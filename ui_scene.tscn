@@ -1,0 +1,1825 @@
+[gd_scene load_steps=2 format=3 uid="uid://p7ji20tjp4pk"]
+
+[ext_resource type="Script" uid="uid://1q8cfob31nek" path="res://ui_controller.gd" id="1_7s2fk"]
+
+[node name="UIController" type="Window"]
+oversampling_override = 1.0
+size = Vector2i(320, 585)
+borderless = true
+script = ExtResource("1_7s2fk")
+
+[node name="RootVBox" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 35.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CollapseButton" type="Button" parent="RootVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "▼ Collapse"
+
+[node name="Version number" type="Label" parent="RootVBox/CollapseButton"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "V 1.0"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="RootVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 550)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="RootVBox/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="MainContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="StartPattern" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
+layout_mode = 2
+
+[node name="StartPatternDropdown" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ResetOnDragLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
+layout_mode = 2
+text = "Reset on Drag"
+
+[node name="ResetOnDragCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator7" type="HSeparator" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="LoadImageButton" type="Button" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Load Background Image"
+
+[node name="Gradient section" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="GradientToggleButton" type="Button" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section"]
+unique_name_in_owner = true
+layout_mode = 2
+text = " ►Gradient Controls"
+
+[node name="GradientControlsContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer"]
+layout_mode = 2
+text = "Gradient Controls"
+
+[node name="HBoxContainer16" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer16"]
+layout_mode = 2
+text = "Top-Left"
+
+[node name="GradColTLPicker" type="ColorPickerButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer16"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="HBoxContainer17" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer17"]
+layout_mode = 2
+text = "Top-Right"
+
+[node name="GradColTRPicker" type="ColorPickerButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer17"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="HBoxContainer18" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer18"]
+layout_mode = 2
+text = "Bottom-Left"
+
+[node name="GradColBLPicker" type="ColorPickerButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer18"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="HBoxContainer19" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer19"]
+layout_mode = 2
+text = "Bottom-Right"
+
+[node name="GradColBRPicker" type="ColorPickerButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer19"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+text = "Active Mouse Translate"
+
+[node name="VBoxContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="PostTranslateRadio" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Post-Transform"
+
+[node name="PreTranslateRadio" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pre-Transform"
+
+[node name="VariationsLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+text = "Variations"
+
+[node name="HBoxContainer12" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="VarADropdown" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer12"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VarATranslateRadio" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer12"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Move"
+
+[node name="HBoxContainer13" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="VarBDropdown" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer13"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VarBTranslateRadio" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer13"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Move"
+
+[node name="HSeparator5" type="HSeparator" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="ApollonianControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA"]
+layout_mode = 2
+text = "Apollonian Controls A"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA"]
+layout_mode = 2
+
+[node name="Scale" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer"]
+layout_mode = 2
+text = "Scale A"
+
+[node name="ApollonianScaleSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ApollonianScaleSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA"]
+layout_mode = 2
+
+[node name="C1 X" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer2"]
+layout_mode = 2
+text = "C1 X"
+
+[node name="ApC1XSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="C1 Y" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer2"]
+layout_mode = 2
+text = "C1 Y"
+
+[node name="ApC1YSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA"]
+layout_mode = 2
+
+[node name="C2 X" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer3"]
+layout_mode = 2
+text = "C2 X"
+
+[node name="ApC2XSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="C2 Y" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer3"]
+layout_mode = 2
+text = "C2 Y"
+
+[node name="ApC2YSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA"]
+layout_mode = 2
+
+[node name="C3 X" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer4"]
+layout_mode = 2
+text = "C3 X"
+
+[node name="ApC3XSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="C3 Y" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer4"]
+layout_mode = 2
+text = "C2 Y"
+
+[node name="ApC3YSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BlurControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BlurRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/BlurControlsContainerA"]
+layout_mode = 2
+
+[node name="Blur Amount A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/BlurControlsContainerA/BlurRow"]
+layout_mode = 2
+text = "Blur Amount A"
+
+[node name="BlurAmountSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/BlurControlsContainerA/BlurRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BlurAmountSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/BlurControlsContainerA/BlurRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CellularWeaveControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CellularWeave A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA"]
+layout_mode = 2
+text = "CellularWeave A"
+
+[node name="Grid Size" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA"]
+layout_mode = 2
+
+[node name="Grid Size" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA/Grid Size"]
+layout_mode = 2
+text = "Angle"
+
+[node name="CellularWeaveGridSizeSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA/Grid Size"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CellularWeaveGridSizeSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA/Grid Size"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Threshold" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA"]
+layout_mode = 2
+
+[node name="Threshold" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA/Threshold"]
+layout_mode = 2
+text = "Threshold"
+
+[node name="CellularWeaveThresholdSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA/Threshold"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CellularWeaveThresholdSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA/Threshold"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Iterations" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA"]
+layout_mode = 2
+
+[node name="Iterations" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA/Iterations"]
+layout_mode = 2
+text = "Iterations"
+
+[node name="CellularWeaveIterationsSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA/Iterations"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CellularWeaveIterationsSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerA/Iterations"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FisheyeControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="StrengthRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FisheyeControlsContainerA"]
+layout_mode = 2
+
+[node name="Strength" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FisheyeControlsContainerA/StrengthRow"]
+layout_mode = 2
+text = "Strength"
+
+[node name="FisheyeStrengthSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FisheyeControlsContainerA/StrengthRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FisheyeStrengthSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FisheyeControlsContainerA/StrengthRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HeartControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Heart A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA"]
+layout_mode = 2
+text = "Heart A"
+
+[node name="Scale Container" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA"]
+layout_mode = 2
+
+[node name="Scale" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA/Scale Container"]
+layout_mode = 2
+text = "Scale"
+
+[node name="HeartScaleSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA/Scale Container"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeartScaleSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA/Scale Container"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Rotation Container" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA"]
+layout_mode = 2
+
+[node name="Rotation" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA/Rotation Container"]
+layout_mode = 2
+text = "Rotation"
+
+[node name="HeartRotationSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA/Rotation Container"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeartRotationSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA/Rotation Container"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Strength Container" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA"]
+layout_mode = 2
+
+[node name="Strength" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA/Strength Container"]
+layout_mode = 2
+text = "Strength"
+
+[node name="HeartStrengthSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA/Strength Container"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeartStrengthSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerA/Strength Container"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="JulianControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Julian A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA"]
+layout_mode = 2
+text = "Julian A"
+
+[node name="PowerRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA"]
+layout_mode = 2
+
+[node name="Power" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/PowerRow"]
+layout_mode = 2
+text = "Power"
+
+[node name="JulianPowerSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/PowerRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianPowerSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/PowerRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DistRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA"]
+layout_mode = 2
+
+[node name="Dist" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/DistRow"]
+layout_mode = 2
+text = "Dist"
+
+[node name="JulianDistSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/DistRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianDistSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/DistRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ARow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA"]
+layout_mode = 2
+
+[node name="A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/ARow"]
+layout_mode = 2
+text = "A"
+
+[node name="JulianASliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/ARow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianASpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/ARow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA"]
+layout_mode = 2
+
+[node name="B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/BRow"]
+layout_mode = 2
+text = "B"
+
+[node name="JulianBSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/BRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianBSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/BRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CRow2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA"]
+layout_mode = 2
+
+[node name="C" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/CRow2"]
+layout_mode = 2
+text = "B"
+
+[node name="JulianCSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/CRow2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianCSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/CRow2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DRow2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA"]
+layout_mode = 2
+
+[node name="D" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/DRow2"]
+layout_mode = 2
+text = "C"
+
+[node name="JulianDSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/DRow2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianDSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/DRow2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ERow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA"]
+layout_mode = 2
+
+[node name="E" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/ERow"]
+layout_mode = 2
+text = "D"
+
+[node name="JulianESliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/ERow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianESpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/ERow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA"]
+layout_mode = 2
+
+[node name="F" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/FRow"]
+layout_mode = 2
+text = "F"
+
+[node name="JulianFSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/FRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianFSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/FRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VarAMirrorControlsContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VarAMirrorXCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarAMirrorControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Mirror X"
+
+[node name="VarAMirrorYCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarAMirrorControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Mirror Y"
+
+[node name="VarAKaleidoscopeControlsContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Kaleidoscope" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarAKaleidoscopeControlsContainer"]
+layout_mode = 2
+text = "Kaleidoscope"
+
+[node name="SymmetrySlicesRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarAKaleidoscopeControlsContainer"]
+layout_mode = 2
+
+[node name="SlicesLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarAKaleidoscopeControlsContainer/SymmetrySlicesRow"]
+layout_mode = 2
+text = "Slices"
+
+[node name="VarAKaleidoscopeSlicesSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarAKaleidoscopeControlsContainer/SymmetrySlicesRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VarAKaleidoscopeSlicesSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarAKaleidoscopeControlsContainer/SymmetrySlicesRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MobiusControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA"]
+layout_mode = 2
+text = "Mobius A"
+
+[node name="Mobius A Re A" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Re A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re A"]
+layout_mode = 2
+text = "Re A"
+
+[node name="MobiusReASliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re A"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusReASpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re A"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius A Im A" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Im A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im A"]
+layout_mode = 2
+text = "Im A"
+
+[node name="MobiusImASliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im A"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusImASpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im A"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius A Re B" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Re B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re B"]
+layout_mode = 2
+text = "Re B"
+
+[node name="MobiusReBSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re B"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusReBSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re B"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius A Im B" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Im B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im B"]
+layout_mode = 2
+text = "Im B"
+
+[node name="MobiusImBSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im B"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusImBSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im B"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius A Re C" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Re C" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re C"]
+layout_mode = 2
+text = "Re C"
+
+[node name="MobiusReCSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re C"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusReCSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re C"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius A Im C" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Im C" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im C"]
+layout_mode = 2
+text = "Im C"
+
+[node name="MobiusImCSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im C"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusImCSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im C"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius A Re D" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Re D" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re D"]
+layout_mode = 2
+text = "Re D"
+
+[node name="MobiusReDSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re D"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusReDSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Re D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius A Im D" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Im D" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im D"]
+layout_mode = 2
+text = "Im D"
+
+[node name="MobiusImDSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im D"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusImDSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerA/Mobius A Im D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PolarControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OffsetRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PolarControlsContainerA"]
+layout_mode = 2
+
+[node name="Offset" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PolarControlsContainerA/OffsetRow"]
+layout_mode = 2
+text = "Offset"
+
+[node name="PolarOffsetSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PolarControlsContainerA/OffsetRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PolarOffsetSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PolarControlsContainerA/OffsetRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="WaveControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA"]
+layout_mode = 2
+text = "Wave Controls A"
+
+[node name="Type" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA"]
+layout_mode = 2
+text = "Type"
+
+[node name="WaveTypeDropdownA" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA"]
+layout_mode = 2
+
+[node name="Frequency" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA/HBoxContainer"]
+layout_mode = 2
+text = "Frequency"
+
+[node name="WaveFrequencySliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WaveFrequencySpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA"]
+layout_mode = 2
+
+[node name="Amplitude" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA/HBoxContainer2"]
+layout_mode = 2
+text = "Amplitude"
+
+[node name="WaveAmplitudeSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WaveAmplitudeSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA"]
+layout_mode = 2
+
+[node name="Speed" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA/HBoxContainer3"]
+layout_mode = 2
+text = "Speed"
+
+[node name="WaveSpeedSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WaveSpeedSpinBoxA" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerA/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ApollonianControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB"]
+layout_mode = 2
+text = "Apollonian Controls B"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB"]
+layout_mode = 2
+
+[node name="Scale" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer"]
+layout_mode = 2
+text = "Scale B"
+
+[node name="ApollonianScaleSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ApollonianScaleSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB"]
+layout_mode = 2
+
+[node name="C1 X" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer2"]
+layout_mode = 2
+text = "C1 X"
+
+[node name="ApC1XSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="C1 Y" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer2"]
+layout_mode = 2
+text = "C1 Y"
+
+[node name="ApC1YSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB"]
+layout_mode = 2
+
+[node name="C2 X" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer3"]
+layout_mode = 2
+text = "C2 X"
+
+[node name="ApC2XSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="C2 Y" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer3"]
+layout_mode = 2
+text = "C2 Y"
+
+[node name="ApC2YSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB"]
+layout_mode = 2
+
+[node name="C3 X" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer4"]
+layout_mode = 2
+text = "C3 X"
+
+[node name="ApC3XSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="C3 Y" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer4"]
+layout_mode = 2
+text = "C2 Y"
+
+[node name="ApC3YSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerB/HBoxContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BlurControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BlurRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/BlurControlsContainerB"]
+layout_mode = 2
+
+[node name="Blur Amount B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/BlurControlsContainerB/BlurRow"]
+layout_mode = 2
+text = "Blur Amount B"
+
+[node name="BlurAmountSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/BlurControlsContainerB/BlurRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BlurAmountSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/BlurControlsContainerB/BlurRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CellularWeaveControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CellularWeave B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB"]
+layout_mode = 2
+text = "CellularWeave B"
+
+[node name="Grid Size" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB"]
+layout_mode = 2
+
+[node name="Grid Size" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB/Grid Size"]
+layout_mode = 2
+text = "Angle"
+
+[node name="CellularWeaveGridSizeSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB/Grid Size"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CellularWeaveGridSizeSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB/Grid Size"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Threshold" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB"]
+layout_mode = 2
+
+[node name="Threshold" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB/Threshold"]
+layout_mode = 2
+text = "Threshold"
+
+[node name="CellularWeaveThresholdSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB/Threshold"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CellularWeaveThresholdSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB/Threshold"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Iterations" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB"]
+layout_mode = 2
+
+[node name="Iterations" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB/Iterations"]
+layout_mode = 2
+text = "Iterations"
+
+[node name="CellularWeaveIterationsSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB/Iterations"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CellularWeaveIterationsSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CellularWeaveControlsContainerB/Iterations"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FisheyeControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="StrengthRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FisheyeControlsContainerB"]
+layout_mode = 2
+
+[node name="Strength" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FisheyeControlsContainerB/StrengthRow"]
+layout_mode = 2
+text = "Strength"
+
+[node name="FisheyeStrengthSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FisheyeControlsContainerB/StrengthRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FisheyeStrengthSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FisheyeControlsContainerB/StrengthRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HeartControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Heart B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB"]
+layout_mode = 2
+text = "Heart B"
+
+[node name="Scale Container" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB"]
+layout_mode = 2
+
+[node name="Scale" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB/Scale Container"]
+layout_mode = 2
+text = "Scale"
+
+[node name="HeartScaleSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB/Scale Container"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeartScaleSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB/Scale Container"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Rotation Container" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB"]
+layout_mode = 2
+
+[node name="Rotation" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB/Rotation Container"]
+layout_mode = 2
+text = "Rotation"
+
+[node name="HeartRotationSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB/Rotation Container"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeartRotationSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB/Rotation Container"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Strength Container" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB"]
+layout_mode = 2
+
+[node name="Strength" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB/Strength Container"]
+layout_mode = 2
+text = "Strength"
+
+[node name="HeartStrengthSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB/Strength Container"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeartStrengthSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HeartControlsContainerB/Strength Container"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="JulianControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Julian B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB"]
+layout_mode = 2
+text = "Julian B"
+
+[node name="PowerRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB"]
+layout_mode = 2
+
+[node name="Power" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/PowerRow"]
+layout_mode = 2
+text = "Power"
+
+[node name="JulianPowerSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/PowerRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianPowerSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/PowerRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DistRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB"]
+layout_mode = 2
+
+[node name="Dist" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/DistRow"]
+layout_mode = 2
+text = "Dist"
+
+[node name="JulianDistSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/DistRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianDistSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/DistRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ARow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB"]
+layout_mode = 2
+
+[node name="A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/ARow"]
+layout_mode = 2
+text = "A"
+
+[node name="JulianASliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/ARow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianASpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/ARow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB"]
+layout_mode = 2
+
+[node name="B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/BRow"]
+layout_mode = 2
+text = "B"
+
+[node name="JulianBSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/BRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianBSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/BRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CRow2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB"]
+layout_mode = 2
+
+[node name="C" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/CRow2"]
+layout_mode = 2
+text = "B"
+
+[node name="JulianCSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/CRow2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianCSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/CRow2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DRow2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB"]
+layout_mode = 2
+
+[node name="D" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/DRow2"]
+layout_mode = 2
+text = "C"
+
+[node name="JulianDSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/DRow2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianDSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/DRow2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ERow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB"]
+layout_mode = 2
+
+[node name="E" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/ERow"]
+layout_mode = 2
+text = "D"
+
+[node name="JulianESliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/ERow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianESpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/ERow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB"]
+layout_mode = 2
+
+[node name="F" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/FRow"]
+layout_mode = 2
+text = "F"
+
+[node name="JulianFSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/FRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JulianFSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/FRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VarBKaleidoscopeControlsContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Kaleidoscope" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarBKaleidoscopeControlsContainer"]
+layout_mode = 2
+text = "Kaleidoscope"
+
+[node name="SymmetrySlicesRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarBKaleidoscopeControlsContainer"]
+layout_mode = 2
+
+[node name="SlicesLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarBKaleidoscopeControlsContainer/SymmetrySlicesRow"]
+layout_mode = 2
+text = "Slices"
+
+[node name="VarBKaleidoscopeSlicesSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarBKaleidoscopeControlsContainer/SymmetrySlicesRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VarBKaleidoscopeSlicesSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarBKaleidoscopeControlsContainer/SymmetrySlicesRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VarBMirrorControlsContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VarBMirrorXCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarBMirrorControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Mirror X"
+
+[node name="VarBMirrorYCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/VarBMirrorControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Mirror Y"
+
+[node name="MobiusControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB"]
+layout_mode = 2
+text = "Mobius B"
+
+[node name="Mobius B Re A" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Re A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re A"]
+layout_mode = 2
+text = "Re A"
+
+[node name="MobiusReASliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re A"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusReASpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re A"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius B Im A" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Im A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im A"]
+layout_mode = 2
+text = "Im A"
+
+[node name="MobiusImASliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im A"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusImASpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im A"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius B Re B" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Re B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re B"]
+layout_mode = 2
+text = "Re B"
+
+[node name="MobiusReBSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re B"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusReBSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re B"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius B Im B" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Im B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im B"]
+layout_mode = 2
+text = "Im B"
+
+[node name="MobiusImBSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im B"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusImBSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im B"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius B Re C" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Re C" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re C"]
+layout_mode = 2
+text = "Re C"
+
+[node name="MobiusReCSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re C"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusReCSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re C"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius B Im C" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Im C" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im C"]
+layout_mode = 2
+text = "Im C"
+
+[node name="MobiusImCSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im C"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusImCSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im C"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius B Re D" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Re D" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re D"]
+layout_mode = 2
+text = "Re D"
+
+[node name="MobiusReDSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re D"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusReDSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Re D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Mobius B Im D" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Im D" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im D"]
+layout_mode = 2
+text = "Im D"
+
+[node name="MobiusImDSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im D"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MobiusImDSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/MobiusControlsContainerB/Mobius B Im D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PolarControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OffsetRow" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PolarControlsContainerB"]
+layout_mode = 2
+
+[node name="Offset" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PolarControlsContainerB/OffsetRow"]
+layout_mode = 2
+text = "Offset"
+
+[node name="PolarOffsetSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PolarControlsContainerB/OffsetRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PolarOffsetSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PolarControlsContainerB/OffsetRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="WaveControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB"]
+layout_mode = 2
+text = "Wave Controls"
+
+[node name="Type" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB"]
+layout_mode = 2
+text = "Type"
+
+[node name="WaveTypeDropdownB" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB"]
+layout_mode = 2
+
+[node name="Frequency" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB/HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Frequency"
+
+[node name="WaveFrequencySliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WaveFrequencySpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB"]
+layout_mode = 2
+
+[node name="Amplitude" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Amplitude"
+
+[node name="WaveAmplitudeSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WaveAmplitudeSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB"]
+layout_mode = 2
+
+[node name="Speed" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB/HBoxContainer3"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Speed"
+
+[node name="WaveSpeedSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WaveSpeedSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/WaveControlsContainerB/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CircleControlsContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer"]
+layout_mode = 2
+text = "Circle Pattern Controls"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer"]
+layout_mode = 2
+text = "Count"
+
+[node name="CircleCountSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CircleCountSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Radius"
+
+[node name="CircleRadiusSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CircleRadiusSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Softness"
+
+[node name="CircleSoftnessSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CircleSoftnessSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer4"]
+layout_mode = 2
+text = "Show Circles"
+
+[node name="ShowCirclesCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator6" type="HSeparator" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="MixLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Mix"
+
+[node name="VarMixSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VarMixSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="FeedbackLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+text = "Feedback"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="AmountLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Amount"
+
+[node name="FeedbackAmountSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FeedbackAmountSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="TilingLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Seamless Tiling"
+
+[node name="TilingCheckBox" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MirrorTilingCheckBox" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Mirror Tile"
+
+[node name="HSeparator2" type="HSeparator" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="PreTransformLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+text = "Pre-Transforms"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="PreScaleLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer4"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Scale"
+
+[node name="PreScaleSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PreScaleSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="PreRotLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer5"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Rotation"
+
+[node name="PreRotationSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer5"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PreRotationSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer5"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator3" type="HSeparator" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="PostTransformLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+text = "Post-Transforms"
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="PostScaleLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer6"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Scale"
+
+[node name="PostScaleSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer6"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PostScaleSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer6"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer7" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="PostRotLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer7"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Rotation"
+
+[node name="PostRotationSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer7"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PostRotationSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer7"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator4" type="HSeparator" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="PostMirrorControlsContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PostMirrorOptions" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PostMirrorControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SymmetryLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PostMirrorControlsContainer/PostMirrorOptions"]
+layout_mode = 2
+text = "Mirrors enable"
+
+[node name="PostMirrorXCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PostMirrorControlsContainer/PostMirrorOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MirrorX"
+
+[node name="PostMirrorYCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PostMirrorControlsContainer/PostMirrorOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MirrorY"
+
+[node name="PostKaleidoscopeControlsContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PostKaleidoscopeMasterCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PostKaleidoscopeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enable Post Kaleidoscope"
+
+[node name="PostKaleidoscopeOptions" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PostKaleidoscopeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SlicesLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PostKaleidoscopeControlsContainer/PostKaleidoscopeOptions"]
+layout_mode = 2
+text = "Kaleidoscope slices"
+
+[node name="PostKaleidoscopeSlicesSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PostKaleidoscopeControlsContainer/PostKaleidoscopeOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PostKaleidoscopeSlicesSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PostKaleidoscopeControlsContainer/PostKaleidoscopeOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator8" type="HSeparator" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="ColorLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+text = "Color Grading"
+
+[node name="HBoxContainer8" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="BrightnessLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer8"]
+layout_mode = 2
+text = "Brightness"
+
+[node name="BrightnessSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer8"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BrightnessSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer8"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer9" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="ContrastLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer9"]
+layout_mode = 2
+text = "Contrast"
+
+[node name="ContrastSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer9"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ContrastSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer9"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer10" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="SaturationLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer10"]
+layout_mode = 2
+text = "Saturation"
+
+[node name="SaturationSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer10"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SaturationSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer10"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer11" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="ResolutionDropdown" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer11"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SaveButton" type="Button" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer11"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save Image"
+
+[node name="HBoxContainer15" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="SavePresetButton" type="Button" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer15"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save Preset"
+
+[node name="LoadPresetButton" type="Button" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer15"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Load Preset"
+
+[node name="HBoxContainer16" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="CopyPresetButton" type="Button" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer16"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "to Clipboard"
+
+[node name="PastePresetButton" type="Button" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer16"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "from Clipboard"
+
+[node name="ClipboardNoticeLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer14" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer14"]
+layout_mode = 2
+text = "Show Start Grid"
+
+[node name="ShowGridCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer14"]
+unique_name_in_owner = true
+layout_mode = 2

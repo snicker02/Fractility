@@ -1,0 +1,69 @@
+[gd_scene load_steps=3 format=3 uid="uid://kwgmoghoe0fi"]
+
+[ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
+[ext_resource type="PackedScene" uid="uid://p7ji20tjp4pk" path="res://ui_scene.tscn" id="2_0e48y"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wtcfe")
+ui_scene = ExtResource("2_0e48y")
+
+[node name="ViewportA" type="SubViewport" parent="."]
+unique_name_in_owner = true
+size = Vector2i(1024, 1024)
+render_target_update_mode = 4
+
+[node name="ShaderRect" type="ColorRect" parent="ViewportA"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ViewportB" type="SubViewport" parent="."]
+unique_name_in_owner = true
+size = Vector2i(1024, 1024)
+render_target_update_mode = 4
+
+[node name="ShaderRect" type="ColorRect" parent="ViewportB"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FinalOutput" type="TextureRect" parent="."]
+unique_name_in_owner = true
+texture_filter = 5
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stretch_mode = 5
+
+[node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+
+[node name="SaveViewport" type="SubViewport" parent="."]
+unique_name_in_owner = true
+render_target_update_mode = 4
+
+[node name="ShaderRect" type="ColorRect" parent="SaveViewport"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PostProcessSaveViewport" type="SubViewport" parent="."]
+unique_name_in_owner = true
+render_target_update_mode = 4
+
+[node name="ShaderRect" type="TextureRect" parent="PostProcessSaveViewport"]
+offset_right = 40.0
+offset_bottom = 40.0
