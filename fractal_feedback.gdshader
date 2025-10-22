@@ -319,6 +319,47 @@ vec2 apply_variation(vec2 uv, int mode,
 		return p;
 	}
 	// --- END APOLLONIAN GASKET ---
+	else if (mode == 14) {
+		return cos(uv * PI);
+	}
+	// --- ADD TANGENT (Mode 15) ---
+	else if (mode == 15) { // Tangent
+		// tan() can produce very large values quickly, multiply by a smaller factor
+		return tan(uv * (PI / 2.0 - 0.01)); // Avoid exact PI/2 where tan is infinite
+	}
+	// --- ADD ARCTANGENT (Mode 16) ---
+	else if (mode == 16) { // ArcTangent
+		// atan(y, x) gives angle, atan(vec2) applies element-wise
+		return atan(uv); // Output range is approx -PI/2 to PI/2
+	}
+	// --- ADD HYPERBOLIC SINE (Mode 17) ---
+	else if (mode == 17) { // Hyperbolic Sine
+		return sinh(uv); // Grows rapidly away from origin
+	}
+	// --- ADD HYPERBOLIC COSINE (Mode 18) ---
+	else if (mode == 18) { // Hyperbolic Cosine
+		return cosh(uv); // Grows rapidly away from origin, always positive-like
+	}
+	// --- ADD L-TROMINO (Mode 19) ---
+	else if (mode == 19) { // L-Tromino Rep-Tile
+		vec2 p = uv * 2.0; // Scale up coordinates by 2 initially
+
+		// Determine which of the 4 smaller L-tromino quadrants the point is in
+		// and transform it back to the base coordinate space [(-1,-1) to (1,1)]
+
+		if (p.x >= 0.0 && p.y >= 0.0) { // Top-right quadrant -> rotate -90 deg, translate
+			p = vec2(p.y, -p.x) + vec2(-1.0, 1.0);
+		} else if (p.x < 0.0 && p.y >= 0.0) { // Top-left quadrant -> translate only
+			p = p + vec2(1.0, -1.0);
+		} else if (p.x < 0.0 && p.y < 0.0) { // Bottom-left quadrant -> translate only
+			p = p + vec2(1.0, 1.0);
+		} else { // Bottom-right quadrant -> rotate +90 deg, translate
+			p = vec2(-p.y, p.x) + vec2(-1.0, -1.0);
+		}
+		// Return the transformed coordinate (divided by 2 because the base shape is usually [-1,1])
+		return p / 2.0;
+	}
+	// --- END L-TROMINO ---
     return uv;
 }
 vec2 random(vec2 st) {
@@ -400,6 +441,7 @@ void fragment() {
 		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b, wave_frequency_b, wave_amplitude_b, wave_speed_b, wave_type_b, julian_power_b, julian_dist_b, julian_mat_b, julian_trans_b, fisheye_strength_b, polar_offset_b, var_b_mirror_x, var_b_mirror_y, var_b_kaleidoscope_slices, mobius_a_b, mobius_b_b, mobius_c_b, mobius_d_b, cellular_weave_grid_size_b, cellular_weave_threshold_b, cellular_weave_iterations_b, blur_amount_b, heart_scale_b, heart_rotation_b, heart_strength_b, apollonian_scale_b, ap_c1_b, ap_c2_b, ap_c3_b);
 		
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
+		vec2 p_final_centered = mixed_uv;
 
 		// Apply Post-Transforms
 		mixed_uv *= rotate(post_rotation);

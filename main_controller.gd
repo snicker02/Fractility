@@ -13,8 +13,8 @@ const PROGRAM_VERSION = 1.0
 
 
 # --- Control Variables ---
-var variation_mode_a: String = "Sinusoidal"
-var variation_mode_b: String = "Spherical"
+var variation_mode_a: int = 0 # Default Sinusoidal ID
+var variation_mode_b: int = 1 # Default Spherical IDl"
 var start_pattern_mode: int = 0
 var variation_mix: float = 0.5
 var feedback_amount: float = 0.98
@@ -174,8 +174,8 @@ func _ready() -> void:
 
 		# --- Connect UI Signals ---
 		# Variation Modes & Mix
-		ui_instance.variation_a_changed.connect(func(index): variation_mode_a = ui_instance.var_a_dropdown.get_item_text(index))
-		ui_instance.variation_b_changed.connect(func(index): variation_mode_b = ui_instance.var_b_dropdown.get_item_text(index))
+		ui_instance.variation_a_changed.connect(func(id): variation_mode_a = id) # Directly receive ID
+		ui_instance.variation_b_changed.connect(func(id): variation_mode_b = id) # Directly receive ID	
 		ui_instance.variation_mix_changed.connect(func(value): variation_mix = value)
 
 		# Start Pattern & Feedback
@@ -410,7 +410,8 @@ func toggle_ui() -> void:
 		ui_instance.visible = not ui_instance.visible
 
 func reset_visuals() -> void:
-	variation_mode_a = "Sinusoidal"; variation_mode_b = "Spherical"
+	variation_mode_a = 0 # Reset to Sinusoidal ID
+	variation_mode_b = 1 # Reset to Spherical ID
 	start_pattern_mode = 0
 	variation_mix = 0.5
 	feedback_amount = 0.98
@@ -462,7 +463,9 @@ func reseed_pattern() -> void:
 func update_ui_from_state() -> void:
 	if is_instance_valid(ui_instance) and ui_instance.has_method("initialize_ui"):
 		var values = {
-			"var_a": variation_mode_a, "var_b": variation_mode_b, "start_pattern": start_pattern_mode,
+			"var_a_id": variation_mode_a, # Pass ID
+			"var_b_id": variation_mode_b, # Pass ID
+			"start_pattern": start_pattern_mode,
 			"var_mix": variation_mix, "feedback": feedback_amount, "tiling": seamless_tiling,"mirror_tiling": mirror_tiling,
 			"reset_on_drag": reset_on_drag_enabled, "show_grid": show_start_grid, "show_circles": show_circles,
 			"pre_scale": pre_scale, "pre_rot": pre_rotation, "post_scale": post_scale, "post_rot": post_rotation,
@@ -629,10 +632,8 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 
 	# Set all the fractal parameters
 	save_material.set_shader_parameter("previous_frame", previous_frame_texture)
-	var id_a = VariationManager.VARIATIONS[variation_mode_a]["id"]
-	var id_b = VariationManager.VARIATIONS[variation_mode_b]["id"]
-	save_material.set_shader_parameter("variation_mode_a", id_a)
-	save_material.set_shader_parameter("variation_mode_b", id_b)
+	save_material.set_shader_parameter("variation_mode_a", variation_mode_a)
+	save_material.set_shader_parameter("variation_mode_b", variation_mode_b)
 	save_material.set_shader_parameter("start_pattern_mode", start_pattern_mode)
 	save_material.set_shader_parameter("variation_mix", variation_mix)
 	save_material.set_shader_parameter("time", time) # Use current time for consistency
@@ -809,10 +810,8 @@ func _process(delta: float) -> void:
 
 	# --- Set Fractal Shader Params ---
 	target_material.set_shader_parameter("previous_frame", previous_frame_texture)
-	var id_a = VariationManager.VARIATIONS[variation_mode_a]["id"]
-	var id_b = VariationManager.VARIATIONS[variation_mode_b]["id"]
-	target_material.set_shader_parameter("variation_mode_a", id_a)
-	target_material.set_shader_parameter("variation_mode_b", id_b)
+	target_material.set_shader_parameter("variation_mode_a", variation_mode_a)
+	target_material.set_shader_parameter("variation_mode_b", variation_mode_b)
 	target_material.set_shader_parameter("start_pattern_mode", start_pattern_mode)
 	target_material.set_shader_parameter("variation_mix", variation_mix)
 	target_material.set_shader_parameter("time", time)
@@ -981,8 +980,8 @@ func _gather_preset_data() -> Dictionary:
 	var data = {
 		# Version & Main Controls
 		"version": PROGRAM_VERSION,
-		"variation_mode_a": variation_mode_a,
-		"variation_mode_b": variation_mode_b,
+		"variation_mode_a_id": variation_mode_a, # Save ID
+		"variation_mode_b_id": variation_mode_b, # Save ID
 		"start_pattern_mode": start_pattern_mode,
 		"variation_mix": variation_mix,
 		"feedback_amount": feedback_amount,
@@ -1169,8 +1168,8 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	var preset_version = data.get("version", 0.0)
 	print("  SetState: Preset was created with version: ", preset_version)
 	# --- Main Controls ---
-	variation_mode_a = data.get("variation_mode_a", "Sinusoidal")
-	variation_mode_b = data.get("variation_mode_b", "Spherical")
+	variation_mode_a = data.get("variation_mode_a_id", 0) # Load ID
+	variation_mode_b = data.get("variation_mode_b_id", 1) # Load ID
 	start_pattern_mode = data.get("start_pattern_mode", 0)
 	variation_mix = data.get("variation_mix", 0.5)
 	feedback_amount = data.get("feedback_amount", 0.98)

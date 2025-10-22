@@ -751,6 +751,25 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="RepTilePanelA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Type A" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA"]
+layout_mode = 2
+text = "Type A"
+
+[node name="RepTileDropdownA" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "L-tromino"
+popup/item_0/id = 0
+popup/item_1/text = "Sphinx"
+popup/item_1/id = 1
+popup/item_2/text = "Custom 3"
+popup/item_2/id = 2
+
 [node name="WaveControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -1385,6 +1404,25 @@ size_flags_horizontal = 3
 [node name="PolarOffsetSpinBoxB" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/PolarControlsContainerB/OffsetRow"]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="RepTilePanelB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Type B" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB"]
+layout_mode = 2
+text = "Type B"
+
+[node name="RepTileDropdownB" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "L-tromino"
+popup/item_0/id = 0
+popup/item_1/text = "Sphinx"
+popup/item_1/id = 1
+popup/item_2/text = "Custom 3"
+popup/item_2/id = 2
 
 [node name="WaveControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
