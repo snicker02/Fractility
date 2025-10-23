@@ -9,10 +9,12 @@ extends Node
 const VARIATIONS = {
 	# Rep-Tiles Category
 	"L-tromino":        { "id": 19, "controls": null,       "category": "Rep-Tile" },
+	"Custom 2x2 Tile":  { "id": 20, "controls": "custom_2x2", "category": "Rep-Tile" },
+	"Sphinx":           { "id": 21, "controls": null, "category": "Rep-Tile" },
 	# Add other true rep-tiles here later
 
 	# Other Variations (Sorted Alphabetically)
-	"Apollonian Gasket": { "id": 13, "controls": "apollonian" }, # <-- REMOVED category
+	"Apollonian Gasket": { "id": 13, "controls": "apollonian" }, 
 	"ArcTangent":       { "id": 16, "controls": null },
 	"Blur":             { "id": 11, "controls": "blur" },
 	# ... (rest of your variations) ...

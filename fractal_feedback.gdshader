@@ -123,6 +123,9 @@ uniform float apollonian_scale_b = 1.5;
 uniform vec2 ap_c1_b = vec2(0.0, 0.5);   // <-- ADD Center 1 for Var B
 uniform vec2 ap_c2_b = vec2(-0.433, -0.25); // <-- ADD Center 2 for Var B
 uniform vec2 ap_c3_b = vec2(0.433, -0.25);  // <-- ADD Center 3 for Var B
+uniform int custom_tl_a; uniform int custom_tr_a; uniform int custom_bl_a; uniform int custom_br_a;
+uniform int custom_tl_b; uniform int custom_tr_b; uniform int custom_bl_b; uniform int custom_br_b;
+
 // --- Helper Functions ---
 mat2 rotate(float angle) {
 	return mat2(vec2(cos(angle), -sin(angle)), vec2(sin(angle), cos(angle)));
@@ -136,6 +139,23 @@ float get_cell_value(vec2 p, vec2 offset) {
     p += offset;
     return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
 }
+vec2 apply_quad_transform(vec2 p, int transform_id) {
+	// Transform IDs: 0:Identity, 1:R+90, 2:R180, 3:R-90, 4:FlipX, 5:FlipY
+	if (transform_id == 1) { // Rotate +90
+		p = vec2(-p.y, p.x);
+	} else if (transform_id == 2) { // Rotate 180
+		p = -p;
+	} else if (transform_id == 3) { // Rotate -90
+		p = vec2(p.y, -p.x);
+	} else if (transform_id == 4) { // Flip X
+		p = vec2(-p.x, p.y);
+	} else if (transform_id == 5) { // Flip Y
+		p = vec2(p.x, -p.y);
+	}
+	// Default (transform_id == 0) is Identity (return p)
+	return p;
+}
+
 // --- REVISED: The function signature is now back to its original, simpler form ---
 vec2 apply_variation(vec2 uv, int mode,
                      float w_freq, float w_amp, float w_speed, int w_type,      // Wave
@@ -146,7 +166,8 @@ vec2 apply_variation(vec2 uv, int mode,
                      float cw_grid, float cw_thresh, float cw_iter,            // Cellular Weave
                      float bl_amount,                                          // Blur
                      float h_scale, float h_rotation, float h_strength,         // Heart
-					float ap_scale, vec2 ap_c1, vec2 ap_c2, vec2 ap_c3
+					float ap_scale, vec2 ap_c1, vec2 ap_c2, vec2 ap_c3,
+					int c_tl, int c_tr, int c_bl, int c_br
                      ) {
 	if (mode == 0) { // Sinusoidal
 		return sin(uv * 3.14159);
@@ -360,6 +381,58 @@ vec2 apply_variation(vec2 uv, int mode,
 		return p / 2.0;
 	}
 	// --- END L-TROMINO ---
+	
+	// --- ADD CUSTOM 2x2 (Mode 20) ---
+	else if (mode == 20) {
+		vec2 p = uv * 2.0; // Map centered uv from [-0.5, 0.5] to [-1, 1]
+
+		if (p.x > 0.0 && p.y > 0.0) { // Top-Right (TR)
+			// Map p from [0,1] to [-1,1], apply transform, map back
+			p = (apply_quad_transform(p - vec2(0.5, 0.5), c_tr) * 0.5) + vec2(0.5, 0.5);
+		} else if (p.x <= 0.0 && p.y > 0.0) { // Top-Left (TL)
+			p = (apply_quad_transform(p - vec2(-0.5, 0.5), c_tl) * 0.5) + vec2(-0.5, 0.5);
+		} else if (p.x <= 0.0 && p.y <= 0.0) { // Bottom-Left (BL)
+			p = (apply_quad_transform(p - vec2(-0.5, -0.5), c_bl) * 0.5) + vec2(-0.5, -0.5);
+		} else { // Bottom-Right (BR)
+			p = (apply_quad_transform(p - vec2(0.5, -0.5), c_br) * 0.5) + vec2(0.5, -0.5);
+		}
+		
+		return p / 2.0; // Scale back down
+	}
+	// --- END CUSTOM 2x2 ---
+	// --- ADD SPHINX (Mode 21) ---
+	else if (mode == 21) { // Sphinx
+		// The Sphinx uses 4 smaller copies, rotated and translated.
+		// We divide the plane into 4 triangular regions using two diagonal lines.
+		vec2 p = uv; // Input is in [-0.5, 0.5]
+		p *= 2.0; // Scale up to [-1, 1] for easier math
+
+		// Define a 90-degree rotation matrix
+		mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
+
+		// Check which triangular region the point is in
+		if (p.x + p.y > 0.0) {
+			if (p.x - p.y > 0.0) {
+				// Top-Right triangle
+				p = R90 * p + vec2(0.0, 1.0);
+			} else {
+				// Top-Left triangle
+				p = p + vec2(-1.0, 0.0);
+			}
+		} else {
+			if (p.x - p.y > 0.0) {
+				// Bottom-Right triangle
+				p = p + vec2(1.0, 0.0);
+			} else {
+				// Bottom-Left triangle
+				p = R90 * p + vec2(0.0, -1.0);
+			}
+		}
+		// Scale the result back down to [-0.5, 0.5]
+		return p / 2.0;
+	}
+	// --- END SPHINX ---
+	
     return uv;
 }
 vec2 random(vec2 st) {
@@ -437,8 +510,8 @@ void fragment() {
 		transformed_uv += pre_translate;
 
 		// Apply Variations
-		vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a, wave_frequency_a, wave_amplitude_a, wave_speed_a, wave_type_a, julian_power_a, julian_dist_a, julian_mat_a, julian_trans_a, fisheye_strength_a, polar_offset_a, var_a_mirror_x, var_a_mirror_y, var_a_kaleidoscope_slices, mobius_a_a, mobius_b_a, mobius_c_a, mobius_d_a, cellular_weave_grid_size_a, cellular_weave_threshold_a, cellular_weave_iterations_a, blur_amount_a, heart_scale_a, heart_rotation_a, heart_strength_a, apollonian_scale_a, ap_c1_a, ap_c2_a, ap_c3_a);
-		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b, wave_frequency_b, wave_amplitude_b, wave_speed_b, wave_type_b, julian_power_b, julian_dist_b, julian_mat_b, julian_trans_b, fisheye_strength_b, polar_offset_b, var_b_mirror_x, var_b_mirror_y, var_b_kaleidoscope_slices, mobius_a_b, mobius_b_b, mobius_c_b, mobius_d_b, cellular_weave_grid_size_b, cellular_weave_threshold_b, cellular_weave_iterations_b, blur_amount_b, heart_scale_b, heart_rotation_b, heart_strength_b, apollonian_scale_b, ap_c1_b, ap_c2_b, ap_c3_b);
+		vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a, wave_frequency_a, wave_amplitude_a, wave_speed_a, wave_type_a, julian_power_a, julian_dist_a, julian_mat_a, julian_trans_a, fisheye_strength_a, polar_offset_a, var_a_mirror_x, var_a_mirror_y, var_a_kaleidoscope_slices, mobius_a_a, mobius_b_a, mobius_c_a, mobius_d_a, cellular_weave_grid_size_a, cellular_weave_threshold_a, cellular_weave_iterations_a, blur_amount_a, heart_scale_a, heart_rotation_a, heart_strength_a, apollonian_scale_a, ap_c1_a, ap_c2_a, ap_c3_a,custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a);
+		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b, wave_frequency_b, wave_amplitude_b, wave_speed_b, wave_type_b, julian_power_b, julian_dist_b, julian_mat_b, julian_trans_b, fisheye_strength_b, polar_offset_b, var_b_mirror_x, var_b_mirror_y, var_b_kaleidoscope_slices, mobius_a_b, mobius_b_b, mobius_c_b, mobius_d_b, cellular_weave_grid_size_b, cellular_weave_threshold_b, cellular_weave_iterations_b, blur_amount_b, heart_scale_b, heart_rotation_b, heart_strength_b, apollonian_scale_b, ap_c1_b, ap_c2_b, ap_c3_b,custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b);
 		
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
 		vec2 p_final_centered = mixed_uv;

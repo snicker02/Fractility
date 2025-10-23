@@ -114,6 +114,14 @@ signal apollonian_scale_b_changed(value: float)
 signal ap_c1_b_changed(value: Vector2)
 signal ap_c2_b_changed(value: Vector2)
 signal ap_c3_b_changed(value: Vector2)
+signal custom_tl_a_changed(index: int)
+signal custom_tr_a_changed(index: int)
+signal custom_bl_a_changed(index: int)
+signal custom_br_a_changed(index: int)
+signal custom_tl_b_changed(index: int)
+signal custom_tr_b_changed(index: int)
+signal custom_bl_b_changed(index: int)
+signal custom_br_b_changed(index: int)
 
 # --- Private Variables ---
 var _expanded_size: Vector2
@@ -324,7 +332,16 @@ var br_stylebox := StyleBoxFlat.new()
 @onready var heart_scale_slider_b: HSlider = %HeartScaleSliderB
 @onready var heart_rotation_slider_b: HSlider = %HeartRotationSliderB
 @onready var heart_strength_slider_b: HSlider = %HeartStrengthSliderB
-
+@onready var custom_2x2_controls_container_a: VBoxContainer = %Custom2x2ControlsContainerA
+@onready var custom_tl_a: OptionButton = %CustomTLA
+@onready var custom_tr_a: OptionButton = %CustomTRA
+@onready var custom_bl_a: OptionButton = %CustomBLA
+@onready var custom_br_a: OptionButton = %CustomBRA
+@onready var custom_2x2_controls_container_b: VBoxContainer = %Custom2x2ControlsContainerB
+@onready var custom_tl_b: OptionButton = %CustomTLB
+@onready var custom_tr_b: OptionButton = %CustomTRB
+@onready var custom_bl_b: OptionButton = %CustomBLB
+@onready var custom_br_b: OptionButton = %CustomBRB
 
 func _ready() -> void:
 	self.borderless = true
@@ -364,6 +381,17 @@ func _ready() -> void:
 	wave_type_dropdown_b.add_item("Vertical"); wave_type_dropdown_b.add_item("Radial"); wave_type_dropdown_b.add_item("Square")
 	gradient_controls_container.visible = false
 	gradient_toggle_button.text = "► Gradient Controls"
+	
+	# --- Populate Custom 2x2 Dropdowns ---
+	var transform_options = ["Identity", "Rotate +90", "Rotate 180", "Rotate -90", "Flip X", "Flip Y"]
+	var dropdowns = [
+		custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a,
+		custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b
+	]
+	for dropdown in dropdowns:
+		dropdown.clear()
+		for option_name in transform_options:
+			dropdown.add_item(option_name)
 
 	
 	# --- Connect Signals ---
@@ -520,6 +548,15 @@ func _ready() -> void:
 	ap_c2y_spinbox_b.value_changed.connect(func(v): _update_ap_vec2("c2_b", v, "y"))
 	ap_c3x_spinbox_b.value_changed.connect(func(v): _update_ap_vec2("c3_b", v, "x"))
 	ap_c3y_spinbox_b.value_changed.connect(func(v): _update_ap_vec2("c3_b", v, "y"))
+	
+	custom_tl_a.item_selected.connect(custom_tl_a_changed.emit)
+	custom_tr_a.item_selected.connect(custom_tr_a_changed.emit)
+	custom_bl_a.item_selected.connect(custom_bl_a_changed.emit)
+	custom_br_a.item_selected.connect(custom_br_a_changed.emit)
+	custom_tl_b.item_selected.connect(custom_tl_b_changed.emit)
+	custom_tr_b.item_selected.connect(custom_tr_b_changed.emit)
+	custom_bl_b.item_selected.connect(custom_bl_b_changed.emit)
+	custom_br_b.item_selected.connect(custom_br_b_changed.emit)
 
 
 	# --- Configure Controls ---
@@ -825,12 +862,23 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	_ap_c3_b = c3b
 	ap_c3x_spinbox_b.value = c3b.x
 	ap_c3y_spinbox_b.value = c3b.y
+	
+	# Initialize Custom 2x2 controls
+	custom_tl_a.select(initial_values.get("custom_tl_a", 0))
+	custom_tr_a.select(initial_values.get("custom_tr_a", 0))
+	custom_bl_a.select(initial_values.get("custom_bl_a", 0))
+	custom_br_a.select(initial_values.get("custom_br_a", 0))
+	custom_tl_b.select(initial_values.get("custom_tl_b", 0))
+	custom_tr_b.select(initial_values.get("custom_tr_b", 0))
+	custom_bl_b.select(initial_values.get("custom_bl_b", 0))
+	custom_br_b.select(initial_values.get("custom_br_b", 0))
 
 	update_contextual_ui_visibility()
 
 # --- REPLACED FUNCTION ---
 func update_contextual_ui_visibility() -> void:
-	# --- Step 1: Hide ALL variation-specific panels ---
+	# --- Step 1: Hide ALL contextual panels first ---
+	# This is the most important step to fix the bug
 	wave_controls_container_a.visible = false
 	julian_controls_container_a.visible = false
 	polar_controls_container_a.visible = false
@@ -842,7 +890,7 @@ func update_contextual_ui_visibility() -> void:
 	blur_controls_container_a.visible = false
 	heart_controls_container_a.visible = false
 	apollonian_controls_container_a.visible = false
-	rep_tile_panel_a.visible = false
+	custom_2x2_controls_container_a.visible = false # <-- Hide custom controls
 	
 	wave_controls_container_b.visible = false
 	julian_controls_container_b.visible = false
@@ -855,22 +903,23 @@ func update_contextual_ui_visibility() -> void:
 	blur_controls_container_b.visible = false
 	heart_controls_container_b.visible = false
 	apollonian_controls_container_b.visible = false
-	rep_tile_panel_b.visible = false
+	custom_2x2_controls_container_b.visible = false # <-- Hide custom controls
 
-	# --- Determine active variation names ---
+	rep_tile_panel_a.visible = false # Hide main rep-tile panel A
+	rep_tile_panel_b.visible = false # Hide main rep-tile panel B
+	
+	
+	# --- Step 2: Get the selected variation names ---
 	var selected_name_a = var_a_dropdown.get_item_text(var_a_dropdown.selected)
 	var selected_name_b = var_b_dropdown.get_item_text(var_b_dropdown.selected)
 	var active_variation_name_a = selected_name_a
 	var active_variation_name_b = selected_name_b
 
+	# --- Handle Var A Visibility ---
 	if selected_name_a == "Rep-Tiles":
-		rep_tile_panel_a.visible = true
+		rep_tile_panel_a.visible = true # Show rep-tile panel A
 		active_variation_name_a = rep_tile_dropdown_a.get_item_text(rep_tile_dropdown_a.selected)
-	if selected_name_b == "Rep-Tiles":
-		rep_tile_panel_b.visible = true
-		active_variation_name_b = rep_tile_dropdown_b.get_item_text(rep_tile_dropdown_b.selected)
-
-	# --- Show controls for ACTIVE variations ---
+	
 	if VariationManager.VARIATIONS.has(active_variation_name_a):
 		var controls_a = VariationManager.VARIATIONS[active_variation_name_a].get("controls")
 		if controls_a != null:
@@ -886,6 +935,12 @@ func update_contextual_ui_visibility() -> void:
 				"blur": blur_controls_container_a.visible = true
 				"heart": heart_controls_container_a.visible = true
 				"apollonian": apollonian_controls_container_a.visible = true
+				"custom_2x2": custom_2x2_controls_container_a.visible = true
+
+	# --- Handle Var B Visibility ---
+	if selected_name_b == "Rep-Tiles":
+		rep_tile_panel_b.visible = true # Show rep-tile panel B
+		active_variation_name_b = rep_tile_dropdown_b.get_item_text(rep_tile_dropdown_b.selected)
 
 	if VariationManager.VARIATIONS.has(active_variation_name_b):
 		var controls_b = VariationManager.VARIATIONS[active_variation_name_b].get("controls")
@@ -902,8 +957,10 @@ func update_contextual_ui_visibility() -> void:
 				"blur": blur_controls_container_b.visible = true
 				"heart": heart_controls_container_b.visible = true
 				"apollonian": apollonian_controls_container_b.visible = true
+				"custom_2x2": custom_2x2_controls_container_b.visible = true
 
 	# --- Handle Post-Processing and Start Pattern visibility ---
+	
 	post_kaleidoscope_options.visible = post_kaleidoscope_master_check.button_pressed
 		
 	# --- Start Pattern Controls Visibility ---
@@ -925,7 +982,7 @@ func update_contextual_ui_visibility() -> void:
 		2: # Image Input
 			load_image_button.visible = true
 		3: # Perlin Noise
-			pass
+			pass # No controls
 
 # --- NEW HELPER FUNCTION ---
 func _update_ap_vec2(point_id: String, value: float, component: String):
@@ -993,6 +1050,7 @@ func _on_rep_tile_dropdown_item_selected(index: int, main_dropdown: OptionButton
 				else:
 					variation_b_changed.emit(var_data["id"])
 				break
+	update_contextual_ui_visibility()
 
 # --- Signal Emitters (OLD var_a/b removed) ---
 func _on_start_pattern_dropdown_item_selected(index: int) -> void:

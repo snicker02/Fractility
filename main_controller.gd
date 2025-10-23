@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 1.0
+const PROGRAM_VERSION = 1.2
 # --- Node References ---
 @onready var viewport_a: SubViewport = %ViewportA
 @onready var viewport_b: SubViewport = %ViewportB
@@ -134,6 +134,17 @@ var apollonian_scale_b: float = 1.5
 var ap_c1_b := Vector2(0.0, 0.5)      # <-- ADD
 var ap_c2_b := Vector2(-0.433, -0.25) # <-- ADD
 var ap_c3_b := Vector2(0.433, -0.25)  # <-- ADD
+
+# Custom 2x2 Tile Vars
+var custom_tl_a: int = 0
+var custom_tr_a: int = 0
+var custom_bl_a: int = 0
+var custom_br_a: int = 0
+var custom_tl_b: int = 0
+var custom_tr_b: int = 0
+var custom_bl_b: int = 0
+var custom_br_b: int = 0
+
 # --- Private Variables ---
 var time: float = 0.0
 var is_a_source = true
@@ -163,7 +174,7 @@ func _ready() -> void:
 		ui_instance = ui_scene.instantiate() # Cast later if needed
 		add_child(ui_instance)
 		# --- Set Version Label ---
-		version_label = ui_instance.get_node_or_null("RootVBox/Version number") # Find it again here
+		version_label = ui_instance.get_node_or_null("%Version number") # Find it again here
 		if version_label:
 			version_label.text = "V " + str(PROGRAM_VERSION) # Set the text
 		else:
@@ -248,6 +259,10 @@ func _ready() -> void:
 		ui_instance.ap_c1_a_changed.connect(func(v): ap_c1_a = v) # <-- ADD
 		ui_instance.ap_c2_a_changed.connect(func(v): ap_c2_a = v) # <-- ADD
 		ui_instance.ap_c3_a_changed.connect(func(v): ap_c3_a = v) # <-- ADD
+		ui_instance.custom_tl_a_changed.connect(func(idx): custom_tl_a = idx)
+		ui_instance.custom_tr_a_changed.connect(func(idx): custom_tr_a = idx)
+		ui_instance.custom_bl_a_changed.connect(func(idx): custom_bl_a = idx)
+		ui_instance.custom_br_a_changed.connect(func(idx): custom_br_a = idx)
 
 
 		# Variation B Parameters
@@ -287,6 +302,10 @@ func _ready() -> void:
 		ui_instance.ap_c1_b_changed.connect(func(v): ap_c1_b = v) # <-- ADD
 		ui_instance.ap_c2_b_changed.connect(func(v): ap_c2_b = v) # <-- ADD
 		ui_instance.ap_c3_b_changed.connect(func(v): ap_c3_b = v) # <-- ADD
+		ui_instance.custom_tl_b_changed.connect(func(idx): custom_tl_b = idx)
+		ui_instance.custom_tr_b_changed.connect(func(idx): custom_tr_b = idx)
+		ui_instance.custom_bl_b_changed.connect(func(idx): custom_bl_b = idx)
+		ui_instance.custom_br_b_changed.connect(func(idx): custom_br_b = idx)
 
 		# Mouse Drag Target
 		ui_instance.translate_target_changed.connect(func(index): active_translate_target = index) # Assuming index matches order 0:post, 1:pre, 2:var_a, 3:var_b
@@ -451,6 +470,14 @@ func reset_visuals() -> void:
 	ap_c1_b = Vector2(0.0, 0.5)      # <-- ADD
 	ap_c2_b = Vector2(-0.433, -0.25) # <-- ADD
 	ap_c3_b = Vector2(0.433, -0.25)  # <-- ADD
+	custom_tl_a = 0
+	custom_tr_a = 0
+	custom_bl_a = 0
+	custom_br_a = 0
+	custom_tl_b = 0
+	custom_tr_b = 0
+	custom_bl_b = 0
+	custom_br_b = 0
 	
 	
 	time = 0.0
@@ -488,6 +515,10 @@ func update_ui_from_state() -> void:
 			"ap_c1_a": ap_c1_a, # <-- ADD
 			"ap_c2_a": ap_c2_a, # <-- ADD
 			"ap_c3_a": ap_c3_a, # <-- ADD
+			"custom_tl_a": custom_tl_a,
+			"custom_tr_a": custom_tr_a,
+			"custom_bl_a": custom_bl_a,
+			"custom_br_a": custom_br_a,
 			# Var B specific
 			"var_b_mirror_x": var_b_mirror_x, "var_b_mirror_y": var_b_mirror_y, "var_b_kaleidoscope_slices": var_b_kaleidoscope_slices,
 			"wave_type_b": wave_type_b, "wave_freq_b": wave_frequency_b, "wave_amp_b": wave_amplitude_b, "wave_speed_b": wave_speed_b,
@@ -501,6 +532,10 @@ func update_ui_from_state() -> void:
 			"ap_c1_b": ap_c1_b, # <-- ADD
 			"ap_c2_b": ap_c2_b, # <-- ADD
 			"ap_c3_b": ap_c3_b, # <-- ADD
+			"custom_tl_b": custom_tl_b,
+			"custom_tr_b": custom_tr_b,
+			"custom_bl_b": custom_bl_b,
+			"custom_br_b": custom_br_b,
 		}
 		ui_instance.initialize_ui(values)
 
@@ -689,6 +724,10 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("ap_c1_a", ap_c1_a) # <-- ADD
 	save_material.set_shader_parameter("ap_c2_a", ap_c2_a) # <-- ADD
 	save_material.set_shader_parameter("ap_c3_a", ap_c3_a) # <-- ADD
+	save_material.set_shader_parameter("custom_tl_a", custom_tl_a)
+	save_material.set_shader_parameter("custom_tr_a", custom_tr_a)
+	save_material.set_shader_parameter("custom_bl_a", custom_bl_a)
+	save_material.set_shader_parameter("custom_br_a", custom_br_a)
 
 	# Var B Params
 	save_material.set_shader_parameter("var_b_mirror_x", var_b_mirror_x)
@@ -720,6 +759,10 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("ap_c1_b", ap_c1_b) # <-- ADD
 	save_material.set_shader_parameter("ap_c2_b", ap_c2_b) # <-- ADD
 	save_material.set_shader_parameter("ap_c3_b", ap_c3_b) # <-- ADD
+	save_material.set_shader_parameter("custom_tl_b", custom_tl_b)
+	save_material.set_shader_parameter("custom_tr_b", custom_tr_b)
+	save_material.set_shader_parameter("custom_bl_b", custom_bl_b)
+	save_material.set_shader_parameter("custom_br_b", custom_br_b)
 
 	# Wait for the raw fractal to render
 	await RenderingServer.frame_post_draw
@@ -867,6 +910,10 @@ func _process(delta: float) -> void:
 	target_material.set_shader_parameter("ap_c1_a", ap_c1_a) # <-- ADD
 	target_material.set_shader_parameter("ap_c2_a", ap_c2_a) # <-- ADD
 	target_material.set_shader_parameter("ap_c3_a", ap_c3_a) # <-- ADD
+	target_material.set_shader_parameter("custom_tl_a", custom_tl_a)
+	target_material.set_shader_parameter("custom_tr_a", custom_tr_a)
+	target_material.set_shader_parameter("custom_bl_a", custom_bl_a)
+	target_material.set_shader_parameter("custom_br_a", custom_br_a)
 	
 
 	# Var B Params
@@ -899,6 +946,10 @@ func _process(delta: float) -> void:
 	target_material.set_shader_parameter("ap_c1_b", ap_c1_b) # <-- ADD
 	target_material.set_shader_parameter("ap_c2_b", ap_c2_b) # <-- ADD
 	target_material.set_shader_parameter("ap_c3_b", ap_c3_b) # <-- ADD
+	target_material.set_shader_parameter("custom_tl_b", custom_tl_b)
+	target_material.set_shader_parameter("custom_tr_b", custom_tr_b)
+	target_material.set_shader_parameter("custom_bl_b", custom_bl_b)
+	target_material.set_shader_parameter("custom_br_b", custom_br_b)
 	# ---------------------------------
 
 	# --- Set Post Process Shader Params ---
@@ -1053,6 +1104,10 @@ func _gather_preset_data() -> Dictionary:
 		"ap_c1_a": {"x": ap_c1_a.x, "y": ap_c1_a.y}, # <-- ADD (Save as Dict)
 		"ap_c2_a": {"x": ap_c2_a.x, "y": ap_c2_a.y}, # <-- ADD (Save as Dict)
 		"ap_c3_a": {"x": ap_c3_a.x, "y": ap_c3_a.y}, # <-- ADD (Save as Dict),
+		"custom_tl_a": custom_tl_a,
+		"custom_tr_a": custom_tr_a,
+		"custom_bl_a": custom_bl_a,
+		"custom_br_a": custom_br_a,
 
 		# Variation B Parameters
 		"var_b_mirror_x": var_b_mirror_x,
@@ -1082,6 +1137,10 @@ func _gather_preset_data() -> Dictionary:
 		"ap_c1_b": {"x": ap_c1_b.x, "y": ap_c1_b.y}, # <-- ADD (Save as Dict)
 		"ap_c2_b": {"x": ap_c2_b.x, "y": ap_c2_b.y}, # <-- ADD (Save as Dict)
 		"ap_c3_b": {"x": ap_c3_b.x, "y": ap_c3_b.y}, # <-- ADD (Save as Dict)
+		"custom_tl_b": custom_tl_b,
+		"custom_tr_b": custom_tr_b,
+		"custom_bl_b": custom_bl_b,
+		"custom_br_b": custom_br_b,
 	}
 	return data
 
@@ -1244,6 +1303,10 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	ap_c1_a = get_vector2(data, "ap_c1_a", Vector2(0.0, 0.5))      # <-- ADD (Use helper)
 	ap_c2_a = get_vector2(data, "ap_c2_a", Vector2(-0.433, -0.25)) # <-- ADD (Use helper)
 	ap_c3_a = get_vector2(data, "ap_c3_a", Vector2(0.433, -0.25))  # <-- ADD (Use helper)
+	custom_tl_a = data.get("custom_tl_a", 0)
+	custom_tr_a = data.get("custom_tr_a", 0)
+	custom_bl_a = data.get("custom_bl_a", 0)
+	custom_br_a = data.get("custom_br_a", 0)
 
 	# --- Variation B Parameters ---
 	var_b_mirror_x = data.get("var_b_mirror_x", false)
@@ -1274,5 +1337,9 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	ap_c1_b = get_vector2(data, "ap_c1_b", Vector2(0.0, 0.5))      # <-- ADD (Use helper)
 	ap_c2_b = get_vector2(data, "ap_c2_b", Vector2(-0.433, -0.25)) # <-- ADD (Use helper)
 	ap_c3_b = get_vector2(data, "ap_c3_b", Vector2(0.433, -0.25))  # <-- ADD (Use helper)
+	custom_tl_b = data.get("custom_tl_b", 0)
+	custom_tr_b = data.get("custom_tr_b", 0)
+	custom_bl_b = data.get("custom_bl_b", 0)
+	custom_br_b = data.get("custom_br_b", 0)
 
 	print("  SetState: Finished applying data.")

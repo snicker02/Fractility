@@ -26,7 +26,7 @@ unique_name_in_owner = true
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
-text = "V 1.1"
+text = "V 1.2"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="RootVBox"]
 unique_name_in_owner = true
@@ -770,6 +770,54 @@ popup/item_1/id = 1
 popup/item_2/text = "Custom 3"
 popup/item_2/id = 2
 
+[node name="Custom2x2ControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Top-LeftContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA"]
+layout_mode = 2
+
+[node name="Top-Left" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA/Top-LeftContainer"]
+layout_mode = 2
+text = "Top-Left"
+
+[node name="CustomTLA" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA/Top-LeftContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Top-RightContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA"]
+layout_mode = 2
+
+[node name="Top-Right" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA/Top-RightContainer"]
+layout_mode = 2
+text = "Top-Right"
+
+[node name="CustomTRA" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA/Top-RightContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Bottom-LeftContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA"]
+layout_mode = 2
+
+[node name="Bottom-Left" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA/Bottom-LeftContainer"]
+layout_mode = 2
+text = "Bottom-Left"
+
+[node name="CustomBLA" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA/Bottom-LeftContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Bottom-RightContainer4" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA"]
+layout_mode = 2
+
+[node name="Bottom-Right" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA/Bottom-RightContainer4"]
+layout_mode = 2
+text = "Bottom-Right"
+
+[node name="CustomBRA" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA/Bottom-RightContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="WaveControlsContainerA" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -1423,6 +1471,54 @@ popup/item_1/text = "Sphinx"
 popup/item_1/id = 1
 popup/item_2/text = "Custom 3"
 popup/item_2/id = 2
+
+[node name="Custom2x2ControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Top-LeftContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB"]
+layout_mode = 2
+
+[node name="Top-Left" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB/Top-LeftContainer"]
+layout_mode = 2
+text = "Top-Left"
+
+[node name="CustomTLB" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB/Top-LeftContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Top-RightContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB"]
+layout_mode = 2
+
+[node name="Top-Right" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB/Top-RightContainer"]
+layout_mode = 2
+text = "Top-Right"
+
+[node name="CustomTRB" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB/Top-RightContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Bottom-LeftContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB"]
+layout_mode = 2
+
+[node name="Bottom-Left" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB/Bottom-LeftContainer"]
+layout_mode = 2
+text = "Bottom-Left"
+
+[node name="CustomBLB" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB/Bottom-LeftContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Bottom-RightContainer4" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB"]
+layout_mode = 2
+
+[node name="Bottom-Right" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB/Bottom-RightContainer4"]
+layout_mode = 2
+text = "Bottom-Right"
+
+[node name="CustomBRB" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/RepTilePanelB/Custom2x2ControlsContainerB/Bottom-RightContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="WaveControlsContainerB" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
