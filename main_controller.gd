@@ -18,6 +18,8 @@ var variation_mode_b: int = 1 # Default Spherical IDl"
 var start_pattern_mode: int = 0
 var variation_mix: float = 0.5
 var feedback_amount: float = 0.98
+var feedback_min: float 
+var feedback_max: float 
 var seamless_tiling: bool = true
 var reset_on_drag_enabled: bool = true
 var show_start_grid: bool = false
@@ -148,11 +150,26 @@ var custom_br_b: int = 0
 # --- Private Variables ---
 var time: float = 0.0
 var is_a_source = true
-var ui_instance: Node # Assuming UIController type if you have one
+var ui_instance: UIController # Specify the class_name
 var post_process_material: ShaderMaterial
 var _preset_json_to_save: String
 
 var version_label: Label
+
+func _set_platform_feedback_defaults() -> void:
+	if OS.has_feature("web"):
+		# Tighter range for web/mobile
+		feedback_min = 0.0
+		feedback_max = 0.02
+		feedback_amount = 0.01
+	else:
+		# Wider range for desktop
+		feedback_min = 0.0
+		feedback_max = 0.1
+	# Also reset the main feedback value to a safe default
+		feedback_amount = 0.02
+
+
 
 func _ready() -> void:
 	# NOTE: update_mode for SaveViewport must be set to 'Always' in the Inspector
@@ -160,7 +177,9 @@ func _ready() -> void:
 
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	file_dialog.current_dir = OS.get_system_dir(OS.SystemDir.SYSTEM_DIR_PICTURES)
-
+	
+	_set_platform_feedback_defaults()
+	
 	var feedback_material = ShaderMaterial.new()
 	feedback_material.shader = load("res://fractal_feedback.gdshader")
 	%ViewportA.get_node("ShaderRect").material = feedback_material
@@ -171,7 +190,7 @@ func _ready() -> void:
 	final_output.material = post_process_material
 
 	if ui_scene:
-		ui_instance = ui_scene.instantiate() # Cast later if needed
+		ui_instance = ui_scene.instantiate() as UIController
 		add_child(ui_instance)
 		# --- Set Version Label ---
 		version_label = ui_instance.get_node_or_null("%Version number") # Find it again here
@@ -190,7 +209,11 @@ func _ready() -> void:
 		ui_instance.variation_mix_changed.connect(func(value): variation_mix = value)
 
 		# Start Pattern & Feedback
-		ui_instance.start_pattern_changed.connect(func(index): start_pattern_mode = index)
+		ui_instance.start_pattern_changed.connect(func(index):
+			start_pattern_mode = index
+			print("DEBUG: Start Pattern Mode changed to: ", start_pattern_mode)
+			reseed_pattern() # <-- This line MUST be INSIDE the connect
+		)
 		ui_instance.show_grid_toggled.connect(func(is_on): show_start_grid = is_on)
 		ui_instance.show_circles_toggled.connect(func(is_on): show_circles = is_on)
 		ui_instance.circle_count_changed.connect(func(value): circle_count = value)
@@ -201,6 +224,14 @@ func _ready() -> void:
 		ui_instance.grad_col_bl_changed.connect(func(color): grad_col_bl = color)
 		ui_instance.grad_col_br_changed.connect(func(color): grad_col_br = color)
 		ui_instance.feedback_amount_changed.connect(func(value): feedback_amount = value)
+		ui_instance.feedback_range_min_changed.connect(func(value):
+			feedback_min = value
+			_update_feedback_ranges_in_ui()
+		)
+		ui_instance.feedback_range_max_changed.connect(func(value):
+			feedback_max = value
+			_update_feedback_ranges_in_ui()
+		)
 
 		# Transforms & Tiling
 		ui_instance.pre_scale_changed.connect(func(value): pre_scale = value)
@@ -428,6 +459,28 @@ func toggle_ui() -> void:
 	if is_instance_valid(ui_instance):
 		ui_instance.visible = not ui_instance.visible
 
+
+func _update_feedback_ranges_in_ui():
+	if is_instance_valid(ui_instance):
+		# 1. Set the new min/max ranges on the slider and spinbox
+		ui_instance.feedback_amount_slider.min_value = feedback_min
+		ui_instance.feedback_amount_spinbox.min_value = feedback_min
+		ui_instance.feedback_amount_slider.max_value = feedback_max
+		ui_instance.feedback_amount_spinbox.max_value = feedback_max
+
+		# 2. Clamp the current feedback_amount variable to the new range
+		var clamped_value = clamp(feedback_amount, feedback_min, feedback_max)
+
+		# 3. Check if the value actually needs to be changed
+		if not is_equal_approx(feedback_amount, clamped_value):
+			feedback_amount = clamped_value # Update the main variable
+
+		# 4. Force the UI to update to the new clamped value
+		# We use set_value_no_signal() to prevent a signal feedback loop
+		ui_instance.feedback_amount_slider.set_value_no_signal(feedback_amount)
+		ui_instance.feedback_amount_spinbox.set_value_no_signal(feedback_amount)
+
+
 func reset_visuals() -> void:
 	variation_mode_a = 0 # Reset to Sinusoidal ID
 	variation_mode_b = 1 # Reset to Spherical ID
@@ -437,6 +490,7 @@ func reset_visuals() -> void:
 	seamless_tiling = true
 	mirror_tiling = false
 	reset_on_drag_enabled = true
+	_set_platform_feedback_defaults()
 	show_start_grid = false; show_circles = true
 	circle_count = 4.0; circle_radius = 0.2; circle_softness = 0.05
 	grad_col_tl = Color.CYAN; grad_col_tr = Color.YELLOW; grad_col_bl = Color.BLUE; grad_col_br = Color.RED
@@ -493,7 +547,7 @@ func update_ui_from_state() -> void:
 			"var_a_id": variation_mode_a, # Pass ID
 			"var_b_id": variation_mode_b, # Pass ID
 			"start_pattern": start_pattern_mode,
-			"var_mix": variation_mix, "feedback": feedback_amount, "tiling": seamless_tiling,"mirror_tiling": mirror_tiling,
+			"var_mix": variation_mix, "feedback": feedback_amount, "feedback_min": feedback_min, "feedback_max": feedback_max, "tiling": seamless_tiling,"mirror_tiling": mirror_tiling,
 			"reset_on_drag": reset_on_drag_enabled, "show_grid": show_start_grid, "show_circles": show_circles,
 			"pre_scale": pre_scale, "pre_rot": pre_rotation, "post_scale": post_scale, "post_rot": post_rotation,
 			"brightness": brightness, "contrast": contrast, "saturation": saturation,
@@ -1036,6 +1090,8 @@ func _gather_preset_data() -> Dictionary:
 		"start_pattern_mode": start_pattern_mode,
 		"variation_mix": variation_mix,
 		"feedback_amount": feedback_amount,
+		"feedback_min": feedback_min,
+		"feedback_max": feedback_max,
 		"seamless_tiling": seamless_tiling,
 		"mirror_tiling": mirror_tiling,
 		"reset_on_drag_enabled": reset_on_drag_enabled,
@@ -1158,11 +1214,8 @@ func _apply_preset_data(data: Dictionary) -> void:
 	print("ApplyPreset: After UI Update.")
 	print("  - Values: pre=%s, post=%s, a=%s, b=%s" % [pre_translate, post_translate, translate_a, translate_b])
 
-	# 3. Set state from data AGAIN
-	_set_state_from_preset_data(data)
-	print("ApplyPreset: After 2nd SetState.")
-	print("  - Values: pre=%s, post=%s, a=%s, b=%s" % [pre_translate, post_translate, translate_a, translate_b])
-
+	
+	# 3. No need to re-apply ranges, update_ui_from_state handled it.
 	# 4. Reseed
 	reseed_pattern()
 	print("Preset applied successfully. Final values:")
@@ -1226,11 +1279,22 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 # Read and print the preset's version (use 0.0 if not found)
 	var preset_version = data.get("version", 0.0)
 	print("  SetState: Preset was created with version: ", preset_version)
+	_set_platform_feedback_defaults()
 	# --- Main Controls ---
 	variation_mode_a = data.get("variation_mode_a_id", 0) # Load ID
 	variation_mode_b = data.get("variation_mode_b_id", 1) # Load ID
 	start_pattern_mode = data.get("start_pattern_mode", 0)
 	variation_mix = data.get("variation_mix", 0.5)
+# --- Now, override defaults if they exist in the preset ---
+	# 1. Load the range from preset, or use platform default if not present
+	feedback_min = data.get("feedback_min", feedback_min)
+	feedback_max = data.get("feedback_max", feedback_max)
+	
+	# 2. Load the amount, or use platform default if not present
+	var loaded_feedback_amount = data.get("feedback_amount", feedback_amount)
+	
+	# 3. Clamp the loaded amount to the (now-final) range
+	feedback_amount = clamp(loaded_feedback_amount, feedback_min, feedback_max)
 	feedback_amount = data.get("feedback_amount", 0.98)
 	seamless_tiling = data.get("seamless_tiling", true)
 	mirror_tiling = data.get("mirror_tiling", false)

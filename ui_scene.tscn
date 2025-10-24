@@ -1698,6 +1698,26 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="FeedbackRangeContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Feedback Range" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FeedbackRangeContainer"]
+layout_mode = 2
+text = "FB Range"
+
+[node name="FeedbackRangeMinSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FeedbackRangeContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Feedback to" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FeedbackRangeContainer"]
+layout_mode = 2
+text = "to"
+
+[node name="FeedbackRangeMaxSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/FeedbackRangeContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="HBoxContainer3" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
 layout_mode = 2
 

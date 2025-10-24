@@ -11,6 +11,17 @@ const VARIATIONS = {
 	"L-tromino":        { "id": 19, "controls": null,       "category": "Rep-Tile" },
 	"Custom 2x2 Tile":  { "id": 20, "controls": "custom_2x2", "category": "Rep-Tile" },
 	"Sphinx":           { "id": 21, "controls": null, "category": "Rep-Tile" },
+	"T-tetromino":      { "id": 22, "controls": null, "category": "Rep-Tile" },
+	"Sierpinski Carpet":{ "id": 23, "controls": null, "category": "Rep-Tile" },
+	"Gosper Island":    { "id": 24, "controls": null, "category": "Rep-Tile" },
+	"Carpet (Corners)":  { "id": 25, "controls": null,       "category": "Rep-Tile" }, 
+	"Carpet (Cross)":    { "id": 26, "controls": null,       "category": "Rep-Tile" },
+	"Pentagonal Tile":   { "id": 27, "controls": null,       "category": "Rep-Tile" },
+	"Diagonal Carpet":   { "id": 28, "controls": null,       "category": "Rep-Tile" },
+	"Penrose Star":      { "id": 29, "controls": null,       "category": "Rep-Tile" },
+	"Hex Tile":          { "id": 30, "controls": null,       "category": "Rep-Tile" }, 
+	"Twindragon Tile":   { "id": 31, "controls": null,       "category": "Rep-Tile" },
+	
 	# Add other true rep-tiles here later
 
 	# Other Variations (Sorted Alphabetically)

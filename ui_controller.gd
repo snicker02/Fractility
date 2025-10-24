@@ -7,6 +7,8 @@ signal variation_b_changed(id: int) # Emits the Variation ID
 signal start_pattern_changed(index: int)
 signal variation_mix_changed(value: float)
 signal feedback_amount_changed(value: float)
+signal feedback_range_min_changed(value: float)
+signal feedback_range_max_changed(value: float)
 signal seamless_tiling_changed(is_on: bool)
 signal reset_on_drag_changed(is_on: bool)
 signal show_grid_toggled(is_on: bool)
@@ -228,6 +230,8 @@ var br_stylebox := StyleBoxFlat.new()
 @onready var var_mix_spinbox: SpinBox = %VarMixSpinBox
 @onready var feedback_amount_slider: HSlider = %FeedbackAmountSlider
 @onready var feedback_amount_spinbox: SpinBox = %FeedbackAmountSpinBox
+@onready var feedback_range_min_spinbox: SpinBox = %FeedbackRangeMinSpinBox
+@onready var feedback_range_max_spinbox: SpinBox = %FeedbackRangeMaxSpinBox
 @onready var pre_scale_slider: HSlider = %PreScaleSlider
 @onready var pre_scale_spinbox: SpinBox = %PreScaleSpinBox
 @onready var pre_rotation_slider: HSlider = %PreRotationSlider
@@ -433,6 +437,10 @@ func _ready() -> void:
 	var_mix_slider.value_changed.connect(variation_mix_changed.emit)
 	var_mix_spinbox.value_changed.connect(_on_varmixslider_value_changed)
 	feedback_amount_slider.value_changed.connect(feedback_amount_changed.emit)
+	feedback_amount_slider.value_changed.connect(_on_feedbackamountslider_value_changed)
+	feedback_amount_spinbox.value_changed.connect(_on_feedbackamountslider_value_changed)
+	feedback_range_min_spinbox.value_changed.connect(feedback_range_min_changed.emit)
+	feedback_range_max_spinbox.value_changed.connect(feedback_range_max_changed.emit)
 	pre_scale_slider.value_changed.connect(pre_scale_changed.emit)
 	pre_rotation_slider.value_changed.connect(pre_rotation_changed.emit)
 	post_scale_slider.value_changed.connect(post_scale_changed.emit)
@@ -562,6 +570,8 @@ func _ready() -> void:
 	# --- Configure Controls ---
 	configure_control_pair(var_mix_slider, var_mix_spinbox, 0.0, 1.0, 0.01)
 	configure_control_pair(feedback_amount_slider, feedback_amount_spinbox, 0.8, 1.0, 0.001)
+	feedback_range_min_spinbox.min_value = -0.02; feedback_range_min_spinbox.max_value = 0.2; feedback_range_min_spinbox.step = 0.001 
+	feedback_range_max_spinbox.min_value = 0.0; feedback_range_max_spinbox.max_value = 0.2; feedback_range_max_spinbox.step = 0.001 
 	configure_control_pair(pre_scale_slider, pre_scale_spinbox, 0.1, 10.0, 0.01)
 	configure_control_pair(post_scale_slider, post_scale_spinbox, 0.1, 10.0, 0.01)
 	configure_control_pair(post_rotation_slider, post_rotation_spinbox, -PI, PI, 0.01)
@@ -730,6 +740,26 @@ func initialize_ui(initial_values: Dictionary) -> void:
 				found_b = true
 				break
 	if not found_b and var_b_dropdown.item_count > 0: var_b_dropdown.select(1 if var_b_dropdown.item_count > 1 else 0) # Fallback
+	
+	# --- Update Feedback Controls ---
+	# Get min/max values from the dictionary first
+	var fb_min = initial_values.get("feedback_min", 0.8)
+	var fb_max = initial_values.get("feedback_max", 1.0)
+	
+	# 1. Set the ranges for the MAIN slider/spinbox
+	feedback_amount_slider.min_value = fb_min
+	feedback_amount_spinbox.min_value = fb_min
+	feedback_amount_slider.max_value = fb_max
+	feedback_amount_spinbox.max_value = fb_max
+	
+	# 2. Set the VALUE of the main slider/spinbox
+	feedback_amount_slider.value = initial_values.get("feedback", 0.98)
+	
+	# 3. Set the VALUE of the RANGE spinboxes
+	feedback_range_min_spinbox.value = fb_min
+	feedback_range_max_spinbox.value = fb_max
+	# --- End Update ---
+	
 
 	
 	# --- Initialize Other Controls ---

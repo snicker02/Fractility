@@ -134,6 +134,18 @@ mat2 rotate(float angle) {
 float rand(vec2 co){
     return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
 }
+
+
+
+// --- ADD THIS HELPER FUNCTION ---
+// Skews square coordinates into hexagonal-style coordinates
+vec2 to_hex_grid(vec2 p) {
+	// Constants for hexagonal grid math
+	float SQRT_3 = 1.7320508;
+	vec2 p_skew = mat2(vec2(1.0, 0.0), vec2(0.5, SQRT_3 / 2.0)) * p;
+	return p_skew;
+}
+
 float get_cell_value(vec2 p, vec2 offset) {
     // A simple hash to get a pseudo-random value for a cell
     p += offset;
@@ -433,6 +445,258 @@ vec2 apply_variation(vec2 uv, int mode,
 	}
 	// --- END SPHINX ---
 	
+	// --- ADD T-TETROMINO (Mode 22) ---
+	else if (mode == 22) { // T-tetromino
+		vec2 p = uv * 2.0; // Scale up to [-1, 1]
+
+		// Define a 90-degree rotation matrix
+		mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
+		
+		// The T-tetromino also divides the space into 4 quadrants
+		if (p.x >= 0.0 && p.y >= 0.0) { // Top-Right
+			p = R90 * p + vec2(0.0, 1.0);
+		} else if (p.x < 0.0 && p.y >= 0.0) { // Top-Left
+			p = R90 * p + vec2(0.0, -1.0);
+		} else if (p.x < 0.0 && p.y < 0.0) { // Bottom-Left
+			p = -p; // Rotate 180 degrees
+		} else { // Bottom-Right
+			p = p + vec2(-1.0, 1.0);
+		}
+		
+		return p / 2.0; // Scale back down
+	}
+	// --- END T-TETROMINO ---
+	
+	// --- ADD SIERPINSKI CARPET (Mode 23) ---
+	// --- ADD SIERPINSKI CARPET (Mode 23) ---
+	else if (mode == 23) { // Sierpinski Carpet
+		// Map uv from [-0.5, 0.5] to [0, 3]
+		vec2 p = (uv + 0.5) * 3.0;
+
+		// Find the grid cell index (0, 1, or 2)
+		vec2 i = floor(p);
+
+		// Check if we are in the center square (1, 1)
+		if (i.x == 1.0 && i.y == 1.0) {
+			// In the center square, return the original coordinate.
+			// This "hole" will not iterate/zoom, causing it to fade out.
+			return uv; 
+		}
+
+		// Not in the center. Get the position within the sub-square [0, 1]
+		vec2 f = fract(p);
+		
+		// Map the position back to the [-0.5, 0.5] range
+		return f - 0.5;
+	}
+	// --- END SIERPINSKI CARPET ---
+	
+	// --- ADD GOSPER ISLAND (Mode 24) ---
+	else if (mode == 24) { // Gosper Island
+		// This logic is based on 7 tiles (1 center, 6 surrounding)
+		// It's easier to work in a [0, 1] space
+		vec2 p = uv + 0.5; // Map from [-0.5, 0.5] to [0, 1]
+
+		// Use a scaling factor (sqrt(7))
+		float GOSPER_SCALE = 2.64575; // sqrt(7)
+		// Rotation matrix for 60 degrees
+		mat2 R60 = mat2(vec2(0.5, 0.866025), vec2(-0.866025, 0.5));
+		
+		vec2 p_hex = to_hex_grid(p); // Skew coordinates
+		vec2 p_scaled = p_hex * GOSPER_SCALE;
+		vec2 f = fract(p_scaled);
+		vec2 i = floor(p_scaled);
+
+		// Map from hex grid index back to square grid index
+		vec2 i_sq = vec2(i.x - floor(i.y / 2.0), i.y);
+
+		int tile_index = int(mod(i_sq.x + i_sq.y * 2.0, 7.0));
+		
+		vec2 c_offset = vec2(0.0, 0.0); // Center offset
+
+		if (tile_index == 1) { c_offset = vec2(1.0, 0.0); }
+		else if (tile_index == 2) { c_offset = vec2(0.0, 1.0); }
+		else if (tile_index == 3) { c_offset = vec2(-1.0, 1.0); }
+		else if (tile_index == 4) { c_offset = vec2(-1.0, 0.0); }
+		else if (tile_index == 5) { c_offset = vec2(0.0, -1.0); }
+		else if (tile_index == 6) { c_offset = vec2(1.0, -1.0); }
+		// tile_index == 0 is the center, no offset
+
+		// Un-skew the fractional part
+		vec2 f_unskew = mat2(vec2(1.0, 0.0), vec2(-0.5 / 0.866025, 1.0 / 0.866025)) * f;
+
+		// Apply transform: rotate based on tile, add offset, scale down
+		vec2 result = (R60 * f_unskew) + c_offset;
+		result = result / GOSPER_SCALE;
+
+		// Map back to [-0.5, 0.5]
+		return result - 0.5;
+	}
+	// --- END GOSPER ISLAND ---
+	// --- ADD CARPET (CORNERS) (Mode 25) ---
+	else if (mode == 25) { // Sierpinski Carpet (Corners)
+		// Map uv from [-0.5, 0.5] to [0, 3]
+		vec2 p = (uv + 0.5) * 3.0; 
+		vec2 i = floor(p);
+		
+		// Keep only if BOTH i.x and i.y are 0 or 2 (the four corners)
+		if ( (i.x == 0.0 || i.x == 2.0) && (i.y == 0.0 || i.y == 2.0) ) {
+			return fract(p) - 0.5; // Map [0, 1] back to [-0.5, 0.5]
+		}
+		return uv; // In hole, return original
+	}
+	// --- ADD CARPET (CROSS) (Mode 26) ---
+	else if (mode == 26) { // Sierpinski Carpet (Cross)
+		// Map uv from [-0.5, 0.5] to [0, 3]
+		vec2 p = (uv + 0.5) * 3.0;
+		vec2 i = floor(p);
+		
+		// Keep if i.x OR i.y is 1 (center column or center row)
+		if (i.x == 1.0 || i.y == 1.0) {
+			return fract(p) - 0.5; // Map [0, 1] back to [-0.5, 0.5]
+		}
+		return uv; // In hole (corners), return original
+	}
+	// --- END CARPET (CROSS) ---
+	
+	// --- ADD PENTAGONAL TILE (Mode 27) ---
+	else if (mode == 27) { // 5-Point / Pentagonal Tile
+		vec2 p = uv; // Input is in [-0.5, 0.5]
+		
+		// We'll use a fixed scale, the Golden Ratio is great for 5-fold symmetry
+		float scale = 1.618034; 
+		
+		// Define 5 points (vertices of a pentagon)
+		// We scale them down by 0.5 to fit nicely in the [-0.5, 0.5] space
+		vec2 c1 = vec2( 0.0,  0.5);
+		vec2 c2 = vec2( 0.4755,  0.1545);
+		vec2 c3 = vec2( 0.2939, -0.4045);
+		vec2 c4 = vec2(-0.2939, -0.4045);
+		vec2 c5 = vec2(-0.4755,  0.1545);
+
+		// Find the closest center point
+		float d1 = distance(p, c1);
+		float d2 = distance(p, c2);
+		float d3 = distance(p, c3);
+		float d4 = distance(p, c4);
+		float d5 = distance(p, c5);
+
+		vec2 closest_center = c1;
+		float min_dist = d1;
+
+		if (d2 < min_dist) { min_dist = d2; closest_center = c2; }
+		if (d3 < min_dist) { min_dist = d3; closest_center = c3; }
+		if (d4 < min_dist) { min_dist = d4; closest_center = c4; }
+		if (d5 < min_dist) { closest_center = c5; }
+
+		// Map the point: Scale it towards the closest center
+		p = closest_center + (p - closest_center) / scale;
+
+		return p;
+	}
+	// --- END PENTAGONAL TILE ---
+	
+	else if (mode == 28) { // Diagonal Carpet (Center + 4 Corners)
+		// Map uv from [-0.5, 0.5] to [0, 3]
+		vec2 p = (uv + 0.5) * 3.0; 
+		vec2 i = floor(p);
+		
+		// Check if we are in an edge square (i.x == 1 AND i.y != 1) OR (i.y == 1 AND i.x != 1)
+		if ( (i.x == 1.0 && i.y != 1.0) || (i.y == 1.0 && i.x != 1.0) ) {
+			return uv; // In hole, return original
+		}
+
+		// Otherwise, we are in a corner or the center, so apply the transform
+		return fract(p) - 0.5; // Map [0, 1] back to [-0.5, 0.5]
+	}
+	// --- END DIAGONAL CARPET ---
+	
+	// --- ADD PENROSE STAR (Mode 29) ---
+	else if (mode == 29) { // 5-Point / Penrose Star
+		vec2 p = uv; 
+		
+		// Use a different scale from Pentagonal Tile
+		float scale = 1.8; // Pentagonal was 1.618, let's try this
+		
+		// Define 5 points (vertices of a pentagon)
+		vec2 c1 = vec2( 0.0,  0.5);
+		vec2 c2 = vec2( 0.4755,  0.1545);
+		vec2 c3 = vec2( 0.2939, -0.4045);
+		vec2 c4 = vec2(-0.2939, -0.4045);
+		vec2 c5 = vec2(-0.4755,  0.1545);
+
+		// Find the closest center point
+		float d1 = distance(p, c1);
+		float d2 = distance(p, c2);
+		float d3 = distance(p, c3);
+		float d4 = distance(p, c4);
+		float d5 = distance(p, c5);
+
+		vec2 closest_center = c1;
+		float min_dist = d1;
+
+		if (d2 < min_dist) { min_dist = d2; closest_center = c2; }
+		if (d3 < min_dist) { min_dist = d3; closest_center = c3; }
+		if (d4 < min_dist) { min_dist = d4; closest_center = c4; }
+		if (d5 < min_dist) { closest_center = c5; }
+
+		// Map the point: Scale it towards the closest center
+		p = closest_center + (p - closest_center) / scale;
+
+		return p;
+	}
+	// --- END PENROSE STAR ---
+	
+	else if (mode == 30) { // Hex Tile
+		// This logic is based on 7 tiles (1 center, 6 surrounding)
+		// We use a scale factor of 3 for this tiling.
+		float SCALE = 3.0;
+
+		vec2 p = to_hex_grid(uv); // Skew coordinates
+		p *= SCALE;
+		
+		vec2 f = fract(p); // Fractional part
+		vec2 i = floor(p); // Integer part
+		
+		// Map from hex grid index back to square grid index
+		vec2 i_sq = vec2(i.x - floor(i.y / 2.0), i.y);
+
+		// Check if we are in the center tile (index 0)
+		int tile_index = int(mod(i_sq.x + i_sq.y * 2.0, 7.0));
+		
+		if (tile_index == 0) {
+			// Center tile: just scale
+			return uv * SCALE;
+		}
+
+		// Not in the center. Un-skew the fractional part.
+		vec2 f_unskew = mat2(vec2(1.0, 0.0), vec2(-0.5 / 0.866025, 1.0 / 0.866025)) * f;
+		
+		// Map back to [-0.5, 0.5]
+		return f_unskew - 0.5;
+	}
+	// --- END HEX TILE ---
+	
+	// --- ADD TWINDRAGON (Mode 31) ---
+	else if (mode == 31) { // Twindragon Tile
+		vec2 p = uv * 2.0; // Scale up to [-1, 1]
+
+		// 90-degree rotation matrix
+		mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
+		
+		// The Twindragon is two tiles (one rotated) mapped to quadrants
+		if (p.x < 0.0) {
+			// Left side (TL & BL quadrants) -> Rotated tile
+			p = R90 * p + vec2(0.0, 1.0);
+		} else {
+			// Right side (TR & BR quadrants) -> Base tile
+			p = p + vec2(-1.0, 0.0);
+		}
+		
+		return p / 2.0; // Scale back down
+	}
+	// --- END TWINDRAGON ---
+	
     return uv;
 }
 vec2 random(vec2 st) {
@@ -548,7 +812,7 @@ void fragment() {
 		// Mix the transformed frame with the previous frame
 		vec4 transformed_color = texture(previous_frame, final_uv);
 		vec4 original_color = texture(previous_frame, UV);
-		final_color = mix(transformed_color, original_color, feedback_amount);
+		final_color = mix(original_color, transformed_color, feedback_amount);
 	}
 
 	COLOR = final_color;
