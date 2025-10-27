@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 1.2
+const PROGRAM_VERSION = 1.4
 # --- Node References ---
 @onready var viewport_a: SubViewport = %ViewportA
 @onready var viewport_b: SubViewport = %ViewportB
@@ -7,6 +7,14 @@ const PROGRAM_VERSION = 1.2
 @onready var file_dialog: FileDialog = %FileDialog
 @onready var save_viewport: SubViewport = %SaveViewport
 @onready var post_process_save_viewport: SubViewport = %PostProcessSaveViewport
+@onready var fractal_mesh: MeshInstance3D = %FractalMesh
+@onready var display_container_3d: SubViewportContainer = %Display_3D_Container # <-- Add reference to 3D view container
+@onready var container_3d_controls: VBoxContainer
+@onready var normal_map_viewport = $NormalMapViewport
+@onready var normal_map_material = $NormalMapViewport/ColorRect.material
+@onready var light_3d: DirectionalLight3D = %DirectionalLight3D
+@onready var world_env: WorldEnvironment = %WorldEnvironment
+@onready var camera_3d: Camera3D = %Camera3D
 
 
 @export var ui_scene: PackedScene
@@ -45,6 +53,8 @@ var var_b_kaleidoscope_slices: float = 6.0
 var background_texture: Texture2D
 var file_dialog_mode: String = "save"
 var mirror_tiling: bool = false
+var is_3d_view: bool = false
+var normal_map_texture: ImageTexture = null
 
 var move_post_translate: bool = true
 var move_pre_translate: bool = false
@@ -147,6 +157,25 @@ var custom_tr_b: int = 0
 var custom_bl_b: int = 0
 var custom_br_b: int = 0
 
+# --- 3D Light Controls ---
+var light_x_rotation: float = 0.0   # Default from your screenshot
+var light_y_rotation: float = 0.0  # Default from your screenshot
+var light_energy: float = 1.0
+var light_color: Color = Color.WHITE
+var light_shadows: bool = true
+
+var normal_map_strength: float = 1.0
+
+
+# --- 3D Camera Controls ---
+var camera_distance: float = 0.5 # How far the camera is from the center
+var camera_x_rotation: float = 0.0 # Rotation around the horizontal axis (pitch)
+var camera_y_rotation: float = 0.0 # Rotation around the vertical axis (yaw)
+var camera_fov: float = 75.0 # Field of View
+
+# --- 3D Background Control ---
+var show_2d_background: bool = false
+
 # --- Private Variables ---
 var time: float = 0.0
 var is_a_source = true
@@ -169,9 +198,65 @@ func _set_platform_feedback_defaults() -> void:
 	# Also reset the main feedback value to a safe default
 		feedback_amount = 0.02
 
+func _update_camera() -> void:
+	if is_instance_valid(camera_3d):
+		# Reset rotation first to avoid gimbal lock issues
+		camera_3d.rotation = Vector3.ZERO
+		
+		# Apply Y rotation (yaw)
+		camera_3d.rotate_y(deg_to_rad(camera_y_rotation))
+		
+		# Apply X rotation (pitch) - rotate around the camera's local X-axis
+		camera_3d.rotate_object_local(Vector3.RIGHT, deg_to_rad(camera_x_rotation))
+		
+		# Move the camera backwards along its local Z-axis
+		camera_3d.position = camera_3d.global_transform.basis.z * camera_distance
+		
+		# Set Field of View
+		camera_3d.fov = camera_fov
 
+func _update_background() -> void:
+	if is_instance_valid(world_env):
+		var env: Environment = world_env.environment
+		if is_instance_valid(env):
+			if show_2d_background:
+				env.background_mode = Environment.BG_CANVAS # Use 2D parent canvas
+			else:
+				env.background_mode = Environment.BG_COLOR # Use solid color
+				env.background_color = Color(0.3, 0.3, 0.3) # Default gray, adjust as needed
+		else:
+			printerr("ERROR: WorldEnvironment node has no Environment resource!")
+	else:
+		printerr("ERROR: WorldEnvironment node not found for background update!")
+
+func _update_light() -> void:
+	if is_instance_valid(light_3d):
+		
+		light_3d.rotation_degrees.x = light_x_rotation
+		light_3d.rotation_degrees.y = light_y_rotation
+		light_3d.light_energy = light_energy
+		light_3d.light_color = light_color
+		light_3d.shadow_enabled = light_shadows
+		# --- Toggle Post-Process Shadows (SSAO) ---
+		if is_instance_valid(world_env):
+			var env: Environment = world_env.environment
+			if is_instance_valid(env):
+				env.ssao_enabled = light_shadows
+			else:
+				printerr("ERROR: WorldEnvironment node has no Environment resource!")
+		else:
+			printerr("ERROR: WorldEnvironment node not found!")
 
 func _ready() -> void:
+	# --- Ensure WorldEnvironment has an Environment ---
+	if is_instance_valid(world_env) and not is_instance_valid(world_env.environment):
+		print("WARNING: WorldEnvironment has no Environment resource. Creating one.")
+		world_env.environment = Environment.new()
+		# Set default background for the new environment
+		world_env.environment.background_mode = Environment.BG_COLOR
+		world_env.environment.background_color = Color(0.3, 0.3, 0.3)
+	# --- End Check ---
+	
 	# NOTE: update_mode for SaveViewport must be set to 'Always' in the Inspector
 	save_viewport.get_node("ShaderRect").anchors_preset = Control.PRESET_FULL_RECT
 
@@ -179,7 +264,24 @@ func _ready() -> void:
 	file_dialog.current_dir = OS.get_system_dir(OS.SystemDir.SYSTEM_DIR_PICTURES)
 	
 	_set_platform_feedback_defaults()
-	
+	# ... (await get_tree().process_frame)
+	var window_size = get_viewport().get_visible_rect().size
+	print("DEBUG: window_size in _ready:", window_size) # <-- Add check for size
+	# --- FIX: Synchronize all viewports to the window size at startup ---
+	if window_size.x <= 0 or window_size.y <= 0:
+		# This can happen if _ready() runs before the window is fully drawn.
+		# Wait one frame and try again.
+		await get_tree().process_frame
+		window_size = get_viewport().get_visible_rect().size
+		if window_size.x <= 0 or window_size.y <= 0:
+			printerr("FATAL: Window size is still invalid. Cannot initialize viewports.")
+			return # Abort
+			
+	# Set the sizes *before* creating any textures
+	viewport_a.size = window_size
+	viewport_b.size = window_size
+	# --- END FIX ---
+	normal_map_viewport.size = $ViewportA.size
 	var feedback_material = ShaderMaterial.new()
 	feedback_material.shader = load("res://fractal_feedback.gdshader")
 	%ViewportA.get_node("ShaderRect").material = feedback_material
@@ -188,10 +290,84 @@ func _ready() -> void:
 	post_process_material = ShaderMaterial.new()
 	post_process_material.shader = load("res://post_process.gdshader")
 	final_output.material = post_process_material
+	
+	
+	# --- ADD THIS 3D MESH SETUP ---
+	# 1. Create a new material for the 3D mesh
+	var mesh_material = StandardMaterial3D.new()
+	
+	# 2. Set shading to UNSHADED. This is a key step!
+	# It makes the mesh display your texture's exact colors 
+	# without needing any 3D lights.
+	mesh_material.normal_enabled = true # 
+	mesh_material.normal_scale = 1.0
+	
+	# --- START OF THE FIX ---
+	# 3. Assign this new material to the mesh's first surface
+	if window_size.x > 0 and window_size.y > 0: # <-- Add check for valid size
+		
+		# We still need this for the resize function to work later
+		var initial_normal_img = Image.create(int(window_size.x), int(window_size.y), false, Image.FORMAT_RGBA8)
+		if is_instance_valid(initial_normal_img):
+			normal_map_texture = ImageTexture.create_from_image(initial_normal_img)
+		else:
+			printerr("ERROR: Failed to create initial_normal_img!")
+
+		# --- CORRECTED MERGED BLOCK ---
+		# This combines the two 'if' blocks into one, keeping the variable in scope
+		if is_instance_valid(mesh_material):
+			# 1. Get the texture *once*
+			var current_fractal_texture = final_output.get_texture() 
+
+			# 2. Set the albedo (color) texture
+			mesh_material.albedo_texture = current_fractal_texture
+
+			# 3. Pass this texture into the normal map shader
+			if is_instance_valid(normal_map_material) and is_instance_valid(current_fractal_texture):
+				# Use the variable we just defined
+				normal_map_material.set_shader_parameter("height_map", current_fractal_texture)
+				normal_map_material.set_shader_parameter("strength", normal_map_strength)
+				print("Setting normal strength: ", normal_map_strength)
+			
+			# 4. Get the *result* from the NormalMapViewport and set it
+			mesh_material.normal_texture = normal_map_viewport.get_texture()
+		else:
+			printerr("ERROR: mesh_material is NOT valid in _ready()!")
+		# --- END MERGED BLOCK ---
+
+	else:
+		printerr("ERROR: window_size is invalid for creating initial normal map image!")
+
+	# Assign material to mesh
+	if is_instance_valid(fractal_mesh):
+		fractal_mesh.set_surface_override_material(0, mesh_material)
+	else:
+		print("ERROR: FractalMesh node not found! Check the path.")
+	# --- END ADJUSTED 3D MESH SETUP ---
+	# --- END OF THE FIX ---
+	
 
 	if ui_scene:
 		ui_instance = ui_scene.instantiate() as UIController
 		add_child(ui_instance)
+		
+		# --- Get 3D Controls Container ---
+		container_3d_controls = ui_instance.get_node_or_null("%Container3DControls")
+		if not container_3d_controls:
+			print("WARNING: Could not find Container3DControls node in UI.")
+		# --- END ---
+
+		# --- Connect Shape Signal ---
+		ui_instance.shape_selected.connect(_on_shape_selected)
+		# --- END ---
+		# Now it's safe to use ui_instance because it exists
+		var view_toggle_checkbox = ui_instance.get_node_or_null("%ViewToggleCheckBox")
+		if view_toggle_checkbox:
+			view_toggle_checkbox.button_pressed = is_3d_view # Set initial state
+			view_toggle_checkbox.toggled.connect(_on_view_toggle_toggled)
+		else:
+			print("WARNING: Could not find ViewToggleCheckBox node in UI.")
+		# --- END CheckBox setup ---
 		# --- Set Version Label ---
 		version_label = ui_instance.get_node_or_null("%Version number") # Find it again here
 		if version_label:
@@ -199,9 +375,10 @@ func _ready() -> void:
 		else:
 			print("WARNING: Could not find Version number label node.")
 			# --------------------------
-
 		
-
+		# ... [all your other UI signal connections go here] ...
+		# ... [they are correct, so I'm omitting them for brevity] ...
+		
 		# --- Connect UI Signals ---
 		# Variation Modes & Mix
 		ui_instance.variation_a_changed.connect(func(id): variation_mode_a = id) # Directly receive ID
@@ -353,6 +530,60 @@ func _ready() -> void:
 		ui_instance.copy_preset_pressed.connect(_on_copy_preset_pressed)
 		ui_instance.paste_preset_pressed.connect(_on_paste_preset_pressed)
 		ui_instance.resolution_selected.connect(func(index): save_resolution_index = index)
+		
+		# --- Connect 3D Light Signals ---
+		ui_instance.light_x_rot_changed.connect(func(value):
+			light_x_rotation = value
+			_update_light()
+		)
+		ui_instance.light_y_rot_changed.connect(func(value):
+			light_y_rotation = value
+			_update_light()
+		)
+		ui_instance.light_energy_changed.connect(func(value):
+			light_energy = value
+			_update_light()
+		)
+		ui_instance.light_color_changed.connect(func(color):
+			light_color = color
+			_update_light()
+		)
+		ui_instance.light_shadows_toggled.connect(func(is_on):
+			light_shadows = is_on
+			_update_light()
+		)
+		# --- END Light Signals ---
+		ui_instance.normal_strength_changed.connect(func(value):
+			normal_map_strength = value
+			
+		)
+		
+		# --- Connect 3D Camera Signals ---
+		ui_instance.camera_dist_changed.connect(func(value):
+			camera_distance = value
+			_update_camera()
+		)
+		ui_instance.camera_x_rot_changed.connect(func(value):
+			camera_x_rotation = value
+			_update_camera()
+		)
+		ui_instance.camera_y_rot_changed.connect(func(value):
+			camera_y_rotation = value
+			_update_camera()
+		)
+		ui_instance.camera_fov_changed.connect(func(value):
+			camera_fov = value
+			_update_camera()
+		)
+		# --- END Camera Signals ---
+
+		# --- Connect Background Signal ---
+		ui_instance.background_toggled.connect(func(is_on):
+			show_2d_background = is_on
+			_update_background()
+			_update_view_visibility()
+		)
+		# --- END Background Signal ---
 		# -----------------------------
 
 		update_ui_from_state()
@@ -397,18 +628,276 @@ func _ready() -> void:
 	var post_save_material = ShaderMaterial.new()
 	post_save_material.shader = load("res://post_process.gdshader")
 	post_process_save_viewport.get_node("ShaderRect").material = post_save_material
-
+# --- Set initial visibility based on is_3d_view ---
+	_update_view_visibility()
 	# --- Web Specific Setup ---
 	print("Control: _ready function running.")
 	if not OS.has_feature("web"):
 		print("Control: Not running on web.")
 		# Optionally disable web-only buttons if desired
 		# if is_instance_valid(ui_instance):
-		#     ui_instance.load_preset_button.disabled = true # Example
+		#     ui_instance.load_preset_button.disabled = true # Example
 
 	print("Control: _ready function finished.")
-		
+	resized.connect(_on_main_control_resized)
+	_update_light() # Set initial light properties
+	_update_camera() # Set initial camera properties
+	_update_background() # Set initial background
 
+func _save_3d_view_web() -> void:
+	print("Starting 3D web save...")
+	var viewport_3d = display_container_3d.get_child(0) as SubViewport
+	if not is_instance_valid(viewport_3d):
+		printerr("ERROR: Could not find 3D viewport to save.")
+		return
+
+	# --- Wait for current rendering to settle ---
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+
+	var final_image: Image = null
+
+	# --- Get Image Data FIRST and Duplicate ---
+	var texture_3d = viewport_3d.get_texture()
+	if not is_instance_valid(texture_3d):
+		printerr("ERROR: Invalid 3D viewport texture.")
+		return
+	var image_3d = texture_3d.get_image()
+	if not is_instance_valid(image_3d) or image_3d.is_empty():
+		printerr("ERROR: Failed to get valid Image from 3D viewport.")
+		return
+	image_3d = image_3d.duplicate() # Ensure we have a stable copy
+
+	if show_2d_background:
+		print("Compositing 3D view over 2D background for save...")
+		var texture_2d = final_output.get_texture()
+		if not is_instance_valid(texture_2d):
+			printerr("ERROR: Invalid 2D background texture.")
+			return
+		var image_2d = texture_2d.get_image()
+		if not is_instance_valid(image_2d) or image_2d.is_empty():
+			printerr("ERROR: Failed to get valid Image from 2D background.")
+			return
+		image_2d = image_2d.duplicate() # Ensure stable copy
+
+		# --- Create temporary textures from the image copies ---
+		var temp_tex_2d = ImageTexture.create_from_image(image_2d)
+		var temp_tex_3d = ImageTexture.create_from_image(image_3d)
+
+		if not is_instance_valid(temp_tex_2d) or not is_instance_valid(temp_tex_3d):
+			printerr("ERROR: Failed to create temporary ImageTextures for compositing.")
+			return
+
+		# --- Setup Composite Viewport ---
+		var composite_viewport = post_process_save_viewport
+		var composite_rect = composite_viewport.get_node("ShaderRect")
+		var composite_material = composite_rect.material as ShaderMaterial
+
+		if not is_instance_valid(composite_rect) or not is_instance_valid(composite_material):
+			printerr("ERROR: Composite viewport nodes/material not valid.")
+			return
+			
+		# Ensure the correct shader is assigned (might have been changed by 2D save)
+		var composite_shader = preload("res://Composite3DOver2D.gdshader")
+		if composite_material.shader != composite_shader:
+			print("Re-assigning composite shader.")
+			composite_material.shader = composite_shader
+
+		var screen_size = image_2d.get_size() # Use image size
+		if screen_size.x <= 0 or screen_size.y <= 0:
+			printerr("ERROR: Invalid image size for compositing: ", screen_size)
+			return
+
+		# --- Configure, Force Render Once, and Wait ---
+		composite_viewport.size = screen_size
+		composite_rect.texture = temp_tex_2d
+		composite_material.set_shader_parameter("foreground_texture", temp_tex_3d)
+		
+		# Set to update once, then wait for the *next* frame's draw cycle to complete
+		composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE) 
+		await get_tree().process_frame       # Wait for next physics/process frame
+		await RenderingServer.frame_post_draw # Wait for draw commands to be submitted
+		await RenderingServer.frame_post_draw # Wait for drawing to actually finish
+
+		# --- Get Result ---
+		var composite_texture = composite_viewport.get_texture()
+		if is_instance_valid(composite_texture):
+			final_image = composite_texture.get_image()
+			if not is_instance_valid(final_image) or final_image.is_empty():
+				printerr("ERROR: Failed to get valid image from composite texture after waiting.")
+				final_image = null 
+		else:
+			printerr("ERROR: Failed to get composite texture from viewport after waiting.")
+
+		# --- Cleanup ---
+		composite_viewport.size = Vector2i(1, 1) # Reset size
+		# No need to change update mode back unless you use UPDATE_ONCE elsewhere
+
+	else: # Not showing 2D background
+		final_image = image_3d # Use the duplicated image
+
+	# --- Actual Saving ---
+	if not is_instance_valid(final_image) or final_image.is_empty():
+		printerr("ERROR: Could not get final, valid image for saving.")
+		return
+
+	var buffer = final_image.save_png_to_buffer()
+	if buffer.is_empty():
+		printerr("ERROR: Failed to save final image to buffer.")
+		return
+
+	var dt = Time.get_datetime_dict_from_system()
+	var filename = "%04d-%02d-%02d_%02d-%02d-%02d_3D.png" % [dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second]
+	JavaScriptBridge.download_buffer(buffer, filename, "image/png")
+	print("3D View Download initiated for " + filename)
+
+
+# ============================================
+
+func _save_3d_view_desktop(path: String) -> void:
+	print("Starting 3D desktop save...")
+	var viewport_3d = display_container_3d.get_child(0) as SubViewport
+	if not is_instance_valid(viewport_3d):
+		printerr("ERROR: Could not find 3D viewport to save.")
+		return
+
+	# --- Wait for current rendering to settle ---
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+
+	var final_image: Image = null
+
+	# --- Get Image Data FIRST and Duplicate ---
+	var texture_3d = viewport_3d.get_texture()
+	if not is_instance_valid(texture_3d):
+		printerr("ERROR: Invalid 3D viewport texture.")
+		return
+	var image_3d = texture_3d.get_image()
+	if not is_instance_valid(image_3d) or image_3d.is_empty():
+		printerr("ERROR: Failed to get valid Image from 3D viewport.")
+		return
+	image_3d = image_3d.duplicate() # Ensure we have a stable copy
+
+	if show_2d_background:
+		print("Compositing 3D view over 2D background for save...")
+		var texture_2d = final_output.get_texture()
+		if not is_instance_valid(texture_2d):
+			printerr("ERROR: Invalid 2D background texture.")
+			return
+		var image_2d = texture_2d.get_image()
+		if not is_instance_valid(image_2d) or image_2d.is_empty():
+			printerr("ERROR: Failed to get valid Image from 2D background.")
+			return
+		image_2d = image_2d.duplicate() # Ensure stable copy
+
+		# --- Create temporary textures from the image copies ---
+		var temp_tex_2d = ImageTexture.create_from_image(image_2d)
+		var temp_tex_3d = ImageTexture.create_from_image(image_3d)
+
+		if not is_instance_valid(temp_tex_2d) or not is_instance_valid(temp_tex_3d):
+			printerr("ERROR: Failed to create temporary ImageTextures for compositing.")
+			return
+
+		# --- Setup Composite Viewport ---
+		var composite_viewport = post_process_save_viewport
+		var composite_rect = composite_viewport.get_node("ShaderRect")
+		var composite_material = composite_rect.material as ShaderMaterial
+
+		if not is_instance_valid(composite_rect) or not is_instance_valid(composite_material):
+			printerr("ERROR: Composite viewport nodes/material not valid.")
+			return
+
+		# Ensure the correct shader is assigned (might have been changed by 2D save)
+		var composite_shader = preload("res://Composite3DOver2D.gdshader")
+		if composite_material.shader != composite_shader:
+			print("Re-assigning composite shader.")
+			composite_material.shader = composite_shader
+
+		var screen_size = image_2d.get_size() # Use image size
+		if screen_size.x <= 0 or screen_size.y <= 0:
+			printerr("ERROR: Invalid image size for compositing: ", screen_size)
+			return
+
+		# --- Configure, Force Render Once, and Wait ---
+		composite_viewport.size = screen_size
+		composite_rect.texture = temp_tex_2d
+		composite_material.set_shader_parameter("foreground_texture", temp_tex_3d)
+
+		# Set to update once, then wait for the *next* frame's draw cycle to complete
+		composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE)
+		await get_tree().process_frame       # Wait for next physics/process frame
+		await RenderingServer.frame_post_draw # Wait for draw commands to be submitted
+		await RenderingServer.frame_post_draw # Wait for drawing to actually finish
+
+		# --- Get Result ---
+		var composite_texture = composite_viewport.get_texture()
+		if is_instance_valid(composite_texture):
+			final_image = composite_texture.get_image()
+			if not is_instance_valid(final_image) or final_image.is_empty():
+				printerr("ERROR: Failed to get valid image from composite texture after waiting.")
+				final_image = null
+		else:
+			printerr("ERROR: Failed to get composite texture from viewport after waiting.")
+
+		# --- Cleanup ---
+		composite_viewport.size = Vector2i(1, 1) # Reset size
+
+	else: # Not showing 2D background
+		final_image = image_3d # Use the duplicated image
+
+	# --- Actual Saving ---
+	if not is_instance_valid(final_image) or final_image.is_empty():
+		printerr("ERROR: Could not get final, valid image for saving.")
+		return
+
+	var error = final_image.save_png(path)
+	if error == OK:
+		print("3D View saved successfully to: " + path)
+	else:
+		printerr("Error saving 3D View. Code: ", error)
+	
+	
+func _on_main_control_resized():
+	# Short delay to ensure viewport size is stable after resize event
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	var new_size = get_viewport().get_visible_rect().size
+	print("DEBUG: Window resized to:", new_size)
+
+	if new_size.x <= 0 or new_size.y <= 0:
+		printerr("ERROR: Invalid size on resize:", new_size)
+		return
+
+	# Resize feedback viewports
+	viewport_a.size = new_size
+	viewport_b.size = new_size
+	
+	# --- NEW (GPU-ONLY) ---
+	# Just resize the NormalMapViewport. The shader will handle the rest.
+	normal_map_viewport.size = new_size
+	# --- END NEW ---
+
+	# Optional: Reseed pattern after resize to avoid stretching artifacts
+	reseed_pattern()
+func _on_view_toggle_toggled(button_pressed: bool):
+	is_3d_view = button_pressed
+	_update_view_visibility()
+
+# --- NEW FUNCTION to show/hide views ---
+func _update_view_visibility():
+	if display_container_3d:
+		display_container_3d.visible = is_3d_view
+	if final_output:
+		# Keep FinalOutput visible if we are in 3D view AND showing the 2D background
+		if is_3d_view and show_2d_background:
+			final_output.visible = true 
+		else:
+			# Otherwise, hide it when in 3D view, show it when in 2D view
+			final_output.visible = not is_3d_view
+	# --- ADD THIS ---
+	if container_3d_controls: # Check if we found it
+		container_3d_controls.visible = is_3d_view
 func _on_load_image_button_pressed() -> void:
 	if OS.has_feature("web"):
 		# On the web, we only call the JavaScript function.
@@ -420,7 +909,40 @@ func _on_load_image_button_pressed() -> void:
 		file_dialog.filters = PackedStringArray(["*.png ; PNG Images", "*.jpg ; JPG Images", "*.jpeg ; JPEG Images", "*.webp ; WebP Images"])
 		file_dialog.popup_centered()
 
+func _on_shape_selected(shape_index: int):
+	if not is_instance_valid(fractal_mesh):
+		printerr("ERROR: FractalMesh is not valid, cannot change shape.")
+		return
 
+	var new_mesh: Mesh = null
+
+	match shape_index:
+		0: # Sphere
+			new_mesh = SphereMesh.new()
+			# You might want to set radius, height, radial_segments etc. here
+			# e.g., (new_mesh as SphereMesh).radius = 0.5
+		1: # Cube
+			new_mesh = BoxMesh.new()
+			# You might want to set size here
+			# e.g., (new_mesh as BoxMesh).size = Vector3(1, 1, 1)
+		2: # Quad
+			new_mesh = QuadMesh.new()
+			# You might want to set size here
+			# e.g., (new_mesh as QuadMesh).size = Vector2(1, 1)
+		3: # Prism
+			new_mesh = PrismMesh.new()
+			# You might want to set size here
+			# e.g., (new_mesh as PrismMesh).size = Vector3(1, 1, 1)
+		4: # Torus
+			new_mesh = TorusMesh.new()
+			# You might want to set inner_radius, outer_radius, rings, ring_segments
+			# e.g., (new_mesh as TorusMesh).outer_radius = 0.5
+
+	if new_mesh:
+		fractal_mesh.mesh = new_mesh
+		print("Changed mesh shape to index: ", shape_index)
+	else:
+		printerr("ERROR: Invalid shape index received: ", shape_index)
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("reset_visuals"):
 		self.reset_visuals.call()
@@ -532,7 +1054,23 @@ func reset_visuals() -> void:
 	custom_tr_b = 0
 	custom_bl_b = 0
 	custom_br_b = 0
+	# --- ADD THESE ---
+	light_x_rotation = 0.0
+	light_y_rotation = 0.0
+	light_energy = 1.0
+	light_color = Color.WHITE
+	light_shadows = true
+	_update_light() # Apply the reset values
+	# --- END ---
+	normal_map_strength = 1.0
 	
+	camera_distance = 0.5
+	camera_x_rotation = 0.0
+	camera_y_rotation = 0.0
+	camera_fov = 75.0
+	show_2d_background = false
+	_update_camera() # Apply reset values
+	_update_background() # Apply reset values
 	
 	time = 0.0
 	update_ui_from_state()
@@ -590,15 +1128,38 @@ func update_ui_from_state() -> void:
 			"custom_tr_b": custom_tr_b,
 			"custom_bl_b": custom_bl_b,
 			"custom_br_b": custom_br_b,
+			# --- ADD THESE ---
+			"light_x_rot": light_x_rotation,
+			"light_y_rot": light_y_rotation,
+			"light_energy": light_energy,
+			"light_color": light_color,
+			"light_shadows": light_shadows,
+			# --- END ---
+			"normal_strength": normal_map_strength,
+			
+			"cam_dist": camera_distance,
+			"cam_x_rot": camera_x_rotation,
+			"cam_y_rot": camera_y_rotation,
+			"cam_fov": camera_fov,
+			"show_2d_bg": show_2d_background
+			
 		}
 		ui_instance.initialize_ui(values)
 
 func _on_save_button_pressed() -> void:
 	if OS.has_feature("web"):
-		print("Starting web render for download...")
-		var resolution = 1024 * pow(2, save_resolution_index)
-		_render_and_save_image("", Vector2i(resolution, resolution))
+		if is_3d_view:
+			# --- NEW ---
+			# Handle 3D web save immediately
+			_save_3d_view_web()
+			# --- END NEW ---
+		else:
+			# Handle 2D web save
+			print("Starting web render for download...")
+			var resolution = 1024 * pow(2, save_resolution_index)
+			_render_and_save_image("", Vector2i(resolution, resolution))
 	else:
+		# Desktop: Just open the dialog. The file_selected function will handle the logic.
 		file_dialog_mode = "save"
 		file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
 		file_dialog.filters = PackedStringArray(["*.png ; PNG Images"])
@@ -674,9 +1235,16 @@ func _on_paste_preset_pressed() -> void:
 
 func _on_file_dialog_file_selected(path: String) -> void:
 	if file_dialog_mode == "save":
-		print("Starting high-resolution render...")
-		var resolution = 1024 * pow(2, save_resolution_index)
-		_render_and_save_image(path, Vector2i(resolution, resolution))
+		if is_3d_view:
+			# --- NEW ---
+			# Handle 3D desktop save
+			_save_3d_view_desktop(path)
+			# --- END NEW ---
+		else:
+			# Handle 2D desktop save
+			print("Starting high-resolution render...")
+			var resolution = 1024 * pow(2, save_resolution_index)
+			_render_and_save_image(path, Vector2i(resolution, resolution))
 
 	elif file_dialog_mode == "load":
 		var image = Image.load_from_file(path)
@@ -1018,7 +1586,45 @@ func _process(delta: float) -> void:
 
 	final_output.texture = target_viewport.get_texture()
 	is_a_source = not is_a_source
+# # --- NEW 3D MESH UPDATE (GPU-ONLY) ---
+	
 
+
+	var mesh_material = fractal_mesh.get_surface_override_material(0)
+	if is_instance_valid(mesh_material):
+
+		# Determine the viewport that was just rendered TO in this frame
+		var rendered_viewport = viewport_b if is_a_source else viewport_a 
+		# (Note: is_a_source was flipped just before this block)
+
+		# 1. Get the texture directly from the viewport that was just rendered
+		var current_texture = rendered_viewport.get_texture()
+
+		# Check if the texture is valid *before* proceeding
+		if not is_instance_valid(current_texture):
+			if is_3d_view:
+				printerr("ERROR in _process: rendered_viewport texture is invalid!")
+			return # Stop processing this mesh update if texture is bad
+
+		# 2. Set the albedo (color) texture
+		mesh_material.albedo_texture = current_texture
+
+		# 3. Pass texture and strength into the normal map shader
+		if is_instance_valid(normal_map_material):
+			# We already checked current_texture is valid above
+			normal_map_material.set_shader_parameter("height_map", current_texture)
+			normal_map_material.set_shader_parameter("strength", normal_map_strength)
+		else:
+			if is_3d_view:
+				printerr("ERROR in _process: normal_map_material is NOT valid!")
+
+		# 4. Get the *result* from the NormalMapViewport and set it
+		mesh_material.normal_texture = normal_map_viewport.get_texture()
+
+	else:
+		if is_3d_view:
+			printerr("ERROR: mesh_material is null in _process!")
+	# --- END 3D MESH UPDATE ---
 
 func _load_image_from_base64(b64_string: String) -> void:
 	if not "," in b64_string:
@@ -1197,6 +1803,23 @@ func _gather_preset_data() -> Dictionary:
 		"custom_tr_b": custom_tr_b,
 		"custom_bl_b": custom_bl_b,
 		"custom_br_b": custom_br_b,
+		
+		# --- ADD THESE ---
+		"light_x_rotation": light_x_rotation,
+		"light_y_rotation": light_y_rotation,
+		"light_energy": light_energy,
+		"light_color": {"r": light_color.r, "g": light_color.g, "b": light_color.b, "a": light_color.a},
+		"light_shadows": light_shadows,
+		# --- END ---
+		
+		"normal_map_strength": normal_map_strength,
+		
+		"camera_distance": camera_distance,
+		"camera_x_rotation": camera_x_rotation,
+		"camera_y_rotation": camera_y_rotation,
+		"camera_fov": camera_fov,
+		"show_2d_background": show_2d_background
+		
 	}
 	return data
 
@@ -1405,5 +2028,25 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	custom_tr_b = data.get("custom_tr_b", 0)
 	custom_bl_b = data.get("custom_bl_b", 0)
 	custom_br_b = data.get("custom_br_b", 0)
+	
+	# --- ADD THESE ---
+	light_x_rotation = data.get("light_x_rotation", 0.0)
+	light_y_rotation = data.get("light_y_rotation", 0.0)
+	light_energy = data.get("light_energy", 1.0)
+	light_color = get_color(data, "light_color", Color.WHITE)
+	light_shadows = data.get("light_shadows", true)
+	_update_light() # Apply loaded light values
+	# --- END ---
+	normal_map_strength = data.get("normal_map_strength", 1.0)
+	
+	camera_distance = data.get("camera_distance", 0.5)
+	camera_x_rotation = data.get("camera_x_rotation", 0.0)
+	camera_y_rotation = data.get("camera_y_rotation", 0.0)
+	camera_fov = data.get("camera_fov", 75.0)
+	show_2d_background = data.get("show_2d_background", false)
+	_update_camera() # Apply loaded camera values
+	_update_background() # Apply loaded background value
+	
+	
 
 	print("  SetState: Finished applying data.")

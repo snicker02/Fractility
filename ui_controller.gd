@@ -2,6 +2,7 @@ class_name UIController
 extends Window
 
 # --- Signals ---
+var _is_initializing := true
 signal variation_a_changed(id: int) # Emits the Variation ID
 signal variation_b_changed(id: int) # Emits the Variation ID
 signal start_pattern_changed(index: int)
@@ -124,6 +125,18 @@ signal custom_tl_b_changed(index: int)
 signal custom_tr_b_changed(index: int)
 signal custom_bl_b_changed(index: int)
 signal custom_br_b_changed(index: int)
+signal shape_selected(shape_index: int)
+signal light_x_rot_changed(value: float)
+signal light_y_rot_changed(value: float)
+signal light_energy_changed(value: float)
+signal light_color_changed(color: Color)
+signal light_shadows_toggled(is_on: bool)
+signal normal_strength_changed(value: float)
+signal camera_dist_changed(value: float)
+signal camera_x_rot_changed(value: float)
+signal camera_y_rot_changed(value: float)
+signal camera_fov_changed(value: float)
+signal background_toggled(is_on: bool)
 
 # --- Private Variables ---
 var _expanded_size: Vector2
@@ -149,6 +162,7 @@ var br_stylebox := StyleBoxFlat.new()
 @onready var scroll_container: ScrollContainer = %ScrollContainer
 @onready var load_image_button: Button = %LoadImageButton
 @onready var mirror_tiling_check_box: CheckBox = %MirrorTilingCheckBox
+@onready var shape_selector_button: OptionButton = %ShapeSelectorButton
 # Main Controls
 @onready var var_a_dropdown: OptionButton = %VarADropdown
 @onready var var_b_dropdown: OptionButton = %VarBDropdown
@@ -346,6 +360,14 @@ var br_stylebox := StyleBoxFlat.new()
 @onready var custom_tr_b: OptionButton = %CustomTRB
 @onready var custom_bl_b: OptionButton = %CustomBLB
 @onready var custom_br_b: OptionButton = %CustomBRB
+@onready var normal_strength_spinbox: SpinBox = %NormalStrengthSpinBox
+@onready var light_x_angle_spinbox: SpinBox = %LightXAngleSpinBox
+@onready var light_y_angle_spinbox: SpinBox = %LightYAngleSpinBox
+@onready var light_energy_spinbox: SpinBox = %LightEnergySpinBox
+@onready var camera_dist_spinbox: SpinBox = %CameraDistSpinBox
+@onready var camera_x_rot_spinbox: SpinBox = %CameraXRotSpinBox
+@onready var camera_y_rot_spinbox: SpinBox = %CameraYRotSpinBox
+@onready var camera_fov_spinbox: SpinBox = %CameraFovSpinBox
 
 func _ready() -> void:
 	self.borderless = true
@@ -396,8 +418,19 @@ func _ready() -> void:
 		dropdown.clear()
 		for option_name in transform_options:
 			dropdown.add_item(option_name)
+			
+			
+	# --- Populate Shape Selector ---
+	shape_selector_button.add_item("Sphere") # Index 0
+	shape_selector_button.add_item("Cube")   # Index 1
+	shape_selector_button.add_item("Quad")   # Index 2 (Flat Plane)
+	shape_selector_button.add_item("Prism")  # Index 3
+	shape_selector_button.add_item("Torus")  # Index 4
+	shape_selector_button.item_selected.connect(_on_shape_selector_item_selected)
+	# --- END Shape Selector Setup ---
 
-	
+	update_contextual_ui_visibility() # Ensure this runs after dropdown setup if it affects visibility
+	_is_initializing = false
 	# --- Connect Signals ---
 	# Connect NEW Dropdown Handlers
 	var_a_dropdown.item_selected.connect(_on_main_dropdown_item_selected.bind(var_a_dropdown, rep_tile_dropdown_a))
@@ -573,6 +606,7 @@ func _ready() -> void:
 	feedback_range_min_spinbox.min_value = -0.02; feedback_range_min_spinbox.max_value = 0.2; feedback_range_min_spinbox.step = 0.001 
 	feedback_range_max_spinbox.min_value = 0.0; feedback_range_max_spinbox.max_value = 0.2; feedback_range_max_spinbox.step = 0.001 
 	configure_control_pair(pre_scale_slider, pre_scale_spinbox, 0.1, 10.0, 0.01)
+	configure_control_pair(pre_rotation_slider, pre_rotation_spinbox, -PI, PI, 0.01)
 	configure_control_pair(post_scale_slider, post_scale_spinbox, 0.1, 10.0, 0.01)
 	configure_control_pair(post_rotation_slider, post_rotation_spinbox, -PI, PI, 0.01)
 	configure_control_pair(brightness_slider, brightness_spinbox, 0.0, 3.0, 0.01)
@@ -642,6 +676,17 @@ func _ready() -> void:
 	configure_control_pair(%HeartStrengthSliderB, %HeartStrengthSpinBoxB, 0.0, 1.0, 0.01)
 	configure_control_pair(apollonian_scale_slider_a, apollonian_scale_spinbox_a, 0.5, 3.0, 0.01)
 	configure_control_pair(apollonian_scale_slider_b, apollonian_scale_spinbox_b, 0.5, 3.0, 0.01)
+	
+	# --- Configure 3D Controls ---
+	configure_control_pair(%NormalStrengthSlider, normal_strength_spinbox, 0.0, 5.0, 0.01) # Use the ranges you set in the scene
+	configure_control_pair(%LightXAngleSlider, light_x_angle_spinbox, -180.0, 180.0, 0.5)
+	configure_control_pair(%LightYAngleSlider, light_y_angle_spinbox, -180.0, 180.0, 0.5)
+	configure_control_pair(%LightEnergySlider, light_energy_spinbox, 0.0, 5.0, 0.01)
+	configure_control_pair(%CameraDistSlider, camera_dist_spinbox, 0.5, 10.0, 0.1)
+	configure_control_pair(%CameraXRotSlider, camera_x_rot_spinbox, -90.0, 90.0, 0.5)
+	configure_control_pair(%CameraYRotSlider, camera_y_rot_spinbox, -180.0, 180.0, 0.5)
+	configure_control_pair(%CameraFovSlider, camera_fov_spinbox, 30.0, 120.0, 1.0)
+# --- END Configure 3D Controls ---
 
 	var ap_min = -2.0; var ap_max = 2.0; var ap_step = 0.01
 	ap_c1x_spinbox_a.min_value = ap_min; ap_c1x_spinbox_a.max_value = ap_max; ap_c1x_spinbox_a.step = ap_step
@@ -672,6 +717,21 @@ func _ready() -> void:
 	collapse_button.text = "▼ Expand"
 	post_mirror_controls.visible = true
 	post_kaleidoscope_controls.visible = true
+	
+	
+	%LightXAngleSlider.value_changed.connect(light_x_rot_changed.emit)
+	%LightYAngleSlider.value_changed.connect(light_y_rot_changed.emit)
+	%LightEnergySlider.value_changed.connect(light_energy_changed.emit)
+	%LightColorPicker.color_changed.connect(light_color_changed.emit)
+	%ShadowCheckBox.toggled.connect(light_shadows_toggled.emit)
+	
+	%NormalStrengthSlider.value_changed.connect(normal_strength_changed.emit)
+	
+	%CameraDistSlider.value_changed.connect(camera_dist_changed.emit)
+	%CameraXRotSlider.value_changed.connect(camera_x_rot_changed.emit)
+	%CameraYRotSlider.value_changed.connect(camera_y_rot_changed.emit)
+	%CameraFovSlider.value_changed.connect(camera_fov_changed.emit)
+	%BackgroundCheckBox.toggled.connect(background_toggled.emit)
 	
 	update_contextual_ui_visibility()
 
@@ -902,10 +962,58 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	custom_tr_b.select(initial_values.get("custom_tr_b", 0))
 	custom_bl_b.select(initial_values.get("custom_bl_b", 0))
 	custom_br_b.select(initial_values.get("custom_br_b", 0))
+	
+	%LightXAngleSlider.set_value_no_signal(initial_values.get("light_x_rot", 77.0))
+	%LightYAngleSlider.set_value_no_signal(initial_values.get("light_y_rot", 163.5))
+	%LightEnergySlider.set_value_no_signal(initial_values.get("light_energy", 1.0))
+	%LightColorPicker.color = initial_values.get("light_color", Color.WHITE)
+	%ShadowCheckBox.set_pressed_no_signal(initial_values.get("light_shadows", true))
+	
+	%NormalStrengthSlider.set_value_no_signal(initial_values.get("normal_strength", 1.0))
+	
+	%CameraDistSlider.set_value_no_signal(initial_values.get("cam_dist", 2.5))
+	%CameraXRotSlider.set_value_no_signal(initial_values.get("cam_x_rot", 0.0))
+	%CameraYRotSlider.set_value_no_signal(initial_values.get("cam_y_rot", 0.0))
+	%CameraFovSlider.set_value_no_signal(initial_values.get("cam_fov", 75.0))
+	%BackgroundCheckBox.set_pressed_no_signal(initial_values.get("show_2d_bg", false))
+	
+	
+	%LightXAngleSlider.set_value_no_signal(initial_values.get("light_x_rot", 77.0))
+	light_x_angle_spinbox.set_value_no_signal(initial_values.get("light_x_rot", 77.0)) # <-- Add
+
+	%LightYAngleSlider.set_value_no_signal(initial_values.get("light_y_rot", 163.5))
+	light_y_angle_spinbox.set_value_no_signal(initial_values.get("light_y_rot", 163.5)) # <-- Add
+
+	%LightEnergySlider.set_value_no_signal(initial_values.get("light_energy", 1.0))
+	light_energy_spinbox.set_value_no_signal(initial_values.get("light_energy", 1.0)) # <-- Add
+
+	%LightColorPicker.color = initial_values.get("light_color", Color.WHITE)
+	%ShadowCheckBox.set_pressed_no_signal(initial_values.get("light_shadows", true))
+
+	%NormalStrengthSlider.set_value_no_signal(initial_values.get("normal_strength", 1.0))
+	normal_strength_spinbox.set_value_no_signal(initial_values.get("normal_strength", 1.0)) # <-- Add
+
+	%CameraDistSlider.set_value_no_signal(initial_values.get("cam_dist", 2.5))
+	camera_dist_spinbox.set_value_no_signal(initial_values.get("cam_dist", 2.5)) # <-- Add
+
+	%CameraXRotSlider.set_value_no_signal(initial_values.get("cam_x_rot", 0.0))
+	camera_x_rot_spinbox.set_value_no_signal(initial_values.get("cam_x_rot", 0.0)) # <-- Add
+
+	%CameraYRotSlider.set_value_no_signal(initial_values.get("cam_y_rot", 0.0))
+	camera_y_rot_spinbox.set_value_no_signal(initial_values.get("cam_y_rot", 0.0)) # <-- Add
+
+	%CameraFovSlider.set_value_no_signal(initial_values.get("cam_fov", 75.0))
+	camera_fov_spinbox.set_value_no_signal(initial_values.get("cam_fov", 75.0)) # <-- Add
+
+	%BackgroundCheckBox.set_pressed_no_signal(initial_values.get("show_2d_bg", false))
 
 	update_contextual_ui_visibility()
 
 # --- REPLACED FUNCTION ---
+
+func _on_shape_selector_item_selected(index: int):
+	if _is_initializing: return # Prevent emission during setup
+	emit_signal("shape_selected", index)
 func update_contextual_ui_visibility() -> void:
 	# --- Step 1: Hide ALL contextual panels first ---
 	# This is the most important step to fix the bug

@@ -26,7 +26,7 @@ unique_name_in_owner = true
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
-text = "V 1.2"
+text = "V 1.4"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="RootVBox"]
 unique_name_in_owner = true
@@ -41,21 +41,185 @@ theme_override_constants/margin_bottom = 10
 [node name="MainContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="StartPattern" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
-layout_mode = 2
-
-[node name="StartPatternDropdown" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
+[node name="Container3DControls" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ResetOnDragLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
+[node name="3D Shape" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+text = "3D Shape"
+
+[node name="ShapeSelectorButton" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BackgroundCheckBox" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "2D Background"
+
+[node name="NormalStrengthContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Normal Strength" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/NormalStrengthContainer"]
+layout_mode = 2
+text = "Normal Strength"
+
+[node name="NormalStrengthSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/NormalStrengthContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NormalStrengthSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/NormalStrengthContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LightXAngleContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Light X Angle" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightXAngleContainer"]
+layout_mode = 2
+text = "Light X Angle "
+
+[node name="LightXAngleSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightXAngleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LightXAngleSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightXAngleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LightYAngleContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Light Y Angle" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightYAngleContainer"]
+layout_mode = 2
+text = "Light Y Angle"
+
+[node name="LightYAngleSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightYAngleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LightYAngleSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightYAngleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LightEnergyContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Light Power" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightEnergyContainer"]
+layout_mode = 2
+text = "Light Power"
+
+[node name="LightEnergySlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightEnergyContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LightEnergySpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightEnergyContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ShadowCheckBox" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enable Shadows"
+
+[node name="CameraDistContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Cam distance" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraDistContainer"]
+layout_mode = 2
+text = "Cam distance"
+
+[node name="CameraDistSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraDistContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CameraDistSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraDistContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CameraXRotContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Cam X Rotate" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraXRotContainer"]
+layout_mode = 2
+text = "Cam X Rotate"
+
+[node name="CameraXRotSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraXRotContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CameraXRotSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraXRotContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CameraYRotContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Cam Y Rotate" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraYRotContainer"]
+layout_mode = 2
+text = "Cam Y Rotate"
+
+[node name="CameraYRotSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraYRotContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CameraYRotSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraYRotContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CameraFovContainer" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Cam FOV" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraFovContainer"]
+layout_mode = 2
+text = "Cam FOV"
+
+[node name="CameraFovSlider" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraFovContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CameraFovSpinBox" type="SpinBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraFovContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Color Picker" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+text = "Color Picker"
+
+[node name="LightColorPicker" type="ColorPickerButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="StartPattern" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
+layout_mode = 2
+
+[node name="HSeparator7" type="HBoxContainer" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer/HSeparator7"]
+layout_mode = 2
+
+[node name="StartPatternDropdown" type="OptionButton" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer/HSeparator7"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ResetOnDragLabel" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer/HSeparator7"]
 layout_mode = 2
 text = "Reset on Drag"
 
-[node name="ResetOnDragCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
+[node name="ResetOnDragCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer/HSeparator7"]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -490,7 +654,7 @@ layout_mode = 2
 
 [node name="C" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/CRow2"]
 layout_mode = 2
-text = "B"
+text = "C"
 
 [node name="JulianCSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/CRow2"]
 unique_name_in_owner = true
@@ -506,7 +670,7 @@ layout_mode = 2
 
 [node name="D" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/DRow2"]
 layout_mode = 2
-text = "C"
+text = "D"
 
 [node name="JulianDSliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/DRow2"]
 unique_name_in_owner = true
@@ -522,7 +686,7 @@ layout_mode = 2
 
 [node name="E" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/ERow"]
 layout_mode = 2
-text = "D"
+text = "E"
 
 [node name="JulianESliderA" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerA/ERow"]
 unique_name_in_owner = true
@@ -1192,7 +1356,7 @@ layout_mode = 2
 
 [node name="C" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/CRow2"]
 layout_mode = 2
-text = "B"
+text = "C"
 
 [node name="JulianCSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/CRow2"]
 unique_name_in_owner = true
@@ -1208,7 +1372,7 @@ layout_mode = 2
 
 [node name="D" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/DRow2"]
 layout_mode = 2
-text = "C"
+text = "D"
 
 [node name="JulianDSliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/DRow2"]
 unique_name_in_owner = true
@@ -1224,7 +1388,7 @@ layout_mode = 2
 
 [node name="E" type="Label" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/ERow"]
 layout_mode = 2
-text = "D"
+text = "E"
 
 [node name="JulianESliderB" type="HSlider" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/JulianControlsContainerB/ERow"]
 unique_name_in_owner = true
@@ -1977,3 +2141,11 @@ text = "Show Start Grid"
 [node name="ShowGridCheck" type="CheckBox" parent="RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer14"]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="ViewToggleCheckBox" type="CheckBox" parent="."]
+unique_name_in_owner = true
+offset_left = 211.0
+offset_top = -2.0
+offset_right = 301.0
+offset_bottom = 29.0
+text = "3D View"
