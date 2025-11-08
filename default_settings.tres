@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="VariationDefaults" load_steps=2 format=3 uid="uid://cmauc4sn1b4yg"]
+
+[ext_resource type="Script" uid="uid://bh231o4nf05it" path="res://VariationDefaults.gd" id="1_d4bs6"]
+
+[resource]
+script = ExtResource("1_d4bs6")
+metadata/_custom_type_script = "uid://bh231o4nf05it"

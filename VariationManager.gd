@@ -28,7 +28,7 @@ const VARIATIONS = {
 	"Apollonian Gasket": { "id": 13, "controls": "apollonian" }, 
 	"ArcTangent":       { "id": 16, "controls": null },
 	"Blur":             { "id": 11, "controls": "blur" },
-	# ... (rest of your variations) ...
+	"Cellular Weave": 	{ "id": 10, "controls": "cellular_weave" },
 	"Cosine":           { "id": 14, "controls": null },
 	"Fisheye":          { "id": 6, "controls": "fisheye" },
 	"Heart":            { "id": 12, "controls": "heart" },

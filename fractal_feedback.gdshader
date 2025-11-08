@@ -1,7 +1,7 @@
 shader_type canvas_item;
 
 // --- Uniforms ---
-uniform sampler2D previous_frame : filter_linear, repeat_enable;
+uniform sampler2D previous_frame : filter_linear;
 uniform int variation_mode_a = 0;
 uniform int variation_mode_b = 1;
 uniform int start_pattern_mode = 0;
@@ -787,8 +787,7 @@ void fragment() {
 
 		vec2 final_uv = mixed_uv + vec2(0.5); // De-center coordinates
 
-		if (seamless_tiling) {
-			if (mirror_tiling) {
+		if (mirror_tiling) {
 			// Get the integer part to know which tile we're on
 			vec2 i = floor(final_uv);
 			// Get the fractional part for the position within the tile
@@ -803,11 +802,13 @@ void fragment() {
 				f.y = 1.0 - f.y;
 			}
 			final_uv = f;
-		} else {
+		} else if (seamless_tiling) {
 			// The original standard tiling
 			final_uv = fract(final_uv);
 		}
-		}
+		// If both are false, final_uv is not tiled.
+
+
 
 		// Mix the transformed frame with the previous frame
 		vec4 transformed_color = texture(previous_frame, final_uv);

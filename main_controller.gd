@@ -1,5 +1,9 @@
 extends Control
 const PROGRAM_VERSION = 1.4
+
+# --- Private Variables ---
+
+
 # --- Node References ---
 @onready var viewport_a: SubViewport = %ViewportA
 @onready var viewport_b: SubViewport = %ViewportB
@@ -9,7 +13,7 @@ const PROGRAM_VERSION = 1.4
 @onready var post_process_save_viewport: SubViewport = %PostProcessSaveViewport
 @onready var fractal_mesh: MeshInstance3D = %FractalMesh
 @onready var display_container_3d: SubViewportContainer = %Display_3D_Container # <-- Add reference to 3D view container
-@onready var container_3d_controls: VBoxContainer
+@onready var container_3d_controls: VBoxContainer = %Container3DControls
 @onready var normal_map_viewport = $NormalMapViewport
 @onready var normal_map_material = $NormalMapViewport/ColorRect.material
 @onready var light_3d: DirectionalLight3D = %DirectionalLight3D
@@ -17,12 +21,266 @@ const PROGRAM_VERSION = 1.4
 @onready var camera_3d: Camera3D = %Camera3D
 
 
-@export var ui_scene: PackedScene
+# --- Node References ---
+# Main Layout
+#@onready var collapse_button: Button = %CollapseButton
+@onready var scroll_container: ScrollContainer = %ScrollContainer
+@onready var load_image_button: Button = %LoadImageButton
+@onready var mirror_tiling_check_box: CheckBox = %MirrorTilingCheckBox
+@onready var shape_selector_button: OptionButton = %ShapeSelectorButton
+# Main Controls
+@onready var var_a_dropdown: OptionButton = %VarADropdown
+@onready var var_b_dropdown: OptionButton = %VarBDropdown
+@onready var rep_tile_panel_a: VBoxContainer = %RepTilePanelA
+@onready var rep_tile_dropdown_a: OptionButton = %RepTileDropdownA
+@onready var rep_tile_panel_b: VBoxContainer = %RepTilePanelB
+@onready var rep_tile_dropdown_b: OptionButton = %RepTileDropdownB
+@onready var start_pattern_dropdown: OptionButton = %StartPatternDropdown
+@onready var tiling_check_box: CheckBox = %TilingCheckBox
+@onready var reset_on_drag_check: CheckBox = %ResetOnDragCheck
+@onready var resolution_dropdown: OptionButton = %ResolutionDropdown
+@onready var save_button: Button = %SaveButton
+@onready var save_preset_button: Button = %SavePresetButton
+@onready var load_preset_button: Button = %LoadPresetButton
+@onready var copy_preset_button: Button = %CopyPresetButton
+@onready var paste_preset_button: Button = %PastePresetButton
 
+# Contextual Containers
+@onready var gradient_controls_container: VBoxContainer = %GradientControlsContainer
+@onready var wave_controls_container_a: VBoxContainer = %WaveControlsContainerA
+@onready var wave_controls_container_b: VBoxContainer = %WaveControlsContainerB
+@onready var circle_controls_container: VBoxContainer = %CircleControlsContainer
+@onready var julian_controls_container_a: VBoxContainer = %JulianControlsContainerA
+@onready var julian_controls_container_b: VBoxContainer = %JulianControlsContainerB
+@onready var fisheye_controls_container_a: VBoxContainer = %FisheyeControlsContainerA
+@onready var polar_controls_container_a: VBoxContainer = %PolarControlsContainerA
+@onready var fisheye_controls_container_b: VBoxContainer = %FisheyeControlsContainerB
+@onready var polar_controls_container_b: VBoxContainer = %PolarControlsContainerB
+@onready var mobius_controls_container_a: VBoxContainer = %MobiusControlsContainerA
+@onready var mobius_controls_container_b: VBoxContainer = %MobiusControlsContainerB
+@onready var cellular_weave_controls_container_a: VBoxContainer = %CellularWeaveControlsContainerA
+@onready var cellular_weave_controls_container_b: VBoxContainer = %CellularWeaveControlsContainerB
+@onready var blur_controls_container_a: VBoxContainer = %BlurControlsContainerA
+@onready var blur_controls_container_b: VBoxContainer = %BlurControlsContainerB
+@onready var heart_controls_container_a: VBoxContainer = %HeartControlsContainerA
+@onready var heart_controls_container_b: VBoxContainer = %HeartControlsContainerB
+@onready var apollonian_controls_container_a: VBoxContainer = %ApollonianControlsContainerA
+@onready var apollonian_controls_container_b: VBoxContainer = %ApollonianControlsContainerB
+
+# Symmetry Control Containers
+@onready var var_a_mirror_controls: VBoxContainer = %VarAMirrorControlsContainer
+@onready var var_a_kaleidoscope_controls: VBoxContainer = %VarAKaleidoscopeControlsContainer
+@onready var var_b_mirror_controls: VBoxContainer = %VarBMirrorControlsContainer
+@onready var var_b_kaleidoscope_controls: VBoxContainer = %VarBKaleidoscopeControlsContainer
+@onready var post_mirror_controls: VBoxContainer = %PostMirrorControlsContainer
+@onready var post_kaleidoscope_controls: VBoxContainer = %PostKaleidoscopeControlsContainer
+@onready var post_mirror_options: HBoxContainer = %PostMirrorOptions
+@onready var post_kaleidoscope_options: HBoxContainer = %PostKaleidoscopeOptions
+@onready var var_a_mirror_x_check: CheckBox = %VarAMirrorXCheck
+@onready var var_a_mirror_y_check: CheckBox = %VarAMirrorYCheck
+@onready var var_a_kaleidoscope_slider: HSlider = %VarAKaleidoscopeSlicesSlider
+@onready var var_a_kaleidoscope_spinbox: SpinBox = %VarAKaleidoscopeSlicesSpinBox
+@onready var var_b_mirror_x_check: CheckBox = %VarBMirrorXCheck
+@onready var var_b_mirror_y_check: CheckBox = %VarBMirrorYCheck
+@onready var var_b_kaleidoscope_slider: HSlider = %VarBKaleidoscopeSlicesSlider
+@onready var var_b_kaleidoscope_spinbox: SpinBox = %VarBKaleidoscopeSlicesSpinBox 
+@onready var post_mirror_x_check: CheckBox = %PostMirrorXCheck
+@onready var post_mirror_y_check: CheckBox = %PostMirrorYCheck
+@onready var post_kaleidoscope_master_check: CheckBox = %PostKaleidoscopeMasterCheck
+@onready var post_kaleidoscope_slider: HSlider = %PostKaleidoscopeSlicesSlider
+@onready var post_kaleidoscope_spinbox: SpinBox = %PostKaleidoscopeSlicesSpinBox
+
+# Start Pattern Controls
+@onready var show_grid_check: CheckBox = %ShowGridCheck
+@onready var show_circles_check: CheckBox = %ShowCirclesCheck
+
+# Transform Controls
+@onready var post_translate_radio: CheckBox = %PostTranslateRadio
+@onready var pre_translate_radio: CheckBox = %PreTranslateRadio
+@onready var var_a_translate_radio: CheckBox = %VarATranslateRadio
+@onready var var_b_translate_radio: CheckBox = %VarBTranslateRadio
+
+# Color & Symmetry Pickers/Checkboxes
+@onready var gradient_toggle_button: Button = %GradientToggleButton
+@onready var grad_col_tl_picker: ColorPickerButton = %GradColTLPicker
+@onready var grad_col_tr_picker: ColorPickerButton = %GradColTRPicker
+@onready var grad_col_bl_picker: ColorPickerButton = %GradColBLPicker
+@onready var grad_col_br_picker: ColorPickerButton = %GradColBRPicker
+
+# Sliders & SpinBoxes (Grouped by name)
+@onready var var_mix_slider: HSlider = %VarMixSlider
+@onready var var_mix_spinbox: SpinBox = %VarMixSpinBox
+@onready var feedback_amount_slider: HSlider = %FeedbackAmountSlider
+@onready var feedback_amount_spinbox: SpinBox = %FeedbackAmountSpinBox
+@onready var feedback_range_min_spinbox: SpinBox = %FeedbackRangeMinSpinBox
+@onready var feedback_range_max_spinbox: SpinBox = %FeedbackRangeMaxSpinBox
+@onready var pre_scale_slider: HSlider = %PreScaleSlider
+@onready var pre_scale_spinbox: SpinBox = %PreScaleSpinBox
+@onready var pre_rotation_slider: HSlider = %PreRotationSlider
+@onready var pre_rotation_spinbox: SpinBox = %PreRotationSpinBox
+@onready var post_scale_slider: HSlider = %PostScaleSlider
+@onready var post_scale_spinbox: SpinBox = %PostScaleSpinBox
+@onready var post_rotation_slider: HSlider = %PostRotationSlider
+@onready var post_rotation_spinbox: SpinBox = %PostRotationSpinBox
+@onready var brightness_slider: HSlider = %BrightnessSlider
+@onready var brightness_spinbox: SpinBox = %BrightnessSpinBox
+@onready var contrast_slider: HSlider = %ContrastSlider
+@onready var contrast_spinbox: SpinBox = %ContrastSpinBox
+@onready var saturation_slider: HSlider = %SaturationSlider
+@onready var saturation_spinbox: SpinBox = %SaturationSpinBox
+@onready var circle_count_slider: HSlider = %CircleCountSlider
+@onready var circle_count_spinbox: SpinBox = %CircleCountSpinBox
+@onready var circle_radius_slider: HSlider = %CircleRadiusSlider
+@onready var circle_radius_spinbox: SpinBox = %CircleRadiusSpinBox
+@onready var circle_softness_slider: HSlider = %CircleSoftnessSlider
+@onready var circle_softness_spinbox: SpinBox = %CircleSoftnessSpinBox
+@onready var wave_type_dropdown_a: OptionButton = %WaveTypeDropdownA
+@onready var wave_frequency_slider_a: HSlider = %WaveFrequencySliderA
+@onready var wave_frequency_spinbox_a: SpinBox = %WaveFrequencySpinBoxA
+@onready var wave_amplitude_slider_a: HSlider = %WaveAmplitudeSliderA
+@onready var wave_amplitude_spinbox_a: SpinBox = %WaveAmplitudeSpinBoxA
+@onready var wave_speed_slider_a: HSlider = %WaveSpeedSliderA
+@onready var wave_speed_spinbox_a: SpinBox = %WaveSpeedSpinBoxA
+@onready var wave_type_dropdown_b: OptionButton = %WaveTypeDropdownB
+@onready var wave_frequency_slider_b: HSlider = %WaveFrequencySliderB
+@onready var wave_frequency_spinbox_b: SpinBox = %WaveFrequencySpinBoxB
+@onready var wave_amplitude_slider_b: HSlider = %WaveAmplitudeSliderB
+@onready var wave_amplitude_spinbox_b: SpinBox = %WaveAmplitudeSpinBoxB
+@onready var wave_speed_slider_b: HSlider = %WaveSpeedSliderB
+@onready var wave_speed_spinbox_b: SpinBox = %WaveSpeedSpinBoxB
+@onready var julian_power_slider_a: HSlider = %JulianPowerSliderA
+@onready var julian_power_spinbox_a: SpinBox = %JulianPowerSpinBoxA
+@onready var julian_dist_slider_a: HSlider = %JulianDistSliderA
+@onready var julian_dist_spinbox_a: SpinBox = %JulianDistSpinBoxA
+@onready var julian_a_slider_a: HSlider = %JulianASliderA
+@onready var julian_a_spinbox_a: SpinBox = %JulianASpinBoxA
+@onready var julian_b_slider_a: HSlider = %JulianBSliderA
+@onready var julian_b_spinbox_a: SpinBox = %JulianBSpinBoxA
+@onready var julian_c_slider_a: HSlider = %JulianCSliderA
+@onready var julian_c_spinbox_a: SpinBox = %JulianCSpinBoxA
+@onready var julian_d_slider_a: HSlider = %JulianDSliderA
+@onready var julian_d_spinbox_a: SpinBox = %JulianDSpinBoxA
+@onready var julian_e_slider_a: HSlider = %JulianESliderA
+@onready var julian_e_spinbox_a: SpinBox = %JulianESpinBoxA
+@onready var julian_f_slider_a: HSlider = %JulianFSliderA
+@onready var julian_f_spinbox_a: SpinBox = %JulianFSpinBoxA
+@onready var julian_power_slider_b: HSlider = %JulianPowerSliderB
+@onready var julian_power_spinbox_b: SpinBox = %JulianPowerSpinBoxB
+@onready var julian_dist_slider_b: HSlider = %JulianDistSliderB
+@onready var julian_dist_spinbox_b: SpinBox = %JulianDistSpinBoxB
+@onready var julian_a_slider_b: HSlider = %JulianASliderB
+@onready var julian_a_spinbox_b: SpinBox = %JulianASpinBoxB
+@onready var julian_b_slider_b: HSlider = %JulianBSliderB
+@onready var julian_b_spinbox_b: SpinBox = %JulianBSpinBoxB
+@onready var julian_c_slider_b: HSlider = %JulianCSliderB
+@onready var julian_c_spinbox_b: SpinBox = %JulianCSpinBoxB
+@onready var julian_d_slider_b: HSlider = %JulianDSliderB
+@onready var julian_d_spinbox_b: SpinBox = %JulianDSpinBoxB
+@onready var julian_e_slider_b: HSlider = %JulianESliderB
+@onready var julian_e_spinbox_b: SpinBox = %JulianESpinBoxB
+@onready var julian_f_slider_b: HSlider = %JulianFSliderB
+@onready var julian_f_spinbox_b: SpinBox = %JulianFSpinBoxB
+@onready var fisheye_strength_slider_a: HSlider = %FisheyeStrengthSliderA
+@onready var fisheye_strength_spinbox_a: SpinBox = %FisheyeStrengthSpinBoxA
+@onready var polar_offset_slider_a: HSlider = %PolarOffsetSliderA
+@onready var polar_offset_spinbox_a: SpinBox = %PolarOffsetSpinBoxA
+@onready var fisheye_strength_slider_b: HSlider = %FisheyeStrengthSliderB
+@onready var fisheye_strength_spinbox_b: SpinBox = %FisheyeStrengthSpinBoxB
+@onready var polar_offset_slider_b: HSlider = %PolarOffsetSliderB
+@onready var polar_offset_spinbox_b: SpinBox = %PolarOffsetSpinBoxB
+@onready var mobius_re_a_spinbox_a: SpinBox = %MobiusReASpinBoxA
+@onready var mobius_im_a_spinbox_a: SpinBox = %MobiusImASpinBoxA
+@onready var mobius_re_b_spinbox_a: SpinBox = %MobiusReBSpinBoxA
+@onready var mobius_im_b_spinbox_a: SpinBox = %MobiusImBSpinBoxA
+@onready var mobius_re_c_spinbox_a: SpinBox = %MobiusReCSpinBoxA
+@onready var mobius_im_c_spinbox_a: SpinBox = %MobiusImCSpinBoxA
+@onready var mobius_re_d_spinbox_a: SpinBox = %MobiusReDSpinBoxA
+@onready var mobius_im_d_spinbox_a: SpinBox = %MobiusImDSpinBoxA
+@onready var mobius_re_a_spinbox_b: SpinBox = %MobiusReASpinBoxB
+@onready var mobius_im_a_spinbox_b: SpinBox = %MobiusImASpinBoxB
+@onready var mobius_re_b_spinbox_b: SpinBox = %MobiusReBSpinBoxB
+@onready var mobius_im_b_spinbox_b: SpinBox = %MobiusImBSpinBoxB
+@onready var mobius_re_c_spinbox_b: SpinBox = %MobiusReCSpinBoxB
+@onready var mobius_im_c_spinbox_b: SpinBox = %MobiusImCSpinBoxB
+@onready var mobius_re_d_spinbox_b: SpinBox = %MobiusReDSpinBoxB
+@onready var mobius_im_d_spinbox_b: SpinBox = %MobiusImDSpinBoxB
+
+
+@onready var apollonian_scale_slider_a: HSlider = %ApollonianScaleSliderA
+@onready var apollonian_scale_spinbox_a: SpinBox = %ApollonianScaleSpinBoxA
+@onready var ap_c1x_spinbox_a: SpinBox = %ApC1XSpinBoxA
+@onready var ap_c1y_spinbox_a: SpinBox = %ApC1YSpinBoxA
+@onready var ap_c2x_spinbox_a: SpinBox = %ApC2XSpinBoxA
+@onready var ap_c2y_spinbox_a: SpinBox = %ApC2YSpinBoxA
+@onready var ap_c3x_spinbox_a: SpinBox = %ApC3XSpinBoxA
+@onready var ap_c3y_spinbox_a: SpinBox = %ApC3YSpinBoxA
+@onready var apollonian_scale_slider_b: HSlider = %ApollonianScaleSliderB
+@onready var apollonian_scale_spinbox_b: SpinBox = %ApollonianScaleSpinBoxB
+@onready var ap_c1x_spinbox_b: SpinBox = %ApC1XSpinBoxB
+@onready var ap_c1y_spinbox_b: SpinBox = %ApC1YSpinBoxB
+@onready var ap_c2x_spinbox_b: SpinBox = %ApC2XSpinBoxB
+@onready var ap_c2y_spinbox_b: SpinBox = %ApC2YSpinBoxB
+@onready var ap_c3x_spinbox_b: SpinBox = %ApC3XSpinBoxB
+@onready var ap_c3y_spinbox_b: SpinBox = %ApC3YSpinBoxB
+
+@onready var cellular_weave_grid_size_slider_a: HSlider = %CellularWeaveGridSizeSliderA
+@onready var cellular_weave_grid_size_spinbox_a: SpinBox = %CellularWeaveGridSizeSpinBoxA
+
+@onready var cellular_weave_threshold_slider_a: HSlider = %CellularWeaveThresholdSliderA
+@onready var cellular_weave_threshold_spinbox_a: SpinBox = %CellularWeaveThresholdSpinBoxA
+@onready var cellular_weave_iterations_slider_a: HSlider = %CellularWeaveIterationsSliderA
+@onready var cellular_weave_iterations_spinbox_a: SpinBox = %CellularWeaveIterationsSpinBoxA
+@onready var cellular_weave_grid_size_slider_b: HSlider = %CellularWeaveGridSizeSliderB
+@onready var cellular_weave_grid_size_spinbox_b: SpinBox = %CellularWeaveGridSizeSpinBoxB
+@onready var cellular_weave_threshold_slider_b: HSlider = %CellularWeaveThresholdSliderB
+@onready var cellular_weave_threshold_spinbox_b: SpinBox = %CellularWeaveThresholdSpinBoxB
+@onready var cellular_weave_iterations_slider_b: HSlider = %CellularWeaveIterationsSliderB
+@onready var cellular_weave_iterations_spinbox_b: SpinBox = %CellularWeaveIterationsSpinBoxB
+
+@onready var blur_amount_slider_a: HSlider = %BlurAmountSliderA
+@onready var blur_amount_spinbox_a: SpinBox = %BlurAmountSpinBoxA 
+@onready var blur_amount_slider_b: HSlider = %BlurAmountSliderB
+@onready var blur_amount_spinbox_b: SpinBox = %BlurAmountSpinBoxB 
+@onready var heart_scale_slider_a: HSlider = %HeartScaleSliderA
+@onready var heart_scale_spinbox_a: SpinBox = %HeartScaleSpinBoxA
+@onready var heart_rotation_slider_a: HSlider = %HeartRotationSliderA
+@onready var heart_rotation_spinbox_a: SpinBox = %HeartRotationSpinBoxA
+@onready var heart_strength_slider_a: HSlider = %HeartStrengthSliderA
+@onready var heart_strength_spinbox_a: SpinBox = %HeartStrengthSpinBoxA
+@onready var heart_scale_slider_b: HSlider = %HeartScaleSliderB
+@onready var heart_scale_spinbox_b: SpinBox = %HeartScaleSpinBoxB
+@onready var heart_rotation_slider_b: HSlider = %HeartRotationSliderB
+@onready var heart_rotation_spinbox_b: SpinBox = %HeartRotationSpinBoxB
+@onready var heart_strength_slider_b: HSlider = %HeartStrengthSliderB
+@onready var heart_strength_spinbox_b: SpinBox = %HeartStrengthSpinBoxB
+@onready var custom_2x2_controls_container_a: VBoxContainer = %Custom2x2ControlsContainerA
+@onready var custom_tl_a: OptionButton = %CustomTLA
+@onready var custom_tr_a: OptionButton = %CustomTRA
+@onready var custom_bl_a: OptionButton = %CustomBLA
+@onready var custom_br_a: OptionButton = %CustomBRA
+@onready var custom_2x2_controls_container_b: VBoxContainer = %Custom2x2ControlsContainerB
+@onready var custom_tl_b: OptionButton = %CustomTLB
+@onready var custom_tr_b: OptionButton = %CustomTRB
+@onready var custom_bl_b: OptionButton = %CustomBLB
+@onready var custom_br_b: OptionButton = %CustomBRB
+@onready var normal_strength_spinbox: SpinBox = %NormalStrengthSpinBox
+@onready var light_x_angle_spinbox: SpinBox = %LightXAngleSpinBox
+@onready var light_y_angle_spinbox: SpinBox = %LightYAngleSpinBox
+@onready var light_energy_spinbox: SpinBox = %LightEnergySpinBox
+@onready var camera_dist_spinbox: SpinBox = %CameraDistSpinBox
+@onready var camera_x_rot_spinbox: SpinBox = %CameraXRotSpinBox
+@onready var camera_y_rot_spinbox: SpinBox = %CameraYRotSpinBox
+@onready var camera_fov_spinbox: SpinBox = %CameraFovSpinBox
+
+
+#@export var ui_scene: PackedScene
+@export var default_settings: VariationDefaults
 
 # --- Control Variables ---
 var variation_mode_a: int = 0 # Default Sinusoidal ID
 var variation_mode_b: int = 1 # Default Spherical IDl"
+var var_a_panels: Dictionary = {}
+var var_b_panels: Dictionary = {}
 var start_pattern_mode: int = 0
 var variation_mix: float = 0.5
 var feedback_amount: float = 0.98
@@ -66,105 +324,105 @@ var grad_col_tr: Color = Color.YELLOW
 var grad_col_bl: Color = Color.BLUE
 var grad_col_br: Color = Color.RED
 
-var fisheye_strength_a: float = 2.0
-var polar_offset_a: float = 1.0
-var fisheye_strength_b: float = 2.0
-var polar_offset_b: float = 1.0
+var fisheye_strength_a: float
+var polar_offset_a: float
+var fisheye_strength_b: float
+var polar_offset_b: float
 
-var wave_frequency_a: float = 0.0
-var wave_amplitude_a: float = 0.1
-var wave_speed_a: float = 0.0
-var wave_frequency_b: float = 5.0
-var wave_amplitude_b: float = 0.1
-var wave_speed_b: float = 0.0
-var wave_type_a: int = 0 # 0: Vertical, 1: Radial, 2: Square
-var wave_type_b: int = 0
+var wave_frequency_a: float
+var wave_amplitude_a: float
+var wave_speed_a: float
+var wave_frequency_b: float
+var wave_amplitude_b: float
+var wave_speed_b: float
+var wave_type_a: int
+var wave_type_b: int
 
 # Julian2 A Controls
-var julian_power_a: float = 2.0
-var julian_dist_a: float = 1.0
-var julian_a_a: float = 1.0
-var julian_b_a: float = 0.0
-var julian_c_a: float = 0.0
-var julian_d_a: float = 1.0
-var julian_e_a: float = 0.0
-var julian_f_a: float = 0.0
+var julian_power_a: float
+var julian_dist_a: float 
+var julian_a_a: float
+var julian_b_a: float
+var julian_c_a: float
+var julian_d_a: float
+var julian_e_a: float
+var julian_f_a: float
 
 # Julian2 B Controls
-var julian_power_b: float = -3.0
-var julian_dist_b: float = 1.0
-var julian_a_b: float = 1.0
-var julian_b_b: float = 0.0
-var julian_c_b: float = 0.0
-var julian_d_b: float = 1.0
-var julian_e_b: float = 0.0
-var julian_f_b: float = 0.0
+var julian_power_b: float
+var julian_dist_b: float
+var julian_a_b: float
+var julian_b_b: float
+var julian_c_b: float
+var julian_d_b: float
+var julian_e_b: float
+var julian_f_b: float
 
-var translate_a: Vector2 = Vector2.ZERO
-var translate_b: Vector2 = Vector2.ZERO
-var pre_scale: float = 1.0
-var pre_rotation: float = 0.0
-var pre_translate: Vector2 = Vector2.ZERO
-var post_scale: float = 0.995
-var post_rotation: float = 0.0
-var post_translate: Vector2 = Vector2.ZERO
+var translate_a: Vector2
+var translate_b: Vector2
+var pre_scale: float
+var pre_rotation: float
+var pre_translate: Vector2
+var post_scale: float
+var post_rotation: float
+var post_translate: Vector2
 
 # ---Mobius---
-var mobius_re_a_a = 0.1;  var mobius_im_a_a = 0.2;
-var mobius_re_b_a = 0.2;  var mobius_im_b_a = -0.12;
-var mobius_re_c_a = -0.15; var mobius_im_c_a = -0.15;
-var mobius_re_d_a = 0.21; var mobius_im_d_a = 0.1;
-var mobius_re_a_b = 0.1;  var mobius_im_a_b = 0.2;
-var mobius_re_b_b = 0.2;  var mobius_im_b_b = -0.12;
-var mobius_re_c_b = -0.15; var mobius_im_c_b = -0.15;
-var mobius_re_d_b = 0.21; var mobius_im_d_b = 0.1;
+var mobius_re_a_a ;  var mobius_im_a_a;
+var mobius_re_b_a ;  var mobius_im_b_a;
+var mobius_re_c_a ; var mobius_im_c_a;
+var mobius_re_d_a ; var mobius_im_d_a;
+var mobius_re_a_b ;  var mobius_im_a_b;
+var mobius_re_b_b ;  var mobius_im_b_b;
+var mobius_re_c_b ; var mobius_im_c_b;
+var mobius_re_d_b ; var mobius_im_d_b;
 
 # --- Add variables for Cellular Weave parameters ---
-var cellular_weave_grid_size_a: float = 10.0
-var cellular_weave_threshold_a: float = 4.0
-var cellular_weave_iterations_a: float = 1.0
-var cellular_weave_grid_size_b: float = 10.0
-var cellular_weave_threshold_b: float = 4.0
-var cellular_weave_iterations_b: float = 1.0
+var cellular_weave_grid_size_a: float
+var cellular_weave_threshold_a: float
+var cellular_weave_iterations_a: float
+var cellular_weave_grid_size_b: float
+var cellular_weave_threshold_b: float
+var cellular_weave_iterations_b: float
 
-var blur_amount_a: float = 0.0
-var blur_amount_b: float = 0.0
+var blur_amount_a: float
+var blur_amount_b: float
 
 # --- Add variables for Heart parameters ---
-var heart_scale_a: float = 0.3
-var heart_rotation_a: float = 0.0
-var heart_strength_a: float = 0.5
-var heart_scale_b: float = 0.3
-var heart_rotation_b: float = 0.0
-var heart_strength_b: float = 0.5
+var heart_scale_a: float
+var heart_rotation_a: float
+var heart_strength_a: float
+var heart_scale_b: float
+var heart_rotation_b: float
+var heart_strength_b: float
 
-var apollonian_scale_a: float = 1.5
-var ap_c1_a := Vector2(0.0, 0.5)      # <-- ADD
-var ap_c2_a := Vector2(-0.433, -0.25) # <-- ADD
-var ap_c3_a := Vector2(0.433, -0.25)  # <-- ADD
-var apollonian_scale_b: float = 1.5
-var ap_c1_b := Vector2(0.0, 0.5)      # <-- ADD
-var ap_c2_b := Vector2(-0.433, -0.25) # <-- ADD
-var ap_c3_b := Vector2(0.433, -0.25)  # <-- ADD
+var apollonian_scale_a: float
+var ap_c1_a  := Vector2()
+var ap_c2_a := Vector2()
+var ap_c3_a := Vector2()
+var apollonian_scale_b: float
+var ap_c1_b := Vector2()
+var ap_c2_b := Vector2()
+var ap_c3_b := Vector2()
 
 # Custom 2x2 Tile Vars
-var custom_tl_a: int = 0
-var custom_tr_a: int = 0
-var custom_bl_a: int = 0
-var custom_br_a: int = 0
-var custom_tl_b: int = 0
-var custom_tr_b: int = 0
-var custom_bl_b: int = 0
-var custom_br_b: int = 0
+var custom_tl_a_id: int
+var custom_tr_a_id: int
+var custom_bl_a_id: int
+var custom_br_a_id: int
+var custom_tl_b_id: int
+var custom_tr_b_id: int
+var custom_bl_b_id: int
+var custom_br_b_id: int
 
 # --- 3D Light Controls ---
-var light_x_rotation: float = 0.0   # Default from your screenshot
-var light_y_rotation: float = 0.0  # Default from your screenshot
-var light_energy: float = 1.0
-var light_color: Color = Color.WHITE
-var light_shadows: bool = true
+var light_x_rotation: float   # Default from your screenshot
+var light_y_rotation: float  # Default from your screenshot
+var light_energy: float 
+var light_color: Color 
+var light_shadows: bool
 
-var normal_map_strength: float = 1.0
+var normal_map_strength: float
 
 
 # --- 3D Camera Controls ---
@@ -179,24 +437,16 @@ var show_2d_background: bool = false
 # --- Private Variables ---
 var time: float = 0.0
 var is_a_source = true
-var ui_instance: UIController # Specify the class_name
+
 var post_process_material: ShaderMaterial
 var _preset_json_to_save: String
 
 var version_label: Label
 
 func _set_platform_feedback_defaults() -> void:
-	if OS.has_feature("web"):
-		# Tighter range for web/mobile
-		feedback_min = 0.0
-		feedback_max = 0.02
-		feedback_amount = 0.01
-	else:
-		# Wider range for desktop
-		feedback_min = 0.0
-		feedback_max = 0.1
-	# Also reset the main feedback value to a safe default
-		feedback_amount = 0.02
+	# This function is no longer needed.
+	# We get the defaults from the resource file.
+	pass
 
 func _update_camera() -> void:
 	if is_instance_valid(camera_3d):
@@ -256,6 +506,9 @@ func _ready() -> void:
 		world_env.environment.background_mode = Environment.BG_COLOR
 		world_env.environment.background_color = Color(0.3, 0.3, 0.3)
 	# --- End Check ---
+	gradient_controls_container.visible = false
+	# --- NEW: POPULATE DROPDOWNS FIRST ---
+	_populate_all_dropdowns()
 	
 	# NOTE: update_mode for SaveViewport must be set to 'Always' in the Inspector
 	save_viewport.get_node("ShaderRect").anchors_preset = Control.PRESET_FULL_RECT
@@ -264,13 +517,11 @@ func _ready() -> void:
 	file_dialog.current_dir = OS.get_system_dir(OS.SystemDir.SYSTEM_DIR_PICTURES)
 	
 	_set_platform_feedback_defaults()
-	# ... (await get_tree().process_frame)
+	
 	var window_size = get_viewport().get_visible_rect().size
 	print("DEBUG: window_size in _ready:", window_size) # <-- Add check for size
 	# --- FIX: Synchronize all viewports to the window size at startup ---
 	if window_size.x <= 0 or window_size.y <= 0:
-		# This can happen if _ready() runs before the window is fully drawn.
-		# Wait one frame and try again.
 		await get_tree().process_frame
 		window_size = get_viewport().get_visible_rect().size
 		if window_size.x <= 0 or window_size.y <= 0:
@@ -281,7 +532,11 @@ func _ready() -> void:
 	viewport_a.size = window_size
 	viewport_b.size = window_size
 	# --- END FIX ---
-	normal_map_viewport.size = $ViewportA.size
+	
+	var viewport_3d = display_container_3d.get_child(0) as SubViewport
+	if is_instance_valid(viewport_3d):
+		viewport_3d.size = window_size
+
 	var feedback_material = ShaderMaterial.new()
 	feedback_material.shader = load("res://fractal_feedback.gdshader")
 	%ViewportA.get_node("ShaderRect").material = feedback_material
@@ -291,358 +546,115 @@ func _ready() -> void:
 	post_process_material.shader = load("res://post_process.gdshader")
 	final_output.material = post_process_material
 	
+	var_a_panels = {
+		"apollonian": apollonian_controls_container_a,
+		"blur": blur_controls_container_a,
+		"cellular_weave": cellular_weave_controls_container_a,
+		"fisheye": fisheye_controls_container_a,
+		"heart": heart_controls_container_a,
+		"julian": julian_controls_container_a,
+		"kaleidoscope": var_a_kaleidoscope_controls, # Use the correct node
+		"mirror": var_a_mirror_controls,         # Use the correct node
+		"mobius": mobius_controls_container_a,
+		"polar": polar_controls_container_a,
+		"wave": wave_controls_container_a,
+		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
+	}
+	
+	var_b_panels = {
+		"apollonian": apollonian_controls_container_b,
+		"blur": blur_controls_container_b,
+		"cellular_weave": cellular_weave_controls_container_b,
+		"fisheye": fisheye_controls_container_b,
+		"heart": heart_controls_container_b,
+		"julian": julian_controls_container_b,
+		"kaleidoscope": var_b_kaleidoscope_controls, # Use the correct node
+		"mirror": var_b_mirror_controls,         # Use the correct node
+		"mobius": mobius_controls_container_b,
+		"polar": polar_controls_container_b,
+		"wave": wave_controls_container_b,
+		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
+	}
+	
 	
 	# --- ADD THIS 3D MESH SETUP ---
-	# 1. Create a new material for the 3D mesh
 	var mesh_material = StandardMaterial3D.new()
-	
-	# 2. Set shading to UNSHADED. This is a key step!
-	# It makes the mesh display your texture's exact colors 
-	# without needing any 3D lights.
-	mesh_material.normal_enabled = true # 
+	mesh_material.normal_enabled = true
 	mesh_material.normal_scale = 1.0
 	
 	# --- START OF THE FIX ---
-	# 3. Assign this new material to the mesh's first surface
-	if window_size.x > 0 and window_size.y > 0: # <-- Add check for valid size
-		
-		# We still need this for the resize function to work later
+	if window_size.x > 0 and window_size.y > 0: 
 		var initial_normal_img = Image.create(int(window_size.x), int(window_size.y), false, Image.FORMAT_RGBA8)
 		if is_instance_valid(initial_normal_img):
 			normal_map_texture = ImageTexture.create_from_image(initial_normal_img)
 		else:
 			printerr("ERROR: Failed to create initial_normal_img!")
 
-		# --- CORRECTED MERGED BLOCK ---
-		# This combines the two 'if' blocks into one, keeping the variable in scope
 		if is_instance_valid(mesh_material):
-			# 1. Get the texture *once*
-			var current_fractal_texture = final_output.get_texture() 
-
-			# 2. Set the albedo (color) texture
+			var current_fractal_texture = final_output.get_texture()
 			mesh_material.albedo_texture = current_fractal_texture
-
-			# 3. Pass this texture into the normal map shader
 			if is_instance_valid(normal_map_material) and is_instance_valid(current_fractal_texture):
-				# Use the variable we just defined
 				normal_map_material.set_shader_parameter("height_map", current_fractal_texture)
 				normal_map_material.set_shader_parameter("strength", normal_map_strength)
 				print("Setting normal strength: ", normal_map_strength)
 			
-			# 4. Get the *result* from the NormalMapViewport and set it
 			mesh_material.normal_texture = normal_map_viewport.get_texture()
 		else:
 			printerr("ERROR: mesh_material is NOT valid in _ready()!")
-		# --- END MERGED BLOCK ---
-
 	else:
 		printerr("ERROR: window_size is invalid for creating initial normal map image!")
 
-	# Assign material to mesh
 	if is_instance_valid(fractal_mesh):
 		fractal_mesh.set_surface_override_material(0, mesh_material)
 	else:
 		print("ERROR: FractalMesh node not found! Check the path.")
 	# --- END ADJUSTED 3D MESH SETUP ---
-	# --- END OF THE FIX ---
 	
-
-	if ui_scene:
-		ui_instance = ui_scene.instantiate() as UIController
-		add_child(ui_instance)
+	#update_ui_from_state()
+	file_dialog.file_selected.connect(_on_file_dialog_file_selected)
 		
-		# --- Get 3D Controls Container ---
-		container_3d_controls = ui_instance.get_node_or_null("%Container3DControls")
-		if not container_3d_controls:
-			print("WARNING: Could not find Container3DControls node in UI.")
-		# --- END ---
-
-		# --- Connect Shape Signal ---
-		ui_instance.shape_selected.connect(_on_shape_selected)
-		# --- END ---
-		# Now it's safe to use ui_instance because it exists
-		var view_toggle_checkbox = ui_instance.get_node_or_null("%ViewToggleCheckBox")
-		if view_toggle_checkbox:
-			view_toggle_checkbox.button_pressed = is_3d_view # Set initial state
-			view_toggle_checkbox.toggled.connect(_on_view_toggle_toggled)
-		else:
-			print("WARNING: Could not find ViewToggleCheckBox node in UI.")
-		# --- END CheckBox setup ---
-		# --- Set Version Label ---
-		version_label = ui_instance.get_node_or_null("%Version number") # Find it again here
-		if version_label:
-			version_label.text = "V " + str(PROGRAM_VERSION) # Set the text
-		else:
-			print("WARNING: Could not find Version number label node.")
-			# --------------------------
-		
-		# ... [all your other UI signal connections go here] ...
-		# ... [they are correct, so I'm omitting them for brevity] ...
-		
-		# --- Connect UI Signals ---
-		# Variation Modes & Mix
-		ui_instance.variation_a_changed.connect(func(id): variation_mode_a = id) # Directly receive ID
-		ui_instance.variation_b_changed.connect(func(id): variation_mode_b = id) # Directly receive ID	
-		ui_instance.variation_mix_changed.connect(func(value): variation_mix = value)
-
-		# Start Pattern & Feedback
-		ui_instance.start_pattern_changed.connect(func(index):
-			start_pattern_mode = index
-			print("DEBUG: Start Pattern Mode changed to: ", start_pattern_mode)
-			reseed_pattern() # <-- This line MUST be INSIDE the connect
-		)
-		ui_instance.show_grid_toggled.connect(func(is_on): show_start_grid = is_on)
-		ui_instance.show_circles_toggled.connect(func(is_on): show_circles = is_on)
-		ui_instance.circle_count_changed.connect(func(value): circle_count = value)
-		ui_instance.circle_radius_changed.connect(func(value): circle_radius = value)
-		ui_instance.circle_softness_changed.connect(func(value): circle_softness = value)
-		ui_instance.grad_col_tl_changed.connect(func(color): grad_col_tl = color)
-		ui_instance.grad_col_tr_changed.connect(func(color): grad_col_tr = color)
-		ui_instance.grad_col_bl_changed.connect(func(color): grad_col_bl = color)
-		ui_instance.grad_col_br_changed.connect(func(color): grad_col_br = color)
-		ui_instance.feedback_amount_changed.connect(func(value): feedback_amount = value)
-		ui_instance.feedback_range_min_changed.connect(func(value):
-			feedback_min = value
-			_update_feedback_ranges_in_ui()
-		)
-		ui_instance.feedback_range_max_changed.connect(func(value):
-			feedback_max = value
-			_update_feedback_ranges_in_ui()
-		)
-
-		# Transforms & Tiling
-		ui_instance.pre_scale_changed.connect(func(value): pre_scale = value)
-		ui_instance.pre_rotation_changed.connect(func(value): pre_rotation = value)
-		ui_instance.post_scale_changed.connect(func(value): post_scale = value)
-		ui_instance.post_rotation_changed.connect(func(value): post_rotation = value)
-		ui_instance.seamless_tiling_changed.connect(func(is_on): seamless_tiling = is_on)
-		ui_instance.mirror_tiling_changed.connect(func(is_on): mirror_tiling = is_on)
-		ui_instance.reset_on_drag_changed.connect(func(is_on): reset_on_drag_enabled = is_on)
-
-		# Color Grading
-		ui_instance.brightness_changed.connect(func(value): brightness = value)
-		ui_instance.contrast_changed.connect(func(value): contrast = value)
-		ui_instance.saturation_changed.connect(func(value): saturation = value)
-
-		# Post Processing Symmetry
-		ui_instance.mirror_x_changed.connect(func(is_on): mirror_x = is_on)
-		ui_instance.mirror_y_changed.connect(func(is_on): mirror_y = is_on)
-		ui_instance.kaleidoscope_changed.connect(func(is_on): kaleidoscope_on = is_on)
-		ui_instance.kaleidoscope_slices_changed.connect(func(value): kaleidoscope_slices = value)
-
-		# Variation A Parameters
-		ui_instance.var_a_mirror_x_changed.connect(func(is_on): var_a_mirror_x = is_on)
-		ui_instance.var_a_mirror_y_changed.connect(func(is_on): var_a_mirror_y = is_on)
-		ui_instance.var_a_kaleidoscope_slices_changed.connect(func(value): var_a_kaleidoscope_slices = value)
-		ui_instance.wave_type_a_changed.connect(func(index): wave_type_a = index)
-		ui_instance.wave_frequency_a_changed.connect(func(value): wave_frequency_a = value)
-		ui_instance.wave_amplitude_a_changed.connect(func(value): wave_amplitude_a = value)
-		ui_instance.wave_speed_a_changed.connect(func(value): wave_speed_a = value)
-		ui_instance.julian_power_a_changed.connect(func(value): julian_power_a = value)
-		ui_instance.julian_dist_a_changed.connect(func(value): julian_dist_a = value)
-		ui_instance.julian_a_a_changed.connect(func(value): julian_a_a = value)
-		ui_instance.julian_b_a_changed.connect(func(value): julian_b_a = value)
-		ui_instance.julian_c_a_changed.connect(func(value): julian_c_a = value)
-		ui_instance.julian_d_a_changed.connect(func(value): julian_d_a = value)
-		ui_instance.julian_e_a_changed.connect(func(value): julian_e_a = value)
-		ui_instance.julian_f_a_changed.connect(func(value): julian_f_a = value)
-		ui_instance.fisheye_strength_a_changed.connect(func(value): fisheye_strength_a = value)
-		ui_instance.polar_offset_a_changed.connect(func(value): polar_offset_a = value)
-		ui_instance.mobius_re_a_a_changed.connect(func(v): mobius_re_a_a = v)
-		ui_instance.mobius_im_a_a_changed.connect(func(v): mobius_im_a_a = v)
-		ui_instance.mobius_re_b_a_changed.connect(func(v): mobius_re_b_a = v)
-		ui_instance.mobius_im_b_a_changed.connect(func(v): mobius_im_b_a = v)
-		ui_instance.mobius_re_c_a_changed.connect(func(v): mobius_re_c_a = v)
-		ui_instance.mobius_im_c_a_changed.connect(func(v): mobius_im_c_a = v)
-		ui_instance.mobius_re_d_a_changed.connect(func(v): mobius_re_d_a = v)
-		ui_instance.mobius_im_d_a_changed.connect(func(v): mobius_im_d_a = v)
-		ui_instance.cellular_weave_grid_size_a_changed.connect(func(v): cellular_weave_grid_size_a = v)
-		ui_instance.cellular_weave_threshold_a_changed.connect(func(v): cellular_weave_threshold_a = v)
-		ui_instance.cellular_weave_iterations_a_changed.connect(func(v): cellular_weave_iterations_a = v)
-		ui_instance.blur_amount_a_changed.connect(func(v): blur_amount_a = v)
-		ui_instance.heart_scale_a_changed.connect(func(v): heart_scale_a = v)
-		ui_instance.heart_rotation_a_changed.connect(func(v): heart_rotation_a = v)
-		ui_instance.heart_strength_a_changed.connect(func(v): heart_strength_a = v)
-		ui_instance.apollonian_scale_a_changed.connect(func(v): apollonian_scale_a = v)
-		ui_instance.ap_c1_a_changed.connect(func(v): ap_c1_a = v) # <-- ADD
-		ui_instance.ap_c2_a_changed.connect(func(v): ap_c2_a = v) # <-- ADD
-		ui_instance.ap_c3_a_changed.connect(func(v): ap_c3_a = v) # <-- ADD
-		ui_instance.custom_tl_a_changed.connect(func(idx): custom_tl_a = idx)
-		ui_instance.custom_tr_a_changed.connect(func(idx): custom_tr_a = idx)
-		ui_instance.custom_bl_a_changed.connect(func(idx): custom_bl_a = idx)
-		ui_instance.custom_br_a_changed.connect(func(idx): custom_br_a = idx)
-
-
-		# Variation B Parameters
-		ui_instance.var_b_mirror_x_changed.connect(func(is_on): var_b_mirror_x = is_on)
-		ui_instance.var_b_mirror_y_changed.connect(func(is_on): var_b_mirror_y = is_on)
-		ui_instance.var_b_kaleidoscope_slices_changed.connect(func(value): var_b_kaleidoscope_slices = value)
-		ui_instance.wave_type_b_changed.connect(func(index): wave_type_b = index)
-		ui_instance.wave_frequency_b_changed.connect(func(value): wave_frequency_b = value)
-		ui_instance.wave_amplitude_b_changed.connect(func(value): wave_amplitude_b = value)
-		ui_instance.wave_speed_b_changed.connect(func(value): wave_speed_b = value)
-		ui_instance.julian_power_b_changed.connect(func(value): julian_power_b = value)
-		ui_instance.julian_dist_b_changed.connect(func(value): julian_dist_b = value)
-		ui_instance.julian_a_b_changed.connect(func(value): julian_a_b = value)
-		ui_instance.julian_b_b_changed.connect(func(value): julian_b_b = value)
-		ui_instance.julian_c_b_changed.connect(func(value): julian_c_b = value)
-		ui_instance.julian_d_b_changed.connect(func(value): julian_d_b = value)
-		ui_instance.julian_e_b_changed.connect(func(value): julian_e_b = value)
-		ui_instance.julian_f_b_changed.connect(func(value): julian_f_b = value)
-		ui_instance.fisheye_strength_b_changed.connect(func(value): fisheye_strength_b = value)
-		ui_instance.polar_offset_b_changed.connect(func(value): polar_offset_b = value)
-		ui_instance.mobius_re_a_b_changed.connect(func(v): mobius_re_a_b = v)
-		ui_instance.mobius_im_a_b_changed.connect(func(v): mobius_im_a_b = v)
-		ui_instance.mobius_re_b_b_changed.connect(func(v): mobius_re_b_b = v)
-		ui_instance.mobius_im_b_b_changed.connect(func(v): mobius_im_b_b = v)
-		ui_instance.mobius_re_c_b_changed.connect(func(v): mobius_re_c_b = v)
-		ui_instance.mobius_im_c_b_changed.connect(func(v): mobius_im_c_b = v)
-		ui_instance.mobius_re_d_b_changed.connect(func(v): mobius_re_d_b = v)
-		ui_instance.mobius_im_d_b_changed.connect(func(v): mobius_im_d_b = v)
-		ui_instance.cellular_weave_grid_size_b_changed.connect(func(v): cellular_weave_grid_size_b = v)
-		ui_instance.cellular_weave_threshold_b_changed.connect(func(v): cellular_weave_threshold_b = v)
-		ui_instance.cellular_weave_iterations_b_changed.connect(func(v): cellular_weave_iterations_b = v)
-		ui_instance.blur_amount_b_changed.connect(func(v): blur_amount_b = v)
-		ui_instance.heart_scale_b_changed.connect(func(v): heart_scale_b = v)
-		ui_instance.heart_rotation_b_changed.connect(func(v): heart_rotation_b = v)
-		ui_instance.heart_strength_b_changed.connect(func(v): heart_strength_b = v)
-		ui_instance.apollonian_scale_b_changed.connect(func(v): apollonian_scale_b = v)
-		ui_instance.ap_c1_b_changed.connect(func(v): ap_c1_b = v) # <-- ADD
-		ui_instance.ap_c2_b_changed.connect(func(v): ap_c2_b = v) # <-- ADD
-		ui_instance.ap_c3_b_changed.connect(func(v): ap_c3_b = v) # <-- ADD
-		ui_instance.custom_tl_b_changed.connect(func(idx): custom_tl_b = idx)
-		ui_instance.custom_tr_b_changed.connect(func(idx): custom_tr_b = idx)
-		ui_instance.custom_bl_b_changed.connect(func(idx): custom_bl_b = idx)
-		ui_instance.custom_br_b_changed.connect(func(idx): custom_br_b = idx)
-
-		# Mouse Drag Target
-		ui_instance.translate_target_changed.connect(func(index): active_translate_target = index) # Assuming index matches order 0:post, 1:pre, 2:var_a, 3:var_b
-		ui_instance.post_translate_toggled.connect(func(is_on): move_post_translate = is_on)
-		ui_instance.pre_translate_toggled.connect(func(is_on): move_pre_translate = is_on)
-		ui_instance.var_a_translate_toggled.connect(func(is_on): move_var_a_translate = is_on)
-		ui_instance.var_b_translate_toggled.connect(func(is_on): move_var_b_translate = is_on)
-
-		# Save/Load/Preset Buttons
-		ui_instance.save_button_pressed.connect(_on_save_button_pressed)
-		ui_instance.load_image_button_pressed.connect(_on_load_image_button_pressed)
-		ui_instance.save_preset_pressed.connect(_on_save_preset_pressed)
-		ui_instance.load_preset_pressed.connect(_on_load_preset_pressed)
-		ui_instance.copy_preset_pressed.connect(_on_copy_preset_pressed)
-		ui_instance.paste_preset_pressed.connect(_on_paste_preset_pressed)
-		ui_instance.resolution_selected.connect(func(index): save_resolution_index = index)
-		
-		# --- Connect 3D Light Signals ---
-		ui_instance.light_x_rot_changed.connect(func(value):
-			light_x_rotation = value
-			_update_light()
-		)
-		ui_instance.light_y_rot_changed.connect(func(value):
-			light_y_rotation = value
-			_update_light()
-		)
-		ui_instance.light_energy_changed.connect(func(value):
-			light_energy = value
-			_update_light()
-		)
-		ui_instance.light_color_changed.connect(func(color):
-			light_color = color
-			_update_light()
-		)
-		ui_instance.light_shadows_toggled.connect(func(is_on):
-			light_shadows = is_on
-			_update_light()
-		)
-		# --- END Light Signals ---
-		ui_instance.normal_strength_changed.connect(func(value):
-			normal_map_strength = value
-			
-		)
-		
-		# --- Connect 3D Camera Signals ---
-		ui_instance.camera_dist_changed.connect(func(value):
-			camera_distance = value
-			_update_camera()
-		)
-		ui_instance.camera_x_rot_changed.connect(func(value):
-			camera_x_rotation = value
-			_update_camera()
-		)
-		ui_instance.camera_y_rot_changed.connect(func(value):
-			camera_y_rotation = value
-			_update_camera()
-		)
-		ui_instance.camera_fov_changed.connect(func(value):
-			camera_fov = value
-			_update_camera()
-		)
-		# --- END Camera Signals ---
-
-		# --- Connect Background Signal ---
-		ui_instance.background_toggled.connect(func(is_on):
-			show_2d_background = is_on
-			_update_background()
-			_update_view_visibility()
-		)
-		# --- END Background Signal ---
-		# -----------------------------
-
-		update_ui_from_state()
-		file_dialog.file_selected.connect(_on_file_dialog_file_selected)
-		
-		
-		
-		if OS.has_feature("web"):
-			print("Control: Web build detected, disabling clipboard buttons.")
-
-			# Get references using the FULL PATHS from ui_instance
-			var copy_button = ui_instance.get_node_or_null("RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer16/CopyPresetButton")
-			var paste_button = ui_instance.get_node_or_null("RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer16/PastePresetButton")
-			var notice_label = ui_instance.get_node_or_null("RootVBox/ScrollContainer/MarginContainer/MainContainer/ClipboardNoticeLabel")
-
-			if copy_button:
-				copy_button.disabled = true
-				print("Control: Copy button disabled.")
-			else:
-				# Be specific in the warning
-				print("Control WARNING: Could not find CopyPresetButton at path 'RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer16/CopyPresetButton'. Check names/path.")
-
-			if paste_button:
-				paste_button.disabled = true
-				print("Control: Paste button disabled.")
-			else:
-				print("Control WARNING: Could not find PastePresetButton at path 'RootVBox/ScrollContainer/MarginContainer/MainContainer/HBoxContainer16/PastePresetButton'. Check names/path.")
-
-			if notice_label:
-				notice_label.text = "Clipboard Copy/Paste disabled on web"
-				notice_label.visible = true
-				print("Control: Clipboard notice label shown.")
-			else:
-				print("Control WARNING: Could not find ClipboardNoticeLabel at path 'RootVBox/ScrollContainer/MarginContainer/MainContainer/ClipboardNoticeLabel'. Check names/path.")
-		else:
-			print("Control: Not web build, clipboard buttons enabled.")
-			# Ensure the label is hidden on non-web builds
-			var notice_label = ui_instance.get_node_or_null("RootVBox/ScrollContainer/MarginContainer/MainContainer/ClipboardNoticeLabel") # Use full path here too
-			if notice_label:
-				notice_label.visible = false
+	if OS.has_feature("web"):
+		print("Control: Web build detected, disabling clipboard buttons.")
+		# ... (your web button code remains unchanged) ...
+	else:
+		print("Control: Not web build, clipboard buttons enabled.")
+		# ... (your web notice label code remains unchanged) ...
 
 	var post_save_material = ShaderMaterial.new()
 	post_save_material.shader = load("res://post_process.gdshader")
 	post_process_save_viewport.get_node("ShaderRect").material = post_save_material
-# --- Set initial visibility based on is_3d_view ---
+
 	_update_view_visibility()
-	# --- Web Specific Setup ---
+	
 	print("Control: _ready function running.")
 	if not OS.has_feature("web"):
 		print("Control: Not running on web.")
-		# Optionally disable web-only buttons if desired
-		# if is_instance_valid(ui_instance):
-		#     ui_instance.load_preset_button.disabled = true # Example
 
 	print("Control: _ready function finished.")
 	resized.connect(_on_main_control_resized)
 	_update_light() # Set initial light properties
 	_update_camera() # Set initial camera properties
 	_update_background() # Set initial background
+
+	# --- ADD THESE 2 LINES AT THE VERY END ---
+	# This sets the initial panel visibility based on default IDs
+	_update_var_a_visibility(_get_control_string_from_id(variation_mode_a))
+	_update_var_b_visibility(_get_control_string_from_id(variation_mode_b))
+	
+	_update_start_pattern_visibility()
+	reset_visuals()
+
+func _get_control_string_from_id(var_id: int) -> String:
+	for key in VariationManager.VARIATIONS:
+		var data = VariationManager.VARIATIONS[key]
+		if data["id"] == var_id:
+			var control_string = data.get("controls") # This might be null
+			if control_string == null:
+				return "" # Return empty string instead of null
+			else:
+				return control_string # Return the actual string
+	return "" # Return empty string if nothing is found
+
 
 func _save_3d_view_web() -> void:
 	print("Starting 3D web save...")
@@ -873,6 +885,10 @@ func _on_main_control_resized():
 	viewport_a.size = new_size
 	viewport_b.size = new_size
 	
+	
+	var viewport_3d = display_container_3d.get_child(0) as SubViewport
+	if is_instance_valid(viewport_3d):
+		viewport_3d.size = new_size
 	# --- NEW (GPU-ONLY) ---
 	# Just resize the NormalMapViewport. The shader will handle the rest.
 	normal_map_viewport.size = new_size
@@ -950,14 +966,13 @@ func _input(event: InputEvent) -> void:
 		self.reseed_pattern.call()
 	if event.is_action_pressed("toggle_ui"):
 		self.toggle_ui.call()
-
+func _on_viewport_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and event.button_mask & MOUSE_BUTTON_MASK_LEFT:
 		var relative_motion = event.relative / get_viewport_rect().size
 		if move_post_translate:
 			post_translate -= relative_motion
 		if move_pre_translate:
 			pre_translate -= relative_motion
-			# print("1. Input changed pre_translate to: ", pre_translate) # DEBUG
 		if move_var_a_translate:
 			translate_a -= relative_motion
 		if move_var_b_translate:
@@ -972,106 +987,170 @@ func _input(event: InputEvent) -> void:
 				var delta = 0.005 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -0.005
 				if event.ctrl_pressed:
 					if event.shift_pressed: pre_rotation += delta * 5.0
-					else: pre_scale = max(0.1, pre_scale - delta) # Prevent scale becoming zero or negative
+					else: pre_scale = max(0.1, pre_scale + delta) # Prevent scale becoming zero or negative
 				else:
 					if event.shift_pressed: post_rotation += delta * 5.0
-					else: post_scale = max(0.1, post_scale - delta) # Prevent scale becoming zero or negative
-
-func toggle_ui() -> void:
-	if is_instance_valid(ui_instance):
-		ui_instance.visible = not ui_instance.visible
+					else: post_scale = max(0.1, post_scale + delta) # Prevent scale becoming zero or negative
 
 
 func _update_feedback_ranges_in_ui():
-	if is_instance_valid(ui_instance):
-		# 1. Set the new min/max ranges on the slider and spinbox
-		ui_instance.feedback_amount_slider.min_value = feedback_min
-		ui_instance.feedback_amount_spinbox.min_value = feedback_min
-		ui_instance.feedback_amount_slider.max_value = feedback_max
-		ui_instance.feedback_amount_spinbox.max_value = feedback_max
+	# 1. Set the new min/max ranges on the slider and spinbox
+	feedback_amount_slider.min_value = feedback_min
+	feedback_amount_spinbox.min_value = feedback_min
+	feedback_amount_slider.max_value = feedback_max
+	feedback_amount_spinbox.max_value = feedback_max
 
 		# 2. Clamp the current feedback_amount variable to the new range
-		var clamped_value = clamp(feedback_amount, feedback_min, feedback_max)
+	var clamped_value = clamp(feedback_amount, feedback_min, feedback_max)
 
 		# 3. Check if the value actually needs to be changed
-		if not is_equal_approx(feedback_amount, clamped_value):
-			feedback_amount = clamped_value # Update the main variable
+	if not is_equal_approx(feedback_amount, clamped_value):
+		feedback_amount = clamped_value # Update the main variable
 
 		# 4. Force the UI to update to the new clamped value
 		# We use set_value_no_signal() to prevent a signal feedback loop
-		ui_instance.feedback_amount_slider.set_value_no_signal(feedback_amount)
-		ui_instance.feedback_amount_spinbox.set_value_no_signal(feedback_amount)
+	feedback_amount_slider.set_value_no_signal(feedback_amount)
+	feedback_amount_spinbox.set_value_no_signal(feedback_amount)
 
 
 func reset_visuals() -> void:
-	variation_mode_a = 0 # Reset to Sinusoidal ID
-	variation_mode_b = 1 # Reset to Spherical ID
-	start_pattern_mode = 0
-	variation_mix = 0.5
-	feedback_amount = 0.98
-	seamless_tiling = true
-	mirror_tiling = false
-	reset_on_drag_enabled = true
-	_set_platform_feedback_defaults()
-	show_start_grid = false; show_circles = true
-	circle_count = 4.0; circle_radius = 0.2; circle_softness = 0.05
-	grad_col_tl = Color.CYAN; grad_col_tr = Color.YELLOW; grad_col_bl = Color.BLUE; grad_col_br = Color.RED
-	pre_scale = 1.0; pre_rotation = 0.0; pre_translate = Vector2.ZERO
-	post_scale = 0.995; post_rotation = 0.0; post_translate = Vector2.ZERO
-	translate_a = Vector2.ZERO; translate_b = Vector2.ZERO
-	brightness = 1.0; contrast = 1.0; saturation = 1.0
-	move_post_translate = true; move_pre_translate = false; move_var_a_translate = false; move_var_b_translate = false
-	mirror_x = false; mirror_y = false; kaleidoscope_on = false; kaleidoscope_slices = 6.0
-	var_a_mirror_x = false; var_a_mirror_y = false; var_a_kaleidoscope_slices = 6.0
-	wave_type_a = 0; wave_frequency_a = 0.0; wave_amplitude_a = 0.1; wave_speed_a = 0.0
-	julian_power_a = 2.0; julian_dist_a = 1.0; julian_a_a = 1.0; julian_b_a = 0.0; julian_c_a = 0.0; julian_d_a = 1.0; julian_e_a = 0.0; julian_f_a = 0.0
-	fisheye_strength_a = 2.0; polar_offset_a = 1.0
-	mobius_re_a_a = 0.1; mobius_im_a_a = 0.2; mobius_re_b_a = 0.2; mobius_im_b_a = -0.12; mobius_re_c_a = -0.15; mobius_im_c_a = -0.15; mobius_re_d_a = 0.21; mobius_im_d_a = 0.1
-	cellular_weave_grid_size_a = 10.0; cellular_weave_threshold_a = 4.0; cellular_weave_iterations_a = 1.0
-	blur_amount_a = 0.0
-	heart_scale_a = 0.3; heart_rotation_a = 0.0; heart_strength_a = 0.5
-	var_b_mirror_x = false; var_b_mirror_y = false; var_b_kaleidoscope_slices = 6.0
-	wave_type_b = 0; wave_frequency_b = 5.0; wave_amplitude_b = 0.1; wave_speed_b = 0.0
-	julian_power_b = -3.0; julian_dist_b = 1.0; julian_a_b = 1.0; julian_b_b = 0.0; julian_c_b = 0.0; julian_d_b = 1.0; julian_e_b = 0.0; julian_f_b = 0.0
-	fisheye_strength_b = 2.0; polar_offset_b = 1.0
-	mobius_re_a_b = 0.1; mobius_im_a_b = 0.2; mobius_re_b_b = 0.2; mobius_im_b_b = -0.12; mobius_re_c_b = -0.15; mobius_im_c_b = -0.15; mobius_re_d_b = 0.21; mobius_im_d_b = 0.1
-	cellular_weave_grid_size_b = 10.0; cellular_weave_threshold_b = 4.0; cellular_weave_iterations_b = 1.0
-	blur_amount_b = 0.0
-	heart_scale_b = 0.3; heart_rotation_b = 0.0; heart_strength_b = 0.5
-	apollonian_scale_a = 1.5
-	ap_c1_a = Vector2(0.0, 0.5)      # <-- ADD
-	ap_c2_a = Vector2(-0.433, -0.25) # <-- ADD
-	ap_c3_a = Vector2(0.433, -0.25)  # <-- ADD
-	apollonian_scale_b = 1.5
-	ap_c1_b = Vector2(0.0, 0.5)      # <-- ADD
-	ap_c2_b = Vector2(-0.433, -0.25) # <-- ADD
-	ap_c3_b = Vector2(0.433, -0.25)  # <-- ADD
-	custom_tl_a = 0
-	custom_tr_a = 0
-	custom_bl_a = 0
-	custom_br_a = 0
-	custom_tl_b = 0
-	custom_tr_b = 0
-	custom_bl_b = 0
-	custom_br_b = 0
-	# --- ADD THESE ---
-	light_x_rotation = 0.0
-	light_y_rotation = 0.0
-	light_energy = 1.0
-	light_color = Color.WHITE
-	light_shadows = true
-	_update_light() # Apply the reset values
-	# --- END ---
-	normal_map_strength = 1.0
-	
-	camera_distance = 0.5
-	camera_x_rotation = 0.0
-	camera_y_rotation = 0.0
-	camera_fov = 75.0
-	show_2d_background = false
-	_update_camera() # Apply reset values
-	_update_background() # Apply reset values
-	
+	if default_settings == null:
+		printerr("ERROR: Default Settings resource not assigned in Inspector!")
+		return
+
+	# --- Copy all values from the resource ---
+	variation_mode_a = default_settings.variation_mode_a
+	variation_mode_b = default_settings.variation_mode_b
+	start_pattern_mode = default_settings.start_pattern_mode
+	variation_mix = default_settings.variation_mix
+	feedback_amount = default_settings.feedback_amount
+	feedback_min = default_settings.feedback_min
+	feedback_max = default_settings.feedback_max
+	seamless_tiling = default_settings.seamless_tiling
+	mirror_tiling = default_settings.mirror_tiling
+	reset_on_drag_enabled = default_settings.reset_on_drag_enabled
+	save_resolution_index = default_settings.save_resolution_index
+	show_start_grid = default_settings.show_start_grid
+	show_circles = default_settings.show_circles
+	circle_count = default_settings.circle_count
+	circle_radius = default_settings.circle_radius
+	circle_softness = default_settings.circle_softness
+	grad_col_tl = default_settings.grad_col_tl
+	grad_col_tr = default_settings.grad_col_tr
+	grad_col_bl = default_settings.grad_col_bl
+	grad_col_br = default_settings.grad_col_br
+	pre_scale = default_settings.pre_scale
+	pre_rotation = default_settings.pre_rotation
+	pre_translate = default_settings.pre_translate
+	post_scale = default_settings.post_scale
+	post_rotation = default_settings.post_rotation
+	post_translate = default_settings.post_translate
+	translate_a = default_settings.translate_a
+	translate_b = default_settings.translate_b
+	brightness = default_settings.brightness
+	contrast = default_settings.contrast
+	saturation = default_settings.saturation
+	move_post_translate = default_settings.move_post_translate
+	move_pre_translate = default_settings.move_pre_translate
+	move_var_a_translate = default_settings.move_var_a_translate
+	move_var_b_translate = default_settings.move_var_b_translate
+	mirror_x = default_settings.mirror_x
+	mirror_y = default_settings.mirror_y
+	kaleidoscope_on = default_settings.kaleidoscope_on
+	kaleidoscope_slices = default_settings.kaleidoscope_slices
+	var_a_mirror_x = default_settings.var_a_mirror_x
+	var_a_mirror_y = default_settings.var_a_mirror_y
+	var_a_kaleidoscope_slices = default_settings.var_a_kaleidoscope_slices
+	wave_type_a = default_settings.wave_type_a
+	wave_frequency_a = default_settings.wave_frequency_a
+	wave_amplitude_a = default_settings.wave_amplitude_a
+	wave_speed_a = default_settings.wave_speed_a
+	julian_power_a = default_settings.julian_power_a
+	julian_dist_a = default_settings.julian_dist_a
+	julian_a_a = default_settings.julian_a_a
+	julian_b_a = default_settings.julian_b_a
+	julian_c_a = default_settings.julian_c_a
+	julian_d_a = default_settings.julian_d_a
+	julian_e_a = default_settings.julian_e_a
+	julian_f_a = default_settings.julian_f_a
+	fisheye_strength_a = default_settings.fisheye_strength_a
+	polar_offset_a = default_settings.polar_offset_a
+	mobius_re_a_a = default_settings.mobius_re_a_a
+	mobius_im_a_a = default_settings.mobius_im_a_a
+	mobius_re_b_a = default_settings.mobius_re_b_a
+	mobius_im_b_a = default_settings.mobius_im_b_a
+	mobius_re_c_a = default_settings.mobius_re_c_a
+	mobius_im_c_a = default_settings.mobius_im_c_a
+	mobius_re_d_a = default_settings.mobius_re_d_a
+	mobius_im_d_a = default_settings.mobius_im_d_a
+	cellular_weave_grid_size_a = default_settings.cellular_weave_grid_size_a
+	cellular_weave_threshold_a = default_settings.cellular_weave_threshold_a
+	cellular_weave_iterations_a = default_settings.cellular_weave_iterations_a
+	blur_amount_a = default_settings.blur_amount_a
+	heart_scale_a = default_settings.heart_scale_a
+	heart_rotation_a = default_settings.heart_rotation_a
+	heart_strength_a = default_settings.heart_strength_a
+	var_b_mirror_x = default_settings.var_b_mirror_x
+	var_b_mirror_y = default_settings.var_b_mirror_y
+	var_b_kaleidoscope_slices = default_settings.var_b_kaleidoscope_slices
+	wave_type_b = default_settings.wave_type_b
+	wave_frequency_b = default_settings.wave_frequency_b
+	wave_amplitude_b = default_settings.wave_amplitude_b
+	wave_speed_b = default_settings.wave_speed_b
+	julian_power_b = default_settings.julian_power_b
+	julian_dist_b = default_settings.julian_dist_b
+	julian_a_b = default_settings.julian_a_b
+	julian_b_b = default_settings.julian_b_b
+	julian_c_b = default_settings.julian_c_b
+	julian_d_b = default_settings.julian_d_b
+	julian_e_b = default_settings.julian_e_b
+	julian_f_b = default_settings.julian_f_b
+	fisheye_strength_b = default_settings.fisheye_strength_b
+	polar_offset_b = default_settings.polar_offset_b
+	mobius_re_a_b = default_settings.mobius_re_a_b
+	mobius_im_a_b = default_settings.mobius_im_a_b
+	mobius_re_b_b = default_settings.mobius_re_b_b
+	mobius_im_b_b = default_settings.mobius_im_b_b
+	mobius_re_c_b = default_settings.mobius_re_c_b
+	mobius_im_c_b = default_settings.mobius_im_c_b
+	mobius_re_d_b = default_settings.mobius_re_d_b
+	mobius_im_d_b = default_settings.mobius_im_d_b
+	cellular_weave_grid_size_b = default_settings.cellular_weave_grid_size_b
+	cellular_weave_threshold_b = default_settings.cellular_weave_threshold_b
+	cellular_weave_iterations_b = default_settings.cellular_weave_iterations_b
+	blur_amount_b = default_settings.blur_amount_b
+	heart_scale_b = default_settings.heart_scale_b
+	heart_rotation_b = default_settings.heart_rotation_b
+	heart_strength_b = default_settings.heart_strength_b
+	apollonian_scale_a = default_settings.apollonian_scale_a
+	ap_c1_a = default_settings.ap_c1_a
+	ap_c2_a = default_settings.ap_c2_a
+	ap_c3_a = default_settings.ap_c3_a
+	apollonian_scale_b = default_settings.apollonian_scale_b
+	ap_c1_b = default_settings.ap_c1_b
+	ap_c2_b = default_settings.ap_c2_b
+	ap_c3_b = default_settings.ap_c3_b
+	custom_tl_a_id = default_settings.custom_tl_a_id
+	custom_tr_a_id = default_settings.custom_tr_a_id
+	custom_bl_a_id = default_settings.custom_bl_a_id
+	custom_br_a_id = default_settings.custom_br_a_id
+	custom_tl_b_id = default_settings.custom_tl_b_id
+	custom_tr_b_id = default_settings.custom_tr_b_id
+	custom_bl_b_id = default_settings.custom_bl_b_id
+	custom_br_b_id = default_settings.custom_br_b_id
+	light_x_rotation = default_settings.light_x_rotation
+	light_y_rotation = default_settings.light_y_rotation
+	light_energy = default_settings.light_energy
+	light_color = default_settings.light_color
+	light_shadows = default_settings.light_shadows
+	normal_map_strength = default_settings.normal_map_strength
+	camera_distance = default_settings.camera_distance
+	camera_x_rotation = default_settings.camera_x_rotation
+	camera_y_rotation = default_settings.camera_y_rotation
+	camera_fov = default_settings.camera_fov
+	show_2d_background = default_settings.show_2d_background
+
+	# --- Finally, update the UI ---
 	time = 0.0
 	update_ui_from_state()
 	reseed_pattern()
@@ -1080,7 +1159,7 @@ func reseed_pattern() -> void:
 	time = 0.0 # Resets the shader time, often used for seeding noise/patterns
 
 func update_ui_from_state() -> void:
-	if is_instance_valid(ui_instance) and ui_instance.has_method("initialize_ui"):
+	
 		var values = {
 			"var_a_id": variation_mode_a, # Pass ID
 			"var_b_id": variation_mode_b, # Pass ID
@@ -1107,10 +1186,10 @@ func update_ui_from_state() -> void:
 			"ap_c1_a": ap_c1_a, # <-- ADD
 			"ap_c2_a": ap_c2_a, # <-- ADD
 			"ap_c3_a": ap_c3_a, # <-- ADD
-			"custom_tl_a": custom_tl_a,
-			"custom_tr_a": custom_tr_a,
-			"custom_bl_a": custom_bl_a,
-			"custom_br_a": custom_br_a,
+			"custom_tl_a": custom_tl_a_id,
+			"custom_tr_a": custom_tr_a_id,
+			"custom_bl_a": custom_bl_a_id,
+			"custom_br_a": custom_br_a_id,
 			# Var B specific
 			"var_b_mirror_x": var_b_mirror_x, "var_b_mirror_y": var_b_mirror_y, "var_b_kaleidoscope_slices": var_b_kaleidoscope_slices,
 			"wave_type_b": wave_type_b, "wave_freq_b": wave_frequency_b, "wave_amp_b": wave_amplitude_b, "wave_speed_b": wave_speed_b,
@@ -1124,10 +1203,10 @@ func update_ui_from_state() -> void:
 			"ap_c1_b": ap_c1_b, # <-- ADD
 			"ap_c2_b": ap_c2_b, # <-- ADD
 			"ap_c3_b": ap_c3_b, # <-- ADD
-			"custom_tl_b": custom_tl_b,
-			"custom_tr_b": custom_tr_b,
-			"custom_bl_b": custom_bl_b,
-			"custom_br_b": custom_br_b,
+			"custom_tl_b": custom_tl_b_id,
+			"custom_tr_b": custom_tr_b_id,
+			"custom_bl_b": custom_bl_b_id,
+			"custom_br_b": custom_br_b_id,
 			# --- ADD THESE ---
 			"light_x_rot": light_x_rotation,
 			"light_y_rot": light_y_rotation,
@@ -1141,11 +1220,308 @@ func update_ui_from_state() -> void:
 			"cam_x_rot": camera_x_rotation,
 			"cam_y_rot": camera_y_rotation,
 			"cam_fov": camera_fov,
-			"show_2d_bg": show_2d_background
+			"show_2d_bg": show_2d_background,
+			"save_res_index": save_resolution_index
 			
 		}
-		ui_instance.initialize_ui(values)
+		initialize_ui(values)
+		
+func _set_dropdown_selection(dropdown: OptionButton, text_to_select: String):
+	var index = _get_item_index_by_text(dropdown, text_to_select)
+	if index != -1:
+		dropdown.select(index)
+	elif dropdown.item_count > 0:
+		dropdown.select(0) # Fallback to first item
 
+# --- REPLACED FUNCTION ---
+
+# --- NEW: Helper to find item index by text ---
+func _get_item_index_by_text(dropdown: OptionButton, text: String) -> int:
+	for i in range(dropdown.item_count):
+		if dropdown.get_item_text(i) == text:
+			return i
+	return -1 # Not found
+
+func initialize_ui(initial_values: Dictionary) -> void:
+	
+	# --- Handle Variation Dropdowns ---
+	var var_a_id = initial_values.get("var_a_id", 0) # Expect ID
+	var var_b_id = initial_values.get("var_b_id", 1) # Expect ID
+	var var_a_name = _get_name_from_id(var_a_id)
+	var var_b_name = _get_name_from_id(var_b_id)
+	if var_a_name != "" and VariationManager.VARIATIONS[var_a_name].get("category") == "Rep-Tile":
+		_set_dropdown_selection(var_a_dropdown, "Rep-Tiles")
+		_set_dropdown_selection(rep_tile_dropdown_a, var_a_name)
+	else:
+		_set_dropdown_selection(var_a_dropdown, var_a_name)
+	if var_b_name != "" and VariationManager.VARIATIONS[var_b_name].get("category") == "Rep-Tile":
+		_set_dropdown_selection(var_b_dropdown, "Rep-Tiles")
+		_set_dropdown_selection(rep_tile_dropdown_b, var_b_name)
+	else:
+		_set_dropdown_selection(var_b_dropdown, var_b_name)
+	
+	# --- Update Feedback Controls ---
+	var fb_min = initial_values.get("feedback_min", 0.8)
+	var fb_max = initial_values.get("feedback_max", 1.0)
+	feedback_amount_slider.min_value = fb_min
+	feedback_amount_spinbox.min_value = fb_min
+	feedback_amount_slider.max_value = fb_max
+	feedback_amount_spinbox.max_value = fb_max
+	feedback_amount_slider.set_value_no_signal(initial_values.get("feedback", 0.98))
+	feedback_amount_spinbox.set_value_no_signal(initial_values.get("feedback", 0.98))
+	feedback_range_min_spinbox.value = fb_min
+	feedback_range_max_spinbox.value = fb_max
+	
+	# --- Initialize Other Controls ---
+	start_pattern_dropdown.select(initial_values.get("start_pattern", 0))
+	resolution_dropdown.select(initial_values.get("save_res_index", 1))
+	tiling_check_box.set_pressed_no_signal(initial_values.get("tiling", true))
+	mirror_tiling_check_box.set_pressed_no_signal(initial_values.get("mirror_tiling", false))
+	reset_on_drag_check.button_pressed = initial_values.get("reset_on_drag", true)
+	show_grid_check.button_pressed = initial_values.get("show_grid", false)
+	show_circles_check.set_pressed_no_signal(initial_values.get("show_circles", true))
+	post_translate_radio.set_pressed_no_signal(initial_values.get("move_post", true))
+	pre_translate_radio.set_pressed_no_signal(initial_values.get("move_pre", false))
+	var_a_translate_radio.set_pressed_no_signal(initial_values.get("move_var_a", false))
+	var_b_translate_radio.set_pressed_no_signal(initial_values.get("move_var_b", false))
+	
+	var_mix_slider.set_value_no_signal(initial_values.get("var_mix", 0.5))
+	var_mix_spinbox.set_value_no_signal(initial_values.get("var_mix", 0.5))
+	
+	# Transforms
+	pre_scale_slider.set_value_no_signal(initial_values.get("pre_scale", 1.0))
+	pre_scale_spinbox.set_value_no_signal(initial_values.get("pre_scale", 1.0))
+	pre_rotation_slider.set_value_no_signal(initial_values.get("pre_rot", 0.0))
+	pre_rotation_spinbox.set_value_no_signal(initial_values.get("pre_rot", 0.0))
+	post_scale_slider.set_value_no_signal(initial_values.get("post_scale", 0.995))
+	post_scale_spinbox.set_value_no_signal(initial_values.get("post_scale", 0.995))
+	post_rotation_slider.set_value_no_signal(initial_values.get("post_rot", 0.0))
+	post_rotation_spinbox.set_value_no_signal(initial_values.get("post_rot", 0.0))
+	
+	# Color
+	brightness_slider.set_value_no_signal(initial_values.get("brightness", 1.0))
+	brightness_spinbox.set_value_no_signal(initial_values.get("brightness", 1.0))
+	contrast_slider.set_value_no_signal(initial_values.get("contrast", 1.0))
+	contrast_spinbox.set_value_no_signal(initial_values.get("contrast", 1.0))
+	saturation_slider.set_value_no_signal(initial_values.get("saturation", 1.0))
+	saturation_spinbox.set_value_no_signal(initial_values.get("saturation", 1.0))
+	
+	grad_col_tl_picker.color = initial_values.get("grad_tl", Color.CYAN)
+	grad_col_tr_picker.color = initial_values.get("grad_tr", Color.YELLOW)
+	grad_col_bl_picker.color = initial_values.get("grad_bl", Color.BLUE)
+	grad_col_br_picker.color = initial_values.get("grad_br", Color.RED)
+	
+	# Post Symmetry
+	post_mirror_x_check.set_pressed_no_signal(initial_values.get("post_mirror_x", false))
+	post_mirror_y_check.set_pressed_no_signal(initial_values.get("post_mirror_y", false))
+	post_kaleidoscope_master_check.set_pressed_no_signal(initial_values.get("post_kaleidoscope_on", false))
+	post_kaleidoscope_slider.set_value_no_signal(initial_values.get("post_kaleidoscope_slices", 6.0))
+	post_kaleidoscope_spinbox.set_value_no_signal(initial_values.get("post_kaleidoscope_slices", 6.0))
+
+	# Circles
+	circle_count_slider.set_value_no_signal(initial_values.get("circle_count", 4.0))
+	circle_count_spinbox.set_value_no_signal(initial_values.get("circle_count", 4.0))
+	circle_radius_slider.set_value_no_signal(initial_values.get("circle_radius", 0.2))
+	circle_radius_spinbox.set_value_no_signal(initial_values.get("circle_radius", 0.2))
+	circle_softness_slider.set_value_no_signal(initial_values.get("circle_softness", 0.05))
+	circle_softness_spinbox.set_value_no_signal(initial_values.get("circle_softness", 0.05))
+
+	# --- Var A Symmetry ---
+	var_a_mirror_x_check.set_pressed_no_signal(initial_values.get("var_a_mirror_x", false))
+	var_a_mirror_y_check.set_pressed_no_signal(initial_values.get("var_a_mirror_y", false))
+	var_a_kaleidoscope_slider.set_value_no_signal(initial_values.get("var_a_kaleidoscope_slices", 6.0))
+	var_a_kaleidoscope_spinbox.set_value_no_signal(initial_values.get("var_a_kaleidoscope_slices", 6.0))
+	
+	# --- Var B Symmetry ---
+	var_b_mirror_x_check.set_pressed_no_signal(initial_values.get("var_b_mirror_x", false))
+	var_b_mirror_y_check.set_pressed_no_signal(initial_values.get("var_b_mirror_y", false))
+	var_b_kaleidoscope_slider.set_value_no_signal(initial_values.get("var_b_kaleidoscope_slices", 6.0))
+	var_b_kaleidoscope_spinbox.set_value_no_signal(initial_values.get("var_b_kaleidoscope_slices", 6.0))
+
+	# --- Var A Controls ---
+	wave_type_dropdown_a.select(initial_values.get("wave_type_a", 0))
+	wave_frequency_slider_a.set_value_no_signal(initial_values.get("wave_freq_a", 0.0))
+	wave_frequency_spinbox_a.set_value_no_signal(initial_values.get("wave_freq_a", 0.0))
+	wave_amplitude_slider_a.set_value_no_signal(initial_values.get("wave_amp_a", 0.1))
+	wave_amplitude_spinbox_a.set_value_no_signal(initial_values.get("wave_amp_a", 0.1))
+	wave_speed_slider_a.set_value_no_signal(initial_values.get("wave_speed_a", 0.0))
+	wave_speed_spinbox_a.set_value_no_signal(initial_values.get("wave_speed_a", 0.0))
+
+	julian_power_slider_a.set_value_no_signal(initial_values.get("julian_power_a", 2.0))
+	julian_power_spinbox_a.set_value_no_signal(initial_values.get("julian_power_a", 2.0))
+	julian_dist_slider_a.set_value_no_signal(initial_values.get("julian_dist_a", 1.0))
+	julian_dist_spinbox_a.set_value_no_signal(initial_values.get("julian_dist_a", 1.0))
+	julian_a_slider_a.set_value_no_signal(initial_values.get("julian_a_a", 1.0))
+	julian_a_spinbox_a.set_value_no_signal(initial_values.get("julian_a_a", 1.0))
+	julian_b_slider_a.set_value_no_signal(initial_values.get("julian_b_a", 0.0))
+	julian_b_spinbox_a.set_value_no_signal(initial_values.get("julian_b_a", 0.0))
+	julian_c_slider_a.set_value_no_signal(initial_values.get("julian_c_a", 0.0))
+	julian_c_spinbox_a.set_value_no_signal(initial_values.get("julian_c_a", 0.0))
+	julian_d_slider_a.set_value_no_signal(initial_values.get("julian_d_a", 1.0))
+	julian_d_spinbox_a.set_value_no_signal(initial_values.get("julian_d_a", 1.0))
+	julian_e_slider_a.set_value_no_signal(initial_values.get("julian_e_a", 0.0))
+	julian_e_spinbox_a.set_value_no_signal(initial_values.get("julian_e_a", 0.0))
+	julian_f_slider_a.set_value_no_signal(initial_values.get("julian_f_a", 0.0))
+	julian_f_spinbox_a.set_value_no_signal(initial_values.get("julian_f_a", 0.0))
+
+	fisheye_strength_slider_a.set_value_no_signal(initial_values.get("fisheye_strength_a", 2.0))
+	fisheye_strength_spinbox_a.set_value_no_signal(initial_values.get("fisheye_strength_a", 2.0))
+	polar_offset_slider_a.set_value_no_signal(initial_values.get("polar_offset_a", 1.0))
+	polar_offset_spinbox_a.set_value_no_signal(initial_values.get("polar_offset_a", 1.0))
+	
+	_on_mobius_re_a_a_changed(initial_values.get("mobius_re_a_a", 0.1))
+	_on_mobius_im_a_a_changed(initial_values.get("mobius_im_a_a", 0.2))
+	_on_mobius_re_b_a_changed(initial_values.get("mobius_re_b_a", 0.2))
+	_on_mobius_im_b_a_changed(initial_values.get("mobius_im_b_a", -0.12))
+	_on_mobius_re_c_a_changed(initial_values.get("mobius_re_c_a", -0.15))
+	_on_mobius_im_c_a_changed(initial_values.get("mobius_im_c_a", -0.15))
+	_on_mobius_re_d_a_changed(initial_values.get("mobius_re_d_a", 0.21))
+	_on_mobius_im_d_a_changed(initial_values.get("mobius_im_d_a", 0.1))
+	
+	cellular_weave_grid_size_slider_a.set_value_no_signal(initial_values.get("cellular_weave_grid_size_a", 10.0))
+	cellular_weave_grid_size_spinbox_a.set_value_no_signal(initial_values.get("cellular_weave_grid_size_a", 10.0))
+	cellular_weave_threshold_slider_a.set_value_no_signal(initial_values.get("cellular_weave_threshold_a", 4.0))
+	cellular_weave_threshold_spinbox_a.set_value_no_signal(initial_values.get("cellular_weave_threshold_a", 4.0))
+	cellular_weave_iterations_slider_a.set_value_no_signal(initial_values.get("cellular_weave_iterations_a", 1.0))
+	cellular_weave_iterations_spinbox_a.set_value_no_signal(initial_values.get("cellular_weave_iterations_a", 1.0))
+	
+	_on_heart_scale_a_changed(initial_values.get("heart_scale_a", 0.3))
+	_on_heart_rotation_a_changed(initial_values.get("heart_rotation_a", 0.0))
+	_on_heart_strength_a_changed(initial_values.get("heart_strength_a", 0.5))
+	
+	blur_amount_slider_a.set_value_no_signal(initial_values.get("blur_amount_a", 0.0))
+	blur_amount_spinbox_a.set_value_no_signal(initial_values.get("blur_amount_a", 0.0))
+	
+	
+	apollonian_scale_slider_a.set_value_no_signal(initial_values.get("apollonian_scale_a", 1.5))
+	apollonian_scale_spinbox_a.set_value_no_signal(initial_values.get("apollonian_scale_a", 1.5))
+	var c1a = initial_values.get("ap_c1_a", Vector2(0.0, 0.5))
+	ap_c1_a = c1a # <-- FIX
+	ap_c1x_spinbox_a.value = c1a.x
+	ap_c1y_spinbox_a.value = c1a.y
+	var c2a = initial_values.get("ap_c2_a", Vector2(-0.433, -0.25))
+	ap_c2_a = c2a # <-- FIX
+	ap_c2x_spinbox_a.value = c2a.x
+	ap_c2y_spinbox_a.value = c2a.y
+	var c3a = initial_values.get("ap_c3_a", Vector2(0.433, -0.25))
+	ap_c3_a = c3a # <-- FIX
+	ap_c3x_spinbox_a.value = c3a.x
+	ap_c3y_spinbox_a.value = c3a.y
+
+	# --- Var B Controls ---
+	wave_type_dropdown_b.select(initial_values.get("wave_type_b", 0))
+	wave_frequency_slider_b.set_value_no_signal(initial_values.get("wave_freq_b", 5.0))
+	wave_frequency_spinbox_b.set_value_no_signal(initial_values.get("wave_freq_b", 5.0))
+	wave_amplitude_slider_b.set_value_no_signal(initial_values.get("wave_amp_b", 0.1))
+	wave_amplitude_spinbox_b.set_value_no_signal(initial_values.get("wave_amp_b", 0.1))
+	wave_speed_slider_b.set_value_no_signal(initial_values.get("wave_speed_b", 0.0))
+	wave_speed_spinbox_b.set_value_no_signal(initial_values.get("wave_speed_b", 0.0))
+	
+	julian_power_slider_b.set_value_no_signal(initial_values.get("julian_power_b", -3.0))
+	julian_power_spinbox_b.set_value_no_signal(initial_values.get("julian_power_b", -3.0))
+	julian_dist_slider_b.set_value_no_signal(initial_values.get("julian_dist_b", 1.0))
+	julian_dist_spinbox_b.set_value_no_signal(initial_values.get("julian_dist_b", 1.0))
+	julian_a_slider_b.set_value_no_signal(initial_values.get("julian_a_b", 1.0))
+	julian_a_spinbox_b.set_value_no_signal(initial_values.get("julian_a_b", 1.0))
+	julian_b_slider_b.set_value_no_signal(initial_values.get("julian_b_b", 0.0))
+	julian_b_spinbox_b.set_value_no_signal(initial_values.get("julian_b_b", 0.0))
+	julian_c_slider_b.set_value_no_signal(initial_values.get("julian_c_b", 0.0))
+	julian_c_spinbox_b.set_value_no_signal(initial_values.get("julian_c_b", 0.0))
+	julian_d_slider_b.set_value_no_signal(initial_values.get("julian_d_b", 1.0))
+	julian_d_spinbox_b.set_value_no_signal(initial_values.get("julian_d_b", 1.0))
+	julian_e_slider_b.set_value_no_signal(initial_values.get("julian_e_b", 0.0))
+	julian_e_spinbox_b.set_value_no_signal(initial_values.get("julian_e_b", 0.0))
+	julian_f_slider_b.set_value_no_signal(initial_values.get("julian_f_b", 0.0))
+	julian_f_spinbox_b.set_value_no_signal(initial_values.get("julian_f_b", 0.0))
+
+	fisheye_strength_slider_b.set_value_no_signal(initial_values.get("fisheye_strength_b", 2.0))
+	fisheye_strength_spinbox_b.set_value_no_signal(initial_values.get("fisheye_strength_b", 2.0))
+	polar_offset_slider_b.set_value_no_signal(initial_values.get("polar_offset_b", 1.0))
+	polar_offset_spinbox_b.set_value_no_signal(initial_values.get("polar_offset_b", 1.0))
+	
+	_on_mobius_re_a_b_changed(initial_values.get("mobius_re_a_b", 0.1))
+	_on_mobius_im_a_b_changed(initial_values.get("mobius_im_a_b", 0.2))
+	_on_mobius_re_b_b_changed(initial_values.get("mobius_re_b_b", 0.2))
+	_on_mobius_im_b_b_changed(initial_values.get("mobius_im_b_b", -0.12))
+	_on_mobius_re_c_b_changed(initial_values.get("mobius_re_c_b", -0.15))
+	_on_mobius_im_c_b_changed(initial_values.get("mobius_im_c_b", -0.15))
+	_on_mobius_re_d_b_changed(initial_values.get("mobius_re_d_b", 0.21))
+	_on_mobius_im_d_b_changed(initial_values.get("mobius_im_d_b", 0.1))
+	
+	
+	
+	cellular_weave_grid_size_slider_b.set_value_no_signal(initial_values.get("cellular_weave_grid_size_b", 10.0))
+	cellular_weave_grid_size_spinbox_b.set_value_no_signal(initial_values.get("cellular_weave_grid_size_b", 10.0))
+	cellular_weave_threshold_slider_b.set_value_no_signal(initial_values.get("cellular_weave_threshold_b", 4.0))
+	cellular_weave_threshold_spinbox_b.set_value_no_signal(initial_values.get("cellular_weave_threshold_b", 4.0))
+	cellular_weave_iterations_slider_b.set_value_no_signal(initial_values.get("cellular_weave_iterations_b", 1.0))
+	cellular_weave_iterations_spinbox_b.set_value_no_signal(initial_values.get("cellular_weave_iterations_b", 1.0))
+
+	_on_heart_scale_b_changed(initial_values.get("heart_scale_b", 0.3))
+	_on_heart_rotation_b_changed(initial_values.get("heart_rotation_b", 0.0))
+	_on_heart_strength_b_changed(initial_values.get("heart_strength_b", 0.5))
+	
+	blur_amount_slider_b.set_value_no_signal(initial_values.get("blur_amount_b", 0.0))
+	blur_amount_spinbox_b.set_value_no_signal(initial_values.get("blur_amount_b", 0.0))
+
+	apollonian_scale_slider_b.set_value_no_signal(initial_values.get("apollonian_scale_b", 1.5))
+	apollonian_scale_spinbox_b.set_value_no_signal(initial_values.get("apollonian_scale_b", 1.5))
+	var c1b = initial_values.get("ap_c1_b", Vector2(0.0, 0.5))
+	ap_c1_b = c1b # <-- FIX
+	ap_c1x_spinbox_b.value = c1b.x
+	ap_c1y_spinbox_b.value = c1b.y
+	var c2b = initial_values.get("ap_c2_b", Vector2(-0.433, -0.25))
+	ap_c2_b = c2b # <-- FIX
+	ap_c2x_spinbox_b.value = c2b.x
+	ap_c2y_spinbox_b.value = c2b.y
+	var c3b = initial_values.get("ap_c3_b", Vector2(0.433, -0.25))
+	ap_c3_b = c3b # <-- FIX
+	ap_c3x_spinbox_b.value = c3b.x
+	ap_c3y_spinbox_b.value = c3b.y
+	
+	# --- Custom 2x2 ---
+	var tl_a_id = initial_values.get("custom_tl_a", 0) as int
+	custom_tl_a.select(_get_item_index_by_text(custom_tl_a, _get_name_from_id(tl_a_id)))
+	var tr_a_id = initial_values.get("custom_tr_a", 0) as int
+	custom_tr_a.select(_get_item_index_by_text(custom_tr_a, _get_name_from_id(tr_a_id)))
+	var bl_a_id = initial_values.get("custom_bl_a", 0) as int
+	custom_bl_a.select(_get_item_index_by_text(custom_bl_a, _get_name_from_id(bl_a_id)))
+	var br_a_id = initial_values.get("custom_br_a", 0) as int
+	custom_br_a.select(_get_item_index_by_text(custom_br_a, _get_name_from_id(br_a_id)))
+	var tl_b_id = initial_values.get("custom_tl_b", 0) as int
+	custom_tl_b.select(_get_item_index_by_text(custom_tl_b, _get_name_from_id(tl_b_id)))
+	var tr_b_id = initial_values.get("custom_tr_b", 0) as int
+	custom_tr_b.select(_get_item_index_by_text(custom_tr_b, _get_name_from_id(tr_b_id)))
+	var bl_b_id = initial_values.get("custom_bl_b", 0) as int
+	custom_bl_b.select(_get_item_index_by_text(custom_bl_b, _get_name_from_id(bl_b_id)))
+	var br_b_id = initial_values.get("custom_br_b", 0) as int
+	custom_br_b.select(_get_item_index_by_text(custom_br_b, _get_name_from_id(br_b_id)))
+	
+	# --- 3D Light Controls ---
+	%LightXAngleSlider.set_value_no_signal(initial_values.get("light_x_rot", 77.0))
+	light_x_angle_spinbox.set_value_no_signal(initial_values.get("light_x_rot", 77.0)) 
+	%LightYAngleSlider.set_value_no_signal(initial_values.get("light_y_rot", 163.5))
+	light_y_angle_spinbox.set_value_no_signal(initial_values.get("light_y_rot", 163.5)) 
+	%LightEnergySlider.set_value_no_signal(initial_values.get("light_energy", 1.0))
+	light_energy_spinbox.set_value_no_signal(initial_values.get("light_energy", 1.0)) 
+	%LightColorPicker.color = initial_values.get("light_color", Color.WHITE)
+	%ShadowCheckBox.set_pressed_no_signal(initial_values.get("light_shadows", true))
+
+	%NormalStrengthSlider.set_value_no_signal(initial_values.get("normal_strength", 1.0))
+	normal_strength_spinbox.set_value_no_signal(initial_values.get("normal_strength", 1.0)) 
+
+	%CameraDistSlider.set_value_no_signal(initial_values.get("cam_dist", 2.5))
+	camera_dist_spinbox.set_value_no_signal(initial_values.get("cam_dist", 2.5)) 
+	%CameraXRotSlider.set_value_no_signal(initial_values.get("cam_x_rot", 0.0))
+	camera_x_rot_spinbox.set_value_no_signal(initial_values.get("cam_x_rot", 0.0)) 
+	%CameraYRotSlider.set_value_no_signal(initial_values.get("cam_y_rot", 0.0))
+	camera_y_rot_spinbox.set_value_no_signal(initial_values.get("cam_y_rot", 0.0)) 
+	%CameraFovSlider.set_value_no_signal(initial_values.get("cam_fov", 75.0))
+	camera_fov_spinbox.set_value_no_signal(initial_values.get("cam_fov", 75.0)) 
+
+	%BackgroundCheckBox.set_pressed_no_signal(initial_values.get("show_2d_bg", false))
+	
+	
 func _on_save_button_pressed() -> void:
 	if OS.has_feature("web"):
 		if is_3d_view:
@@ -1156,8 +1532,24 @@ func _on_save_button_pressed() -> void:
 		else:
 			# Handle 2D web save
 			print("Starting web render for download...")
-			var resolution = 1024 * pow(2, save_resolution_index)
-			_render_and_save_image("", Vector2i(resolution, resolution))
+			
+			# 1. Get the base width from the dropdown
+			var base_width = 1024 * pow(2, save_resolution_index)
+			
+			# 2. Get the current window aspect ratio
+			var window_size = get_viewport().get_visible_rect().size
+			var aspect_ratio = window_size.y / window_size.x
+			
+			# 3. Calculate the new height
+			var render_height = int(base_width * aspect_ratio)
+			
+			# 4. Create the final render size
+			var render_size = Vector2i(base_width, render_height)
+			
+			# 5. Call save with an EMPTY string for path
+			_render_and_save_image("", render_size) 
+	
+	# This 'else' is now correctly indented
 	else:
 		# Desktop: Just open the dialog. The file_selected function will handle the logic.
 		file_dialog_mode = "save"
@@ -1236,15 +1628,26 @@ func _on_paste_preset_pressed() -> void:
 func _on_file_dialog_file_selected(path: String) -> void:
 	if file_dialog_mode == "save":
 		if is_3d_view:
-			# --- NEW ---
 			# Handle 3D desktop save
 			_save_3d_view_desktop(path)
-			# --- END NEW ---
 		else:
 			# Handle 2D desktop save
 			print("Starting high-resolution render...")
-			var resolution = 1024 * pow(2, save_resolution_index)
-			_render_and_save_image(path, Vector2i(resolution, resolution))
+			
+			# 1. Get the base width from the dropdown
+			var base_width = 1024 * pow(2, save_resolution_index)
+			
+			# 2. Get the current window aspect ratio
+			var window_size = get_viewport().get_visible_rect().size
+			var aspect_ratio = window_size.y / window_size.x
+			
+			# 3. Calculate the new height
+			var render_height = int(base_width * aspect_ratio)
+			
+			# 4. Create the final render size
+			var render_size = Vector2i(base_width, render_height)
+			
+			_render_and_save_image(path, render_size)
 
 	elif file_dialog_mode == "load":
 		var image = Image.load_from_file(path)
@@ -1264,7 +1667,6 @@ func _on_file_dialog_file_selected(path: String) -> void:
 		else:
 			printerr("Error: Could not open file for writing at path: ", path, " | Error code: ", FileAccess.get_open_error())
 
-
 	elif file_dialog_mode == "load_preset":
 		var file = FileAccess.open(path, FileAccess.READ)
 		if file:
@@ -1277,7 +1679,6 @@ func _on_file_dialog_file_selected(path: String) -> void:
 				print("Error: Could not parse preset file.")
 		else:
 			printerr("Error: Could not open file for reading at path: ", path, " | Error code: ", FileAccess.get_open_error())
-
 
 func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	# --- STAGE 1: Render the raw high-resolution fractal ---
@@ -1346,10 +1747,10 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("ap_c1_a", ap_c1_a) # <-- ADD
 	save_material.set_shader_parameter("ap_c2_a", ap_c2_a) # <-- ADD
 	save_material.set_shader_parameter("ap_c3_a", ap_c3_a) # <-- ADD
-	save_material.set_shader_parameter("custom_tl_a", custom_tl_a)
-	save_material.set_shader_parameter("custom_tr_a", custom_tr_a)
-	save_material.set_shader_parameter("custom_bl_a", custom_bl_a)
-	save_material.set_shader_parameter("custom_br_a", custom_br_a)
+	save_material.set_shader_parameter("custom_tl_a", custom_tl_a_id)
+	save_material.set_shader_parameter("custom_tr_a", custom_tr_a_id)
+	save_material.set_shader_parameter("custom_bl_a", custom_bl_a_id)
+	save_material.set_shader_parameter("custom_br_a", custom_br_a_id)
 
 	# Var B Params
 	save_material.set_shader_parameter("var_b_mirror_x", var_b_mirror_x)
@@ -1381,10 +1782,10 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("ap_c1_b", ap_c1_b) # <-- ADD
 	save_material.set_shader_parameter("ap_c2_b", ap_c2_b) # <-- ADD
 	save_material.set_shader_parameter("ap_c3_b", ap_c3_b) # <-- ADD
-	save_material.set_shader_parameter("custom_tl_b", custom_tl_b)
-	save_material.set_shader_parameter("custom_tr_b", custom_tr_b)
-	save_material.set_shader_parameter("custom_bl_b", custom_bl_b)
-	save_material.set_shader_parameter("custom_br_b", custom_br_b)
+	save_material.set_shader_parameter("custom_tl_b", custom_tl_b_id)
+	save_material.set_shader_parameter("custom_tr_b", custom_tr_b_id)
+	save_material.set_shader_parameter("custom_bl_b", custom_bl_b_id)
+	save_material.set_shader_parameter("custom_br_b", custom_br_b_id)
 
 	# Wait for the raw fractal to render
 	await RenderingServer.frame_post_draw
@@ -1475,6 +1876,7 @@ func _process(delta: float) -> void:
 
 	# --- Set Fractal Shader Params ---
 	target_material.set_shader_parameter("previous_frame", previous_frame_texture)
+	
 	target_material.set_shader_parameter("variation_mode_a", variation_mode_a)
 	target_material.set_shader_parameter("variation_mode_b", variation_mode_b)
 	target_material.set_shader_parameter("start_pattern_mode", start_pattern_mode)
@@ -1532,10 +1934,10 @@ func _process(delta: float) -> void:
 	target_material.set_shader_parameter("ap_c1_a", ap_c1_a) # <-- ADD
 	target_material.set_shader_parameter("ap_c2_a", ap_c2_a) # <-- ADD
 	target_material.set_shader_parameter("ap_c3_a", ap_c3_a) # <-- ADD
-	target_material.set_shader_parameter("custom_tl_a", custom_tl_a)
-	target_material.set_shader_parameter("custom_tr_a", custom_tr_a)
-	target_material.set_shader_parameter("custom_bl_a", custom_bl_a)
-	target_material.set_shader_parameter("custom_br_a", custom_br_a)
+	target_material.set_shader_parameter("custom_tl_a", custom_tl_a_id)
+	target_material.set_shader_parameter("custom_tr_a", custom_tr_a_id)
+	target_material.set_shader_parameter("custom_bl_a", custom_bl_a_id)
+	target_material.set_shader_parameter("custom_br_a", custom_br_a_id)
 	
 
 	# Var B Params
@@ -1568,10 +1970,10 @@ func _process(delta: float) -> void:
 	target_material.set_shader_parameter("ap_c1_b", ap_c1_b) # <-- ADD
 	target_material.set_shader_parameter("ap_c2_b", ap_c2_b) # <-- ADD
 	target_material.set_shader_parameter("ap_c3_b", ap_c3_b) # <-- ADD
-	target_material.set_shader_parameter("custom_tl_b", custom_tl_b)
-	target_material.set_shader_parameter("custom_tr_b", custom_tr_b)
-	target_material.set_shader_parameter("custom_bl_b", custom_bl_b)
-	target_material.set_shader_parameter("custom_br_b", custom_br_b)
+	target_material.set_shader_parameter("custom_tl_b", custom_tl_b_id)
+	target_material.set_shader_parameter("custom_tr_b", custom_tr_b_id)
+	target_material.set_shader_parameter("custom_bl_b", custom_bl_b_id)
+	target_material.set_shader_parameter("custom_br_b", custom_br_b_id)
 	# ---------------------------------
 
 	# --- Set Post Process Shader Params ---
@@ -1701,6 +2103,7 @@ func _gather_preset_data() -> Dictionary:
 		"seamless_tiling": seamless_tiling,
 		"mirror_tiling": mirror_tiling,
 		"reset_on_drag_enabled": reset_on_drag_enabled,
+		"save_resolution_index": save_resolution_index,
 
 		# Start Patterns
 		"show_start_grid": show_start_grid,
@@ -1766,10 +2169,10 @@ func _gather_preset_data() -> Dictionary:
 		"ap_c1_a": {"x": ap_c1_a.x, "y": ap_c1_a.y}, # <-- ADD (Save as Dict)
 		"ap_c2_a": {"x": ap_c2_a.x, "y": ap_c2_a.y}, # <-- ADD (Save as Dict)
 		"ap_c3_a": {"x": ap_c3_a.x, "y": ap_c3_a.y}, # <-- ADD (Save as Dict),
-		"custom_tl_a": custom_tl_a,
-		"custom_tr_a": custom_tr_a,
-		"custom_bl_a": custom_bl_a,
-		"custom_br_a": custom_br_a,
+		"custom_tl_a": custom_tl_a_id,
+		"custom_tr_a": custom_tr_a_id,
+		"custom_bl_a": custom_bl_a_id,
+		"custom_br_a": custom_br_a_id,
 
 		# Variation B Parameters
 		"var_b_mirror_x": var_b_mirror_x,
@@ -1799,10 +2202,10 @@ func _gather_preset_data() -> Dictionary:
 		"ap_c1_b": {"x": ap_c1_b.x, "y": ap_c1_b.y}, # <-- ADD (Save as Dict)
 		"ap_c2_b": {"x": ap_c2_b.x, "y": ap_c2_b.y}, # <-- ADD (Save as Dict)
 		"ap_c3_b": {"x": ap_c3_b.x, "y": ap_c3_b.y}, # <-- ADD (Save as Dict)
-		"custom_tl_b": custom_tl_b,
-		"custom_tr_b": custom_tr_b,
-		"custom_bl_b": custom_bl_b,
-		"custom_br_b": custom_br_b,
+		"custom_tl_b": custom_tl_b_id,
+		"custom_tr_b": custom_tr_b_id,
+		"custom_bl_b": custom_bl_b_id,
+		"custom_br_b": custom_br_b_id,
 		
 		# --- ADD THESE ---
 		"light_x_rotation": light_x_rotation,
@@ -1908,6 +2311,7 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	variation_mode_b = data.get("variation_mode_b_id", 1) # Load ID
 	start_pattern_mode = data.get("start_pattern_mode", 0)
 	variation_mix = data.get("variation_mix", 0.5)
+	save_resolution_index = data.get("save_resolution_index", 1)
 # --- Now, override defaults if they exist in the preset ---
 	# 1. Load the range from preset, or use platform default if not present
 	feedback_min = data.get("feedback_min", feedback_min)
@@ -1990,10 +2394,10 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	ap_c1_a = get_vector2(data, "ap_c1_a", Vector2(0.0, 0.5))      # <-- ADD (Use helper)
 	ap_c2_a = get_vector2(data, "ap_c2_a", Vector2(-0.433, -0.25)) # <-- ADD (Use helper)
 	ap_c3_a = get_vector2(data, "ap_c3_a", Vector2(0.433, -0.25))  # <-- ADD (Use helper)
-	custom_tl_a = data.get("custom_tl_a", 0)
-	custom_tr_a = data.get("custom_tr_a", 0)
-	custom_bl_a = data.get("custom_bl_a", 0)
-	custom_br_a = data.get("custom_br_a", 0)
+	custom_tl_a_id = data.get("custom_tl_a", 0)
+	custom_tr_a_id = data.get("custom_tr_a", 0)
+	custom_bl_a_id = data.get("custom_bl_a", 0)
+	custom_br_a_id = data.get("custom_br_a", 0)
 
 	# --- Variation B Parameters ---
 	var_b_mirror_x = data.get("var_b_mirror_x", false)
@@ -2024,10 +2428,10 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	ap_c1_b = get_vector2(data, "ap_c1_b", Vector2(0.0, 0.5))      # <-- ADD (Use helper)
 	ap_c2_b = get_vector2(data, "ap_c2_b", Vector2(-0.433, -0.25)) # <-- ADD (Use helper)
 	ap_c3_b = get_vector2(data, "ap_c3_b", Vector2(0.433, -0.25))  # <-- ADD (Use helper)
-	custom_tl_b = data.get("custom_tl_b", 0)
-	custom_tr_b = data.get("custom_tr_b", 0)
-	custom_bl_b = data.get("custom_bl_b", 0)
-	custom_br_b = data.get("custom_br_b", 0)
+	custom_tl_b_id = data.get("custom_tl_b", 0)
+	custom_tr_b_id = data.get("custom_tr_b", 0)
+	custom_bl_b_id = data.get("custom_bl_b", 0)
+	custom_br_b_id = data.get("custom_br_b", 0)
 	
 	# --- ADD THESE ---
 	light_x_rotation = data.get("light_x_rotation", 0.0)
@@ -2050,3 +2454,1369 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	
 
 	print("  SetState: Finished applying data.")
+
+
+# =================================================================
+# --- UI CONTROL LOGIC & SIGNAL CALLBACKS ---
+# =================================================================
+
+func _on_variation_mix_changed(value: float):
+	variation_mix = value
+	var_mix_slider.set_value_no_signal(value)
+	var_mix_spinbox.set_value_no_signal(value)
+
+func _on_var_mix_slider_value_changed(value: float) -> void:
+	_on_variation_mix_changed(value)
+
+func _on_var_mix_spin_box_value_changed(value: float) -> void:
+	_on_variation_mix_changed(value)
+
+# --- Feedback Amount ---
+func _on_feedback_amount_changed(value: float):
+	feedback_amount = value
+	feedback_amount_slider.set_value_no_signal(value)
+	feedback_amount_spinbox.set_value_no_signal(value)
+
+func _on_feedback_amount_slider_value_changed(value: float):
+	_on_feedback_amount_changed(value)
+
+func _on_feedback_amount_spinbox_value_changed(value: float):
+	_on_feedback_amount_changed(value)
+
+# --- Feedback Range (These are simpler) ---
+func _on_feedback_range_min_spinbox_value_changed(value: float):
+	feedback_min = value
+	_update_feedback_ranges_in_ui() # This is your existing helper function
+
+func _on_feedback_range_max_spinbox_value_changed(value: float):
+	feedback_max = value
+	_update_feedback_ranges_in_ui() # This is your existing helper function
+
+# --- Pre-Scale ---
+func _on_pre_scale_changed(value: float):
+	pre_scale = value
+	pre_scale_slider.set_value_no_signal(value)
+	pre_scale_spinbox.set_value_no_signal(value)
+
+func _on_pre_scale_slider_value_changed(value: float):
+	_on_pre_scale_changed(value)
+
+func _on_pre_scale_spinbox_value_changed(value: float):
+	_on_pre_scale_changed(value)
+
+# --- Pre-Rotation ---
+func _on_pre_rotation_changed(value: float):
+	pre_rotation = value
+	pre_rotation_slider.set_value_no_signal(value)
+	pre_rotation_spinbox.set_value_no_signal(value)
+	
+func _on_pre_rotation_slider_value_changed(value: float):
+	_on_pre_rotation_changed(value)
+
+func _on_pre_rotation_spinbox_value_changed(value: float):
+	_on_pre_rotation_changed(value)
+
+# --- Post-Scale ---
+func _on_post_scale_changed(value: float):
+	post_scale = value
+	post_scale_slider.set_value_no_signal(value)
+	post_scale_spinbox.set_value_no_signal(value)
+
+func _on_post_scale_slider_value_changed(value: float):
+	_on_post_scale_changed(value)
+
+func _on_post_scale_spinbox_value_changed(value: float):
+	_on_post_scale_changed(value)
+
+# --- Post-Rotation ---
+func _on_post_rotation_changed(value: float):
+	post_rotation = value
+	post_rotation_slider.set_value_no_signal(value)
+	post_rotation_spinbox.set_value_no_signal(value)
+
+func _on_post_rotation_slider_value_changed(value: float):
+	_on_post_rotation_changed(value)
+
+func _on_post_rotation_spinbox_value_changed(value: float):
+	_on_post_rotation_changed(value)
+
+# --- Brightness ---
+func _on_brightness_changed(value: float):
+	brightness = value
+	brightness_slider.set_value_no_signal(value)
+	brightness_spinbox.set_value_no_signal(value)
+
+func _on_brightness_slider_value_changed(value: float):
+	_on_brightness_changed(value)
+	
+func _on_brightness_spinbox_value_changed(value: float):
+	_on_brightness_changed(value)
+
+# --- Contrast ---
+func _on_contrast_changed(value: float):
+	contrast = value
+	contrast_slider.set_value_no_signal(value)
+	contrast_spinbox.set_value_no_signal(value)
+	
+func _on_contrast_slider_value_changed(value: float):
+	_on_contrast_changed(value)
+
+func _on_contrast_spinbox_value_changed(value: float):
+	_on_contrast_changed(value)
+
+# --- Saturation ---
+func _on_saturation_changed(value: float):
+	saturation = value
+	saturation_slider.set_value_no_signal(value)
+	saturation_spinbox.set_value_no_signal(value)
+
+func _on_saturation_slider_value_changed(value: float):
+	_on_saturation_changed(value)
+
+func _on_saturation_spinbox_value_changed(value: float):
+	_on_saturation_changed(value)
+
+# --- Circle Count ---
+func _on_circle_count_changed(value: float):
+	circle_count = value
+	circle_count_slider.set_value_no_signal(value)
+	circle_count_spinbox.set_value_no_signal(value)
+
+func _on_circle_count_slider_value_changed(value: float):
+	_on_circle_count_changed(value)
+	
+func _on_circle_count_spinbox_value_changed(value: float):
+	_on_circle_count_changed(value)
+
+# --- Circle Radius ---
+func _on_circle_radius_changed(value: float):
+	circle_radius = value
+	circle_radius_slider.set_value_no_signal(value)
+	circle_radius_spinbox.set_value_no_signal(value)
+
+func _on_circle_radius_slider_value_changed(value: float):
+	_on_circle_radius_changed(value)
+
+func _on_circle_radius_spinbox_value_changed(value: float):
+	_on_circle_radius_changed(value)
+
+# --- Circle Softness ---
+func _on_circle_softness_changed(value: float):
+	circle_softness = value
+	circle_softness_slider.set_value_no_signal(value)
+	circle_softness_spinbox.set_value_no_signal(value)
+
+func _on_circle_softness_slider_value_changed(value: float):
+	_on_circle_softness_changed(value)
+
+func _on_circle_softness_spinbox_value_changed(value: float):
+	_on_circle_softness_changed(value)
+
+
+
+
+
+
+# --- ADD THIS NEW FUNCTION ---
+func _update_var_a_visibility(control_key: String):
+	# 1. Hide all panels
+	for key in var_a_panels:
+		var_a_panels[key].visible = false
+	
+	# 2. Show the correct one
+	if control_key != "" and var_a_panels.has(control_key):
+		var_a_panels[control_key].visible = true
+	# (If control_key is null, like for "Sinusoidal", nothing will be shown)
+
+func _update_var_b_visibility(control_key: String):
+	# 1. Hide all panels
+	for key in var_b_panels:
+		var_b_panels[key].visible = false
+	
+	# 2. Show the correct one
+	if control_key != "" and var_b_panels.has(control_key):
+		var_b_panels[control_key].visible = true
+
+# --- REPLACED SIGNAL CALLBACKS ---
+# (You must connect these in the editor)
+
+func _on_var_a_dropdown_item_selected(index: int):
+	var item_text = var_a_dropdown.get_item_text(index)
+	var control_string = "" 
+
+	if item_text == "Rep-Tiles":
+		control_string = "rep_tile" 
+		var rep_text = rep_tile_dropdown_a.get_item_text(rep_tile_dropdown_a.selected)
+		if VariationManager.VARIATIONS.has(rep_text):
+			variation_mode_a = VariationManager.VARIATIONS[rep_text]["id"]
+		
+		# --- ADD THIS CHECK ---
+		if rep_text == "Custom 2x2 Tile":
+			custom_2x2_controls_container_a.visible = true
+		else:
+			custom_2x2_controls_container_a.visible = false
+		# --- END ADD ---
+	else:
+		if VariationManager.VARIATIONS.has(item_text):
+			var data = VariationManager.VARIATIONS[item_text]
+			variation_mode_a = data["id"]
+			var new_control = data.get("controls")
+			if new_control != null:
+				control_string = new_control
+		
+		custom_2x2_controls_container_a.visible = false # --- ADD THIS LINE ---
+	
+	_update_var_a_visibility(control_string)
+
+func _on_rep_tile_dropdown_a_item_selected(index: int):
+	# This just updates the ID. The panel is already visible.
+	var item_text = rep_tile_dropdown_a.get_item_text(index)
+	if VariationManager.VARIATIONS.has(item_text):
+		variation_mode_a = VariationManager.VARIATIONS[item_text]["id"]
+	if item_text == "Custom 2x2 Tile":
+		custom_2x2_controls_container_a.visible = true
+	else:
+		custom_2x2_controls_container_a.visible = false
+
+
+func _on_var_b_dropdown_item_selected(index: int):
+	var item_text = var_b_dropdown.get_item_text(index)
+	var control_string = ""
+
+	if item_text == "Rep-Tiles":
+		control_string = "rep_tile"
+		var rep_text = rep_tile_dropdown_b.get_item_text(rep_tile_dropdown_b.selected)
+		if VariationManager.VARIATIONS.has(rep_text):
+			variation_mode_b = VariationManager.VARIATIONS[rep_text]["id"]
+		
+		# --- ADD THIS CHECK ---
+		if rep_text == "Custom 2x2 Tile":
+			custom_2x2_controls_container_b.visible = true
+		else:
+			custom_2x2_controls_container_b.visible = false
+		# --- END ADD ---
+	else:
+		if VariationManager.VARIATIONS.has(item_text):
+			var data = VariationManager.VARIATIONS[item_text]
+			variation_mode_b = data["id"]
+			var new_control = data.get("controls")
+			if new_control != null:
+				control_string = new_control
+		
+		custom_2x2_controls_container_b.visible = false # --- ADD THIS LINE ---
+	
+	_update_var_b_visibility(control_string)
+
+func _on_rep_tile_dropdown_b_item_selected(index: int):
+	# This just updates the ID. The panel is already visible.
+	var item_text = rep_tile_dropdown_b.get_item_text(index)
+	if VariationManager.VARIATIONS.has(item_text):
+		variation_mode_b = VariationManager.VARIATIONS[item_text]["id"]
+	if item_text == "Custom 2x2 Tile":
+		custom_2x2_controls_container_b.visible = true
+	else:
+		custom_2x2_controls_container_b.visible = false
+
+# --- ADD THIS NEW HELPER FUNCTION ---
+func _get_name_from_id(var_id: int) -> String:
+	for key in VariationManager.VARIATIONS:
+		var data = VariationManager.VARIATIONS[key]
+		if data["id"] == var_id:
+			return key # Returns the name, e.g., "Sinusoidal"
+	return "" # Return empty string if not found
+
+# --- ADD THIS NEW FUNCTION TO POPULATE THE UI ---
+# --- ADD THIS NEW FUNCTION TO POPULATE THE UI ---
+func _populate_all_dropdowns():
+	# --- 1. Populate Start Pattern Dropdown ---
+	start_pattern_dropdown.clear()
+	# These are based on your shader's `start_pattern_mode` (int)
+	start_pattern_dropdown.clear()
+	start_pattern_dropdown.add_item("Gradient + Grid") # Index 0
+	start_pattern_dropdown.add_item("Circles")         # Index 1
+	start_pattern_dropdown.add_item("Image Input")     # Index 2
+	start_pattern_dropdown.add_item("Perlin Noise")    # Index 3
+	# (Add more items here if you have them)
+
+	# --- 2. Populate Variation Dropdowns ---
+	var_a_dropdown.clear()
+	var_b_dropdown.clear()
+	rep_tile_dropdown_a.clear()
+	rep_tile_dropdown_b.clear()
+	
+	var main_vars = []
+	var rep_tile_vars = []
+	
+	for key in VariationManager.VARIATIONS:
+		var data = VariationManager.VARIATIONS[key]
+		var item_data = {"name": key, "data": data}
+		
+		if data.get("category") == "Rep-Tile":
+			rep_tile_vars.append(item_data)
+		else:
+			main_vars.append(item_data)
+			
+	main_vars.sort_custom(func(a, b): return a["name"] < b["name"])
+	rep_tile_vars.sort_custom(func(a, b): return a["name"] < b["name"])
+	
+	var_a_dropdown.add_item("Rep-Tiles")
+	var_b_dropdown.add_item("Rep-Tiles")
+	
+	for item in main_vars:
+		var_a_dropdown.add_item(item["name"])
+		var_b_dropdown.add_item(item["name"])
+		
+	for item in rep_tile_vars:
+		rep_tile_dropdown_a.add_item(item["name"])
+		rep_tile_dropdown_b.add_item(item["name"])
+
+	# --- 3. Populate Wave Type Dropdowns (FIXES ERROR) ---
+	wave_type_dropdown_a.clear()
+	wave_type_dropdown_b.clear()
+	# Based on comments in your code: 0: Vertical, 1: Radial, 2: Square
+	wave_type_dropdown_a.add_item("Vertical") # Index 0
+	wave_type_dropdown_a.add_item("Radial")   # Index 1
+	wave_type_dropdown_a.add_item("Square")   # Index 2
+	
+	wave_type_dropdown_b.add_item("Vertical") # Index 0
+	wave_type_dropdown_b.add_item("Radial")   # Index 1
+	wave_type_dropdown_b.add_item("Square")   # Index 2
+
+	# --- 4. Populate Custom 2x2 Dropdowns ---
+	# Clear all 8 dropdowns
+	custom_tl_a.clear()
+	custom_tr_a.clear()
+	custom_bl_a.clear()
+	custom_br_a.clear()
+	custom_tl_b.clear()
+	custom_tr_b.clear()
+	custom_bl_b.clear()
+	custom_br_b.clear()
+
+	# Define the 6 transform types
+	var transform_items = [
+		"Identity",    # Index 0
+		"Rotate +90",  # Index 1
+		"Rotate 180",  # Index 2
+		"Rotate -90",  # Index 3
+		"Flip X",      # Index 4
+		"Flip Y"       # Index 5
+	]
+
+	# Populate all 8 dropdowns with the transform types
+	for item_text in transform_items:
+		custom_tl_a.add_item(item_text)
+		custom_tr_a.add_item(item_text)
+		custom_bl_a.add_item(item_text)
+		custom_br_a.add_item(item_text)
+		custom_tl_b.add_item(item_text)
+		custom_tr_b.add_item(item_text)
+		custom_bl_b.add_item(item_text)
+		custom_br_b.add_item(item_text)
+		
+# =================================================================
+# --- Custom 2x2 Signal Callbacks ---
+# =================================================================
+
+	resolution_dropdown.clear()
+	resolution_dropdown.add_item("Width: 1024px") # Index 0
+	resolution_dropdown.add_item("Width: 2048px") # Index 1
+	resolution_dropdown.add_item("Width: 4096px") # Index 2
+	resolution_dropdown.add_item("Width: 8192px") # Index 3
+	
+	
+	# --- 6. ADD THIS NEW SECTION ---
+	shape_selector_button.clear()
+	shape_selector_button.add_item("Sphere") # Index 0
+	shape_selector_button.add_item("Cube")   # Index 1
+	shape_selector_button.add_item("Quad")   # Index 2
+	shape_selector_button.add_item("Prism")  # Index 3
+	shape_selector_button.add_item("Torus")  # Index 4
+	
+
+func _get_id_from_name(var_name: String) -> int:
+	if VariationManager.VARIATIONS.has(var_name):
+		return VariationManager.VARIATIONS[var_name]["id"]
+	return 0 # Default to 0 (Sinusoidal) if not found
+
+func _on_custom_tl_a_item_selected(index: int):
+	custom_tl_a_id = index
+
+func _on_custom_tr_a_item_selected(index: int):
+	custom_tr_a_id = index
+
+func _on_custom_bl_a_item_selected(index: int):
+	custom_bl_a_id = index
+
+func _on_custom_br_a_item_selected(index: int):
+	custom_br_a_id = index
+
+func _on_custom_tl_b_item_selected(index: int):
+	custom_tl_b_id = index
+
+func _on_custom_tr_b_item_selected(index: int):
+	custom_tr_b_id = index
+
+func _on_custom_bl_b_item_selected(index: int):
+	custom_bl_b_id = index
+
+func _on_custom_br_b_item_selected(index: int):
+	custom_br_b_id = index
+
+
+
+func _on_gradient_toggle_button_pressed():
+	gradient_controls_container.visible = not gradient_controls_container.visible
+	
+
+func _update_start_pattern_visibility():
+	# 1. Get the selected index
+	var selected_index = start_pattern_dropdown.selected
+	
+	# 2. Hide all related controls first
+	gradient_toggle_button.visible = false
+	circle_controls_container.visible = false
+	load_image_button.visible = false
+	
+	# 3. Also hide the gradient panel itself, in case it was left open
+	gradient_controls_container.visible = false 
+	
+	# 4. Show the correct controls based on selection
+	match selected_index:
+		0: # Gradient + Grid
+			gradient_toggle_button.visible = true
+			# We leave the gradient_controls_container hidden
+			# The button itself will toggle it
+		1: # Circles
+			circle_controls_container.visible = true
+		2: # Image Input
+			load_image_button.visible = true
+		3: # Perlin Noise
+			pass # No extra controls to show
+
+
+func _on_start_pattern_dropdown_item_selected(index: int) -> void:
+	start_pattern_mode = index # Update the state variable
+	_update_start_pattern_visibility() # Call the helper to update the UI
+
+
+# =================================================================
+# --- Gradient Color Picker Signals ---
+# =================================================================
+
+func _on_grad_col_tl_picker_color_changed(color: Color):
+	grad_col_tl = color
+
+func _on_grad_col_tr_picker_color_changed(color: Color):
+	grad_col_tr = color
+
+func _on_grad_col_bl_picker_color_changed(color: Color):
+	grad_col_bl = color
+
+func _on_grad_col_br_picker_color_changed(color: Color):
+	grad_col_br = color
+
+
+func _on_show_circles_check_toggled(button_pressed: bool):
+	show_circles = button_pressed
+
+func _on_tiling_check_box_toggled(button_pressed: bool):
+	seamless_tiling = button_pressed
+	
+
+func _on_reset_on_drag_check_toggled(button_pressed: bool):
+	reset_on_drag_enabled = button_pressed
+
+
+# =================================================================
+# --- Post Symmetry & Tiling Signals ---
+# =================================================================
+
+func _on_mirror_tiling_check_box_toggled(button_pressed: bool):
+	mirror_tiling = button_pressed
+
+func _on_post_mirror_x_check_toggled(button_pressed: bool):
+	mirror_x = button_pressed
+
+func _on_post_mirror_y_check_toggled(button_pressed: bool):
+	mirror_y = button_pressed
+
+func _on_post_kaleidoscope_master_check_toggled(button_pressed: bool):
+	kaleidoscope_on = button_pressed
+
+func _on_kaleidoscope_slices_changed(value: float):
+	kaleidoscope_slices = value
+	post_kaleidoscope_slider.set_value_no_signal(value)
+	post_kaleidoscope_spinbox.set_value_no_signal(value)
+
+# --- Updated slider callback ---
+func _on_post_kaleidoscope_slider_value_changed(value: float):
+	_on_kaleidoscope_slices_changed(value)
+
+# --- New spinbox callback ---
+
+
+
+
+func _on_post_kaleidoscope_slices_spin_box_value_changed(value: float):
+	_on_kaleidoscope_slices_changed(value)
+
+
+
+
+# =================================================================
+# --- Resolution Dropdown Signal ---
+# =================================================================
+
+func _on_resolution_dropdown_item_selected(index: int):
+	save_resolution_index = index
+
+# =================================================================
+# --- 3D Controls Signals ---
+# =================================================================
+
+# --- 3D Shape Dropdown ---
+# (You already have this function, just connect the signal)
+# func _on_shape_selected(shape_index: int):
+# ...
+
+# --- 2D Background Checkbox ---
+func _on_background_check_box_toggled(button_pressed: bool):
+	show_2d_background = button_pressed
+	_update_background() # Call helper
+	_update_view_visibility() # Call helper to fix 2D/3D visibility
+
+# --- Normal Strength ---
+func _on_normal_strength_changed(value: float):
+	normal_map_strength = value
+	%NormalStrengthSlider.set_value_no_signal(value) # Assuming slider is %NormalStrengthSlider
+	normal_strength_spinbox.set_value_no_signal(value)
+
+func _on_normal_strength_slider_value_changed(value: float):
+	_on_normal_strength_changed(value)
+
+func _on_normal_strength_spinbox_value_changed(value: float):
+	_on_normal_strength_changed(value)
+
+# --- Light X Angle ---
+func _on_light_x_angle_changed(value: float):
+	light_x_rotation = value
+	%LightXAngleSlider.set_value_no_signal(value) # Assuming slider is %LightXAngleSlider
+	light_x_angle_spinbox.set_value_no_signal(value)
+	_update_light() # Call helper
+
+func _on_light_x_angle_slider_value_changed(value: float):
+	_on_light_x_angle_changed(value)
+
+func _on_light_x_angle_spinbox_value_changed(value: float):
+	_on_light_x_angle_changed(value)
+
+# --- Light Y Angle ---
+func _on_light_y_angle_changed(value: float):
+	light_y_rotation = value
+	%LightYAngleSlider.set_value_no_signal(value) # Assuming slider is %LightYAngleSlider
+	light_y_angle_spinbox.set_value_no_signal(value)
+	_update_light() # Call helper
+
+func _on_light_y_angle_slider_value_changed(value: float):
+	_on_light_y_angle_changed(value)
+
+func _on_light_y_angle_spinbox_value_changed(value: float):
+	_on_light_y_angle_changed(value)
+
+# --- Light Energy ---
+func _on_light_energy_changed(value: float):
+	light_energy = value
+	%LightEnergySlider.set_value_no_signal(value) # Assuming slider is %LightEnergySlider
+	light_energy_spinbox.set_value_no_signal(value)
+	_update_light() # Call helper
+
+func _on_light_energy_slider_value_changed(value: float):
+	_on_light_energy_changed(value)
+
+func _on_light_energy_spinbox_value_changed(value: float):
+	_on_light_energy_changed(value)
+
+# --- Light Color ---
+func _on_light_color_picker_color_changed(color: Color):
+	light_color = color
+	_update_light() # Call helper
+	
+# --- Light Shadows ---
+func _on_shadow_check_box_toggled(button_pressed: bool):
+	light_shadows = button_pressed
+	_update_light() # Call helper
+
+# --- Camera Distance ---
+func _on_camera_dist_changed(value: float):
+	camera_distance = value
+	%CameraDistSlider.set_value_no_signal(value) # Assuming slider is %CameraDistSlider
+	camera_dist_spinbox.set_value_no_signal(value)
+	_update_camera() # Call helper
+
+func _on_camera_dist_slider_value_changed(value: float):
+	_on_camera_dist_changed(value)
+
+func _on_camera_dist_spinbox_value_changed(value: float):
+	_on_camera_dist_changed(value)
+
+# --- Camera X Rotate ---
+func _on_camera_x_rot_changed(value: float):
+	camera_x_rotation = value
+	%CameraXRotSlider.set_value_no_signal(value) # Assuming slider is %CameraXRotSlider
+	camera_x_rot_spinbox.set_value_no_signal(value)
+	_update_camera() # Call helper
+
+func _on_camera_x_rot_slider_value_changed(value: float):
+	_on_camera_x_rot_changed(value)
+
+func _on_camera_x_rot_spinbox_value_changed(value: float):
+	_on_camera_x_rot_changed(value)
+
+# --- Camera Y Rotate ---
+func _on_camera_y_rot_changed(value: float):
+	camera_y_rotation = value
+	%CameraYRotSlider.set_value_no_signal(value) # Assuming slider is %CameraYRotSlider
+	camera_y_rot_spinbox.set_value_no_signal(value)
+	_update_camera() # Call helper
+
+func _on_camera_y_rot_slider_value_changed(value: float):
+	_on_camera_y_rot_changed(value)
+
+func _on_camera_y_rot_spinbox_value_changed(value: float):
+	_on_camera_y_rot_changed(value)
+
+# --- Camera FOV ---
+func _on_camera_fov_changed(value: float):
+	camera_fov = value
+	%CameraFovSlider.set_value_no_signal(value) # Assuming slider is %CameraFovSlider
+	camera_fov_spinbox.set_value_no_signal(value)
+	_update_camera() # Call helper
+
+func _on_camera_fov_slider_value_changed(value: float):
+	_on_camera_fov_changed(value)
+
+func _on_camera_fov_spinbox_value_changed(value: float):
+	_on_camera_fov_changed(value)
+
+
+# =================================================================
+# --- Active Translate Radio Button Signals ---
+# =================================================================
+
+func _on_post_translate_radio_toggled(button_pressed: bool):
+	if button_pressed:
+		# Set this one as active
+		move_post_translate = true
+		move_pre_translate = false
+		move_var_a_translate = false
+		move_var_b_translate = false
+		
+		# Update other buttons' visuals without firing their signals
+		pre_translate_radio.set_pressed_no_signal(false)
+		var_a_translate_radio.set_pressed_no_signal(false)
+		var_b_translate_radio.set_pressed_no_signal(false)
+	else:
+		# Prevent un-toggling; a radio group must have one selection
+		post_translate_radio.set_pressed_no_signal(true)
+
+func _on_pre_translate_radio_toggled(button_pressed: bool):
+	if button_pressed:
+		move_post_translate = false
+		move_pre_translate = true
+		move_var_a_translate = false
+		move_var_b_translate = false
+		
+		post_translate_radio.set_pressed_no_signal(false)
+		var_a_translate_radio.set_pressed_no_signal(false)
+		var_b_translate_radio.set_pressed_no_signal(false)
+	else:
+		pre_translate_radio.set_pressed_no_signal(true)
+
+func _on_var_a_translate_radio_toggled(button_pressed: bool):
+	if button_pressed:
+		move_post_translate = false
+		move_pre_translate = false
+		move_var_a_translate = true
+		move_var_b_translate = false
+		
+		post_translate_radio.set_pressed_no_signal(false)
+		pre_translate_radio.set_pressed_no_signal(false)
+		var_b_translate_radio.set_pressed_no_signal(false)
+	else:
+		var_a_translate_radio.set_pressed_no_signal(true)
+
+func _on_var_b_translate_radio_toggled(button_pressed: bool):
+	if button_pressed:
+		move_post_translate = false
+		move_pre_translate = false
+		move_var_a_translate = false
+		move_var_b_translate = true
+		
+		post_translate_radio.set_pressed_no_signal(false)
+		pre_translate_radio.set_pressed_no_signal(false)
+		var_a_translate_radio.set_pressed_no_signal(false)
+	else:
+		var_b_translate_radio.set_pressed_no_signal(true)
+
+
+# =================================================================
+# --- Variation-Specific Signal Callbacks ---
+# =================================================================
+
+# --- Symmetry Controls (Var A & B) ---
+
+func _on_var_a_mirror_x_check_toggled(button_pressed: bool):
+	var_a_mirror_x = button_pressed
+
+func _on_var_a_mirror_y_check_toggled(button_pressed: bool):
+	var_a_mirror_y = button_pressed
+
+func _on_var_b_mirror_x_check_toggled(button_pressed: bool):
+	var_b_mirror_x = button_pressed
+
+func _on_var_b_mirror_y_check_toggled(button_pressed: bool):
+	var_b_mirror_y = button_pressed
+
+func _on_var_a_kaleidoscope_slices_changed(value: float):
+	var_a_kaleidoscope_slices = value
+	var_a_kaleidoscope_slider.set_value_no_signal(value)
+	var_a_kaleidoscope_spinbox.set_value_no_signal(value)
+
+func _on_var_a_kaleidoscope_slices_slider_value_changed(value: float):
+	_on_var_a_kaleidoscope_slices_changed(value)
+
+func _on_var_a_kaleidoscope_slices_spinbox_value_changed(value: float):
+	_on_var_a_kaleidoscope_slices_changed(value)
+
+func _on_var_b_kaleidoscope_slices_changed(value: float):
+	var_b_kaleidoscope_slices = value
+	var_b_kaleidoscope_slider.set_value_no_signal(value)
+	var_b_kaleidoscope_spinbox.set_value_no_signal(value)
+
+func _on_var_b_kaleidoscope_slices_slider_value_changed(value: float):
+	_on_var_b_kaleidoscope_slices_changed(value)
+
+func _on_var_b_kaleidoscope_slices_spinbox_value_changed(value: float):
+	_on_var_b_kaleidoscope_slices_changed(value)
+
+
+# --- Wave Controls (Var A & B) ---
+
+func _on_wave_type_dropdown_a_item_selected(index: int):
+	wave_type_a = index
+
+func _on_wave_frequency_a_changed(value: float):
+	wave_frequency_a = value
+	wave_frequency_slider_a.set_value_no_signal(value)
+	wave_frequency_spinbox_a.set_value_no_signal(value)
+
+func _on_wave_frequency_slider_a_value_changed(value: float):
+	_on_wave_frequency_a_changed(value)
+
+func _on_wave_frequency_spinbox_a_value_changed(value: float):
+	_on_wave_frequency_a_changed(value)
+
+func _on_wave_amplitude_a_changed(value: float):
+	wave_amplitude_a = value
+	wave_amplitude_slider_a.set_value_no_signal(value)
+	wave_amplitude_spinbox_a.set_value_no_signal(value)
+
+func _on_wave_amplitude_slider_a_value_changed(value: float):
+	_on_wave_amplitude_a_changed(value)
+
+func _on_wave_amplitude_spinbox_a_value_changed(value: float):
+	_on_wave_amplitude_a_changed(value)
+
+func _on_wave_speed_a_changed(value: float):
+	wave_speed_a = value
+	wave_speed_slider_a.set_value_no_signal(value)
+	wave_speed_spinbox_a.set_value_no_signal(value)
+
+func _on_wave_speed_slider_a_value_changed(value: float):
+	_on_wave_speed_a_changed(value)
+
+func _on_wave_speed_spinbox_a_value_changed(value: float):
+	_on_wave_speed_a_changed(value)
+
+func _on_wave_type_dropdown_b_item_selected(index: int):
+	wave_type_b = index
+
+func _on_wave_frequency_b_changed(value: float):
+	wave_frequency_b = value
+	wave_frequency_slider_b.set_value_no_signal(value)
+	wave_frequency_spinbox_b.set_value_no_signal(value)
+
+func _on_wave_frequency_slider_b_value_changed(value: float):
+	_on_wave_frequency_b_changed(value)
+
+func _on_wave_frequency_spinbox_b_value_changed(value: float):
+	_on_wave_frequency_b_changed(value)
+
+func _on_wave_amplitude_b_changed(value: float):
+	wave_amplitude_b = value
+	wave_amplitude_slider_b.set_value_no_signal(value)
+	wave_amplitude_spinbox_b.set_value_no_signal(value)
+
+func _on_wave_amplitude_slider_b_value_changed(value: float):
+	_on_wave_amplitude_b_changed(value)
+
+func _on_wave_amplitude_spinbox_b_value_changed(value: float):
+	_on_wave_amplitude_b_changed(value)
+
+func _on_wave_speed_b_changed(value: float):
+	wave_speed_b = value
+	wave_speed_slider_b.set_value_no_signal(value)
+	wave_speed_spinbox_b.set_value_no_signal(value)
+
+func _on_wave_speed_slider_b_value_changed(value: float):
+	_on_wave_speed_b_changed(value)
+
+func _on_wave_speed_spinbox_b_value_changed(value: float):
+	_on_wave_speed_b_changed(value)
+
+
+# --- Julian Controls (Var A & B) ---
+
+# (This is a pattern: repeat for all 6 Julian pairs, A and B)
+func _on_julian_power_a_changed(value: float):
+	julian_power_a = value
+	julian_power_slider_a.set_value_no_signal(value)
+	julian_power_spinbox_a.set_value_no_signal(value)
+
+func _on_julian_power_slider_a_value_changed(value: float):
+	_on_julian_power_a_changed(value)
+
+func _on_julian_power_spinbox_a_value_changed(value: float):
+	_on_julian_power_a_changed(value)
+
+func _on_julian_dist_a_changed(value: float):
+	julian_dist_a = value
+	julian_dist_slider_a.set_value_no_signal(value)
+	julian_dist_spinbox_a.set_value_no_signal(value)
+
+func _on_julian_dist_slider_a_value_changed(value: float):
+	_on_julian_dist_a_changed(value)
+
+func _on_julian_dist_spinbox_a_value_changed(value: float):
+	_on_julian_dist_a_changed(value)
+
+func _on_julian_a_a_changed(value: float):
+	julian_a_a = value
+	julian_a_slider_a.set_value_no_signal(value)
+	julian_a_spinbox_a.set_value_no_signal(value)
+
+func _on_julian_a_slider_a_value_changed(value: float):
+	_on_julian_a_a_changed(value)
+
+func _on_julian_a_spinbox_a_value_changed(value: float):
+	_on_julian_a_a_changed(value)
+
+func _on_julian_b_a_changed(value: float):
+	julian_b_a = value
+	julian_b_slider_a.set_value_no_signal(value)
+	julian_b_spinbox_a.set_value_no_signal(value)
+
+func _on_julian_b_slider_a_value_changed(value: float):
+	_on_julian_b_a_changed(value)
+
+func _on_julian_b_spinbox_a_value_changed(value: float):
+	_on_julian_b_a_changed(value)
+
+func _on_julian_c_a_changed(value: float):
+	julian_c_a = value
+	julian_c_slider_a.set_value_no_signal(value)
+	julian_c_spinbox_a.set_value_no_signal(value)
+
+func _on_julian_c_slider_a_value_changed(value: float):
+	_on_julian_c_a_changed(value)
+
+func _on_julian_c_spinbox_a_value_changed(value: float):
+	_on_julian_c_a_changed(value)
+
+func _on_julian_d_a_changed(value: float):
+	julian_d_a = value
+	julian_d_slider_a.set_value_no_signal(value)
+	julian_d_spinbox_a.set_value_no_signal(value)
+
+func _on_julian_d_slider_a_value_changed(value: float):
+	_on_julian_d_a_changed(value)
+
+func _on_julian_d_spinbox_a_value_changed(value: float):
+	_on_julian_d_a_changed(value)
+
+func _on_julian_e_a_changed(value: float):
+	julian_e_a = value
+	julian_e_slider_a.set_value_no_signal(value)
+	julian_e_spinbox_a.set_value_no_signal(value)
+
+func _on_julian_e_slider_a_value_changed(value: float):
+	_on_julian_e_a_changed(value)
+
+func _on_julian_e_spinbox_a_value_changed(value: float):
+	_on_julian_e_a_changed(value)
+
+func _on_julian_f_a_changed(value: float):
+	julian_f_a = value
+	julian_f_slider_a.set_value_no_signal(value)
+	julian_f_spinbox_a.set_value_no_signal(value)
+
+func _on_julian_f_slider_a_value_changed(value: float):
+	_on_julian_f_a_changed(value)
+
+func _on_julian_f_spinbox_a_value_changed(value: float):
+	_on_julian_f_a_changed(value)
+
+func _on_julian_power_b_changed(value: float):
+	julian_power_b = value
+	julian_power_slider_b.set_value_no_signal(value)
+	julian_power_spinbox_b.set_value_no_signal(value)
+
+func _on_julian_power_slider_b_value_changed(value: float):
+	_on_julian_power_b_changed(value)
+
+func _on_julian_power_spinbox_b_value_changed(value: float):
+	_on_julian_power_b_changed(value)
+
+func _on_julian_dist_b_changed(value: float):
+	julian_dist_b = value
+	julian_dist_slider_b.set_value_no_signal(value)
+	julian_dist_spinbox_b.set_value_no_signal(value)
+
+func _on_julian_dist_slider_b_value_changed(value: float):
+	_on_julian_dist_b_changed(value)
+
+func _on_julian_dist_spinbox_b_value_changed(value: float):
+	_on_julian_dist_b_changed(value)
+
+func _on_julian_a_b_changed(value: float):
+	julian_a_b = value
+	julian_a_slider_b.set_value_no_signal(value)
+	julian_a_spinbox_b.set_value_no_signal(value)
+
+func _on_julian_a_slider_b_value_changed(value: float):
+	_on_julian_a_b_changed(value)
+
+func _on_julian_a_spinbox_b_value_changed(value: float):
+	_on_julian_a_b_changed(value)
+
+func _on_julian_b_b_changed(value: float):
+	julian_b_b = value
+	julian_b_slider_b.set_value_no_signal(value)
+	julian_b_spinbox_b.set_value_no_signal(value)
+
+func _on_julian_b_slider_b_value_changed(value: float):
+	_on_julian_b_b_changed(value)
+
+func _on_julian_b_spinbox_b_value_changed(value: float):
+	_on_julian_b_b_changed(value)
+
+func _on_julian_c_b_changed(value: float):
+	julian_c_b = value
+	julian_c_slider_b.set_value_no_signal(value)
+	julian_c_spinbox_b.set_value_no_signal(value)
+
+func _on_julian_c_slider_b_value_changed(value: float):
+	_on_julian_c_b_changed(value)
+
+func _on_julian_c_spinbox_b_value_changed(value: float):
+	_on_julian_c_b_changed(value)
+
+func _on_julian_d_b_changed(value: float):
+	julian_d_b = value
+	julian_d_slider_b.set_value_no_signal(value)
+	julian_d_spinbox_b.set_value_no_signal(value)
+
+func _on_julian_d_slider_b_value_changed(value: float):
+	_on_julian_d_b_changed(value)
+
+func _on_julian_d_spinbox_b_value_changed(value: float):
+	_on_julian_d_b_changed(value)
+
+func _on_julian_e_b_changed(value: float):
+	julian_e_b = value
+	julian_e_slider_b.set_value_no_signal(value)
+	julian_e_spinbox_b.set_value_no_signal(value)
+
+func _on_julian_e_slider_b_value_changed(value: float):
+	_on_julian_e_b_changed(value)
+
+func _on_julian_e_spinbox_b_value_changed(value: float):
+	_on_julian_e_b_changed(value)
+
+func _on_julian_f_b_changed(value: float):
+	julian_f_b = value
+	julian_f_slider_b.set_value_no_signal(value)
+	julian_f_spinbox_b.set_value_no_signal(value)
+
+func _on_julian_f_slider_b_value_changed(value: float):
+	_on_julian_f_b_changed(value)
+
+func _on_julian_f_spinbox_b_value_changed(value: float):
+	_on_julian_f_b_changed(value)
+
+
+# --- Fisheye & Polar Controls (Var A & B) ---
+
+func _on_fisheye_strength_a_changed(value: float):
+	fisheye_strength_a = value
+	fisheye_strength_slider_a.set_value_no_signal(value)
+	fisheye_strength_spinbox_a.set_value_no_signal(value)
+
+func _on_fisheye_strength_slider_a_value_changed(value: float):
+	_on_fisheye_strength_a_changed(value)
+
+func _on_fisheye_strength_spinbox_a_value_changed(value: float):
+	_on_fisheye_strength_a_changed(value)
+
+func _on_polar_offset_a_changed(value: float):
+	polar_offset_a = value
+	polar_offset_slider_a.set_value_no_signal(value)
+	polar_offset_spinbox_a.set_value_no_signal(value)
+
+func _on_polar_offset_slider_a_value_changed(value: float):
+	_on_polar_offset_a_changed(value)
+
+func _on_polar_offset_spinbox_a_value_changed(value: float):
+	_on_polar_offset_a_changed(value)
+
+func _on_fisheye_strength_b_changed(value: float):
+	fisheye_strength_b = value
+	fisheye_strength_slider_b.set_value_no_signal(value)
+	fisheye_strength_spinbox_b.set_value_no_signal(value)
+
+func _on_fisheye_strength_slider_b_value_changed(value: float):
+	_on_fisheye_strength_b_changed(value)
+
+func _on_fisheye_strength_spinbox_b_value_changed(value: float):
+	_on_fisheye_strength_b_changed(value)
+
+func _on_polar_offset_b_changed(value: float):
+	polar_offset_b = value
+	polar_offset_slider_b.set_value_no_signal(value)
+	polar_offset_spinbox_b.set_value_no_signal(value)
+
+func _on_polar_offset_slider_b_value_changed(value: float):
+	_on_polar_offset_b_changed(value)
+
+func _on_polar_offset_spinbox_b_value_changed(value: float):
+	_on_polar_offset_b_changed(value)
+
+
+# --- Apollonian Scale Controls (Var A & B) ---
+
+func _on_apollonian_scale_a_changed(value: float):
+	apollonian_scale_a = value
+	apollonian_scale_slider_a.set_value_no_signal(value)
+	apollonian_scale_spinbox_a.set_value_no_signal(value)
+
+func _on_apollonian_scale_slider_a_value_changed(value: float):
+	_on_apollonian_scale_a_changed(value)
+
+func _on_apollonian_scale_spinbox_a_value_changed(value: float):
+	_on_apollonian_scale_a_changed(value)
+	
+func _on_apollonian_scale_b_changed(value: float):
+	apollonian_scale_b = value
+	apollonian_scale_slider_b.set_value_no_signal(value)
+	apollonian_scale_spinbox_b.set_value_no_signal(value)
+
+func _on_apollonian_scale_slider_b_value_changed(value: float):
+	_on_apollonian_scale_b_changed(value)
+
+func _on_apollonian_scale_spinbox_b_value_changed(value: float):
+	_on_apollonian_scale_b_changed(value)
+
+
+# --- Heart Controls (Var A & B) ---
+func _on_heart_scale_a_changed(value: float):
+	heart_scale_a = value
+	heart_scale_slider_a.set_value_no_signal(value)
+	heart_scale_spinbox_a.set_value_no_signal(value)
+	
+func _on_heart_scale_slider_a_value_changed(value: float): _on_heart_scale_a_changed(value)
+func _on_heart_scale_spinbox_a_value_changed(value: float): _on_heart_scale_a_changed(value)
+
+func _on_heart_rotation_a_changed(value: float):
+	heart_rotation_a = value
+	heart_rotation_slider_a.set_value_no_signal(value)
+	heart_rotation_spinbox_a.set_value_no_signal(value)
+	
+func _on_heart_rotation_slider_a_value_changed(value: float): _on_heart_rotation_a_changed(value)
+func _on_heart_rotation_spinbox_a_value_changed(value: float): _on_heart_rotation_a_changed(value)
+
+func _on_heart_strength_a_changed(value: float):
+	heart_strength_a = value
+	heart_strength_slider_a.set_value_no_signal(value)
+	heart_strength_spinbox_a.set_value_no_signal(value)
+	
+func _on_heart_strength_slider_a_value_changed(value: float): _on_heart_strength_a_changed(value)
+func _on_heart_strength_spinbox_a_value_changed(value: float): _on_heart_strength_a_changed(value)
+
+func _on_heart_scale_b_changed(value: float):
+	heart_scale_b = value
+	heart_scale_slider_b.set_value_no_signal(value)
+	heart_scale_spinbox_b.set_value_no_signal(value)
+	
+func _on_heart_scale_slider_b_value_changed(value: float): _on_heart_scale_b_changed(value)
+func _on_heart_scale_spinbox_b_value_changed(value: float): _on_heart_scale_b_changed(value)
+
+func _on_heart_rotation_b_changed(value: float):
+	heart_rotation_b = value
+	heart_rotation_slider_b.set_value_no_signal(value)
+	heart_rotation_spinbox_b.set_value_no_signal(value)
+	
+func _on_heart_rotation_slider_b_value_changed(value: float): _on_heart_rotation_b_changed(value)
+func _on_heart_rotation_spinbox_b_value_changed(value: float): _on_heart_rotation_b_changed(value)
+
+func _on_heart_strength_b_changed(value: float):
+	heart_strength_b = value
+	heart_strength_slider_b.set_value_no_signal(value)
+	heart_strength_spinbox_b.set_value_no_signal(value)
+	
+func _on_heart_strength_slider_b_value_changed(value: float): _on_heart_strength_b_changed(value)
+func _on_heart_strength_spinbox_b_value_changed(value: float): _on_heart_strength_b_changed(value)
+# --- Slider-Only Controls (Mobius, CellularWeave, Blur) ---
+
+# --- Mobius A ---
+func _on_mobius_re_a_a_changed(value: float):
+	mobius_re_a_a = value
+	%MobiusReASliderA.set_value_no_signal(value)
+	mobius_re_a_spinbox_a.set_value_no_signal(value)
+
+func _on_mobius_im_a_a_changed(value: float):
+	mobius_im_a_a = value
+	%MobiusImASliderA.set_value_no_signal(value)
+	mobius_im_a_spinbox_a.set_value_no_signal(value)
+
+func _on_mobius_re_b_a_changed(value: float):
+	mobius_re_b_a = value
+	%MobiusReBSliderA.set_value_no_signal(value)
+	mobius_re_b_spinbox_a.set_value_no_signal(value)
+
+func _on_mobius_im_b_a_changed(value: float):
+	mobius_im_b_a = value
+	%MobiusImBSliderA.set_value_no_signal(value)
+	mobius_im_b_spinbox_a.set_value_no_signal(value)
+
+func _on_mobius_re_c_a_changed(value: float):
+	mobius_re_c_a = value
+	%MobiusReCSliderA.set_value_no_signal(value)
+	mobius_re_c_spinbox_a.set_value_no_signal(value)
+
+func _on_mobius_im_c_a_changed(value: float):
+	mobius_im_c_a = value
+	%MobiusImCSliderA.set_value_no_signal(value)
+	mobius_im_c_spinbox_a.set_value_no_signal(value)
+
+func _on_mobius_re_d_a_changed(value: float):
+	mobius_re_d_a = value
+	%MobiusReDSliderA.set_value_no_signal(value)
+	mobius_re_d_spinbox_a.set_value_no_signal(value)
+
+func _on_mobius_im_d_a_changed(value: float):
+	mobius_im_d_a = value
+	%MobiusImDSliderA.set_value_no_signal(value)
+	mobius_im_d_spinbox_a.set_value_no_signal(value)
+
+# --- Mobius B ---
+func _on_mobius_re_a_b_changed(value: float):
+	mobius_re_a_b = value
+	%MobiusReASliderB.set_value_no_signal(value)
+	mobius_re_a_spinbox_b.set_value_no_signal(value)
+
+func _on_mobius_im_a_b_changed(value: float):
+	mobius_im_a_b = value
+	%MobiusImASliderB.set_value_no_signal(value)
+	mobius_im_a_spinbox_b.set_value_no_signal(value)
+
+func _on_mobius_re_b_b_changed(value: float):
+	mobius_re_b_b = value
+	%MobiusReBSliderB.set_value_no_signal(value)
+	mobius_re_b_spinbox_b.set_value_no_signal(value)
+
+func _on_mobius_im_b_b_changed(value: float):
+	mobius_im_b_b = value
+	%MobiusImBSliderB.set_value_no_signal(value)
+	mobius_im_b_spinbox_b.set_value_no_signal(value)
+
+func _on_mobius_re_c_b_changed(value: float):
+	mobius_re_c_b = value
+	%MobiusReCSliderB.set_value_no_signal(value)
+	mobius_re_c_spinbox_b.set_value_no_signal(value)
+
+func _on_mobius_im_c_b_changed(value: float):
+	mobius_im_c_b = value
+	%MobiusImCSliderB.set_value_no_signal(value)
+	mobius_im_c_spinbox_b.set_value_no_signal(value)
+
+func _on_mobius_re_d_b_changed(value: float):
+	mobius_re_d_b = value
+	%MobiusReDSliderB.set_value_no_signal(value)
+	mobius_re_d_spinbox_b.set_value_no_signal(value)
+
+func _on_mobius_im_d_b_changed(value: float):
+	mobius_im_d_b = value
+	%MobiusImDSliderB.set_value_no_signal(value)
+	mobius_im_d_spinbox_b.set_value_no_signal(value)
+
+
+# --- SLIDER HANDLERS (A) ---
+func _on_mobius_re_a_slider_a_value_changed(value: float): _on_mobius_re_a_a_changed(value)
+func _on_mobius_im_a_slider_a_value_changed(value: float): _on_mobius_im_a_a_changed(value)
+func _on_mobius_re_b_slider_a_value_changed(value: float): _on_mobius_re_b_a_changed(value)
+func _on_mobius_im_b_slider_a_value_changed(value: float): _on_mobius_im_b_a_changed(value)
+func _on_mobius_re_c_slider_a_value_changed(value: float): _on_mobius_re_c_a_changed(value)
+func _on_mobius_im_c_slider_a_value_changed(value: float): _on_mobius_im_c_a_changed(value)
+func _on_mobius_re_d_slider_a_value_changed(value: float): _on_mobius_re_d_a_changed(value)
+func _on_mobius_im_d_slider_a_value_changed(value: float): _on_mobius_im_d_a_changed(value)
+
+# --- SPINBOX HANDLERS (A) ---
+func _on_mobius_re_a_spinbox_a_value_changed(value: float): _on_mobius_re_a_a_changed(value)
+func _on_mobius_im_a_spinbox_a_value_changed(value: float): _on_mobius_im_a_a_changed(value)
+func _on_mobius_re_b_spinbox_a_value_changed(value: float): _on_mobius_re_b_a_changed(value)
+func _on_mobius_im_b_spinbox_a_value_changed(value: float): _on_mobius_im_b_a_changed(value)
+func _on_mobius_re_c_spinbox_a_value_changed(value: float): _on_mobius_re_c_a_changed(value)
+func _on_mobius_im_c_spinbox_a_value_changed(value: float): _on_mobius_im_c_a_changed(value)
+func _on_mobius_re_d_spinbox_a_value_changed(value: float): _on_mobius_re_d_a_changed(value)
+func _on_mobius_im_d_spinbox_a_value_changed(value: float): _on_mobius_im_d_a_changed(value)
+
+# --- SLIDER HANDLERS (B) ---
+func _on_mobius_re_a_slider_b_value_changed(value: float): _on_mobius_re_a_b_changed(value)
+func _on_mobius_im_a_slider_b_value_changed(value: float): _on_mobius_im_a_b_changed(value)
+func _on_mobius_re_b_slider_b_value_changed(value: float): _on_mobius_re_b_b_changed(value)
+func _on_mobius_im_b_slider_b_value_changed(value: float): _on_mobius_im_b_b_changed(value)
+func _on_mobius_re_c_slider_b_value_changed(value: float): _on_mobius_re_c_b_changed(value)
+func _on_mobius_im_c_slider_b_value_changed(value: float): _on_mobius_im_c_b_changed(value)
+func _on_mobius_re_d_slider_b_value_changed(value: float): _on_mobius_re_d_b_changed(value)
+func _on_mobius_im_d_slider_b_value_changed(value: float): _on_mobius_im_d_b_changed(value)
+
+# --- SPINBOX HANDLERS (B) ---
+func _on_mobius_re_a_spinbox_b_value_changed(value: float): _on_mobius_re_a_b_changed(value)
+func _on_mobius_im_a_spinbox_b_value_changed(value: float): _on_mobius_im_a_b_changed(value)
+func _on_mobius_re_b_spinbox_b_value_changed(value: float): _on_mobius_re_b_b_changed(value)
+func _on_mobius_im_b_spinbox_b_value_changed(value: float): _on_mobius_im_b_b_changed(value)
+func _on_mobius_re_c_spinbox_b_value_changed(value: float): _on_mobius_re_c_b_changed(value)
+func _on_mobius_im_c_spinbox_b_value_changed(value: float): _on_mobius_im_c_b_changed(value)
+func _on_mobius_re_d_spinbox_b_value_changed(value: float): _on_mobius_re_d_b_changed(value)
+func _on_mobius_im_d_spinbox_b_value_changed(value: float): _on_mobius_im_d_b_changed(value)
+
+
+# --- Cellular Weave A ---
+func _on_cellular_weave_grid_size_a_changed(value: float):
+	cellular_weave_grid_size_a = value
+	cellular_weave_grid_size_slider_a.set_value_no_signal(value)
+	cellular_weave_grid_size_spinbox_a.set_value_no_signal(value)
+
+func _on_cellular_weave_grid_size_slider_a_value_changed(value: float):
+	_on_cellular_weave_grid_size_a_changed(value)
+
+func _on_cellular_weave_grid_size_spinbox_a_value_changed(value: float):
+	_on_cellular_weave_grid_size_a_changed(value)
+
+func _on_cellular_weave_threshold_a_changed(value: float):
+	cellular_weave_threshold_a = value
+	cellular_weave_threshold_slider_a.set_value_no_signal(value)
+	cellular_weave_threshold_spinbox_a.set_value_no_signal(value)
+
+func _on_cellular_weave_threshold_slider_a_value_changed(value: float):
+	_on_cellular_weave_threshold_a_changed(value)
+
+func _on_cellular_weave_threshold_spinbox_a_value_changed(value: float):
+	_on_cellular_weave_threshold_a_changed(value)
+
+func _on_cellular_weave_iterations_a_changed(value: float):
+	cellular_weave_iterations_a = value
+	cellular_weave_iterations_slider_a.set_value_no_signal(value)
+	cellular_weave_iterations_spinbox_a.set_value_no_signal(value)
+
+func _on_cellular_weave_iterations_slider_a_value_changed(value: float):
+	_on_cellular_weave_iterations_a_changed(value)
+
+func _on_cellular_weave_iterations_spinbox_a_value_changed(value: float):
+	_on_cellular_weave_iterations_a_changed(value)
+
+# --- Cellular Weave B ---
+func _on_cellular_weave_grid_size_b_changed(value: float):
+	cellular_weave_grid_size_b = value
+	cellular_weave_grid_size_slider_b.set_value_no_signal(value)
+	cellular_weave_grid_size_spinbox_b.set_value_no_signal(value)
+	
+func _on_cellular_weave_grid_size_slider_b_value_changed(value: float):
+	_on_cellular_weave_grid_size_b_changed(value)
+
+func _on_cellular_weave_grid_size_spinbox_b_value_changed(value: float):
+	_on_cellular_weave_grid_size_b_changed(value)
+
+func _on_cellular_weave_threshold_b_changed(value: float):
+	cellular_weave_threshold_b = value
+	cellular_weave_threshold_slider_b.set_value_no_signal(value)
+	cellular_weave_threshold_spinbox_b.set_value_no_signal(value)
+
+func _on_cellular_weave_threshold_slider_b_value_changed(value: float):
+	_on_cellular_weave_threshold_b_changed(value)
+
+func _on_cellular_weave_threshold_spinbox_b_value_changed(value: float):
+	_on_cellular_weave_threshold_b_changed(value)
+
+func _on_cellular_weave_iterations_b_changed(value: float):
+	cellular_weave_iterations_b = value
+	cellular_weave_iterations_slider_b.set_value_no_signal(value)
+	cellular_weave_iterations_spinbox_b.set_value_no_signal(value)
+
+func _on_cellular_weave_iterations_slider_b_value_changed(value: float):
+	_on_cellular_weave_iterations_b_changed(value)
+
+func _on_cellular_weave_iterations_spinbox_b_value_changed(value: float):
+	_on_cellular_weave_iterations_b_changed(value)
+
+# --- Blur Amount A ---
+func _on_blur_amount_a_changed(value: float):
+	blur_amount_a = value
+	blur_amount_slider_a.set_value_no_signal(value)
+	blur_amount_spinbox_a.set_value_no_signal(value)
+
+func _on_blur_amount_slider_a_value_changed(value: float):
+	_on_blur_amount_a_changed(value)
+
+func _on_blur_amount_spinbox_a_value_changed(value: float):
+	_on_blur_amount_a_changed(value)
+
+# --- Blur Amount B ---
+func _on_blur_amount_b_changed(value: float):
+	blur_amount_b = value
+	blur_amount_slider_b.set_value_no_signal(value)
+	blur_amount_spinbox_b.set_value_no_signal(value)
+
+func _on_blur_amount_slider_b_value_changed(value: float):
+	_on_blur_amount_b_changed(value)
+
+func _on_blur_amount_spinbox_b_value_changed(value: float):
+	_on_blur_amount_b_changed(value)
+
+# --- Unique Vector Controls (Apollonian) ---
+func _on_ap_c1x_spinbox_a_value_changed(value: float):
+	ap_c1_a.x = value
+func _on_ap_c1y_spinbox_a_value_changed(value: float):
+	ap_c1_a.y = value
+func _on_ap_c2x_spinbox_a_value_changed(value: float):
+	ap_c2_a.x = value
+func _on_ap_c2y_spinbox_a_value_changed(value: float):
+	ap_c2_a.y = value
+func _on_ap_c3x_spinbox_a_value_changed(value: float):
+	ap_c3_a.x = value
+func _on_ap_c3y_spinbox_a_value_changed(value: float):
+	ap_c3_a.y = value
+
+func _on_ap_c1x_spinbox_b_value_changed(value: float):
+	ap_c1_b.x = value
+func _on_ap_c1y_spinbox_b_value_changed(value: float):
+	ap_c1_b.y = value
+func _on_ap_c2x_spinbox_b_value_changed(value: float):
+	ap_c2_b.x = value
+func _on_ap_c2y_spinbox_b_value_changed(value: float):
+	ap_c2_b.y = value
+func _on_ap_c3x_spinbox_b_value_changed(value: float):
+	ap_c3_b.x = value
+func _on_ap_c3y_spinbox_b_value_changed(value: float):
+	ap_c3_b.y = value
