@@ -77,6 +77,16 @@ class_name VariationDefaults
 @export var cellular_weave_grid_size_a: float = 10.0
 @export var cellular_weave_threshold_a: float = 4.0
 @export var cellular_weave_iterations_a: float = 1.0
+@export var clifford_a_a: float = -1.7
+@export var clifford_b_a: float = 1.7
+@export var clifford_c_a: float = -0.5
+@export var clifford_d_a: float = -1.2
+
+@export var dejong_a_a: float = 1.4
+@export var dejong_b_a: float = 2.3
+@export var dejong_c_a: float = 1.5
+@export var dejong_d_a: float = -0.6
+
 @export var blur_amount_a: float = 0.0
 @export var heart_scale_a: float = 0.3
 @export var heart_rotation_a: float = 0.0
@@ -89,6 +99,7 @@ class_name VariationDefaults
 @export var custom_tr_a_id: int = 0
 @export var custom_bl_a_id: int = 0
 @export var custom_br_a_id: int = 0
+
 
 ## --- Variation B ---
 @export var var_b_mirror_x: bool = false
@@ -119,6 +130,15 @@ class_name VariationDefaults
 @export var cellular_weave_grid_size_b: float = 10.0
 @export var cellular_weave_threshold_b: float = 4.0
 @export var cellular_weave_iterations_b: float = 1.0
+
+@export var clifford_a_b: float = -1.7
+@export var clifford_b_b: float = 1.7
+@export var clifford_c_b: float = -0.5
+@export var clifford_d_b: float = -1.2
+@export var dejong_a_b: float = 1.4
+@export var dejong_b_b: float = 2.3
+@export var dejong_c_b: float = 1.5
+@export var dejong_d_b: float = -0.6
 @export var blur_amount_b: float = 0.0
 @export var heart_scale_b: float = 0.3
 @export var heart_rotation_b: float = 0.0
@@ -131,6 +151,7 @@ class_name VariationDefaults
 @export var custom_tr_b_id: int = 0
 @export var custom_bl_b_id: int = 0
 @export var custom_br_b_id: int = 0
+
 
 ## --- 3D Controls ---
 @export var light_x_rotation: float = 0.0

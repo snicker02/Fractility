@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dkd3sc3vxx6jf"]
+
+[ext_resource type="Script" uid="uid://jb4d2af4wai" path="res://VariationPanel.gd" id="1_ffqpq"]
+
+[node name="VariationPanel" type="VBoxContainer"]
+script = ExtResource("1_ffqpq")

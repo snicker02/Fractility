@@ -125,7 +125,23 @@ uniform vec2 ap_c2_b = vec2(-0.433, -0.25); // <-- ADD Center 2 for Var B
 uniform vec2 ap_c3_b = vec2(0.433, -0.25);  // <-- ADD Center 3 for Var B
 uniform int custom_tl_a; uniform int custom_tr_a; uniform int custom_bl_a; uniform int custom_br_a;
 uniform int custom_tl_b; uniform int custom_tr_b; uniform int custom_bl_b; uniform int custom_br_b;
+uniform float clifford_a_a;
+uniform float clifford_b_a;
+uniform float clifford_c_a;
+uniform float clifford_d_a;
+uniform float clifford_a_b;
+uniform float clifford_b_b;
+uniform float clifford_c_b;
+uniform float clifford_d_b;
 
+uniform float dejong_a_a;
+uniform float dejong_b_a;
+uniform float dejong_c_a;
+uniform float dejong_d_a;
+uniform float dejong_a_b;
+uniform float dejong_b_b;
+uniform float dejong_c_b;
+uniform float dejong_d_b;
 // --- Helper Functions ---
 mat2 rotate(float angle) {
 	return mat2(vec2(cos(angle), -sin(angle)), vec2(sin(angle), cos(angle)));
@@ -179,7 +195,9 @@ vec2 apply_variation(vec2 uv, int mode,
                      float bl_amount,                                          // Blur
                      float h_scale, float h_rotation, float h_strength,         // Heart
 					float ap_scale, vec2 ap_c1, vec2 ap_c2, vec2 ap_c3,
-					int c_tl, int c_tr, int c_bl, int c_br
+					int c_tl, int c_tr, int c_bl, int c_br,
+					float cl_a, float cl_b, float cl_c, float cl_d,           // Clifford
+					float dj_a, float dj_b, float dj_c, float dj_d            // DeJong
                      ) {
 	if (mode == 0) { // Sinusoidal
 		return sin(uv * 3.14159);
@@ -696,7 +714,14 @@ vec2 apply_variation(vec2 uv, int mode,
 		return p / 2.0; // Scale back down
 	}
 	// --- END TWINDRAGON ---
-	
+	else if (mode == 32) { // Clifford
+		return vec2(sin(cl_a * uv.y) + cl_c * cos(cl_a * uv.x),
+					sin(cl_b * uv.x) + cl_d * cos(cl_b * uv.y));
+	}
+	else if (mode == 33) { // DeJong
+		return vec2(sin(dj_a * uv.y) - cos(dj_b * uv.x),
+					sin(dj_c * uv.x) - cos(dj_d * uv.y));
+					}
     return uv;
 }
 vec2 random(vec2 st) {
@@ -774,9 +799,8 @@ void fragment() {
 		transformed_uv += pre_translate;
 
 		// Apply Variations
-		vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a, wave_frequency_a, wave_amplitude_a, wave_speed_a, wave_type_a, julian_power_a, julian_dist_a, julian_mat_a, julian_trans_a, fisheye_strength_a, polar_offset_a, var_a_mirror_x, var_a_mirror_y, var_a_kaleidoscope_slices, mobius_a_a, mobius_b_a, mobius_c_a, mobius_d_a, cellular_weave_grid_size_a, cellular_weave_threshold_a, cellular_weave_iterations_a, blur_amount_a, heart_scale_a, heart_rotation_a, heart_strength_a, apollonian_scale_a, ap_c1_a, ap_c2_a, ap_c3_a,custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a);
-		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b, wave_frequency_b, wave_amplitude_b, wave_speed_b, wave_type_b, julian_power_b, julian_dist_b, julian_mat_b, julian_trans_b, fisheye_strength_b, polar_offset_b, var_b_mirror_x, var_b_mirror_y, var_b_kaleidoscope_slices, mobius_a_b, mobius_b_b, mobius_c_b, mobius_d_b, cellular_weave_grid_size_b, cellular_weave_threshold_b, cellular_weave_iterations_b, blur_amount_b, heart_scale_b, heart_rotation_b, heart_strength_b, apollonian_scale_b, ap_c1_b, ap_c2_b, ap_c3_b,custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b);
-		
+		vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a, wave_frequency_a, wave_amplitude_a, wave_speed_a, wave_type_a, julian_power_a, julian_dist_a, julian_mat_a, julian_trans_a, fisheye_strength_a, polar_offset_a, var_a_mirror_x, var_a_mirror_y, var_a_kaleidoscope_slices, mobius_a_a, mobius_b_a, mobius_c_a, mobius_d_a, cellular_weave_grid_size_a, cellular_weave_threshold_a, cellular_weave_iterations_a, blur_amount_a, heart_scale_a, heart_rotation_a, heart_strength_a, apollonian_scale_a, ap_c1_a, ap_c2_a, ap_c3_a, custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a, clifford_a_a, clifford_b_a, clifford_c_a, clifford_d_a, dejong_a_a, dejong_b_a, dejong_c_a, dejong_d_a);
+		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b, wave_frequency_b, wave_amplitude_b, wave_speed_b, wave_type_b, julian_power_b, julian_dist_b, julian_mat_b, julian_trans_b, fisheye_strength_b, polar_offset_b, var_b_mirror_x, var_b_mirror_y, var_b_kaleidoscope_slices, mobius_a_b, mobius_b_b, mobius_c_b, mobius_d_b, cellular_weave_grid_size_b, cellular_weave_threshold_b, cellular_weave_iterations_b, blur_amount_b, heart_scale_b, heart_rotation_b, heart_strength_b, apollonian_scale_b, ap_c1_b, ap_c2_b, ap_c3_b, custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b, clifford_a_b, clifford_b_b, clifford_c_b, clifford_d_b, dejong_a_b, dejong_b_b, dejong_c_b, dejong_d_b);
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
 		vec2 p_final_centered = mixed_uv;
 

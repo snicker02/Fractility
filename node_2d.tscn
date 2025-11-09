@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=30 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -7,6 +7,152 @@
 [ext_resource type="Script" uid="uid://duxyymkhormcs" path="res://mydefaults10.gd" id="3_kdubu"]
 [ext_resource type="Shader" uid="uid://dmj4hrxigy3dq" path="res://Composite3DOver2D.gdshader" id="3_q6r6c"]
 [ext_resource type="Shader" uid="uid://m48sth4ixbgv" path="res://NormalMap.gdshader" id="4_0hol4"]
+[ext_resource type="PackedScene" uid="uid://dkd3sc3vxx6jf" path="res://VariationPanel.tscn" id="5_rj586"]
+[ext_resource type="Script" uid="uid://di65wpry5ixo0" path="res://VariationParameter.gd" id="6_4d7sh"]
+
+[sub_resource type="Resource" id="Resource_4d7sh"]
+script = ExtResource("6_4d7sh")
+name = "clifford_a_a"
+label = "A"
+default = -1.7
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ir8iy"]
+script = ExtResource("6_4d7sh")
+name = "clifford_b_a"
+label = "B"
+default = 1.7
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_hqns4"]
+script = ExtResource("6_4d7sh")
+name = "clifford_c_a"
+label = "C"
+default = -0.5
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_x0ka3"]
+script = ExtResource("6_4d7sh")
+name = "clifford_d_a"
+label = "D"
+default = -1.2
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_0h7mo"]
+script = ExtResource("6_4d7sh")
+name = "dejong_a_a"
+label = "A"
+default = 1.4
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_nr8wp"]
+script = ExtResource("6_4d7sh")
+name = "dejong_b_a"
+label = "B"
+default = 2.3
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_d2bti"]
+script = ExtResource("6_4d7sh")
+name = "dejong_c_a"
+label = "C"
+default = 1.5
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ta5nu"]
+script = ExtResource("6_4d7sh")
+name = "dejong_d_a"
+label = "D"
+default = -0.6
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_flf07"]
+script = ExtResource("6_4d7sh")
+name = "clifford_a_b"
+label = "A"
+default = -1.7
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_k73cj"]
+script = ExtResource("6_4d7sh")
+name = "clifford_b_b"
+label = "B"
+default = 1.7
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_rjqkl"]
+script = ExtResource("6_4d7sh")
+name = "clifford_c_b"
+label = "C"
+default = -0.5
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_fs4d3"]
+script = ExtResource("6_4d7sh")
+name = "clifford_d_b"
+label = "D"
+default = -1.2
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_7vxoj"]
+script = ExtResource("6_4d7sh")
+name = "dejong_a_b"
+label = "A"
+default = 1.4
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ei405"]
+script = ExtResource("6_4d7sh")
+name = "dejong_b_b"
+label = "B"
+default = 2.3
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_e8dv2"]
+script = ExtResource("6_4d7sh")
+name = "dejong_c_b"
+label = "C"
+default = 1.5
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_2nhjh"]
+script = ExtResource("6_4d7sh")
+name = "dejong_d_b"
+label = "D"
+default = -0.6
+min = -3.0
+max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Environment" id="Environment_0e48y"]
 
@@ -224,6 +370,10 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern"]
 layout_mode = 2
+
+[node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
+layout_mode = 2
+text = "V 2.0"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -542,10 +692,10 @@ text = "C3 X"
 [node name="ApC3XSpinBoxA" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer4"]
 unique_name_in_owner = true
 layout_mode = 2
-min_value = -10.0
-max_value = 10.0
+min_value = -3.0
+max_value = 3.0
 step = 0.001
-value = 0.4299999999999997
+value = 0.43000000000000016
 script = ExtResource("2_q6r6c")
 
 [node name="C3 Y" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/ApollonianControlsContainerA/HBoxContainer4"]
@@ -659,6 +809,18 @@ unique_name_in_owner = true
 layout_mode = 2
 max_value = 10.0
 step = 0.001
+
+[node name="CliffordControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Clifford A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_4d7sh"), SubResource("Resource_ir8iy"), SubResource("Resource_hqns4"), SubResource("Resource_x0ka3")])
+
+[node name="DeJongControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "DeJong A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_0h7mo"), SubResource("Resource_nr8wp"), SubResource("Resource_d2bti"), SubResource("Resource_ta5nu")])
 
 [node name="FisheyeControlsContainerA" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
@@ -1577,6 +1739,18 @@ unique_name_in_owner = true
 layout_mode = 2
 max_value = 10.0
 step = 0.001
+
+[node name="CliffordControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Clifford B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_flf07"), SubResource("Resource_k73cj"), SubResource("Resource_rjqkl"), SubResource("Resource_fs4d3")])
+
+[node name="DeJongControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "DeJong B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_7vxoj"), SubResource("Resource_ei405"), SubResource("Resource_e8dv2"), SubResource("Resource_2nhjh")])
 
 [node name="FisheyeControlsContainerB" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true

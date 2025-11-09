@@ -1,6 +1,6 @@
 extends Control
-const PROGRAM_VERSION = 1.4
-
+const PROGRAM_VERSION = 2.0
+const VariationPanel = preload("res://VariationPanel.gd")
 # --- Private Variables ---
 
 
@@ -414,6 +414,13 @@ var custom_tl_b_id: int
 var custom_tr_b_id: int
 var custom_bl_b_id: int
 var custom_br_b_id: int
+@onready var clifford_controls_container_a: VBoxContainer = %CliffordControlsContainerA
+@onready var clifford_controls_container_b: VBoxContainer = %CliffordControlsContainerB
+@onready var dejong_controls_container_a: VBoxContainer = %DeJongControlsContainerA
+@onready var dejong_controls_container_b: VBoxContainer = %DeJongControlsContainerB
+
+var _auto_params_a: Dictionary = {}
+var _auto_params_b: Dictionary = {}
 
 # --- 3D Light Controls ---
 var light_x_rotation: float   # Default from your screenshot
@@ -498,6 +505,17 @@ func _update_light() -> void:
 			printerr("ERROR: WorldEnvironment node not found!")
 
 func _ready() -> void:
+	# --- ALL VAR DECLARATIONS MUST GO FIRST ---
+	var window_size = get_viewport().get_visible_rect().size
+	var viewport_3d = display_container_3d.get_child(0) as SubViewport
+	var feedback_material = ShaderMaterial.new()
+	var mesh_material = StandardMaterial3D.new()
+	var initial_normal_img: Image
+	var current_fractal_texture
+	var post_save_material = ShaderMaterial.new()
+
+	# --- NOW, THE REST OF THE CODE CAN RUN ---
+	
 	# --- Ensure WorldEnvironment has an Environment ---
 	if is_instance_valid(world_env) and not is_instance_valid(world_env.environment):
 		print("WARNING: WorldEnvironment has no Environment resource. Creating one.")
@@ -516,9 +534,8 @@ func _ready() -> void:
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	file_dialog.current_dir = OS.get_system_dir(OS.SystemDir.SYSTEM_DIR_PICTURES)
 	
-	_set_platform_feedback_defaults()
+	#_set_platform_feedback_defaults() # This is now handled by reset_visuals()
 	
-	var window_size = get_viewport().get_visible_rect().size
 	print("DEBUG: window_size in _ready:", window_size) # <-- Add check for size
 	# --- FIX: Synchronize all viewports to the window size at startup ---
 	if window_size.x <= 0 or window_size.y <= 0:
@@ -533,11 +550,9 @@ func _ready() -> void:
 	viewport_b.size = window_size
 	# --- END FIX ---
 	
-	var viewport_3d = display_container_3d.get_child(0) as SubViewport
 	if is_instance_valid(viewport_3d):
 		viewport_3d.size = window_size
 
-	var feedback_material = ShaderMaterial.new()
 	feedback_material.shader = load("res://fractal_feedback.gdshader")
 	%ViewportA.get_node("ShaderRect").material = feedback_material
 	%ViewportB.get_node("ShaderRect").material = feedback_material.duplicate()
@@ -554,10 +569,12 @@ func _ready() -> void:
 		"heart": heart_controls_container_a,
 		"julian": julian_controls_container_a,
 		"kaleidoscope": var_a_kaleidoscope_controls, # Use the correct node
-		"mirror": var_a_mirror_controls,         # Use the correct node
+		"mirror": var_a_mirror_controls,# Use the correct node
 		"mobius": mobius_controls_container_a,
 		"polar": polar_controls_container_a,
 		"wave": wave_controls_container_a,
+		"clifford": clifford_controls_container_a, # <-- ADD
+		"dejong": dejong_controls_container_a,     # <-- ADD
 		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
 	}
 	
@@ -569,29 +586,36 @@ func _ready() -> void:
 		"heart": heart_controls_container_b,
 		"julian": julian_controls_container_b,
 		"kaleidoscope": var_b_kaleidoscope_controls, # Use the correct node
-		"mirror": var_b_mirror_controls,         # Use the correct node
+		"mirror": var_b_mirror_controls,# Use the correct node
 		"mobius": mobius_controls_container_b,
 		"polar": polar_controls_container_b,
 		"wave": wave_controls_container_b,
+		"clifford": clifford_controls_container_b, # <-- ADD
+		"dejong": dejong_controls_container_b,     # <-- ADD
 		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
 	}
 	
+	# --- Connect new UI panels ---
+	clifford_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	clifford_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	dejong_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	dejong_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	
 	
 	# --- ADD THIS 3D MESH SETUP ---
-	var mesh_material = StandardMaterial3D.new()
 	mesh_material.normal_enabled = true
 	mesh_material.normal_scale = 1.0
 	
 	# --- START OF THE FIX ---
-	if window_size.x > 0 and window_size.y > 0: 
-		var initial_normal_img = Image.create(int(window_size.x), int(window_size.y), false, Image.FORMAT_RGBA8)
+	if window_size.x > 0 and window_size.y > 0:
+		initial_normal_img = Image.create(int(window_size.x), int(window_size.y), false, Image.FORMAT_RGBA8)
 		if is_instance_valid(initial_normal_img):
 			normal_map_texture = ImageTexture.create_from_image(initial_normal_img)
 		else:
 			printerr("ERROR: Failed to create initial_normal_img!")
 
 		if is_instance_valid(mesh_material):
-			var current_fractal_texture = final_output.get_texture()
+			current_fractal_texture = final_output.get_texture()
 			mesh_material.albedo_texture = current_fractal_texture
 			if is_instance_valid(normal_map_material) and is_instance_valid(current_fractal_texture):
 				normal_map_material.set_shader_parameter("height_map", current_fractal_texture)
@@ -610,7 +634,8 @@ func _ready() -> void:
 		print("ERROR: FractalMesh node not found! Check the path.")
 	# --- END ADJUSTED 3D MESH SETUP ---
 	
-	#update_ui_from_state()
+	print("DEBUG: ap_c1y_spinbox_a is: ", ap_c1y_spinbox_a)
+	
 	file_dialog.file_selected.connect(_on_file_dialog_file_selected)
 		
 	if OS.has_feature("web"):
@@ -620,7 +645,6 @@ func _ready() -> void:
 		print("Control: Not web build, clipboard buttons enabled.")
 		# ... (your web notice label code remains unchanged) ...
 
-	var post_save_material = ShaderMaterial.new()
 	post_save_material.shader = load("res://post_process.gdshader")
 	post_process_save_viewport.get_node("ShaderRect").material = post_save_material
 
@@ -632,17 +656,19 @@ func _ready() -> void:
 
 	print("Control: _ready function finished.")
 	resized.connect(_on_main_control_resized)
-	_update_light() # Set initial light properties
-	_update_camera() # Set initial camera properties
-	_update_background() # Set initial background
+	
+	# Call reset_visuals() at the end to load defaults and update the UI
+	reset_visuals() 
+	
+	# Set initial 3D properties AFTER reset_visuals() has loaded the defaults
+	_update_light()
+	_update_camera()
+	_update_background()
 
-	# --- ADD THESE 2 LINES AT THE VERY END ---
-	# This sets the initial panel visibility based on default IDs
+	# This sets the initial panel visibility based on default IDs loaded by reset_visuals()
 	_update_var_a_visibility(_get_control_string_from_id(variation_mode_a))
 	_update_var_b_visibility(_get_control_string_from_id(variation_mode_b))
-	
 	_update_start_pattern_visibility()
-	reset_visuals()
 
 func _get_control_string_from_id(var_id: int) -> String:
 	for key in VariationManager.VARIATIONS:
@@ -1224,6 +1250,8 @@ func update_ui_from_state() -> void:
 			"save_res_index": save_resolution_index
 			
 		}
+		values.merge(_auto_params_a, true) # Add all "A" auto-params
+		values.merge(_auto_params_b, true) # Add all "B" auto-params
 		initialize_ui(values)
 		
 func _set_dropdown_selection(dropdown: OptionButton, text_to_select: String):
@@ -1368,6 +1396,15 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	fisheye_strength_spinbox_a.set_value_no_signal(initial_values.get("fisheye_strength_a", 2.0))
 	polar_offset_slider_a.set_value_no_signal(initial_values.get("polar_offset_a", 1.0))
 	polar_offset_spinbox_a.set_value_no_signal(initial_values.get("polar_offset_a", 1.0))
+	clifford_controls_container_a.set_param_value("clifford_a_a", initial_values.get("clifford_a_a", -1.7))
+	clifford_controls_container_a.set_param_value("clifford_b_a", initial_values.get("clifford_b_a", 1.7))
+	clifford_controls_container_a.set_param_value("clifford_c_a", initial_values.get("clifford_c_a", -0.5))
+	clifford_controls_container_a.set_param_value("clifford_d_a", initial_values.get("clifford_d_a", -1.2))
+
+	dejong_controls_container_a.set_param_value("dejong_a_a", initial_values.get("dejong_a_a", 1.4))
+	dejong_controls_container_a.set_param_value("dejong_b_a", initial_values.get("dejong_b_a", 2.3))
+	dejong_controls_container_a.set_param_value("dejong_c_a", initial_values.get("dejong_c_a", 1.5))
+	dejong_controls_container_a.set_param_value("dejong_d_a", initial_values.get("dejong_d_a", -0.6))
 	
 	_on_mobius_re_a_a_changed(initial_values.get("mobius_re_a_a", 0.1))
 	_on_mobius_im_a_a_changed(initial_values.get("mobius_im_a_a", 0.2))
@@ -1438,6 +1475,16 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	fisheye_strength_spinbox_b.set_value_no_signal(initial_values.get("fisheye_strength_b", 2.0))
 	polar_offset_slider_b.set_value_no_signal(initial_values.get("polar_offset_b", 1.0))
 	polar_offset_spinbox_b.set_value_no_signal(initial_values.get("polar_offset_b", 1.0))
+	
+	clifford_controls_container_b.set_param_value("clifford_a_b", initial_values.get("clifford_a_b", -1.7))
+	clifford_controls_container_b.set_param_value("clifford_b_b", initial_values.get("clifford_b_b", 1.7))
+	clifford_controls_container_b.set_param_value("clifford_c_b", initial_values.get("clifford_c_b", -0.5))
+	clifford_controls_container_b.set_param_value("clifford_d_b", initial_values.get("clifford_d_b", -1.2))
+
+	dejong_controls_container_b.set_param_value("dejong_a_b", initial_values.get("dejong_a_b", 1.4))
+	dejong_controls_container_b.set_param_value("dejong_b_b", initial_values.get("dejong_b_b", 2.3))
+	dejong_controls_container_b.set_param_value("dejong_c_b", initial_values.get("dejong_c_b", 1.5))
+	dejong_controls_container_b.set_param_value("dejong_d_b", initial_values.get("dejong_d_b", -0.6))
 	
 	_on_mobius_re_a_b_changed(initial_values.get("mobius_re_a_b", 0.1))
 	_on_mobius_im_a_b_changed(initial_values.get("mobius_im_a_b", 0.2))
@@ -1716,7 +1763,11 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("grad_col_bl", grad_col_bl)
 	save_material.set_shader_parameter("grad_col_br", grad_col_br)
 	save_material.set_shader_parameter("background_texture", background_texture)
-
+	for param_name in _auto_params_a:
+		save_material.set_shader_parameter(param_name,_auto_params_a[param_name])
+	
+	for param_name in _auto_params_b:
+		save_material.set_shader_parameter(param_name, _auto_params_b[param_name])
 	# Var A Params
 	save_material.set_shader_parameter("var_a_mirror_x", var_a_mirror_x)
 	save_material.set_shader_parameter("var_a_mirror_y", var_a_mirror_y)
@@ -1873,7 +1924,11 @@ func _process(delta: float) -> void:
 
 	var previous_frame_texture = source_viewport.get_texture()
 	var target_material = target_viewport.get_node("ShaderRect").material as ShaderMaterial
-
+	for param_name in _auto_params_a:
+		target_material.set_shader_parameter(param_name, _auto_params_a[param_name])
+	
+	for param_name in _auto_params_b:
+		target_material.set_shader_parameter(param_name, _auto_params_b[param_name])
 	# --- Set Fractal Shader Params ---
 	target_material.set_shader_parameter("previous_frame", previous_frame_texture)
 	
@@ -2224,6 +2279,8 @@ func _gather_preset_data() -> Dictionary:
 		"show_2d_background": show_2d_background
 		
 	}
+	data.merge(_auto_params_a, true) # Add all "A" auto-params
+	data.merge(_auto_params_b, true) # Add all "B" auto-params
 	return data
 
 func _apply_preset_data(data: Dictionary) -> void:
@@ -2302,156 +2359,49 @@ func get_vector2(data: Dictionary, key: String, default_vector: Vector2) -> Vect
 # --- Function to apply loaded data to variables ---
 func _set_state_from_preset_data(data: Dictionary) -> void:
 	print("  SetState: Applying data...")
-# Read and print the preset's version (use 0.0 if not found)
+	
+	# --- CLEAR OLD AUTO-PARAMS ---
+	_auto_params_a.clear()
+	_auto_params_b.clear()
+
+	# Loop through every key in the loaded preset file
+	for key in data:
+		var value = data[key]
+		
+		# Check if it's a known class variable (old system)
+		if key in self:
+			# Special handling for vectors/colors from JSON
+			if "translate" in key or key.begins_with("ap_c"):
+				set(key, get_vector2(data, key, Vector2.ZERO))
+			elif "grad_col" in key or key == "light_color":
+				set(key, get_color(data, key, Color.WHITE))
+			else:
+				# It's a simple value (float, bool, int), just set it
+				set(key, value)
+		else:
+			# It's not a class variable. It must be an auto-panel param.
+			# Add it to the correct dictionary.
+			if key.ends_with("_a"):
+				_auto_params_a[key] = value
+			elif key.ends_with("_b"):
+				_auto_params_b[key] = value
+
+	# --- END NEW LOADING LOGIC ---
+
 	var preset_version = data.get("version", 0.0)
 	print("  SetState: Preset was created with version: ", preset_version)
+	
+	# This legacy stuff is now handled above, but we keep the platform defaults
 	_set_platform_feedback_defaults()
-	# --- Main Controls ---
-	variation_mode_a = data.get("variation_mode_a_id", 0) # Load ID
-	variation_mode_b = data.get("variation_mode_b_id", 1) # Load ID
-	start_pattern_mode = data.get("start_pattern_mode", 0)
-	variation_mix = data.get("variation_mix", 0.5)
-	save_resolution_index = data.get("save_resolution_index", 1)
-# --- Now, override defaults if they exist in the preset ---
-	# 1. Load the range from preset, or use platform default if not present
 	feedback_min = data.get("feedback_min", feedback_min)
 	feedback_max = data.get("feedback_max", feedback_max)
-	
-	# 2. Load the amount, or use platform default if not present
 	var loaded_feedback_amount = data.get("feedback_amount", feedback_amount)
-	
-	# 3. Clamp the loaded amount to the (now-final) range
 	feedback_amount = clamp(loaded_feedback_amount, feedback_min, feedback_max)
-	feedback_amount = data.get("feedback_amount", 0.98)
-	seamless_tiling = data.get("seamless_tiling", true)
-	mirror_tiling = data.get("mirror_tiling", false)
-	reset_on_drag_enabled = data.get("reset_on_drag_enabled", true)
 
-	# --- Start Patterns ---
-	show_start_grid = data.get("show_start_grid", false)
-	show_circles = data.get("show_circles", true)
-	circle_count = data.get("circle_count", 4.0)
-	circle_radius = data.get("circle_radius", 0.2)
-	circle_softness = data.get("circle_softness", 0.05)
-	# Use the moved helper functions, passing 'data'
-	grad_col_tl = get_color(data, "grad_col_tl", Color.CYAN)
-	grad_col_tr = get_color(data, "grad_col_tr", Color.YELLOW)
-	grad_col_bl = get_color(data, "grad_col_bl", Color.BLUE)
-	grad_col_br = get_color(data, "grad_col_br", Color.RED)
-
-	# --- Transforms & Color ---
-	pre_scale = data.get("pre_scale", 1.0)
-	pre_rotation = data.get("pre_rotation", 0.0)
-	# Use the moved helper functions, passing 'data'
-	pre_translate = get_vector2(data, "pre_translate", Vector2.ZERO)
-	post_scale = data.get("post_scale", 1.0) # Default changed to 1.0 for consistency
-	post_rotation = data.get("post_rotation", 0.0)
-	post_translate = get_vector2(data, "post_translate", Vector2.ZERO)
-	translate_a = get_vector2(data, "translate_a", Vector2.ZERO)
-	translate_b = get_vector2(data, "translate_b", Vector2.ZERO)
-	brightness = data.get("brightness", 1.0)
-	contrast = data.get("contrast", 1.0)
-	saturation = data.get("saturation", 1.0)
-
-	# --- Active Mouse Translate ---
-	move_post_translate = data.get("move_post_translate", true)
-	move_pre_translate = data.get("move_pre_translate", false)
-	move_var_a_translate = data.get("move_var_a_translate", false)
-	move_var_b_translate = data.get("move_var_b_translate", false)
-
-	# --- Post-Processing Symmetry ---
-	mirror_x = data.get("post_mirror_x", false)
-	mirror_y = data.get("post_mirror_y", false)
-	kaleidoscope_on = data.get("post_kaleidoscope_on", false)
-	kaleidoscope_slices = data.get("post_kaleidoscope_slices", 6.0)
-
-	# --- Variation A Parameters ---
-	var_a_mirror_x = data.get("var_a_mirror_x", false)
-	var_a_mirror_y = data.get("var_a_mirror_y", false)
-	var_a_kaleidoscope_slices = data.get("var_a_kaleidoscope_slices", 6.0)
-	wave_type_a = data.get("wave_type_a", 0)
-	wave_frequency_a = data.get("wave_frequency_a", 0.0)
-	wave_amplitude_a = data.get("wave_amplitude_a", 0.1)
-	wave_speed_a = data.get("wave_speed_a", 0.0)
-	julian_power_a = data.get("julian_power_a", 2.0)
-	julian_dist_a = data.get("julian_dist_a", 1.0)
-	julian_a_a = data.get("julian_a_a", 1.0); julian_b_a = data.get("julian_b_a", 0.0); julian_c_a = data.get("julian_c_a", 0.0)
-	julian_d_a = data.get("julian_d_a", 1.0); julian_e_a = data.get("julian_e_a", 0.0); julian_f_a = data.get("julian_f_a", 0.0)
-	fisheye_strength_a = data.get("fisheye_strength_a", 2.0)
-	polar_offset_a = data.get("polar_offset_a", 1.0)
-	mobius_re_a_a = data.get("mobius_re_a_a", 0.1); mobius_im_a_a = data.get("mobius_im_a_a", 0.2)
-	mobius_re_b_a = data.get("mobius_re_b_a", 0.2); mobius_im_b_a = data.get("mobius_im_b_a", -0.12)
-	mobius_re_c_a = data.get("mobius_re_c_a", -0.15); mobius_im_c_a = data.get("mobius_im_c_a", -0.15)
-	mobius_re_d_a = data.get("mobius_re_d_a", 0.21); mobius_im_d_a = data.get("mobius_im_d_a", 0.1)
-	cellular_weave_grid_size_a = data.get("cellular_weave_grid_size_a", 10.0)
-	cellular_weave_threshold_a = data.get("cellular_weave_threshold_a", 4.0)
-	cellular_weave_iterations_a = data.get("cellular_weave_iterations_a", 1.0)
-	blur_amount_a = data.get("blur_amount_a", 0.0)
-	heart_scale_a = data.get("heart_scale_a", 0.3)
-	heart_rotation_a = data.get("heart_rotation_a", 0.0)
-	heart_strength_a = data.get("heart_strength_a", 0.5)
-	apollonian_scale_a = data.get("apollonian_scale_a", 1.5)
-	ap_c1_a = get_vector2(data, "ap_c1_a", Vector2(0.0, 0.5))      # <-- ADD (Use helper)
-	ap_c2_a = get_vector2(data, "ap_c2_a", Vector2(-0.433, -0.25)) # <-- ADD (Use helper)
-	ap_c3_a = get_vector2(data, "ap_c3_a", Vector2(0.433, -0.25))  # <-- ADD (Use helper)
-	custom_tl_a_id = data.get("custom_tl_a", 0)
-	custom_tr_a_id = data.get("custom_tr_a", 0)
-	custom_bl_a_id = data.get("custom_bl_a", 0)
-	custom_br_a_id = data.get("custom_br_a", 0)
-
-	# --- Variation B Parameters ---
-	var_b_mirror_x = data.get("var_b_mirror_x", false)
-	var_b_mirror_y = data.get("var_b_mirror_y", false)
-	var_b_kaleidoscope_slices = data.get("var_b_kaleidoscope_slices", 6.0)
-	wave_type_b = data.get("wave_type_b", 0)
-	wave_frequency_b = data.get("wave_frequency_b", 5.0)
-	wave_amplitude_b = data.get("wave_amplitude_b", 0.1)
-	wave_speed_b = data.get("wave_speed_b", 0.0)
-	julian_power_b = data.get("julian_power_b", -3.0)
-	julian_dist_b = data.get("julian_dist_b", 1.0)
-	julian_a_b = data.get("julian_a_b", 1.0); julian_b_b = data.get("julian_b_b", 0.0); julian_c_b = data.get("julian_c_b", 0.0)
-	julian_d_b = data.get("julian_d_b", 1.0); julian_e_b = data.get("julian_e_b", 0.0); julian_f_b = data.get("julian_f_b", 0.0)
-	fisheye_strength_b = data.get("fisheye_strength_b", 2.0)
-	polar_offset_b = data.get("polar_offset_b", 1.0)
-	mobius_re_a_b = data.get("mobius_re_a_b", 0.1); mobius_im_a_b = data.get("mobius_im_a_b", 0.2)
-	mobius_re_b_b = data.get("mobius_re_b_b", 0.2); mobius_im_b_b = data.get("mobius_im_b_b", -0.12)
-	mobius_re_c_b = data.get("mobius_re_c_b", -0.15); mobius_im_c_b = data.get("mobius_im_c_b", -0.15)
-	mobius_re_d_b = data.get("mobius_re_d_b", 0.21); mobius_im_d_b = data.get("mobius_im_d_b", 0.1)
-	cellular_weave_grid_size_b = data.get("cellular_weave_grid_size_b", 10.0)
-	cellular_weave_threshold_b = data.get("cellular_weave_threshold_b", 4.0)
-	cellular_weave_iterations_b = data.get("cellular_weave_iterations_b", 1.0)
-	blur_amount_b = data.get("blur_amount_b", 0.0)
-	heart_scale_b = data.get("heart_scale_b", 0.3)
-	heart_rotation_b = data.get("heart_rotation_b", 0.0)
-	heart_strength_b = data.get("heart_strength_b", 0.5)
-	apollonian_scale_b = data.get("apollonian_scale_b", 1.5)
-	ap_c1_b = get_vector2(data, "ap_c1_b", Vector2(0.0, 0.5))      # <-- ADD (Use helper)
-	ap_c2_b = get_vector2(data, "ap_c2_b", Vector2(-0.433, -0.25)) # <-- ADD (Use helper)
-	ap_c3_b = get_vector2(data, "ap_c3_b", Vector2(0.433, -0.25))  # <-- ADD (Use helper)
-	custom_tl_b_id = data.get("custom_tl_b", 0)
-	custom_tr_b_id = data.get("custom_tr_b", 0)
-	custom_bl_b_id = data.get("custom_bl_b", 0)
-	custom_br_b_id = data.get("custom_br_b", 0)
-	
-	# --- ADD THESE ---
-	light_x_rotation = data.get("light_x_rotation", 0.0)
-	light_y_rotation = data.get("light_y_rotation", 0.0)
-	light_energy = data.get("light_energy", 1.0)
-	light_color = get_color(data, "light_color", Color.WHITE)
-	light_shadows = data.get("light_shadows", true)
-	_update_light() # Apply loaded light values
-	# --- END ---
-	normal_map_strength = data.get("normal_map_strength", 1.0)
-	
-	camera_distance = data.get("camera_distance", 0.5)
-	camera_x_rotation = data.get("camera_x_rotation", 0.0)
-	camera_y_rotation = data.get("camera_y_rotation", 0.0)
-	camera_fov = data.get("camera_fov", 75.0)
-	show_2d_background = data.get("show_2d_background", false)
-	_update_camera() # Apply loaded camera values
-	_update_background() # Apply loaded background value
-	
-	
+	# Apply 3D settings
+	_update_light()
+	_update_camera()
+	_update_background()
 
 	print("  SetState: Finished applying data.")
 
@@ -2667,6 +2617,12 @@ func _on_var_a_dropdown_item_selected(index: int):
 		custom_2x2_controls_container_a.visible = false # --- ADD THIS LINE ---
 	
 	_update_var_a_visibility(control_string)
+	if control_string != "" and var_a_panels.has(control_string):
+		var panel = var_a_panels[control_string]
+		if panel is VariationPanel:
+			# It's an auto-panel! Load its defaults.
+			for param in panel.parameters:
+				_auto_params_a[param.name] = param.default
 
 func _on_rep_tile_dropdown_a_item_selected(index: int):
 	# This just updates the ID. The panel is already visible.
@@ -2706,6 +2662,13 @@ func _on_var_b_dropdown_item_selected(index: int):
 		custom_2x2_controls_container_b.visible = false # --- ADD THIS LINE ---
 	
 	_update_var_b_visibility(control_string)
+	
+	if control_string != "" and var_b_panels.has(control_string):
+		var panel = var_b_panels[control_string]
+		if panel is VariationPanel:
+			# It's an auto-panel! Load its defaults.
+			for param in panel.parameters:
+				_auto_params_b[param.name] = param.default
 
 func _on_rep_tile_dropdown_b_item_selected(index: int):
 	# This just updates the ID. The panel is already visible.
@@ -3820,3 +3783,22 @@ func _on_ap_c3x_spinbox_b_value_changed(value: float):
 	ap_c3_b.x = value
 func _on_ap_c3y_spinbox_b_value_changed(value: float):
 	ap_c3_b.y = value
+
+
+# =================================================================
+# --- Auto-UI Panel Handlers ---
+# =================================================================
+
+# =================================================================
+# --- Auto-UI Panel Handlers ---
+# =================================================================
+
+func _on_variation_param_changed(param_name: String, new_value: float, var_group: String):
+	# This one function handles ALL new variation panels.
+	# param_name will be "clifford_a_a", "dejong_b_a", etc.
+	# var_group will be "a" or "b".
+	
+	if var_group == "a":
+		_auto_params_a[param_name] = new_value
+	else:
+		_auto_params_b[param_name] = new_value
