@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=38 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -80,6 +80,78 @@ label = "D"
 default = -0.6
 min = -3.0
 max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_bjha6"]
+script = ExtResource("6_4d7sh")
+name = "truchet_scale_a"
+label = "Scale"
+default = 2.0
+min = 0.1
+max = 20.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_gt76g"]
+script = ExtResource("6_4d7sh")
+name = "truchet_rotate_a"
+label = "Rotate"
+min = -180.0
+max = 180.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ebxd8"]
+script = ExtResource("6_4d7sh")
+name = "truchet_strength_a"
+label = "Strength"
+default = 0.1
+min = -1.0
+max = 1.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_24dk6"]
+script = ExtResource("6_4d7sh")
+name = "truchet_mode_a"
+label = "Mode"
+default = 1.0
+min = 1.0
+max = 3.0
+step = 1.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_1fr6y"]
+script = ExtResource("6_4d7sh")
+name = "truchet_scale_b"
+label = "Scale"
+default = 2.0
+min = 0.1
+max = 20.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_2hxjc"]
+script = ExtResource("6_4d7sh")
+name = "truchet_rotate_b"
+label = "Rotate"
+min = -180.0
+max = 180.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_2u7jv"]
+script = ExtResource("6_4d7sh")
+name = "truchet_strength_b"
+label = "Strength"
+default = 0.1
+min = -1.0
+max = 1.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_mryly"]
+script = ExtResource("6_4d7sh")
+name = "truchet_mode_b"
+label = "Mode"
+default = 1.0
+min = 1.0
+max = 3.0
+step = 1.0
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_flf07"]
@@ -373,7 +445,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 2.0"
+text = "V 2.2"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -552,6 +624,70 @@ text = "Show Circles"
 [node name="ShowCirclesCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer4"]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="CircleGridControlsContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Scale" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer"]
+layout_mode = 2
+
+[node name="Scale" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Scale"]
+layout_mode = 2
+text = "Num Rings"
+
+[node name="CircleGridScaleSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Scale"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 10.0
+step = 0.01
+
+[node name="CircleGridScaleSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Scale"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 10.0
+step = 0.01
+
+[node name="Radius" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer"]
+layout_mode = 2
+
+[node name="Radius" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Radius"]
+layout_mode = 2
+text = "Ring Width"
+
+[node name="CircleGridRadiusSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Radius"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.001
+
+[node name="CircleGridRadiusSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Radius"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.001
+
+[node name="Softness" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer"]
+layout_mode = 2
+
+[node name="Softness" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Softness"]
+layout_mode = 2
+text = "Softness"
+
+[node name="CircleGridSoftnessSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Softness"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.001
+
+[node name="CircleGridSoftnessSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Softness"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.001
 
 [node name="Label" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 layout_mode = 2
@@ -1454,6 +1590,18 @@ text = "Bottom-Right"
 [node name="CustomBRA" type="OptionButton" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RepTilePanelA/Custom2x2ControlsContainerA/Bottom-RightContainer4"]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="TruchetControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Truchet A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_bjha6"), SubResource("Resource_gt76g"), SubResource("Resource_ebxd8"), SubResource("Resource_24dk6")])
+
+[node name="TruchetControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Truchet B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_1fr6y"), SubResource("Resource_2hxjc"), SubResource("Resource_2u7jv"), SubResource("Resource_mryly")])
 
 [node name="WaveControlsContainerA" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
@@ -2965,6 +3113,12 @@ grow_vertical = 2
 [connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer3/CircleSoftnessSlider" to="." method="_on_circle_softness_slider_value_changed"]
 [connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer3/CircleSoftnessSpinBox" to="." method="_on_circle_softness_spinbox_value_changed"]
 [connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleControlsContainer/HBoxContainer4/ShowCirclesCheck" to="." method="_on_show_circles_check_toggled"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Scale/CircleGridScaleSlider" to="." method="_on_circle_grid_scale_slider_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Scale/CircleGridScaleSpinBox" to="." method="_on_circle_grid_scale_spin_box_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Radius/CircleGridRadiusSlider" to="." method="_on_circle_grid_radius_slider_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Radius/CircleGridRadiusSpinBox" to="." method="_on_circle_grid_radius_spinbox_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Softness/CircleGridSoftnessSlider" to="." method="_on_circle_grid_softness_slider_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/CircleGridControlsContainer/Softness/CircleGridSoftnessSpinBox" to="." method="_on_circle_grid_softness_spinbox_value_changed"]
 [connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/VBoxContainer/PostTranslateRadio" to="." method="_on_post_translate_radio_toggled"]
 [connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/VBoxContainer/PreTranslateRadio" to="." method="_on_pre_translate_radio_toggled"]
 [connection signal="item_selected" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer12/VarADropdown" to="." method="_on_var_a_dropdown_item_selected"]

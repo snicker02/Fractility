@@ -45,6 +45,7 @@ const VARIATIONS = {
 	"Spherical":        { "id": 1, "controls": null },
 	"Swirl":            { "id": 2, "controls": null },
 	"Tangent":          { "id": 15, "controls": null },
+	"Truchet": { "id": 34, "controls": "truchet" },
 	"Wave":             { "id": 3, "controls": "wave" },
 }
 

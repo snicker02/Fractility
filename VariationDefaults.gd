@@ -24,6 +24,9 @@ class_name VariationDefaults
 @export var grad_col_tr: Color = Color.YELLOW
 @export var grad_col_bl: Color = Color.BLUE
 @export var grad_col_br: Color = Color.RED
+@export var circle_grid_scale: float = 8.0
+@export var circle_grid_radius: float = 0.4
+@export var circle_grid_softness: float = 0.05
 
 ## --- Transforms ---
 @export var pre_scale: float = 1.0
@@ -151,7 +154,17 @@ class_name VariationDefaults
 @export var custom_tr_b_id: int = 0
 @export var custom_bl_b_id: int = 0
 @export var custom_br_b_id: int = 0
+## --- Truchet A ---
+@export var truchet_scale_a: float = 2.0
+@export var truchet_rotate_a: float = 0.0
+@export var truchet_strength_a: float = 0.1
+@export var truchet_mode_a: float = 1.0
 
+## --- Truchet B ---
+@export var truchet_scale_b: float = 2.0
+@export var truchet_rotate_b: float = 0.0
+@export var truchet_strength_b: float = 0.1
+@export var truchet_mode_b: float = 1.0
 
 ## --- 3D Controls ---
 @export var light_x_rotation: float = 0.0

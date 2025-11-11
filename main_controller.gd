@@ -1,7 +1,8 @@
 extends Control
-const PROGRAM_VERSION = 2.0
+const PROGRAM_VERSION = 2.2
 const VariationPanel = preload("res://VariationPanel.gd")
-# --- Private Variables ---
+# IDs for "inversive" variations that zoom in when scale INCREASES
+const INVERSE_VARIATIONS = [1,4 ]
 
 
 # --- Node References ---
@@ -50,6 +51,13 @@ const VariationPanel = preload("res://VariationPanel.gd")
 @onready var wave_controls_container_a: VBoxContainer = %WaveControlsContainerA
 @onready var wave_controls_container_b: VBoxContainer = %WaveControlsContainerB
 @onready var circle_controls_container: VBoxContainer = %CircleControlsContainer
+@onready var circle_grid_controls_container: VBoxContainer = %CircleGridControlsContainer
+@onready var circle_grid_scale_slider: HSlider = %CircleGridScaleSlider
+@onready var circle_grid_scale_spinbox: SpinBox = %CircleGridScaleSpinBox
+@onready var circle_grid_radius_slider: HSlider = %CircleGridRadiusSlider
+@onready var circle_grid_radius_spinbox: SpinBox = %CircleGridRadiusSpinBox
+@onready var circle_grid_softness_slider: HSlider = %CircleGridSoftnessSlider
+@onready var circle_grid_softness_spinbox: SpinBox = %CircleGridSoftnessSpinBox
 @onready var julian_controls_container_a: VBoxContainer = %JulianControlsContainerA
 @onready var julian_controls_container_b: VBoxContainer = %JulianControlsContainerB
 @onready var fisheye_controls_container_a: VBoxContainer = %FisheyeControlsContainerA
@@ -271,6 +279,12 @@ const VariationPanel = preload("res://VariationPanel.gd")
 @onready var camera_x_rot_spinbox: SpinBox = %CameraXRotSpinBox
 @onready var camera_y_rot_spinbox: SpinBox = %CameraYRotSpinBox
 @onready var camera_fov_spinbox: SpinBox = %CameraFovSpinBox
+@onready var clifford_controls_container_a: VBoxContainer = %CliffordControlsContainerA
+@onready var clifford_controls_container_b: VBoxContainer = %CliffordControlsContainerB
+@onready var dejong_controls_container_a: VBoxContainer = %DeJongControlsContainerA
+@onready var dejong_controls_container_b: VBoxContainer = %DeJongControlsContainerB
+@onready var truchet_controls_container_a: VBoxContainer = %TruchetControlsContainerA
+@onready var truchet_controls_container_b: VBoxContainer = %TruchetControlsContainerB
 
 
 #@export var ui_scene: PackedScene
@@ -298,6 +312,9 @@ var active_translate_target: int = 0
 var circle_count: float = 4.0
 var circle_radius: float = 0.2
 var circle_softness: float = 0.05
+var circle_grid_scale: float   
+var circle_grid_radius: float  
+var circle_grid_softness: float
 var mirror_x: bool = false
 var mirror_y: bool = false
 var kaleidoscope_on: bool = false
@@ -414,10 +431,12 @@ var custom_tl_b_id: int
 var custom_tr_b_id: int
 var custom_bl_b_id: int
 var custom_br_b_id: int
-@onready var clifford_controls_container_a: VBoxContainer = %CliffordControlsContainerA
-@onready var clifford_controls_container_b: VBoxContainer = %CliffordControlsContainerB
-@onready var dejong_controls_container_a: VBoxContainer = %DeJongControlsContainerA
-@onready var dejong_controls_container_b: VBoxContainer = %DeJongControlsContainerB
+var truchet_scale_a: float
+var truchet_rotate_a: float
+var truchet_strength_a: float
+var truchet_scale_b: float
+var truchet_rotate_b: float
+var truchet_strength_b: float
 
 var _auto_params_a: Dictionary = {}
 var _auto_params_b: Dictionary = {}
@@ -573,8 +592,9 @@ func _ready() -> void:
 		"mobius": mobius_controls_container_a,
 		"polar": polar_controls_container_a,
 		"wave": wave_controls_container_a,
-		"clifford": clifford_controls_container_a, # <-- ADD
-		"dejong": dejong_controls_container_a,     # <-- ADD
+		"clifford": clifford_controls_container_a, 
+		"dejong": dejong_controls_container_a,     
+		"truchet": truchet_controls_container_a,
 		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
 	}
 	
@@ -590,8 +610,9 @@ func _ready() -> void:
 		"mobius": mobius_controls_container_b,
 		"polar": polar_controls_container_b,
 		"wave": wave_controls_container_b,
-		"clifford": clifford_controls_container_b, # <-- ADD
-		"dejong": dejong_controls_container_b,     # <-- ADD
+		"clifford": clifford_controls_container_b, 
+		"dejong": dejong_controls_container_b,     
+		"truchet": truchet_controls_container_b,
 		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
 	}
 	
@@ -600,6 +621,8 @@ func _ready() -> void:
 	clifford_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	dejong_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	dejong_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	truchet_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	truchet_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	
 	
 	# --- ADD THIS 3D MESH SETUP ---
@@ -669,6 +692,7 @@ func _ready() -> void:
 	_update_var_a_visibility(_get_control_string_from_id(variation_mode_a))
 	_update_var_b_visibility(_get_control_string_from_id(variation_mode_b))
 	_update_start_pattern_visibility()
+	reseed_pattern()
 
 func _get_control_string_from_id(var_id: int) -> String:
 	for key in VariationManager.VARIATIONS:
@@ -1008,17 +1032,31 @@ func _on_viewport_gui_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 			if reset_on_drag_enabled:
 				reseed_pattern()
+		
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			if event.pressed:
-				var delta = 0.005 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -0.005
+				var base_delta = 0.005 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -0.005
+				
+				# --- NEW ZOOM LOGIC ---
+				# 1. Determine which variation is dominant
+				var dominant_variation_id = variation_mode_a
+				if variation_mix >= 0.5:
+					dominant_variation_id = variation_mode_b
+				
+				# 2. Check if the dominant variation is "normal" or "inversive"
+				var zoom_delta = base_delta
+				if not dominant_variation_id in INVERSE_VARIATIONS:
+					# It's a "normal" variation (like Truchet).
+					# Flip the delta so wheel-up zooms in (decreases scale).
+					zoom_delta *= -1.0
+				# --- END NEW LOGIC ---
+
 				if event.ctrl_pressed:
-					if event.shift_pressed: pre_rotation += delta * 5.0
-					else: pre_scale = max(0.1, pre_scale + delta) # Prevent scale becoming zero or negative
+					if event.shift_pressed: pre_rotation += zoom_delta * 5.0
+					else: pre_scale = max(0.1, pre_scale + zoom_delta)
 				else:
-					if event.shift_pressed: post_rotation += delta * 5.0
-					else: post_scale = max(0.1, post_scale + delta) # Prevent scale becoming zero or negative
-
-
+					if event.shift_pressed: post_rotation += zoom_delta * 5.0
+					else: post_scale = max(0.1, post_scale + zoom_delta)
 func _update_feedback_ranges_in_ui():
 	# 1. Set the new min/max ranges on the slider and spinbox
 	feedback_amount_slider.min_value = feedback_min
@@ -1061,6 +1099,9 @@ func reset_visuals() -> void:
 	circle_count = default_settings.circle_count
 	circle_radius = default_settings.circle_radius
 	circle_softness = default_settings.circle_softness
+	circle_grid_scale = default_settings.circle_grid_scale
+	circle_grid_radius = default_settings.circle_grid_radius
+	circle_grid_softness = default_settings.circle_grid_softness
 	grad_col_tl = default_settings.grad_col_tl
 	grad_col_tr = default_settings.grad_col_tr
 	grad_col_bl = default_settings.grad_col_bl
@@ -1195,6 +1236,9 @@ func update_ui_from_state() -> void:
 			"pre_scale": pre_scale, "pre_rot": pre_rotation, "post_scale": post_scale, "post_rot": post_rotation,
 			"brightness": brightness, "contrast": contrast, "saturation": saturation,
 			"circle_count": circle_count, "circle_radius": circle_radius, "circle_softness": circle_softness,
+			"circle_grid_scale": circle_grid_scale,
+			"circle_grid_radius": circle_grid_radius,
+			"circle_grid_softness": circle_grid_softness,
 			"grad_tl": grad_col_tl, "grad_tr": grad_col_tr, "grad_bl": grad_col_bl, "grad_br": grad_col_br,
 			"move_post": move_post_translate, "move_pre": move_pre_translate,
 			"move_var_a": move_var_a_translate, "move_var_b": move_var_b_translate,
@@ -1353,6 +1397,13 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	circle_radius_spinbox.set_value_no_signal(initial_values.get("circle_radius", 0.2))
 	circle_softness_slider.set_value_no_signal(initial_values.get("circle_softness", 0.05))
 	circle_softness_spinbox.set_value_no_signal(initial_values.get("circle_softness", 0.05))
+	
+	circle_grid_scale_slider.set_value_no_signal(initial_values.get("circle_grid_scale", 8.0))
+	circle_grid_scale_spinbox.set_value_no_signal(initial_values.get("circle_grid_scale", 8.0))
+	circle_grid_radius_slider.set_value_no_signal(initial_values.get("circle_grid_radius", 0.4))
+	circle_grid_radius_spinbox.set_value_no_signal(initial_values.get("circle_grid_radius", 0.4))
+	circle_grid_softness_slider.set_value_no_signal(initial_values.get("circle_grid_softness", 0.05))
+	circle_grid_softness_spinbox.set_value_no_signal(initial_values.get("circle_grid_softness", 0.05))
 
 	# --- Var A Symmetry ---
 	var_a_mirror_x_check.set_pressed_no_signal(initial_values.get("var_a_mirror_x", false))
@@ -1756,6 +1807,9 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("circle_count", circle_count)
 	save_material.set_shader_parameter("circle_radius", circle_radius)
 	save_material.set_shader_parameter("circle_softness", circle_softness)
+	save_material.set_shader_parameter("circle_grid_scale", circle_grid_scale)
+	save_material.set_shader_parameter("circle_grid_radius", circle_grid_radius)
+	save_material.set_shader_parameter("circle_grid_softness", circle_grid_softness)
 	save_material.set_shader_parameter("translate_a", translate_a)
 	save_material.set_shader_parameter("translate_b", translate_b)
 	save_material.set_shader_parameter("grad_col_tl", grad_col_tl)
@@ -1951,6 +2005,9 @@ func _process(delta: float) -> void:
 	target_material.set_shader_parameter("circle_count", circle_count)
 	target_material.set_shader_parameter("circle_radius", circle_radius)
 	target_material.set_shader_parameter("circle_softness", circle_softness)
+	target_material.set_shader_parameter("circle_grid_scale", circle_grid_scale)
+	target_material.set_shader_parameter("circle_grid_radius", circle_grid_radius)
+	target_material.set_shader_parameter("circle_grid_softness", circle_grid_softness)
 	target_material.set_shader_parameter("translate_a", translate_a)
 	target_material.set_shader_parameter("translate_b", translate_b)
 	target_material.set_shader_parameter("grad_col_tl", grad_col_tl)
@@ -2563,7 +2620,44 @@ func _on_circle_softness_spinbox_value_changed(value: float):
 	_on_circle_softness_changed(value)
 
 
+# --- Circle Grid Scale ---
+func _on_circle_grid_scale_changed(value: float):
+	circle_grid_scale = value
+	circle_grid_scale_slider.set_value_no_signal(value)
+	circle_grid_scale_spinbox.set_value_no_signal(value)
+	reseed_pattern()
 
+func _on_circle_grid_scale_slider_value_changed(value: float):
+	_on_circle_grid_scale_changed(value)
+
+func _on_circle_grid_scale_spinbox_value_changed(value: float):
+	_on_circle_grid_scale_changed(value)
+
+# --- Circle Grid Radius ---
+func _on_circle_grid_radius_changed(value: float):
+	circle_grid_radius = value
+	circle_grid_radius_slider.set_value_no_signal(value)
+	circle_grid_radius_spinbox.set_value_no_signal(value)
+	reseed_pattern()
+
+func _on_circle_grid_radius_slider_value_changed(value: float):
+	_on_circle_grid_radius_changed(value)
+
+func _on_circle_grid_radius_spinbox_value_changed(value: float):
+	_on_circle_grid_radius_changed(value)
+
+# --- Circle Grid Softness ---
+func _on_circle_grid_softness_changed(value: float):
+	circle_grid_softness = value
+	circle_grid_softness_slider.set_value_no_signal(value)
+	circle_grid_softness_spinbox.set_value_no_signal(value)
+	reseed_pattern()
+
+func _on_circle_grid_softness_slider_value_changed(value: float):
+	_on_circle_grid_softness_changed(value)
+
+func _on_circle_grid_softness_spinbox_value_changed(value: float):
+	_on_circle_grid_softness_changed(value)
 
 
 
@@ -2699,6 +2793,7 @@ func _populate_all_dropdowns():
 	start_pattern_dropdown.add_item("Circles")         # Index 1
 	start_pattern_dropdown.add_item("Image Input")     # Index 2
 	start_pattern_dropdown.add_item("Perlin Noise")    # Index 3
+	start_pattern_dropdown.add_item("Concentric Rings")     # Index 4
 	# (Add more items here if you have them)
 
 	# --- 2. Populate Variation Dropdowns ---
@@ -2839,6 +2934,7 @@ func _update_start_pattern_visibility():
 	# 2. Hide all related controls first
 	gradient_toggle_button.visible = false
 	circle_controls_container.visible = false
+	circle_grid_controls_container.visible = false
 	load_image_button.visible = false
 	
 	# 3. Also hide the gradient panel itself, in case it was left open
@@ -2856,6 +2952,10 @@ func _update_start_pattern_visibility():
 			load_image_button.visible = true
 		3: # Perlin Noise
 			pass # No extra controls to show
+			# Circle Grid
+		4: # Concentric Rings
+			gradient_toggle_button.visible = true # <-- THIS IS THE FIX
+			circle_grid_controls_container.visible = true
 
 
 func _on_start_pattern_dropdown_item_selected(index: int) -> void:

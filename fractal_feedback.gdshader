@@ -23,6 +23,10 @@ uniform vec4 grad_col_tr = vec4(1.0, 1.0, 0.0, 1.0);
 uniform vec4 grad_col_bl = vec4(0.0, 0.0, 1.0, 1.0);
 uniform vec4 grad_col_br = vec4(1.0, 0.0, 0.0, 1.0);
 
+uniform float circle_grid_scale = 8.0;
+uniform float circle_grid_radius = 0.4;
+uniform float circle_grid_softness = 0.05;
+
 // Pre-Transform Uniforms
 uniform float pre_scale = 1.0;
 uniform float pre_rotation = 0.0;
@@ -142,6 +146,14 @@ uniform float dejong_a_b;
 uniform float dejong_b_b;
 uniform float dejong_c_b;
 uniform float dejong_d_b;
+uniform float truchet_scale_a;
+uniform float truchet_rotate_a;
+uniform float truchet_strength_a;
+uniform float truchet_scale_b;
+uniform float truchet_rotate_b;
+uniform float truchet_strength_b;
+uniform float truchet_mode_a;
+uniform float truchet_mode_b;
 // --- Helper Functions ---
 mat2 rotate(float angle) {
 	return mat2(vec2(cos(angle), -sin(angle)), vec2(sin(angle), cos(angle)));
@@ -197,7 +209,8 @@ vec2 apply_variation(vec2 uv, int mode,
 					float ap_scale, vec2 ap_c1, vec2 ap_c2, vec2 ap_c3,
 					int c_tl, int c_tr, int c_bl, int c_br,
 					float cl_a, float cl_b, float cl_c, float cl_d,           // Clifford
-					float dj_a, float dj_b, float dj_c, float dj_d            // DeJong
+					float dj_a, float dj_b, float dj_c, float dj_d,           // DeJong
+					float tr_scale, float tr_rotate, float tr_strength, float tr_mode                     // Truchet
                      ) {
 	if (mode == 0) { // Sinusoidal
 		return sin(uv * 3.14159);
@@ -722,8 +735,72 @@ vec2 apply_variation(vec2 uv, int mode,
 		return vec2(sin(dj_a * uv.y) - cos(dj_b * uv.x),
 					sin(dj_c * uv.x) - cos(dj_d * uv.y));
 					}
-    return uv;
-}
+	else if (mode == 34) { // Truchet (Multi-Mode)
+		
+		int truchet_mode = int(tr_mode); // Cast float to int
+		
+		// --- Mode 1: Perfect Displacement (The one you liked) ---
+		if (truchet_mode == 1) {
+			vec2 p = uv;
+			p = p * rotate(radians(tr_rotate));
+			p = p * tr_scale;
+			
+			vec2 i = floor(p);
+			vec2 f = fract(p);
+			
+			float r = rand(i);
+			
+			vec2 c1, c2;
+			if (r > 0.5) { c1 = vec2(0.0, 1.0); c2 = vec2(1.0, 0.0); }
+			else { c1 = vec2(0.0, 0.0); c2 = vec2(1.0, 1.0); }
+
+			vec2 g = normalize(f - c1) - normalize(f - c2);
+			vec2 displacement = g * rotate(radians(tr_rotate)) * tr_strength;
+
+			return uv + displacement;
+		} 
+		
+		// --- Mode 2: 90-degree rotate (Sharp angles) ---
+		else if (truchet_mode == 2) {
+			vec2 p = uv;
+			p = p * rotate(radians(tr_rotate));
+			p = p * tr_scale;
+			
+			vec2 i = floor(p);
+			vec2 f = fract(p);
+			
+			float r = rand(i);
+			if (r > 0.5) {
+				f = vec2(f.y, 1.0 - f.x); 
+			}
+			
+			return (i + f) / tr_scale * rotate(radians(-tr_rotate));
+		} 
+		
+		// --- Mode 3: f.xy = f.yx swap (Straight lines, curved feel) ---
+		else if (truchet_mode == 3) {
+			vec2 p = uv;
+			p = p * rotate(radians(tr_rotate));
+			p = p * tr_scale;
+			
+			vec2 i = floor(p);
+			vec2 f = fract(p);
+			
+			float r = rand(i);
+			if (r > 0.5) {
+				f.x = 1.0 - f.x;
+			}
+			if (f.x > f.y) {
+				f.xy = f.yx;
+			}
+			
+			return (i + f) / tr_scale * rotate(radians(-tr_rotate));
+		}
+		
+		return uv; // Fallback in case mode is out of range
+	}
+	return uv;
+	}
 vec2 random(vec2 st) {
     st = vec2(dot(st, vec2(127.1,311.7)),
               dot(st, vec2(269.5,183.3)));
@@ -740,14 +817,16 @@ float perlin_noise(vec2 st) {
 }
 
 // --- Main Shader Logic ---
+// --- Main Shader Logic ---
+// --- Main Shader Logic ---
 void fragment() {
 	// Reconstruct matrices from their column vectors first
 	mat2 julian_mat_a = mat2(julian_mat_a_col1, julian_mat_a_col2);
 	mat2 julian_mat_b = mat2(julian_mat_b_col1, julian_mat_b_col2);
 
 	vec4 final_color;
-
-	// This block runs only on the first frame (or after a reset) to create the initial background
+	
+	// --- STEP 1: Calculate the Start Pattern (ONLY on frame 1) ---
 	if (time < 0.1) {
 		if (start_pattern_mode == 0) { // Gradient + Grid
 			vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
@@ -774,67 +853,85 @@ void fragment() {
 			}
 		}
 		else if (start_pattern_mode == 2) { // Image Input
-			// Check if a valid texture has been loaded before trying to sample it
 			if (textureSize(background_texture, 0).x > 1) {
 				final_color = texture(background_texture, UV);
 			} else {
-				final_color = vec4(0.0, 0.0, 0.0, 1.0); // Default to black if no texture is present
+				final_color = vec4(0.0, 0.0, 0.0, 1.0); // Default to black
 			}
 		}
 		else if (start_pattern_mode == 3) { // Perlin Noise
-			// Multiply UV by a number to control the "zoom" of the noise
-			float n = perlin_noise(UV * 10.0); 
-			// Remap the noise value from [-1, 1] to the visible [0, 1] range
+			float n = perlin_noise(UV * 10.0);
 			n = (n + 1.0) * 0.5;
 			final_color = vec4(vec3(n), 1.0);
 		}
+		else if (start_pattern_mode == 4) { // Concentric Rings (Full Color)
+			// --- Create Gradient A (Normal) ---
+			vec4 top_mix_A = mix(grad_col_tl, grad_col_tr, UV.x);
+			vec4 bottom_mix_A = mix(grad_col_bl, grad_col_br, UV.x);
+			vec4 gradient_color_A = mix(top_mix_A, bottom_mix_A, UV.y);
+			
+			// --- Create Gradient B (Flipped 180-degrees) ---
+			vec4 top_mix_B = mix(grad_col_br, grad_col_bl, UV.x);
+			vec4 bottom_mix_B = mix(grad_col_tr, grad_col_tl, UV.x);
+			vec4 gradient_color_B = mix(top_mix_B, bottom_mix_B, UV.y);
+			
+			float d = distance(UV, vec2(0.5)) * 2.0; 
+			float v = fract(d * circle_grid_scale);
+			float half_width = circle_grid_radius * 0.5;
+			
+			float ring_value = smoothstep(0.5 - half_width - circle_grid_softness, 0.5 - half_width, v) - 
+							   smoothstep(0.5 + half_width, 0.5 + half_width + circle_grid_softness, v);
+			
+			// --- THIS IS THE FIX ---
+			// This completely overwrites the screen.
+			// It shows gradient_color_A for the rings (where ring_value=1)
+			// and gradient_color_B for the gaps (where ring_value=0).
+			// It does NOT read from previous_frame.
+			final_color = mix(gradient_color_B, gradient_color_A, ring_value);
+		}
+		else {
+			// Default case
+			vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
+			vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
+			final_color = mix(top_mix, bottom_mix, UV.y);
+		}
 	} 
-	// This block runs on every subsequent frame, applying the feedback loop
 	else {
-		vec2 transformed_uv = UV - vec2(0.5); // Center coordinates for rotation/scaling
+		// --- STEP 2: Calculate the Feedback (Recursive for ALL patterns) ---
+		
+		vec2 transformed_uv = UV - vec2(0.5); // Center coordinates
 
 		// Apply Pre-Transforms
 		transformed_uv *= rotate(pre_rotation);
-		transformed_uv /= pre_scale; // Use division for intuitive zoom
+		transformed_uv /= pre_scale;
 		transformed_uv += pre_translate;
 
 		// Apply Variations
-		vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a, wave_frequency_a, wave_amplitude_a, wave_speed_a, wave_type_a, julian_power_a, julian_dist_a, julian_mat_a, julian_trans_a, fisheye_strength_a, polar_offset_a, var_a_mirror_x, var_a_mirror_y, var_a_kaleidoscope_slices, mobius_a_a, mobius_b_a, mobius_c_a, mobius_d_a, cellular_weave_grid_size_a, cellular_weave_threshold_a, cellular_weave_iterations_a, blur_amount_a, heart_scale_a, heart_rotation_a, heart_strength_a, apollonian_scale_a, ap_c1_a, ap_c2_a, ap_c3_a, custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a, clifford_a_a, clifford_b_a, clifford_c_a, clifford_d_a, dejong_a_a, dejong_b_a, dejong_c_a, dejong_d_a);
-		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b, wave_frequency_b, wave_amplitude_b, wave_speed_b, wave_type_b, julian_power_b, julian_dist_b, julian_mat_b, julian_trans_b, fisheye_strength_b, polar_offset_b, var_b_mirror_x, var_b_mirror_y, var_b_kaleidoscope_slices, mobius_a_b, mobius_b_b, mobius_c_b, mobius_d_b, cellular_weave_grid_size_b, cellular_weave_threshold_b, cellular_weave_iterations_b, blur_amount_b, heart_scale_b, heart_rotation_b, heart_strength_b, apollonian_scale_b, ap_c1_b, ap_c2_b, ap_c3_b, custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b, clifford_a_b, clifford_b_b, clifford_c_b, clifford_d_b, dejong_a_b, dejong_b_b, dejong_c_b, dejong_d_b);
+		vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a, wave_frequency_a, wave_amplitude_a, wave_speed_a, wave_type_a, julian_power_a, julian_dist_a, julian_mat_a, julian_trans_a, fisheye_strength_a, polar_offset_a, var_a_mirror_x, var_a_mirror_y, var_a_kaleidoscope_slices, mobius_a_a, mobius_b_a, mobius_c_a, mobius_d_a, cellular_weave_grid_size_a, cellular_weave_threshold_a, cellular_weave_iterations_a, blur_amount_a, heart_scale_a, heart_rotation_a, heart_strength_a, apollonian_scale_a, ap_c1_a, ap_c2_a, ap_c3_a, custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a, clifford_a_a, clifford_b_a, clifford_c_a, clifford_d_a, dejong_a_a, dejong_b_a, dejong_c_a, dejong_d_a, truchet_scale_a, truchet_rotate_a, truchet_strength_a, truchet_mode_a);
+		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b, wave_frequency_b, wave_amplitude_b, wave_speed_b, wave_type_b, julian_power_b, julian_dist_b, julian_mat_b, julian_trans_b, fisheye_strength_b, polar_offset_b, var_b_mirror_x, var_b_mirror_y, var_b_kaleidoscope_slices, mobius_a_b, mobius_b_b, mobius_c_b, mobius_d_b, cellular_weave_grid_size_b, cellular_weave_threshold_b, cellular_weave_iterations_b, blur_amount_b, heart_scale_b, heart_rotation_b, heart_strength_b, apollonian_scale_b, ap_c1_b, ap_c2_b, ap_c3_b, custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b, clifford_a_b, clifford_b_b, clifford_c_b, clifford_d_b, dejong_a_b, dejong_b_b, dejong_c_b, dejong_d_b, truchet_scale_b, truchet_rotate_b, truchet_strength_b, truchet_mode_b);
+		
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
-		vec2 p_final_centered = mixed_uv;
-
+		
 		// Apply Post-Transforms
 		mixed_uv *= rotate(post_rotation);
-		mixed_uv /= post_scale; // Use division for intuitive zoom
+		mixed_uv /= post_scale;
 		mixed_uv += post_translate;
 
 		vec2 final_uv = mixed_uv + vec2(0.5); // De-center coordinates
 
+		// --- TILING LOGIC ---
 		if (mirror_tiling) {
-			// Get the integer part to know which tile we're on
 			vec2 i = floor(final_uv);
-			// Get the fractional part for the position within the tile
 			vec2 f = fract(final_uv);
-			
-			// If the tile's x-index is odd, flip the x-coordinate
-			if (mod(i.x, 2.0) == 1.0) {
-				f.x = 1.0 - f.x;
-			}
-			// If the tile's y-index is odd, flip the y-coordinate
-			if (mod(i.y, 2.0) == 1.0) {
-				f.y = 1.0 - f.y;
-			}
+			if (mod(i.x, 2.0) == 1.0) { f.x = 1.0 - f.x; }
+			if (mod(i.y, 2.0) == 1.0) { f.y = 1.0 - f.y; }
 			final_uv = f;
 		} else if (seamless_tiling) {
-			// The original standard tiling
 			final_uv = fract(final_uv);
 		}
-		// If both are false, final_uv is not tiled.
+		// --- END TILING ---
 
-
-
-		// Mix the transformed frame with the previous frame
+		// --- FINAL MIXING LOGIC (Recursive for ALL patterns) ---
 		vec4 transformed_color = texture(previous_frame, final_uv);
 		vec4 original_color = texture(previous_frame, UV);
 		final_color = mix(original_color, transformed_color, feedback_amount);
