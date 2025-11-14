@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 2.2
+const PROGRAM_VERSION = 2.25
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1,4 ]
@@ -271,6 +271,14 @@ const INVERSE_VARIATIONS = [1,4 ]
 @onready var custom_tr_b: OptionButton = %CustomTRB
 @onready var custom_bl_b: OptionButton = %CustomBLB
 @onready var custom_br_b: OptionButton = %CustomBRB
+@onready var animation_player: AnimationPlayer = %AnimationPlayer
+@onready var record_timer: Timer = %RecordTimer
+@onready var record_button: Button = %RecordButton # (You already have this)
+
+var is_recording: bool = false
+var frame_counter: int = 0
+var recording_dir: String = "user://recordings/"
+#var video_output_path: String = "user://recordings/output.mp4"
 @onready var normal_strength_spinbox: SpinBox = %NormalStrengthSpinBox
 @onready var light_x_angle_spinbox: SpinBox = %LightXAngleSpinBox
 @onready var light_y_angle_spinbox: SpinBox = %LightYAngleSpinBox
@@ -440,6 +448,8 @@ var truchet_strength_b: float
 
 var _auto_params_a: Dictionary = {}
 var _auto_params_b: Dictionary = {}
+var _speed_controls: Dictionary = {}
+var anim_lib = AnimationLibrary.new()
 
 # --- 3D Light Controls ---
 var light_x_rotation: float   # Default from your screenshot
@@ -522,6 +532,7 @@ func _update_light() -> void:
 				printerr("ERROR: WorldEnvironment node has no Environment resource!")
 		else:
 			printerr("ERROR: WorldEnvironment node not found!")
+
 
 func _ready() -> void:
 	# --- ALL VAR DECLARATIONS MUST GO FIRST ---
@@ -693,6 +704,8 @@ func _ready() -> void:
 	_update_var_b_visibility(_get_control_string_from_id(variation_mode_b))
 	_update_start_pattern_visibility()
 	reseed_pattern()
+	
+	setup_animations()
 
 func _get_control_string_from_id(var_id: int) -> String:
 	for key in VariationManager.VARIATIONS:
@@ -1447,15 +1460,32 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	fisheye_strength_spinbox_a.set_value_no_signal(initial_values.get("fisheye_strength_a", 2.0))
 	polar_offset_slider_a.set_value_no_signal(initial_values.get("polar_offset_a", 1.0))
 	polar_offset_spinbox_a.set_value_no_signal(initial_values.get("polar_offset_a", 1.0))
+
+	# --- Clifford A ---
 	clifford_controls_container_a.set_param_value("clifford_a_a", initial_values.get("clifford_a_a", -1.7))
 	clifford_controls_container_a.set_param_value("clifford_b_a", initial_values.get("clifford_b_a", 1.7))
 	clifford_controls_container_a.set_param_value("clifford_c_a", initial_values.get("clifford_c_a", -0.5))
 	clifford_controls_container_a.set_param_value("clifford_d_a", initial_values.get("clifford_d_a", -1.2))
-
+	clifford_controls_container_a.set_param_value("clifford_a_a_speed", initial_values.get("clifford_a_a_speed", 0.0))
+	clifford_controls_container_a.set_param_value("clifford_b_a_speed", initial_values.get("clifford_b_a_speed", 0.0))
+	clifford_controls_container_a.set_param_value("clifford_c_a_speed", initial_values.get("clifford_c_a_speed", 0.0))
+	clifford_controls_container_a.set_param_value("clifford_d_a_speed", initial_values.get("clifford_d_a_speed", 0.0))
+	
+	# --- DeJong A ---
 	dejong_controls_container_a.set_param_value("dejong_a_a", initial_values.get("dejong_a_a", 1.4))
 	dejong_controls_container_a.set_param_value("dejong_b_a", initial_values.get("dejong_b_a", 2.3))
 	dejong_controls_container_a.set_param_value("dejong_c_a", initial_values.get("dejong_c_a", 1.5))
 	dejong_controls_container_a.set_param_value("dejong_d_a", initial_values.get("dejong_d_a", -0.6))
+	dejong_controls_container_a.set_param_value("dejong_a_a_speed", initial_values.get("dejong_a_a_speed", 0.0)) # <-- THIS WAS MISSING
+	dejong_controls_container_a.set_param_value("dejong_b_a_speed", initial_values.get("dejong_b_a_speed", 0.0)) # <-- THIS WAS MISSING
+	dejong_controls_container_a.set_param_value("dejong_c_a_speed", initial_values.get("dejong_c_a_speed", 0.0)) # <-- THIS WAS MISSING
+	dejong_controls_container_a.set_param_value("dejong_d_a_speed", initial_values.get("dejong_d_a_speed", 0.0)) # <-- THIS WAS MISSING
+	
+	# --- Truchet A ---
+	truchet_controls_container_a.set_param_value("truchet_scale_a", initial_values.get("truchet_scale_a", 2.0))     # <-- THIS WAS MISSING
+	truchet_controls_container_a.set_param_value("truchet_rotate_a", initial_values.get("truchet_rotate_a", 0.0))    # <-- THIS WAS MISSING
+	truchet_controls_container_a.set_param_value("truchet_strength_a", initial_values.get("truchet_strength_a", 0.1)) # <-- THIS WAS MISSING
+	truchet_controls_container_a.set_param_value("truchet_mode_a", initial_values.get("truchet_mode_a", 1.0))         # <-- THIS WAS MISSING
 	
 	_on_mobius_re_a_a_changed(initial_values.get("mobius_re_a_a", 0.1))
 	_on_mobius_im_a_a_changed(initial_values.get("mobius_im_a_a", 0.2))
@@ -1527,15 +1557,31 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	polar_offset_slider_b.set_value_no_signal(initial_values.get("polar_offset_b", 1.0))
 	polar_offset_spinbox_b.set_value_no_signal(initial_values.get("polar_offset_b", 1.0))
 	
+	# --- Clifford B ---
 	clifford_controls_container_b.set_param_value("clifford_a_b", initial_values.get("clifford_a_b", -1.7))
 	clifford_controls_container_b.set_param_value("clifford_b_b", initial_values.get("clifford_b_b", 1.7))
 	clifford_controls_container_b.set_param_value("clifford_c_b", initial_values.get("clifford_c_b", -0.5))
 	clifford_controls_container_b.set_param_value("clifford_d_b", initial_values.get("clifford_d_b", -1.2))
+	clifford_controls_container_b.set_param_value("clifford_a_b_speed", initial_values.get("clifford_a_b_speed", 0.0))
+	clifford_controls_container_b.set_param_value("clifford_b_b_speed", initial_values.get("clifford_b_b_speed", 0.0))
+	clifford_controls_container_b.set_param_value("clifford_c_b_speed", initial_values.get("clifford_c_b_speed", 0.0))
+	clifford_controls_container_b.set_param_value("clifford_d_b_speed", initial_values.get("clifford_d_b_speed", 0.0))
 
+	# --- DeJong B ---
 	dejong_controls_container_b.set_param_value("dejong_a_b", initial_values.get("dejong_a_b", 1.4))
 	dejong_controls_container_b.set_param_value("dejong_b_b", initial_values.get("dejong_b_b", 2.3))
 	dejong_controls_container_b.set_param_value("dejong_c_b", initial_values.get("dejong_c_b", 1.5))
 	dejong_controls_container_b.set_param_value("dejong_d_b", initial_values.get("dejong_d_b", -0.6))
+	dejong_controls_container_b.set_param_value("dejong_a_b_speed", initial_values.get("dejong_a_b_speed", 0.0)) # <-- THIS WAS MISSING
+	dejong_controls_container_b.set_param_value("dejong_b_b_speed", initial_values.get("dejong_b_b_speed", 0.0)) # <-- THIS WAS MISSING
+	dejong_controls_container_b.set_param_value("dejong_c_b_speed", initial_values.get("dejong_c_b_speed", 0.0)) # <-- THIS WAS MISSING
+	dejong_controls_container_b.set_param_value("dejong_d_b_speed", initial_values.get("dejong_d_b_speed", 0.0)) # <-- THIS WAS MISSING
+	
+	# --- Truchet B ---
+	truchet_controls_container_b.set_param_value("truchet_scale_b", initial_values.get("truchet_scale_b", 2.0))     # <-- THIS WAS MISSING
+	truchet_controls_container_b.set_param_value("truchet_rotate_b", initial_values.get("truchet_rotate_b", 0.0))    # <-- THIS WAS MISSING
+	truchet_controls_container_b.set_param_value("truchet_strength_b", initial_values.get("truchet_strength_b", 0.1)) # <-- THIS WAS MISSING
+	truchet_controls_container_b.set_param_value("truchet_mode_b", initial_values.get("truchet_mode_b", 1.0))         # <-- THIS WAS MISSING
 	
 	_on_mobius_re_a_b_changed(initial_values.get("mobius_re_a_b", 0.1))
 	_on_mobius_im_a_b_changed(initial_values.get("mobius_im_a_b", 0.2))
@@ -1578,47 +1624,38 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	ap_c3y_spinbox_b.value = c3b.y
 	
 	# --- Custom 2x2 ---
-	var tl_a_id = initial_values.get("custom_tl_a", 0) as int
-	custom_tl_a.select(_get_item_index_by_text(custom_tl_a, _get_name_from_id(tl_a_id)))
-	var tr_a_id = initial_values.get("custom_tr_a", 0) as int
-	custom_tr_a.select(_get_item_index_by_text(custom_tr_a, _get_name_from_id(tr_a_id)))
-	var bl_a_id = initial_values.get("custom_bl_a", 0) as int
-	custom_bl_a.select(_get_item_index_by_text(custom_bl_a, _get_name_from_id(bl_a_id)))
-	var br_a_id = initial_values.get("custom_br_a", 0) as int
-	custom_br_a.select(_get_item_index_by_text(custom_br_a, _get_name_from_id(br_a_id)))
-	var tl_b_id = initial_values.get("custom_tl_b", 0) as int
-	custom_tl_b.select(_get_item_index_by_text(custom_tl_b, _get_name_from_id(tl_b_id)))
-	var tr_b_id = initial_values.get("custom_tr_b", 0) as int
-	custom_tr_b.select(_get_item_index_by_text(custom_tr_b, _get_name_from_id(tr_b_id)))
-	var bl_b_id = initial_values.get("custom_bl_b", 0) as int
-	custom_bl_b.select(_get_item_index_by_text(custom_bl_b, _get_name_from_id(bl_b_id)))
-	var br_b_id = initial_values.get("custom_br_b", 0) as int
-	custom_br_b.select(_get_item_index_by_text(custom_br_b, _get_name_from_id(br_b_id)))
+	custom_tl_a.select(initial_values.get("custom_tl_a", 0))
+	custom_tr_a.select(initial_values.get("custom_tr_a", 0))
+	custom_bl_a.select(initial_values.get("custom_bl_a", 0))
+	custom_br_a.select(initial_values.get("custom_br_a", 0))
+	custom_tl_b.select(initial_values.get("custom_tl_b", 0))
+	custom_tr_b.select(initial_values.get("custom_tr_b", 0))
+	custom_bl_b.select(initial_values.get("custom_bl_b", 0))
+	custom_br_b.select(initial_values.get("custom_br_b", 0))
 	
 	# --- 3D Light Controls ---
 	%LightXAngleSlider.set_value_no_signal(initial_values.get("light_x_rot", 77.0))
-	light_x_angle_spinbox.set_value_no_signal(initial_values.get("light_x_rot", 77.0)) 
+	light_x_angle_spinbox.set_value_no_signal(initial_values.get("light_x_rot", 77.0))
 	%LightYAngleSlider.set_value_no_signal(initial_values.get("light_y_rot", 163.5))
-	light_y_angle_spinbox.set_value_no_signal(initial_values.get("light_y_rot", 163.5)) 
+	light_y_angle_spinbox.set_value_no_signal(initial_values.get("light_y_rot", 163.5))
 	%LightEnergySlider.set_value_no_signal(initial_values.get("light_energy", 1.0))
-	light_energy_spinbox.set_value_no_signal(initial_values.get("light_energy", 1.0)) 
+	light_energy_spinbox.set_value_no_signal(initial_values.get("light_energy", 1.0))
 	%LightColorPicker.color = initial_values.get("light_color", Color.WHITE)
 	%ShadowCheckBox.set_pressed_no_signal(initial_values.get("light_shadows", true))
 
 	%NormalStrengthSlider.set_value_no_signal(initial_values.get("normal_strength", 1.0))
-	normal_strength_spinbox.set_value_no_signal(initial_values.get("normal_strength", 1.0)) 
+	normal_strength_spinbox.set_value_no_signal(initial_values.get("normal_strength", 1.0))
 
 	%CameraDistSlider.set_value_no_signal(initial_values.get("cam_dist", 2.5))
-	camera_dist_spinbox.set_value_no_signal(initial_values.get("cam_dist", 2.5)) 
+	camera_dist_spinbox.set_value_no_signal(initial_values.get("cam_dist", 2.5))
 	%CameraXRotSlider.set_value_no_signal(initial_values.get("cam_x_rot", 0.0))
-	camera_x_rot_spinbox.set_value_no_signal(initial_values.get("cam_x_rot", 0.0)) 
+	camera_x_rot_spinbox.set_value_no_signal(initial_values.get("cam_x_rot", 0.0))
 	%CameraYRotSlider.set_value_no_signal(initial_values.get("cam_y_rot", 0.0))
-	camera_y_rot_spinbox.set_value_no_signal(initial_values.get("cam_y_rot", 0.0)) 
+	camera_y_rot_spinbox.set_value_no_signal(initial_values.get("cam_y_rot", 0.0))
 	%CameraFovSlider.set_value_no_signal(initial_values.get("cam_fov", 75.0))
-	camera_fov_spinbox.set_value_no_signal(initial_values.get("cam_fov", 75.0)) 
+	camera_fov_spinbox.set_value_no_signal(initial_values.get("cam_fov", 75.0))
 
 	%BackgroundCheckBox.set_pressed_no_signal(initial_values.get("show_2d_bg", false))
-	
 	
 func _on_save_button_pressed() -> void:
 	if OS.has_feature("web"):
@@ -1777,6 +1814,10 @@ func _on_file_dialog_file_selected(path: String) -> void:
 				print("Error: Could not parse preset file.")
 		else:
 			printerr("Error: Could not open file for reading at path: ", path, " | Error code: ", FileAccess.get_open_error())
+	elif file_dialog_mode == "save_animation":
+		# The user has picked a name and location.
+		# The 'path' is absolute, so we can use it directly.
+		_stitch_frames_to_video(path)
 
 func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	# --- STAGE 1: Render the raw high-resolution fractal ---
@@ -1785,6 +1826,8 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 
 	save_viewport.size = render_size
 	var save_material = save_viewport.get_node("ShaderRect").material as ShaderMaterial
+	var is_animating = (wave_speed_a != 0.0 or wave_speed_b != 0.0 or not _speed_controls.is_empty())
+	save_material.set_shader_parameter("is_animating", is_animating)
 
 	# Set all the fractal parameters
 	save_material.set_shader_parameter("previous_frame", previous_frame_texture)
@@ -1978,11 +2021,33 @@ func _process(delta: float) -> void:
 
 	var previous_frame_texture = source_viewport.get_texture()
 	var target_material = target_viewport.get_node("ShaderRect").material as ShaderMaterial
-	for param_name in _auto_params_a:
-		target_material.set_shader_parameter(param_name, _auto_params_a[param_name])
+	var is_animating = (wave_speed_a != 0.0 or wave_speed_b != 0.0 or not _speed_controls.is_empty())
 	
+	var current_feedback = feedback_amount
+	if is_animating:
+		current_feedback = 1.0
+	target_material.set_shader_parameter("is_animating", is_animating)
+	# Send Auto-Params for A
+	for param_name in _auto_params_a:
+		var speed_key = param_name + "_speed"
+		if _auto_params_a.has(speed_key) and _auto_params_a.get(speed_key, 0.0) != 0.0:
+			# This parameter is animated!
+			var base_val = _auto_params_a[param_name]
+			var speed_val = _auto_params_a[speed_key]
+			target_material.set_shader_parameter(param_name, base_val + sin(time * speed_val))
+		else:
+			# This is a static parameter, just send its value
+			target_material.set_shader_parameter(param_name, _auto_params_a[param_name])
+	
+	# Send Auto-Params for B
 	for param_name in _auto_params_b:
-		target_material.set_shader_parameter(param_name, _auto_params_b[param_name])
+		var speed_key = param_name + "_speed"
+		if _auto_params_b.has(speed_key) and _auto_params_b.get(speed_key, 0.0) != 0.0:
+			var base_val = _auto_params_b[param_name]
+			var speed_val = _auto_params_b[speed_key]
+			target_material.set_shader_parameter(param_name, base_val + sin(time * speed_val))
+		else:
+			target_material.set_shader_parameter(param_name, _auto_params_b[param_name])
 	# --- Set Fractal Shader Params ---
 	target_material.set_shader_parameter("previous_frame", previous_frame_texture)
 	
@@ -2353,6 +2418,10 @@ func _apply_preset_data(data: Dictionary) -> void:
 	update_ui_from_state()
 	print("ApplyPreset: After UI Update.")
 	print("  - Values: pre=%s, post=%s, a=%s, b=%s" % [pre_translate, post_translate, translate_a, translate_b])
+	
+	_on_var_a_dropdown_item_selected(var_a_dropdown.selected)
+	_on_var_b_dropdown_item_selected(var_b_dropdown.selected)
+	_on_start_pattern_dropdown_item_selected(start_pattern_dropdown.selected)
 
 	
 	# 3. No need to re-apply ranges, update_ui_from_state handled it.
@@ -2420,13 +2489,16 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	# --- CLEAR OLD AUTO-PARAMS ---
 	_auto_params_a.clear()
 	_auto_params_b.clear()
-
-	# Loop through every key in the loaded preset file
+	_speed_controls.clear()
+	if data.has("variation_mode_a_id"):
+		variation_mode_a = int(data["variation_mode_a_id"])
+	if data.has("variation_mode_b_id"):
+		variation_mode_b = int(data["variation_mode_b_id"])
+	# --- PASS 1: Load all hard-coded class variables ---
+	# This is critical so we know which variations are active.
 	for key in data:
 		var value = data[key]
-		
-		# Check if it's a known class variable (old system)
-		if key in self:
+		if key in self: # Check if it's a known class variable
 			# Special handling for vectors/colors from JSON
 			if "translate" in key or key.begins_with("ap_c"):
 				set(key, get_vector2(data, key, Vector2.ZERO))
@@ -2434,21 +2506,55 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 				set(key, get_color(data, key, Color.WHITE))
 			else:
 				# It's a simple value (float, bool, int), just set it
-				set(key, value)
-		else:
-			# It's not a class variable. It must be an auto-panel param.
-			# Add it to the correct dictionary.
-			if key.ends_with("_a"):
-				_auto_params_a[key] = value
-			elif key.ends_with("_b"):
-				_auto_params_b[key] = value
+				set(key, value) # This sets variation_mode_a, etc.
 
-	# --- END NEW LOADING LOGIC ---
+	# --- PASS 2: Pre-populate auto-params with defaults ---
+	# Now that variation_mode_a is set, we find its panel and load its defaults.
+	var control_string_a = _get_control_string_from_id(variation_mode_a)
+	if control_string_a != "" and var_a_panels.has(control_string_a):
+		var panel_a = var_a_panels[control_string_a]
+		if panel_a is VariationPanel:
+			for param in panel_a.parameters:
+				_auto_params_a[param.name] = param.default
+
+	# Do the same for Variation B
+	var control_string_b = _get_control_string_from_id(variation_mode_b)
+	if control_string_b != "" and var_b_panels.has(control_string_b):
+		var panel_b = var_b_panels[control_string_b]
+		if panel_b is VariationPanel:
+			for param in panel_b.parameters:
+				_auto_params_b[param.name] = param.default
+
+	# --- PASS 3: Load saved auto-param values from file ---
+	for key in data:
+		var value = data[key]
+		if not (key in self): # Only check keys that are NOT class variables
+			
+			# Check if this key (e.g., "clifford_a_a_speed")
+			# exists in the parameters for the active Var A panel.
+			if _auto_params_a.has(key):
+				_auto_params_a[key] = value
+				
+				# --- ADD THIS BLOCK ---
+				# If this is a speed key and it's not zero,
+				# add it to the active speed controls.
+				if key.ends_with("_speed") and value != 0.0:
+					_speed_controls[key] = value
+				# --- END ADD ---
+				
+			# Check if this key (e.g., "clifford_b_b_speed")
+			# exists in the parameters for the active Var B panel.
+			elif _auto_params_b.has(key):
+				_auto_params_b[key] = value
+				
+				# --- ADD THIS BLOCK ---
+				if key.ends_with("_speed") and value != 0.0:
+					_speed_controls[key] = value
 
 	var preset_version = data.get("version", 0.0)
 	print("  SetState: Preset was created with version: ", preset_version)
 	
-	# This legacy stuff is now handled above, but we keep the platform defaults
+	# Set platform-specific feedback ranges, but let loaded values override
 	_set_platform_feedback_defaults()
 	feedback_min = data.get("feedback_min", feedback_min)
 	feedback_max = data.get("feedback_max", feedback_max)
@@ -3893,7 +3999,7 @@ func _on_ap_c3y_spinbox_b_value_changed(value: float):
 # --- Auto-UI Panel Handlers ---
 # =================================================================
 
-func _on_variation_param_changed(param_name: String, new_value: float, var_group: String):
+func _on_variation_param_changed(param_name: String, new_value: float, is_speed: bool, var_group: String):
 	# This one function handles ALL new variation panels.
 	# param_name will be "clifford_a_a", "dejong_b_a", etc.
 	# var_group will be "a" or "b".
@@ -3902,3 +4008,202 @@ func _on_variation_param_changed(param_name: String, new_value: float, var_group
 		_auto_params_a[param_name] = new_value
 	else:
 		_auto_params_b[param_name] = new_value
+	if is_speed:
+		if new_value != 0.0:
+			_speed_controls[param_name] = new_value
+		elif _speed_controls.has(param_name):
+			_speed_controls.erase(param_name)
+			
+			
+func setup_animations():
+	# --- Get or create the default Animation Library ---
+	var anim_lib: AnimationLibrary
+	if animation_player.has_animation_library(""):
+		anim_lib = animation_player.get_animation_library("")
+	else:
+		anim_lib = AnimationLibrary.new()
+		animation_player.add_animation_library("", anim_lib)
+
+	# --- Create a "Clifford Pulse" animation ---
+	var anim = Animation.new()
+	anim.length = 4.0 # 4 seconds long
+	anim.loop_mode = Animation.LOOP_LINEAR # Make it loop
+
+	# --- Track 1: Animate the 'clifford_a_a' slider ---
+	var track_clifford_a = anim.add_track(Animation.TYPE_VALUE)
+	var slider_a_path = clifford_controls_container_a.get_slider("clifford_a_a").get_path()
+	anim.track_set_path(track_clifford_a, str(slider_a_path) + ":value")
+	
+	anim.track_insert_key(track_clifford_a, 0.0, -1.7) # Start value
+	anim.track_insert_key(track_clifford_a, 2.0, 1.0)  # Mid value
+	anim.track_insert_key(track_clifford_a, 4.0, -1.7) # End value (same as start)
+
+	# --- Track 2: Animate the 'clifford_c_a' slider ---
+	var track_clifford_c = anim.add_track(Animation.TYPE_VALUE)
+	var slider_c_path = clifford_controls_container_a.get_slider("clifford_c_a").get_path()
+	anim.track_set_path(track_clifford_c, str(slider_c_path) + ":value")
+	
+	anim.track_insert_key(track_clifford_c, 0.0, -0.5)
+	anim.track_insert_key(track_clifford_c, 2.0, 0.8)
+	anim.track_insert_key(track_clifford_c, 4.0, -0.5)
+
+	# --- Track 3: The "No Mud" Fix ---
+	var track_feedback = anim.add_track(Animation.TYPE_VALUE)
+	anim.track_set_path(track_feedback, str(feedback_amount_slider.get_path()) + ":value")
+	anim.track_insert_key(track_feedback, 0.0, 1.0) # Set feedback to 1.0
+
+	# --- Add the animation to the library ---
+	anim_lib.add_animation("Clifford_Pulse", anim)
+
+
+
+# =================================================================
+# --- Animation & Recording ---
+# =================================================================
+
+func _on_record_button_toggled(button_pressed: bool):
+	is_recording = button_pressed
+	
+	if is_recording:
+		# --- STARTING RECORDING ---
+		record_button.text = "Stop Recording"
+		
+		if OS.has_feature("web"):
+			JavaScriptBridge.eval("startRecording();")
+		else:
+			frame_counter = 0
+			var full_rec_dir = ProjectSettings.globalize_path(recording_dir)
+			
+			var dir = DirAccess.open("user://")
+			if not dir:
+				printerr("CRITICAL: Cannot open 'user://' directory.")
+				is_recording = false
+				record_button.set_pressed_no_signal(false)
+				record_button.text = "Start Recording"
+				return
+
+			if not dir.dir_exists("recordings"):
+				var err = dir.make_dir("recordings")
+				if err != OK:
+					printerr("Failed to create recordings directory: ", full_rec_dir, " Error: ", err)
+					is_recording = false
+					record_button.set_pressed_no_signal(false)
+					record_button.text = "Start Recording"
+					return
+			
+			var rec_dir = DirAccess.open(full_rec_dir)
+			if not rec_dir:
+				printerr("Failed to open recordings directory even after creating it.")
+				return
+			
+			for file in rec_dir.get_files():
+				if file.ends_with(".png"):
+					rec_dir.remove(file)
+			
+			print("Starting frame capture... Saving to: ", full_rec_dir)
+			record_timer.start()
+	else:
+		# --- STOPPING RECORDING ---
+		record_button.text = "Start Recording"
+		
+		if OS.has_feature("web"):
+			JavaScriptBridge.eval("stopRecording();")
+		else:
+			# On desktop, stop the timer and open the save dialog
+			record_timer.stop()
+			print("Recording finished. %d frames saved." % frame_counter)
+			
+			# Wait a moment for the last frame to save
+			await get_tree().create_timer(0.1).timeout
+			
+			# --- OPEN THE SAVE DIALOG ---
+			file_dialog_mode = "save_animation"
+			file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+			file_dialog.filters = PackedStringArray(["*.mp4 ; MP4 Video"])
+			
+			var dt = Time.get_datetime_dict_from_system()
+			var timestamp = "%04d-%02d-%02d_%02d-%02d-%02d" % [dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second]
+			file_dialog.current_file = "animation_" + timestamp + ".mp4"
+			file_dialog.popup_centered()
+
+func _on_record_timer_timeout():
+	# This function only runs on desktop
+	if not is_recording:
+		return
+
+	# --- THIS IS THE NEW LOGIC ---
+	
+	# 1. Determine which viewport was just rendered TO
+	#    Note: is_a_source was flipped in _process, so the source is the one just rendered
+	var source_viewport = viewport_a if is_a_source else viewport_b
+	var raw_fractal_texture = source_viewport.get_texture()
+	
+	if not is_instance_valid(raw_fractal_texture):
+		print("Failed to get raw texture for frame ", frame_counter)
+		return
+	post_process_save_viewport.size = source_viewport.size
+	# 2. Get the post-process viewport and its material
+	var post_save_material = post_process_save_viewport.get_node("ShaderRect").material as ShaderMaterial
+	var post_save_rect = post_process_save_viewport.get_node("ShaderRect")
+
+	# 3. Feed the raw fractal into the post-processing shader
+	post_save_rect.texture = raw_fractal_texture
+
+	# 4. Set all the color grading & post-fx parameters
+	post_save_material.set_shader_parameter("brightness", brightness)
+	post_save_material.set_shader_parameter("contrast", contrast)
+	post_save_material.set_shader_parameter("saturation", saturation)
+	post_save_material.set_shader_parameter("mirror_x", mirror_x)
+	post_save_material.set_shader_parameter("mirror_y", mirror_y)
+	post_save_material.set_shader_parameter("kaleidoscope_on", kaleidoscope_on)
+	post_save_material.set_shader_parameter("kaleidoscope_slices", kaleidoscope_slices)
+	
+	# 5. Wait for the post-process viewport to render
+	await RenderingServer.frame_post_draw
+
+	# 6. Get the FINAL image from the post-process viewport
+	var img = post_process_save_viewport.get_texture().get_image()
+	
+	# --- END NEW LOGIC ---
+
+	if not is_instance_valid(img) or img.is_empty():
+		print("Failed to get final post-processed image for frame ", frame_counter)
+		return
+
+	# Save the frame as a PNG
+	var path = recording_dir.path_join("frame_%05d.png" % frame_counter)
+	var err = img.save_png(path)
+	if err != OK:
+		print("Error saving PNG frame: ", err)
+	
+	frame_counter += 1
+
+func _stitch_frames_to_video(save_path: String):
+	# This function runs the FFmpeg command-line tool
+	var global_rec_dir = ProjectSettings.globalize_path(recording_dir)
+	# var global_output_path = ProjectSettings.globalize_path(video_output_path) # <-- DELETE THIS
+	var input_path = global_rec_dir.path_join("frame_%05d.png")
+	
+	# These are the arguments for FFmpeg
+	var ffmpeg_args = [
+		"-y", # Overwrite output file if it exists
+		"-framerate", "60", # Input FPS (must match your Timer)
+		"-i", input_path,   # Input files
+		"-c:v", "libx264",  # Video codec
+		"-pix_fmt", "yuv420p", # Pixel format for compatibility
+		save_path  # Output file
+	]
+	
+	# Try to execute FFmpeg
+	var output = []
+	print("Running FFmpeg... Command: ffmpeg " + " ".join(ffmpeg_args))
+	var exit_code = OS.execute("ffmpeg", ffmpeg_args, output, true) # true = blocking
+	
+	if exit_code == 0:
+		print("Video saved successfully to: ", save_path)
+		OS.shell_open(save_path)
+	else:
+		print("--- FFMPEG FAILED ---")
+		print("FFmpeg may not be installed or is not in your system's PATH.")
+		print("Your PNG frames are safe in: ", global_rec_dir)
+		OS.shell_open(global_rec_dir) # Open the PNG folder instead

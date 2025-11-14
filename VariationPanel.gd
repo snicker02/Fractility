@@ -50,6 +50,7 @@ func _generate_controls():
 		# Get data from the resource, using its direct properties
 		var p_name: String = param.name
 		var p_label: String = param.label
+		var p_is_speed: bool = param.is_speed_control
 		var p_default: float = param.default
 		var p_min: float = param.min
 		var p_max: float = param.max
@@ -58,6 +59,9 @@ func _generate_controls():
 		# If the label is empty, auto-capitalize the name
 		if p_label == "":
 			p_label = p_name.capitalize()
+			
+		if p_is_speed: # <-- ADD THIS
+			p_label += " (Speed)"
 
 		var hbox = HBoxContainer.new()
 		hbox.name = p_name + "Container" # Set a name for clarity
@@ -96,15 +100,15 @@ func _generate_controls():
 		# --- Connect signals ---
 		# Connect them to a local function that will sync them
 		# and then emit our public signal.
-		slider.value_changed.connect(_on_control_value_changed.bind(p_name, spinbox))
-		spinbox.value_changed.connect(_on_control_value_changed.bind(p_name, slider))
+		slider.value_changed.connect(_on_control_value_changed.bind(p_name, spinbox, p_is_speed))
+		spinbox.value_changed.connect(_on_control_value_changed.bind(p_name, slider, p_is_speed))
 # This function is called by EITHER the slider or spinbox
-func _on_control_value_changed(new_value: float, param_name: String, control_to_sync: Control):
+func _on_control_value_changed(new_value: float, param_name: String, control_to_sync: Control, is_speed: bool):
 	# Sync the other control
 	control_to_sync.set_value_no_signal(new_value)
 	
 	# Emit our public signal so the main controller knows
-	emit_signal("value_updated", param_name, new_value)
+	emit_signal("value_updated", param_name, new_value, is_speed)
 
 
 # --- Public functions ---
@@ -118,3 +122,8 @@ func set_param_value(param_name: String, new_value: float):
 # A function to set the panel's visibility
 func set_panel_visible(is_visible: bool):
 	visible = is_visible
+func get_slider(param_name: String) -> HSlider:
+	return sliders.get(param_name)
+
+func get_spinbox(param_name: String) -> SpinBox:
+	return spinboxes.get(param_name)

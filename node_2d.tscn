@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=46 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -44,6 +44,42 @@ label = "D"
 default = -1.2
 min = -3.0
 max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_kq1c5"]
+script = ExtResource("6_4d7sh")
+name = "clifford_a_a_speed"
+label = "A"
+is_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ornx7"]
+script = ExtResource("6_4d7sh")
+name = "clifford_b_a_speed"
+label = "B"
+is_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_cnnru"]
+script = ExtResource("6_4d7sh")
+name = "clifford_c_a_speed"
+label = "C"
+is_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_540hr"]
+script = ExtResource("6_4d7sh")
+name = "clifford_d_a_speed"
+label = "D"
+is_speed_control = true
+min = -2.0
+max = 2.0
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_0h7mo"]
@@ -188,6 +224,42 @@ label = "D"
 default = -1.2
 min = -3.0
 max = 3.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_6ip5v"]
+script = ExtResource("6_4d7sh")
+name = "clifford_a_b_speed"
+label = "A"
+is_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_q5dlx"]
+script = ExtResource("6_4d7sh")
+name = "clifford_b_b_speed"
+label = "B"
+is_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_c4wnb"]
+script = ExtResource("6_4d7sh")
+name = "clifford_c_b_speed"
+label = "C"
+is_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_7plk7"]
+script = ExtResource("6_4d7sh")
+name = "clifford_d_b_speed"
+label = "D"
+is_speed_control = true
+min = -2.0
+max = 2.0
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_7vxoj"]
@@ -445,7 +517,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 2.2"
+text = "V 2.25"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -950,7 +1022,7 @@ step = 0.001
 unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Clifford A"
-parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_4d7sh"), SubResource("Resource_ir8iy"), SubResource("Resource_hqns4"), SubResource("Resource_x0ka3")])
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_4d7sh"), SubResource("Resource_ir8iy"), SubResource("Resource_hqns4"), SubResource("Resource_x0ka3"), SubResource("Resource_kq1c5"), SubResource("Resource_ornx7"), SubResource("Resource_cnnru"), SubResource("Resource_540hr")])
 
 [node name="DeJongControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
@@ -1892,7 +1964,7 @@ step = 0.001
 unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Clifford B"
-parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_flf07"), SubResource("Resource_k73cj"), SubResource("Resource_rjqkl"), SubResource("Resource_fs4d3")])
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_flf07"), SubResource("Resource_k73cj"), SubResource("Resource_rjqkl"), SubResource("Resource_fs4d3"), SubResource("Resource_6ip5v"), SubResource("Resource_q5dlx"), SubResource("Resource_c4wnb"), SubResource("Resource_7plk7")])
 
 [node name="DeJongControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
@@ -2925,6 +2997,15 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Save Image"
 
+[node name="HBoxContainer17" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="RecordButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer17"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "Start Recording"
+
 [node name="HBoxContainer15" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 layout_mode = 2
 
@@ -3076,6 +3157,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+
+[node name="RecordTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 0.017
 
 [connection signal="item_selected" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/ShapeSelectorButton" to="." method="_on_shape_selected"]
 [connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/BackgroundCheckBox" to="." method="_on_background_check_box_toggled"]
@@ -3302,9 +3390,11 @@ grow_vertical = 2
 [connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer10/SaturationSpinBox" to="." method="_on_saturation_spinbox_value_changed"]
 [connection signal="item_selected" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer11/ResolutionDropdown" to="." method="_on_resolution_dropdown_item_selected"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer11/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer17/RecordButton" to="." method="_on_record_button_toggled"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer15/SavePresetButton" to="." method="_on_save_preset_pressed"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer15/LoadPresetButton" to="." method="_on_load_preset_pressed"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer16/CopyPresetButton" to="." method="_on_copy_preset_pressed"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer16/PastePresetButton" to="." method="_on_paste_preset_pressed"]
 [connection signal="gui_input" from="HSplitContainer/Control/FinalOutput" to="." method="_on_viewport_gui_input"]
 [connection signal="gui_input" from="HSplitContainer/Control/Display_3D_Container" to="." method="_on_viewport_gui_input"]
+[connection signal="timeout" from="RecordTimer" to="." method="_on_record_timer_timeout"]

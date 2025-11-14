@@ -13,6 +13,7 @@ uniform bool mirror_tiling;
 uniform bool show_grid = false;
 uniform bool show_circles = true;
 uniform sampler2D background_texture;
+uniform bool is_animating = false;
 
 // Start Pattern Uniforms
 uniform float circle_count = 4.0;
@@ -825,83 +826,77 @@ void fragment() {
 	mat2 julian_mat_b = mat2(julian_mat_b_col1, julian_mat_b_col2);
 
 	vec4 final_color;
+	vec4 start_pattern_color;
 	
-	// --- STEP 1: Calculate the Start Pattern (ONLY on frame 1) ---
-	if (time < 0.1) {
-		if (start_pattern_mode == 0) { // Gradient + Grid
-			vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
-			vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
-			final_color = mix(top_mix, bottom_mix, UV.y);
-			if (show_grid) {
-				vec2 pixel_coords = UV / TEXTURE_PIXEL_SIZE;
-				float line_width = 1.5;
-				if (mod(pixel_coords.x, 50.0) < line_width || mod(pixel_coords.y, 50.0) < line_width) {
-					final_color *= 1.5;
-				}
+	// --- STEP 1: Calculate the Start Pattern (ALWAYS) ---
+	// We calculate this every frame so it's always available.
+	if (start_pattern_mode == 0) { // Gradient + Grid
+		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
+		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
+		start_pattern_color = mix(top_mix, bottom_mix, UV.y);
+		if (show_grid) {
+			vec2 pixel_coords = UV / TEXTURE_PIXEL_SIZE;
+			float line_width = 1.5;
+			if (mod(pixel_coords.x, 50.0) < line_width || mod(pixel_coords.y, 50.0) < line_width) {
+				start_pattern_color *= 1.5;
 			}
-		} 
-		else if (start_pattern_mode == 1) { // Circles
-			vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
-			vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
-			vec4 gradient_color = mix(top_mix, bottom_mix, UV.y);
-			final_color = gradient_color;
-			if (show_circles) {
-				vec2 grid_uv = fract(UV * circle_count);
-				float dist = distance(grid_uv, vec2(0.5));
-				float circle = 1.0 - smoothstep(circle_radius, circle_radius + circle_softness, dist);
-				final_color = vec4(vec3(circle), 1.0) * gradient_color;
-			}
-		}
-		else if (start_pattern_mode == 2) { // Image Input
-			if (textureSize(background_texture, 0).x > 1) {
-				final_color = texture(background_texture, UV);
-			} else {
-				final_color = vec4(0.0, 0.0, 0.0, 1.0); // Default to black
-			}
-		}
-		else if (start_pattern_mode == 3) { // Perlin Noise
-			float n = perlin_noise(UV * 10.0);
-			n = (n + 1.0) * 0.5;
-			final_color = vec4(vec3(n), 1.0);
-		}
-		else if (start_pattern_mode == 4) { // Concentric Rings (Full Color)
-			// --- Create Gradient A (Normal) ---
-			vec4 top_mix_A = mix(grad_col_tl, grad_col_tr, UV.x);
-			vec4 bottom_mix_A = mix(grad_col_bl, grad_col_br, UV.x);
-			vec4 gradient_color_A = mix(top_mix_A, bottom_mix_A, UV.y);
-			
-			// --- Create Gradient B (Flipped 180-degrees) ---
-			vec4 top_mix_B = mix(grad_col_br, grad_col_bl, UV.x);
-			vec4 bottom_mix_B = mix(grad_col_tr, grad_col_tl, UV.x);
-			vec4 gradient_color_B = mix(top_mix_B, bottom_mix_B, UV.y);
-			
-			float d = distance(UV, vec2(0.5)) * 2.0; 
-			float v = fract(d * circle_grid_scale);
-			float half_width = circle_grid_radius * 0.5;
-			
-			float ring_value = smoothstep(0.5 - half_width - circle_grid_softness, 0.5 - half_width, v) - 
-							   smoothstep(0.5 + half_width, 0.5 + half_width + circle_grid_softness, v);
-			
-			// --- THIS IS THE FIX ---
-			// This completely overwrites the screen.
-			// It shows gradient_color_A for the rings (where ring_value=1)
-			// and gradient_color_B for the gaps (where ring_value=0).
-			// It does NOT read from previous_frame.
-			final_color = mix(gradient_color_B, gradient_color_A, ring_value);
-		}
-		else {
-			// Default case
-			vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
-			vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
-			final_color = mix(top_mix, bottom_mix, UV.y);
 		}
 	} 
+	else if (start_pattern_mode == 1) { // Circles
+		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
+		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
+		vec4 gradient_color = mix(top_mix, bottom_mix, UV.y);
+		start_pattern_color = gradient_color;
+		if (show_circles) {
+			vec2 grid_uv = fract(UV * circle_count);
+			float dist = distance(grid_uv, vec2(0.5));
+			float circle = 1.0 - smoothstep(circle_radius, circle_radius + circle_softness, dist);
+			start_pattern_color = vec4(vec3(circle), 1.0) * gradient_color;
+		}
+	}
+	else if (start_pattern_mode == 2) { // Image Input
+		if (textureSize(background_texture, 0).x > 1) {
+			start_pattern_color = texture(background_texture, UV);
+		} else {
+			start_pattern_color = vec4(0.0, 0.0, 0.0, 1.0); // Default to black
+		}
+	}
+	else if (start_pattern_mode == 3) { // Perlin Noise
+		float n = perlin_noise(UV * 10.0);
+		n = (n + 1.0) * 0.5;
+		start_pattern_color = vec4(vec3(n), 1.0);
+	}
+	else if (start_pattern_mode == 4) { // Concentric Rings (Full Color)
+		vec4 top_mix_A = mix(grad_col_tl, grad_col_tr, UV.x);
+		vec4 bottom_mix_A = mix(grad_col_bl, grad_col_br, UV.x);
+		vec4 gradient_color_A = mix(top_mix_A, bottom_mix_A, UV.y);
+		vec4 top_mix_B = mix(grad_col_br, grad_col_bl, UV.x);
+		vec4 bottom_mix_B = mix(grad_col_tr, grad_col_tl, UV.x);
+		vec4 gradient_color_B = mix(top_mix_B, bottom_mix_B, UV.y);
+		float d = distance(UV, vec2(0.5)) * 2.0; 
+		float v = fract(d * circle_grid_scale);
+		float half_width = circle_grid_radius * 0.5;
+		float ring_value = smoothstep(0.5 - half_width - circle_grid_softness, 0.5 - half_width, v) - 
+						   smoothstep(0.5 + half_width, 0.5 + half_width + circle_grid_softness, v);
+		start_pattern_color = mix(gradient_color_B, gradient_color_A, ring_value);
+	}
 	else {
-		// --- STEP 2: Calculate the Feedback (Recursive for ALL patterns) ---
-		
-		vec2 transformed_uv = UV - vec2(0.5); // Center coordinates
+		// Default case
+		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
+		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
+		start_pattern_color = mix(top_mix, bottom_mix, UV.y);
+	}
+	// --- END STEP 1 ---
 
-		// Apply Pre-Transforms
+
+	// --- STEP 2: Calculate the Feedback ---
+	if (time < 0.1) {
+		// On the first frame, the final color *is* the start pattern
+		final_color = start_pattern_color;
+	} 
+	else {
+		// On subsequent frames, run the feedback loop
+		vec2 transformed_uv = UV - vec2(0.5); // Center coordinates
 		transformed_uv *= rotate(pre_rotation);
 		transformed_uv /= pre_scale;
 		transformed_uv += pre_translate;
@@ -931,10 +926,19 @@ void fragment() {
 		}
 		// --- END TILING ---
 
-		// --- FINAL MIXING LOGIC (Recursive for ALL patterns) ---
+		// --- FINAL MIXING LOGIC (THE FIX) ---
 		vec4 transformed_color = texture(previous_frame, final_uv);
-		vec4 original_color = texture(previous_frame, UV);
-		final_color = mix(original_color, transformed_color, feedback_amount);
+		
+		if (is_animating) {
+			// ANIMATION MODE: Mix the transformed frame with the FRESH start pattern.
+			// This prevents motion blur/mud.
+			final_color = mix(start_pattern_color, transformed_color, feedback_amount);
+		} else {
+			// RECURSIVE MODE: Mix the transformed frame with the PREVIOUS frame.
+			// This creates the fractal detail.
+			vec4 original_color = texture(previous_frame, UV);
+			final_color = mix(original_color, transformed_color, feedback_amount);
+		}
 	}
 
 	COLOR = final_color;
