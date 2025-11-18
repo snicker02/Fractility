@@ -48,113 +48,358 @@ uniform float contrast = 1.0;
 uniform float saturation = 1.0;
 
 // Wave A Variation Uniforms
-uniform float wave_frequency_a = 5.0;
-uniform float wave_amplitude_a = 0.1;
-uniform float wave_speed_a = 1.0;
-uniform int wave_type_a = 0;
+uniform int wave_type_a;
+uniform float wave_frequency_a;      // Base frequency
+uniform float wave_frequency_a_speed; // Speed to animate frequency
+uniform float wave_amplitude_a;      // Base amplitude
+uniform float wave_amplitude_a_speed; // Speed to animate amplitude
+uniform float wave_phase_a;          // Base phase (renamed from wave_speed_a)
+uniform float wave_phase_a_speed;    // Speed to animate phase
 
 // Wave B Variation Uniforms
-uniform float wave_frequency_b = 5.0;
-uniform float wave_amplitude_b = 0.1;
-uniform float wave_speed_b = 1.0;
-uniform int wave_type_b = 0;
+uniform int wave_type_b;
+uniform float wave_frequency_b;
+uniform float wave_frequency_b_speed;
+uniform float wave_amplitude_b;
+uniform float wave_amplitude_b_speed;
+uniform float wave_phase_b;
+uniform float wave_phase_b_speed;
 
 // Julian2 A Uniforms
-uniform float julian_power_a = 2.0;
-uniform float julian_dist_a = 1.0;
-uniform vec2 julian_mat_a_col1;
-uniform vec2 julian_mat_a_col2;
-uniform vec2 julian_trans_a = vec2(0.0, 0.0);
+uniform float julian_power_a;
+uniform float julian_power_a_speed;
+uniform float julian_dist_a;
+uniform float julian_dist_a_speed;
+uniform float julian_a_a;
+uniform float julian_a_a_speed;
+uniform float julian_b_a;
+uniform float julian_b_a_speed;
+uniform float julian_c_a;
+uniform float julian_c_a_speed;
+uniform float julian_d_a;
+uniform float julian_d_a_speed;
+uniform float julian_e_a;
+uniform float julian_e_a_speed;
+uniform float julian_f_a;
+uniform float julian_f_a_speed;
 
 // Julian2 B Uniforms
-uniform float julian_power_b = -3.0;
-uniform float julian_dist_b = 1.0;
-uniform vec2 julian_mat_b_col1;
-uniform vec2 julian_mat_b_col2;
-uniform vec2 julian_trans_b = vec2(0.0, 0.0);
-
+uniform float julian_power_b;
+uniform float julian_power_b_speed;
+uniform float julian_dist_b;
+uniform float julian_dist_b_speed;
+uniform float julian_a_b;
+uniform float julian_a_b_speed;
+uniform float julian_b_b;
+uniform float julian_b_b_speed;
+uniform float julian_c_b;
+uniform float julian_c_b_speed;
+uniform float julian_d_b;
+uniform float julian_d_b_speed;
+uniform float julian_e_b;
+uniform float julian_e_b_speed;
+uniform float julian_f_b;
+uniform float julian_f_b_speed;
 // Fisheye/Polar Uniforms
-uniform float fisheye_strength_a = 2.0;
-uniform float polar_offset_a = 1.0;
-uniform float fisheye_strength_b = 2.0;
-uniform float polar_offset_b = 1.0;
+uniform float fisheye_strength_a;
+uniform float fisheye_strength_a_speed;
+uniform float polar_offset_a;
+uniform float polar_offset_a_speed;
+uniform float fisheye_strength_b;
+uniform float fisheye_strength_b_speed;
+uniform float polar_offset_b;
+uniform float polar_offset_b_speed;
 
 // Symmetry Uniforms
-uniform bool var_a_mirror_x;
-uniform bool var_a_mirror_y;
+
+uniform float var_a_mirror_x; 
+uniform float var_a_mirror_y; 
+uniform float var_a_mirror_rotation;
+uniform float var_a_mirror_rotation_speed;
 uniform float var_a_kaleidoscope_slices;
+uniform float var_a_kaleidoscope_rotation;
+uniform float var_a_kaleidoscope_rotation_speed;
 
-uniform bool var_b_mirror_x;
-uniform bool var_b_mirror_y;
+uniform float var_b_mirror_x; 
+uniform float var_b_mirror_y; 
+uniform float var_b_mirror_rotation;
+uniform float var_b_mirror_rotation_speed;
 uniform float var_b_kaleidoscope_slices;
+uniform float var_b_kaleidoscope_rotation;
+uniform float var_b_kaleidoscope_rotation_speed;
 
-// For efficiency, we pack Re/Im parts into vec2s
-uniform vec2 mobius_a_a; // x=re_a, y=im_a
-uniform vec2 mobius_b_a; // x=re_b, y=im_b
-uniform vec2 mobius_c_a; // x=re_c, y=im_c
-uniform vec2 mobius_d_a; // x=re_d, y=im_d
+// Mobius A Uniforms
+uniform float mobius_re_a_a;
+uniform float mobius_re_a_a_speed;
+uniform float mobius_im_a_a;
+uniform float mobius_im_a_a_speed;
+uniform float mobius_re_b_a;
+uniform float mobius_re_b_a_speed;
+uniform float mobius_im_b_a;
+uniform float mobius_im_b_a_speed;
+uniform float mobius_re_c_a;
+uniform float mobius_re_c_a_speed;
+uniform float mobius_im_c_a;
+uniform float mobius_im_c_a_speed;
+uniform float mobius_re_d_a;
+uniform float mobius_re_d_a_speed;
+uniform float mobius_im_d_a;
+uniform float mobius_im_d_a_speed;
 
-uniform vec2 mobius_a_b;
-uniform vec2 mobius_b_b;
-uniform vec2 mobius_c_b;
-uniform vec2 mobius_d_b;
+// Mobius B Uniforms
+uniform float mobius_re_a_b;
+uniform float mobius_re_a_b_speed;
+uniform float mobius_im_a_b;
+uniform float mobius_im_a_b_speed;
+uniform float mobius_re_b_b;
+uniform float mobius_re_b_b_speed;
+uniform float mobius_im_b_b;
+uniform float mobius_im_b_b_speed;
+uniform float mobius_re_c_b;
+uniform float mobius_re_c_b_speed;
+uniform float mobius_im_c_b;
+uniform float mobius_im_c_b_speed;
+uniform float mobius_re_d_b;
+uniform float mobius_re_d_b_speed;
+uniform float mobius_im_d_b;
+uniform float mobius_im_d_b_speed;
 
-// --- Add uniforms for XHeart A and B ---
+// Cellular Weave A Uniforms
 uniform float cellular_weave_grid_size_a;
+uniform float cellular_weave_grid_size_a_speed;
 uniform float cellular_weave_threshold_a;
+uniform float cellular_weave_threshold_a_speed;
 uniform float cellular_weave_iterations_a;
-uniform float cellular_weave_grid_size_b;
-uniform float cellular_weave_threshold_b;
-uniform float cellular_weave_iterations_b;
+uniform float cellular_weave_iterations_a_speed;
 
-// --- Add uniforms for Heart A and B ---
+// Cellular Weave B Uniforms
+uniform float cellular_weave_grid_size_b;
+uniform float cellular_weave_grid_size_b_speed;
+uniform float cellular_weave_threshold_b;
+uniform float cellular_weave_threshold_b_speed;
+uniform float cellular_weave_iterations_b;
+uniform float cellular_weave_iterations_b_speed;
+
+// --- Heart A Uniforms ---
 uniform float heart_scale_a;
+uniform float heart_scale_a_speed;
 uniform float heart_rotation_a;
+uniform float heart_rotation_a_speed;
 uniform float heart_strength_a;
+uniform float heart_strength_a_speed;
+
+// --- Heart B Uniforms ---
 uniform float heart_scale_b;
+uniform float heart_scale_b_speed;
 uniform float heart_rotation_b;
+uniform float heart_rotation_b_speed;
 uniform float heart_strength_b;
+uniform float heart_strength_b_speed;
 
 // --- Add uniforms for Blur ---
 uniform float blur_amount_a;
 uniform float blur_amount_b;
 
 
-uniform float apollonian_scale_a = 1.5;
-uniform vec2 ap_c1_a = vec2(0.0, 0.5);   // <-- ADD Center 1 for Var A
-uniform vec2 ap_c2_a = vec2(-0.433, -0.25); // <-- ADD Center 2 for Var A
-uniform vec2 ap_c3_a = vec2(0.433, -0.25);  // <-- ADD Center 3 for Var A
-uniform float apollonian_scale_b = 1.5;
-uniform vec2 ap_c1_b = vec2(0.0, 0.5);   // <-- ADD Center 1 for Var B
-uniform vec2 ap_c2_b = vec2(-0.433, -0.25); // <-- ADD Center 2 for Var B
-uniform vec2 ap_c3_b = vec2(0.433, -0.25);  // <-- ADD Center 3 for Var B
+// Apollonian A Uniforms
+uniform float apollonian_scale_a;
+uniform float apollonian_scale_a_speed;
+uniform float ap_c1x_a;
+uniform float ap_c1x_a_speed;
+uniform float ap_c1y_a;
+uniform float ap_c1y_a_speed;
+uniform float ap_c2x_a;
+uniform float ap_c2x_a_speed;
+uniform float ap_c2y_a;
+uniform float ap_c2y_a_speed;
+uniform float ap_c3x_a;
+uniform float ap_c3x_a_speed;
+uniform float ap_c3y_a;
+uniform float ap_c3y_a_speed;
+
+// Apollonian B Uniforms
+uniform float apollonian_scale_b;
+uniform float apollonian_scale_b_speed;
+uniform float ap_c1x_b;
+uniform float ap_c1x_b_speed;
+uniform float ap_c1y_b;
+uniform float ap_c1y_b_speed;
+uniform float ap_c2x_b;
+uniform float ap_c2x_b_speed;
+uniform float ap_c2y_b;
+uniform float ap_c2y_b_speed;
+uniform float ap_c3x_b;
+uniform float ap_c3x_b_speed;
+uniform float ap_c3y_b;
+uniform float ap_c3y_b_speed;
+// ArcTangent A Uniforms
+uniform float arctangent_scale_a;
+uniform float arctangent_scale_a_speed;
+uniform float arctangent_strength_a;
+uniform float arctangent_strength_a_speed;
+
+// ArcTangent B Uniforms
+uniform float arctangent_scale_b;
+uniform float arctangent_scale_b_speed;
+uniform float arctangent_strength_b;
+uniform float arctangent_strength_b_speed;
 uniform int custom_tl_a; uniform int custom_tr_a; uniform int custom_bl_a; uniform int custom_br_a;
 uniform int custom_tl_b; uniform int custom_tr_b; uniform int custom_bl_b; uniform int custom_br_b;
+// Clifford A Uniforms
 uniform float clifford_a_a;
+uniform float clifford_a_a_speed;
 uniform float clifford_b_a;
+uniform float clifford_b_a_speed;
 uniform float clifford_c_a;
+uniform float clifford_c_a_speed;
 uniform float clifford_d_a;
+uniform float clifford_d_a_speed;
+
+// Clifford B Uniforms
 uniform float clifford_a_b;
+uniform float clifford_a_b_speed;
 uniform float clifford_b_b;
+uniform float clifford_b_b_speed;
 uniform float clifford_c_b;
+uniform float clifford_c_b_speed;
 uniform float clifford_d_b;
+uniform float clifford_d_b_speed;
+
+// Cosine A Uniforms
+uniform float cosine_scale_a;
+uniform float cosine_scale_a_speed;
+uniform float cosine_strength_a;
+uniform float cosine_strength_a_speed;
+
+// Cosine B Uniforms
+uniform float cosine_scale_b;
+uniform float cosine_scale_b_speed;
+uniform float cosine_strength_b;
+uniform float cosine_strength_b_speed;
 
 uniform float dejong_a_a;
+uniform float dejong_a_a_speed;
 uniform float dejong_b_a;
+uniform float dejong_b_a_speed;
 uniform float dejong_c_a;
+uniform float dejong_c_a_speed;
 uniform float dejong_d_a;
+uniform float dejong_d_a_speed;
+
+// DeJong B Uniforms
 uniform float dejong_a_b;
+uniform float dejong_a_b_speed;
 uniform float dejong_b_b;
+uniform float dejong_b_b_speed;
 uniform float dejong_c_b;
+uniform float dejong_c_b_speed;
 uniform float dejong_d_b;
+uniform float dejong_d_b_speed;
+// Truchet A Uniforms
 uniform float truchet_scale_a;
+uniform float truchet_scale_a_speed;
 uniform float truchet_rotate_a;
+uniform float truchet_rotate_a_speed;
 uniform float truchet_strength_a;
-uniform float truchet_scale_b;
-uniform float truchet_rotate_b;
-uniform float truchet_strength_b;
+uniform float truchet_strength_a_speed;
 uniform float truchet_mode_a;
+
+// Truchet B Uniforms
+uniform float truchet_scale_b;
+uniform float truchet_scale_b_speed;
+uniform float truchet_rotate_b;
+uniform float truchet_rotate_b_speed;
+uniform float truchet_strength_b;
+uniform float truchet_strength_b_speed;
 uniform float truchet_mode_b;
+// Hyperbolic Cosine A Uniforms
+uniform float hyperbolic_cosine_scale_a;
+uniform float hyperbolic_cosine_scale_a_speed;
+uniform float hyperbolic_cosine_strength_a;
+uniform float hyperbolic_cosine_strength_a_speed;
+
+// Hyperbolic Cosine B Uniforms
+uniform float hyperbolic_cosine_scale_b;
+uniform float hyperbolic_cosine_scale_b_speed;
+uniform float hyperbolic_cosine_strength_b;
+uniform float hyperbolic_cosine_strength_b_speed;
+
+// Hyperbolic Sine A Uniforms
+uniform float hyperbolic_sine_scale_a;
+uniform float hyperbolic_sine_scale_a_speed;
+uniform float hyperbolic_sine_strength_a;
+uniform float hyperbolic_sine_strength_a_speed;
+
+// Hyperbolic Sine B Uniforms
+uniform float hyperbolic_sine_scale_b;
+uniform float hyperbolic_sine_scale_b_speed;
+uniform float hyperbolic_sine_strength_b;
+uniform float hyperbolic_sine_strength_b_speed;
+
+// Sinusoidal A Uniforms
+uniform float sinusoidal_scale_a;
+uniform float sinusoidal_scale_a_speed;
+uniform float sinusoidal_strength_a;
+uniform float sinusoidal_strength_a_speed;
+
+// Sinusoidal B Uniforms
+uniform float sinusoidal_scale_b;
+uniform float sinusoidal_scale_b_speed;
+uniform float sinusoidal_strength_b;
+uniform float sinusoidal_strength_b_speed;
+
+// Spherical A Uniforms
+uniform float spherical_strength_a;
+uniform float spherical_strength_a_speed;
+uniform float spherical_center_x_a;
+uniform float spherical_center_x_a_speed;
+uniform float spherical_center_y_a;
+uniform float spherical_center_y_a_speed;
+
+// Spherical B Uniforms
+uniform float spherical_strength_b;
+uniform float spherical_strength_b_speed;
+uniform float spherical_center_x_b;
+uniform float spherical_center_x_b_speed;
+uniform float spherical_center_y_b;
+uniform float spherical_center_y_b_speed;
+
+// Swirl A Uniforms
+uniform float swirl_radius_scale_a;
+uniform float swirl_radius_scale_a_speed;
+uniform float swirl_angle_scale_a;
+uniform float swirl_angle_scale_a_speed;
+
+// Swirl B Uniforms
+uniform float swirl_radius_scale_b;
+uniform float swirl_radius_scale_b_speed;
+uniform float swirl_angle_scale_b;
+uniform float swirl_angle_scale_b_speed;
+
+// Tangent A Uniforms
+uniform float tangent_scale_a;
+uniform float tangent_scale_a_speed;
+uniform float tangent_strength_a;
+uniform float tangent_strength_a_speed;
+
+// Rep-Tile A Uniforms
+uniform float reptile_scale_a;
+uniform float reptile_scale_a_speed;
+uniform float reptile_rotate_a;
+uniform float reptile_rotate_a_speed;
+
+// Rep-Tile B Uniforms
+uniform float reptile_scale_b;
+uniform float reptile_scale_b_speed;
+uniform float reptile_rotate_b;
+uniform float reptile_rotate_b_speed;
+
+// Tangent B Uniforms
+uniform float tangent_scale_b;
+uniform float tangent_scale_b_speed;
+uniform float tangent_strength_b;
+uniform float tangent_strength_b_speed;
+
 // --- Helper Functions ---
 mat2 rotate(float angle) {
 	return mat2(vec2(cos(angle), -sin(angle)), vec2(sin(angle), cos(angle)));
@@ -198,73 +443,216 @@ vec2 apply_quad_transform(vec2 p, int transform_id) {
 }
 
 // --- REVISED: The function signature is now back to its original, simpler form ---
-vec2 apply_variation(vec2 uv, int mode,
-                     float w_freq, float w_amp, float w_speed, int w_type,      // Wave
-                     float j_power, float j_dist, mat2 j_mat, vec2 j_trans,      // Julian2
-                     float f_strength, float p_offset,                         // Fisheye/Polar
-                     bool m_x, bool m_y, float k_slices,                        // Mirror/Kaleidoscope
-                     vec2 m_a, vec2 m_b, vec2 m_c, vec2 m_d,                 // Mobius
-                     float cw_grid, float cw_thresh, float cw_iter,            // Cellular Weave
-                     float bl_amount,                                          // Blur
-                     float h_scale, float h_rotation, float h_strength,         // Heart
-					float ap_scale, vec2 ap_c1, vec2 ap_c2, vec2 ap_c3,
-					int c_tl, int c_tr, int c_bl, int c_br,
-					float cl_a, float cl_b, float cl_c, float cl_d,           // Clifford
-					float dj_a, float dj_b, float dj_c, float dj_d,           // DeJong
-					float tr_scale, float tr_rotate, float tr_strength, float tr_mode                     // Truchet
-                     ) {
-	if (mode == 0) { // Sinusoidal
-		return sin(uv * 3.14159);
-	}
-	else if (mode == 1) { // Spherical
-		float r2 = dot(uv, uv);
-		if (r2 > 0.0) { return uv / r2; }
-	} else if (mode == 2) { // Swirl
-		float r = length(uv);
-		float angle = atan(uv.y, uv.x);
-		float s = sin(r * 5.0 - angle * 2.0);
-		float c = cos(r * 5.0 - angle * 2.0);
-		return vec2(s, c) * r;
-	} else if (mode == 3) { // Wave
-		float offset = 0.0;
-		if (w_type == 0) { offset = sin(uv.y * w_freq + time * w_speed) * w_amp; return uv + vec2(offset, 0.0); } 
-		else if (w_type == 1) { float r = length(uv); offset = sin(r * w_freq - time * w_speed) * w_amp; return uv * (1.0 + offset); } 
-		else if (w_type == 2) { offset = sign(sin(uv.y * w_freq + time * w_speed)) * w_amp; return uv + vec2(offset, 0.0); }
-	} else if (mode == 4) { // Julian2
-		if (j_power == 0.0) { return uv; }
-		float _cN = j_dist / j_power * 0.5;
-		vec2 p = uv * j_mat + j_trans;
-		float angle = atan(p.y, p.x) / j_power;
+vec2 apply_variation(vec2 uv, int variation_id,
+	// Sinusoidal (NEW)
+    float sinusoidal_scale, float sinusoidal_scale_speed,
+    float sinusoidal_strength, float sinusoidal_strength_speed,
+	// Spherical
+	float spherical_strength, float spherical_strength_speed,
+    float spherical_center_x, float spherical_center_x_speed,
+    float spherical_center_y, float spherical_center_y_speed,
+	// Swirl 
+    float swirl_radius_scale, float swirl_radius_scale_speed,
+    float swirl_angle_scale, float swirl_angle_scale_speed,
+	// Tangent
+    float tangent_scale, float tangent_scale_speed,
+    float tangent_strength, float tangent_strength_speed,
+    // Wave
+    int wave_type, float wave_frequency, float wave_frequency_speed, float wave_amplitude, float wave_amplitude_speed, float wave_phase, float wave_phase_speed,
+    // Julian
+    float julian_power, float julian_power_speed, float julian_dist, float julian_dist_speed,
+    float julian_a, float julian_a_speed, float julian_b, float julian_b_speed,
+    float julian_c, float julian_c_speed, float julian_d, float julian_d_speed,
+    float julian_e, float julian_e_speed, float julian_f, float julian_f_speed,
+    // Fisheye / Polar
+    float fisheye_strength, float fisheye_strength_speed, float polar_offset, float polar_offset_speed,
+    // Symmetry (NEW)
+    float mirror_x, float mirror_y, float mirror_rotation, float mirror_rotation_speed,
+    float kaleidoscope_slices, float kaleidoscope_rotation, float kaleidoscope_rotation_speed,
+    // Mobius
+    float mobius_re_a, float mobius_re_a_speed, float mobius_im_a, float mobius_im_a_speed,
+    float mobius_re_b, float mobius_re_b_speed, float mobius_im_b, float mobius_im_b_speed,
+    float mobius_re_c, float mobius_re_c_speed, float mobius_im_c, float mobius_im_c_speed,
+    float mobius_re_d, float mobius_re_d_speed, float mobius_im_d, float mobius_im_d_speed,
+    // Cellular Weave
+    float cellular_grid_size, float cellular_grid_size_speed,
+    float cellular_threshold, float cellular_threshold_speed,
+    float cellular_iterations, float cellular_iterations_speed,
+    // Blur
+    float blur_amount,
+    // Heart
+    float heart_scale, float heart_scale_speed,
+    float heart_rotation, float heart_rotation_speed,
+    float heart_strength, float heart_strength_speed,
+    // Apollonian
+    float apollonian_scale, float apollonian_scale_speed,
+    float ap_c1x, float ap_c1x_speed, float ap_c1y, float ap_c1y_speed,
+    float ap_c2x, float ap_c2x_speed, float ap_c2y, float ap_c2y_speed,
+    float ap_c3x, float ap_c3x_speed, float ap_c3y, float ap_c3y_speed,
+    // ArcTangent
+    float arctangent_scale, float arctangent_scale_speed,
+    float arctangent_strength, float arctangent_strength_speed,
+    // Cosine
+    float cosine_scale, float cosine_scale_speed,
+    float cosine_strength, float cosine_strength_speed,
+    // Hyperbolic Cosine
+    float hyperbolic_cosine_scale, float hyperbolic_cosine_scale_speed,
+    float hyperbolic_cosine_strength, float hyperbolic_cosine_strength_speed,
+    // Hyperbolic Sine
+    float hyperbolic_sine_scale, float hyperbolic_sine_scale_speed,
+    float hyperbolic_sine_strength, float hyperbolic_sine_strength_speed,
+    // Custom 2x2
+    int custom_tl, int custom_tr, int custom_bl, int custom_br,
+    // Clifford
+	float clifford_a, float clifford_a_speed, float clifford_b, float clifford_b_speed,
+    float clifford_c, float clifford_c_speed, float clifford_d, float clifford_d_speed,
+	// DeJong
+    float dejong_a, float dejong_a_speed, float dejong_b, float dejong_b_speed,
+    float dejong_c, float dejong_c_speed, float dejong_d, float dejong_d_speed,
+    // Truchet
+    float truchet_scale, float truchet_scale_speed,
+    float truchet_rotate, float truchet_rotate_speed,
+    float truchet_strength, float truchet_strength_speed,
+    float truchet_mode,
+	// Rep-Tile General
+    float reptile_scale, float reptile_scale_speed, float reptile_rotate, float reptile_rotate_speed,
+) {
+	if (variation_id == 0) { // Sinusoidal
+    // 1. Calculate animated values
+    float anim_scale = sinusoidal_scale + sin(time * sinusoidal_scale_speed);
+    float anim_strength = sinusoidal_strength + sin(time * sinusoidal_strength_speed);
+
+    // 2. Apply parameters
+    return sin(uv * anim_scale) * anim_strength;
+}
+	else if (variation_id == 1) { // Spherical
+    // 1. Calculate animated values
+    float anim_strength = spherical_strength + sin(time * spherical_strength_speed);
+    float anim_center_x = spherical_center_x + sin(time * spherical_center_x_speed);
+    float anim_center_y = spherical_center_y + sin(time * spherical_center_y_speed);
+
+    // 2. Reconstruct center vec2
+    vec2 center = vec2(anim_center_x, anim_center_y);
+    
+    // 3. Apply logic
+    vec2 p = uv - center;
+    float r2 = dot(p, p);
+    if (r2 > 1e-9) { // Avoid divide by zero
+        return center + (p / r2) * anim_strength;
+    }
+    return uv; // Return original uv if at center
+} else if (variation_id == 2) { // Swirl
+    // 1. Calculate animated values
+    float anim_radius_scale = swirl_radius_scale + sin(time * swirl_radius_scale_speed);
+    float anim_angle_scale = swirl_angle_scale + sin(time * swirl_angle_scale_speed);
+    
+    // 2. Apply logic
+    float r = length(uv);
+    float angle = atan(uv.y, uv.x);
+    float s = sin(r * anim_radius_scale - angle * anim_angle_scale);
+    float c = cos(r * anim_radius_scale - angle * anim_angle_scale);
+    return vec2(s, c) * r;
+} else if (variation_id == 3) { // Wave
+    // 1. Calculate the animated values
+    float freq = wave_frequency + sin(time * wave_frequency_speed);
+    float amp = wave_amplitude + sin(time * wave_amplitude_speed);
+    float phase = wave_phase + sin(time * wave_phase_speed);
+
+    // 2. The rest of the logic uses these new animated values
+    float offset = 0.0;
+    if (wave_type == 0) { // Vertical
+        offset = sin(uv.y * freq + phase) * amp;
+        return uv + vec2(offset, 0.0);
+    } else if (wave_type == 1) { // Radial
+        float r = length(uv);
+        offset = sin(r * freq + phase) * amp;
+        return uv * (1.0 + offset);
+    } else { // Square
+        offset = sign(sin(uv.y * freq + phase)) * amp;
+        return uv + vec2(offset, 0.0);
+    }
+} else if (variation_id == 4) { // Julian2
+		// 1. Calculate all animated values first
+		float anim_power = julian_power + sin(time * julian_power_speed);
+		float anim_dist = julian_dist + sin(time * julian_dist_speed);
+		float anim_a = julian_a + sin(time * julian_a_speed);
+		float anim_b = julian_b + sin(time * julian_b_speed);
+		float anim_c = julian_c + sin(time * julian_c_speed);
+		float anim_d = julian_d + sin(time * julian_d_speed);
+		float anim_e = julian_e + sin(time * julian_e_speed);
+		float anim_f = julian_f + sin(time * julian_f_speed);
+		
+		// 2. Re-create the matrix and vector
+		mat2 julian_mat = mat2(vec2(anim_a, anim_c), vec2(anim_b, anim_d));
+		vec2 julian_trans = vec2(anim_e, anim_f);
+		
+		// 3. Call the julian function with the animated values
+		if (anim_power == 0.0) { return uv; }
+		float _cN = anim_dist / anim_power * 0.5;
+		vec2 p = uv * julian_mat + julian_trans;
+		float angle = atan(p.y, p.x) / anim_power;
 		float r = pow(dot(p, p), _cN);
 		return vec2(r * cos(angle), r * sin(angle));
-	} else if (mode == 5) { // Polar
-		float r = length(uv);
-		float theta = atan(uv.y, uv.x);
-		return vec2(theta / PI, r - p_offset);
-	} else if (mode == 6) { // Fisheye
-		float r = length(uv);
-		return (f_strength / (r + 1.0)) * uv;
-	} else if (mode == 7) { // Mirror
-		vec2 p = uv;
-		if (m_x) { p.x = abs(p.x); } // Use passed-in parameter
-		if (m_y) { p.y = abs(p.y); } // Use passed-in parameter
-		return p;
-	} else if (mode == 8) { // Kaleidoscope
-		if (k_slices <= 0.0) { return uv; }
-		vec2 p = uv;
-		float angle = atan(p.y, p.x);
-		float r = length(p);
-		float slice_angle = PI / k_slices; // Use passed-in parameter
-		angle = mod(angle, slice_angle * 2.0);
-		angle = abs(angle - slice_angle);
-		p.x = r * cos(angle);
-		p.y = r * sin(angle);
-		return p;
-	}    else if (mode == 9) { // Mobius
-        // This calculates f(z) = (a*z + b) / (c*z + d) using complex numbers
-        // z = (uv.x, uv.y)
-        // a,b,c,d are the uniform vec2s (m_a, m_b, m_c, m_d)
+	} else if (variation_id == 5) { // Polar
+    // 1. Calculate animated value
+    float anim_offset = polar_offset + sin(time * polar_offset_speed);
 
+    // 2. Apply logic
+    float r = length(uv);
+    float theta = atan(uv.y, uv.x);
+    return vec2(theta / PI, r - anim_offset);
+} else if (variation_id == 6) { // Fisheye
+		float anim_strength = fisheye_strength + sin(time * fisheye_strength_speed);
+		float r = length(uv);
+		return (anim_strength / (r + 1.0)) * uv;
+	} else if (variation_id == 7) { // Mirror
+    // 1. Calculate and apply animated rotation
+    float anim_rotation = mirror_rotation + (time * mirror_rotation_speed);
+    vec2 p = uv * rotate(radians(anim_rotation)); 
+
+    // 2. Apply mirror logic (check if float is > 0.5)
+    if (mirror_x > 0.5) { p.x = abs(p.x); } 
+    if (mirror_y > 0.5) { p.y = abs(p.y); } 
+    return p;
+	} else if (variation_id == 8) { // Kaleidoscope
+		// 1. Calculate animated rotation
+    float anim_rotation = kaleidoscope_rotation + (time * kaleidoscope_rotation_speed);
+    
+    // 2. Apply rotation to the coordinate system (using your 'vec * mat' syntax)
+    vec2 p = uv * rotate(radians(anim_rotation)); 
+
+    // 3. Apply kaleidoscope logic to the rotated coordinates
+    // Note: We use the non-animated 'kaleidoscope_slices' for stability
+    if (kaleidoscope_slices <= 0.0) { return p; } // Return just the rotated UVs
+    
+    float angle = atan(p.y, p.x);
+    float r = length(p);
+    float slice_angle = PI / kaleidoscope_slices;
+    angle = mod(angle, slice_angle * 2.0);
+    angle = abs(angle - slice_angle);
+    p.x = r * cos(angle);
+    p.y = r * sin(angle);
+    
+    // 4. Return the sliced, rotated coordinates
+    return p;
+}    else if (variation_id == 9) { // Mobius
+        // 1. Calculate all 8 animated values
+        float anim_re_a = mobius_re_a + sin(time * mobius_re_a_speed);
+        float anim_im_a = mobius_im_a + sin(time * mobius_im_a_speed);
+        float anim_re_b = mobius_re_b + sin(time * mobius_re_b_speed);
+        float anim_im_b = mobius_im_b + sin(time * mobius_im_b_speed);
+        float anim_re_c = mobius_re_c + sin(time * mobius_re_c_speed);
+        float anim_im_c = mobius_im_c + sin(time * mobius_im_c_speed);
+        float anim_re_d = mobius_re_d + sin(time * mobius_re_d_speed);
+        float anim_im_d = mobius_im_d + sin(time * mobius_im_d_speed);
+
+        // 2. Reconstruct the complex numbers (a, b, c, d) as vec2s
+        vec2 m_a = vec2(anim_re_a, anim_im_a);
+        vec2 m_b = vec2(anim_re_b, anim_im_b);
+        vec2 m_c = vec2(anim_re_c, anim_im_c);
+        vec2 m_d = vec2(anim_re_d, anim_im_d);
+
+        // 3. Run the original Mobius logic with the new vec2s
         // u = a*z + b
         vec2 u = vec2(m_a.x * uv.x - m_a.y * uv.y, m_a.x * uv.y + m_a.y * uv.x) + m_b;
         
@@ -278,530 +666,429 @@ vec2 apply_variation(vec2 uv, int mode,
         
         // Return u / v, which is (u * conjugate(v)) / |v|^2
         return vec2(u.x * v.x + u.y * v.y, u.y * v.x - u.x * v.y) * inv_d;
-	}else if (mode == 10) { // Cellular Weave
-        vec2 p = uv;
-        for (int i = 0; i < int(cw_iter); i++) {
-            vec2 grid_p = floor(p * cw_grid); // Find which grid cell we're in
-            
-            float neighbor_sum = 0.0;
-            // Check the 8 neighbors
-            neighbor_sum += get_cell_value(grid_p, vec2(-1.0, -1.0)) > 0.5 ? 1.0 : 0.0;
-            neighbor_sum += get_cell_value(grid_p, vec2( 0.0, -1.0)) > 0.5 ? 1.0 : 0.0;
-            neighbor_sum += get_cell_value(grid_p, vec2( 1.0, -1.0)) > 0.5 ? 1.0 : 0.0;
-            neighbor_sum += get_cell_value(grid_p, vec2(-1.0,  0.0)) > 0.5 ? 1.0 : 0.0;
-            neighbor_sum += get_cell_value(grid_p, vec2( 1.0,  0.0)) > 0.5 ? 1.0 : 0.0;
-            neighbor_sum += get_cell_value(grid_p, vec2(-1.0,  1.0)) > 0.5 ? 1.0 : 0.0;
-            neighbor_sum += get_cell_value(grid_p, vec2( 0.0,  1.0)) > 0.5 ? 1.0 : 0.0;
-            neighbor_sum += get_cell_value(grid_p, vec2( 1.0,  1.0)) > 0.5 ? 1.0 : 0.0;
-            
-            // If the number of "on" neighbors is over the threshold...
-            if (neighbor_sum > cw_thresh) {
-                // ...twist the coordinate
-                float angle = neighbor_sum * 0.1;
-                p = mat2(vec2(cos(angle), sin(angle)), vec2(-sin(angle), cos(angle))) * p;
-            } else {
-                // ...otherwise, pull it towards the center of its cell
-                vec2 cell_center = (grid_p + 0.5) / cw_grid;
-                p = mix(p, cell_center, 0.1);
-            }
-        }
-        return p;
-	}else if (mode == 11) { // Blur
-        float angle = rand(uv) * 2.0 * PI;
-        float radius = rand(uv + vec2(5.2, 3.1)) * bl_amount;
-        return uv + vec2(cos(angle), sin(angle)) * radius;
-    }else if (mode == 12) { // Heart
-        vec2 p = uv;
+    } else if (variation_id == 10) { // Cellular Weave
+    // 1. Calculate animated values
+    // Use max() to ensure grid size never goes below 2.0 (or any small number)
+    float anim_grid = max(2.0, cellular_grid_size + sin(time * cellular_grid_size_speed));
+    // Use clamp() to keep the threshold between 0 and 8 (the max neighbors)
+    float anim_thresh = clamp(cellular_threshold + sin(time * cellular_threshold_speed), 0.0, 8.0);
+    // This one is already correct
+    float anim_iter = max(1.0, abs(cellular_iterations + sin(time * cellular_iterations_speed)));
 
-        // Apply scale and rotation to the coordinate system for the heart
-        p /= h_scale;
-		p.y *= -1.0;
-        p = vec2(cos(radians(h_rotation)) * p.x - sin(radians(h_rotation)) * p.y,
-                 sin(radians(h_rotation)) * p.x + cos(radians(h_rotation)) * p.y);
+    // 2. Run logic with animated values
+    vec2 p = uv;
+    for (int i = 0; i < int(anim_iter); i++) {
+        vec2 grid_p = floor(p * anim_grid); // Use anim_grid
+        float neighbor_sum = 0.0;
+        neighbor_sum += get_cell_value(grid_p, vec2(-1.0, -1.0)) > 0.5 ? 1.0 : 0.0;
+        neighbor_sum += get_cell_value(grid_p, vec2( 0.0, -1.0)) > 0.5 ? 1.0 : 0.0;
+        neighbor_sum += get_cell_value(grid_p, vec2( 1.0, -1.0)) > 0.5 ? 1.0 : 0.0;
+        neighbor_sum += get_cell_value(grid_p, vec2(-1.0,  0.0)) > 0.5 ? 1.0 : 0.0;
+        neighbor_sum += get_cell_value(grid_p, vec2( 1.0,  0.0)) > 0.5 ? 1.0 : 0.0;
+        neighbor_sum += get_cell_value(grid_p, vec2(-1.0,  1.0)) > 0.5 ? 1.0 : 0.0;
+        neighbor_sum += get_cell_value(grid_p, vec2( 0.0,  1.0)) > 0.5 ? 1.0 : 0.0;
+        neighbor_sum += get_cell_value(grid_p, vec2( 1.0,  1.0)) > 0.5 ? 1.0 : 0.0;
         
-        // --- Heart Shape Formula ---
-        // This is a common mathematical heart shape.
-        float x = p.x;
-        float y = p.y;
+        // 1. Define both possible outcomes
+        float angle = neighbor_sum * 0.1;
+        vec2 twisted_p = mat2(vec2(cos(angle), sin(angle)), vec2(-sin(angle), cos(angle))) * p;
         
-        // Calculate the value of the implicit heart function
-        // (x^2 + y^2 - 1)^3 - x^2 * y^3 = 0  (approximately)
-        // We'll use a slightly simplified or modified version for displacement
-        float heart_val = pow(x*x + y*y - 1.0, 3.0) - x*x * pow(y, 3.0);
-        
-        // Normalize heart_val to get a displacement direction
-        // When heart_val is negative, we're inside the heart.
-        // We want to push coordinates *away* from the center of the heart shape.
-        
-        // The strength determines how much the heart shape influences the coordinate
-        vec2 displacement = normalize(vec2(
-            3.0 * pow(x*x + y*y - 1.0, 2.0) * (2.0*x) - 2.0*x*pow(y, 3.0),
-            3.0 * pow(x*x + y*y - 1.0, 2.0) * (2.0*y) - x*x * 3.0*pow(y, 2.0)
-        ));
-        
-        // Invert the displacement if we're "inside" the heart's implicit boundary
-        if (heart_val < 0.0) {
-            displacement *= -1.0;
-        }
-        
-        // Apply displacement, scaled by strength
-        return uv + displacement * h_strength * 0.1; // *0.1 to keep it subtle
+        vec2 cell_center = (grid_p + 0.5) / anim_grid;
+        vec2 pulled_p = mix(p, cell_center, 0.1);
+
+        // 2. Create a "soft" threshold instead of a hard "if"
+        // This will smoothly blend from 0.0 to 1.0 as the neighbor_sum crosses the threshold
+        float softness = 0.5; // Controls how wide the blend is
+        float mix_factor = smoothstep(anim_thresh - softness, anim_thresh + softness, neighbor_sum);
+
+        // 3. Mix between the two outcomes using the mix_factor
+        p = mix(pulled_p, twisted_p, mix_factor);
     }
-	else if (mode == 13) { // Apollonian Gasket (Iterative Approximation)
-		vec2 p = uv; // Use the incoming coordinate
+    return p;
+}	else if (variation_id == 11) { // Blur
+        float angle = rand(uv) * 2.0 * PI;
+        float radius = rand(uv + vec2(5.2, 3.1)) * blur_amount;
+        return uv + vec2(cos(angle), sin(angle)) * radius;
+    }else if (variation_id == 12) { // Heart
+    // 1. Calculate animated values
+    // Use max(0.01, ...) for scale to prevent divide-by-zero
+    float anim_scale = max(0.01, heart_scale + sin(time * heart_scale_speed));
+    float anim_rotation = heart_rotation + sin(time * heart_rotation_speed);
+    float anim_strength = heart_strength + sin(time * heart_strength_speed);
 
-		// Define 3 circle centers (forming a triangle around the origin)
-		// Adjust these positions for different packing looks
-		vec2 c1 = vec2(0.0, 0.5);  // Top
-		vec2 c2 = vec2(-0.433, -0.25); // Bottom-left
-		vec2 c3 = vec2(0.433, -0.25);  // Bottom-right
+    // 2. Apply scale and rotation
+    vec2 p = uv;
+    p /= anim_scale;
+    p.y *= -1.0;
+    p = vec2(cos(radians(anim_rotation)) * p.x - sin(radians(anim_rotation)) * p.y,
+               sin(radians(anim_rotation)) * p.x + cos(radians(anim_rotation)) * p.y);
+    
+    // --- Heart Shape Formula ---
+    float x = p.x;
+    float y = p.y;
+    
+    float heart_val = pow(x*x + y*y - 1.0, 3.0) - x*x * pow(y, 3.0);
+    
+    vec2 displacement = normalize(vec2(
+        3.0 * pow(x*x + y*y - 1.0, 2.0) * (2.0*x) - 2.0*x*pow(y, 3.0),
+        3.0 * pow(x*x + y*y - 1.0, 2.0) * (2.0*y) - x*x * 3.0*pow(y, 2.0)
+    ));
+    
+    if (heart_val < 0.0) {
+        displacement *= -1.0;
+    }
+    
+    // 3. Apply animated strength
+    return uv + displacement * anim_strength * 0.1; // *0.1 to keep it subtle
+}
+else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
+    vec2 p = uv; 
 
-		// Scaling factor (from uniform) - should probably be > 1.0 for this approach
-		float scale = ap_scale; // Use the passed-in scale parameter
+    // 1. Calculate all animated values
+    float anim_scale = apollonian_scale + sin(time * apollonian_scale_speed);
+    float anim_c1x = ap_c1x + sin(time * ap_c1x_speed);
+    float anim_c1y = ap_c1y + sin(time * ap_c1y_speed);
+    float anim_c2x = ap_c2x + sin(time * ap_c2x_speed);
+    float anim_c2y = ap_c2y + sin(time * ap_c2y_speed);
+    float anim_c3x = ap_c3x + sin(time * ap_c3x_speed);
+    float anim_c3y = ap_c3y + sin(time * ap_c3y_speed);
 
-		// Find the closest center
-		float d1 = distance(p, ap_c1);
-		float d2 = distance(p, ap_c2);
-		float d3 = distance(p, ap_c3);
+    // 2. Reconstruct the vec2 centers
+    vec2 c1 = vec2(anim_c1x, anim_c1y);
+    vec2 c2 = vec2(anim_c2x, anim_c2y);
+    vec2 c3 = vec2(anim_c3x, anim_c3y);
 
-		vec2 closest_center;
-		if (d1 < d2 && d1 < d3) {
-			closest_center = ap_c1;
-		} else if (d2 < d3) {
-			closest_center = ap_c2;
-		} else {
-			closest_center = ap_c3;
-		}
+    // 3. Find the closest center
+    float d1 = distance(p, c1);
+    float d2 = distance(p, c2);
+    float d3 = distance(p, c3);
 
-		// Map the point: Scale it towards the closest center
-		// Formula: center + (point - center) * scale
-		// We invert the scale here because we are transforming the *lookup* coordinate
-		// A scale > 1 shrinks the pattern when used in feedback lookup.
-		// A scale < 1 expands the pattern.
-		if (abs(ap_scale) < 1e-6) { return p; }
-		p = closest_center + (p - closest_center) / ap_scale;
+    vec2 closest_center;
+    if (d1 < d2 && d1 < d3) {
+        closest_center = c1;
+    } else if (d2 < d3) {
+        closest_center = c2;
+    } else {
+        closest_center = c3;
+    }
+    
+    // 4. Map the point
+    if (abs(anim_scale) < 1e-6) { return p; } // Protect from divide by zero
+    p = closest_center + (p - closest_center) / anim_scale;
 
-		return p;
-	}
+    return p;
+}
 	// --- END APOLLONIAN GASKET ---
-	else if (mode == 14) {
-		return cos(uv * PI);
+	else if (variation_id == 14) {
+	// 1. Calculate animated values
+    float anim_scale = cosine_scale + sin(time * cosine_scale_speed);
+    float anim_strength = cosine_strength + sin(time * cosine_strength_speed);
+
+    // 2. Apply parameters
+    return cos(uv * anim_scale) * anim_strength;
 	}
 	// --- ADD TANGENT (Mode 15) ---
-	else if (mode == 15) { // Tangent
-		// tan() can produce very large values quickly, multiply by a smaller factor
-		return tan(uv * (PI / 2.0 - 0.01)); // Avoid exact PI/2 where tan is infinite
-	}
+	else if (variation_id == 15) { // Tangent
+    // 1. Calculate animated values
+    float anim_scale = tangent_scale + sin(time * tangent_scale_speed);
+    float anim_strength = tangent_strength + sin(time * tangent_strength_speed);
+
+    // 2. Apply parameters
+    // We simply multiply uv by scale. If the user sets scale to ~1.57 (PI/2), 
+    // they will get the extreme stretching effect.
+    return tan(uv * anim_scale) * anim_strength;
+}
 	// --- ADD ARCTANGENT (Mode 16) ---
-	else if (mode == 16) { // ArcTangent
-		// atan(y, x) gives angle, atan(vec2) applies element-wise
-		return atan(uv); // Output range is approx -PI/2 to PI/2
-	}
+	else if (variation_id == 16) { // ArcTangent
+    // 1. Calculate animated values
+    float anim_scale = arctangent_scale + sin(time * arctangent_scale_speed);
+    float anim_strength = arctangent_strength + sin(time * arctangent_strength_speed);
+
+    // 2. Apply parameters
+    return atan(uv * anim_scale) * anim_strength;
+}
 	// --- ADD HYPERBOLIC SINE (Mode 17) ---
-	else if (mode == 17) { // Hyperbolic Sine
-		return sinh(uv); // Grows rapidly away from origin
-	}
+	else if (variation_id == 17) { // Hyperbolic Sine
+    // 1. Calculate animated values
+    float anim_scale = hyperbolic_sine_scale + sin(time * hyperbolic_sine_scale_speed);
+    float anim_strength = hyperbolic_sine_strength + sin(time * hyperbolic_sine_strength_speed);
+
+    // 2. Apply parameters
+    return sinh(uv * anim_scale) * anim_strength;
+}
 	// --- ADD HYPERBOLIC COSINE (Mode 18) ---
-	else if (mode == 18) { // Hyperbolic Cosine
-		return cosh(uv); // Grows rapidly away from origin, always positive-like
+	else if (variation_id == 18) { // Hyperbolic Cosine
+    // 1. Calculate animated values
+    float anim_scale = hyperbolic_cosine_scale + sin(time * hyperbolic_cosine_scale_speed);
+    float anim_strength = hyperbolic_cosine_strength + sin(time * hyperbolic_cosine_strength_speed);
+
+    // 2. Apply parameters
+    return cosh(uv * anim_scale) * anim_strength;
 	}
 	// --- ADD L-TROMINO (Mode 19) ---
-	else if (mode == 19) { // L-Tromino Rep-Tile
-		vec2 p = uv * 2.0; // Scale up coordinates by 2 initially
+	// --- REP-TILES GROUP ---
+    // Now INCLUDES ID 20 (Custom 2x2)
+    if (variation_id >= 19 && variation_id <= 31) {
+        
+        // 1. Calculate Animated Transforms
+        float anim_scale = max(0.01, reptile_scale + sin(time * reptile_scale_speed));
+        float anim_rot = reptile_rotate + sin(time * reptile_rotate_speed);
+        
+        // 2. Apply global rotation to UV
+        vec2 p = uv * rotate(radians(anim_rot));
+        
+        // L-Tromino (19)
+        if (variation_id == 19) { 
+            p *= 2.0 * anim_scale; 
+            if (p.x >= 0.0 && p.y >= 0.0) { p = vec2(p.y, -p.x) + vec2(-1.0, 1.0); }
+            else if (p.x < 0.0 && p.y >= 0.0) { p = p + vec2(1.0, -1.0); }
+            else if (p.x < 0.0 && p.y < 0.0) { p = p + vec2(1.0, 1.0); }
+            else { p = vec2(-p.y, p.x) + vec2(-1.0, -1.0); }
+            return p / 2.0;
+        }
+        // Custom 2x2 (20) - NEWLY ADDED HERE
+        else if (variation_id == 20) {
+            // For ID 20, we apply scale at the END to preserve the 0.5 offsets
+            vec2 q = p * 2.0; 
 
-		// Determine which of the 4 smaller L-tromino quadrants the point is in
-		// and transform it back to the base coordinate space [(-1,-1) to (1,1)]
+            if (q.x > 0.0 && q.y > 0.0) { // TR
+                 q = (apply_quad_transform(q - vec2(0.5, 0.5), custom_tr) * 0.5) + vec2(0.5, 0.5);
+            } else if (q.x <= 0.0 && q.y > 0.0) { // TL
+                 q = (apply_quad_transform(q - vec2(-0.5, 0.5), custom_tl) * 0.5) + vec2(-0.5, 0.5);
+            } else if (q.x <= 0.0 && q.y <= 0.0) { // BL
+                 q = (apply_quad_transform(q - vec2(-0.5, -0.5), custom_bl) * 0.5) + vec2(-0.5, -0.5);
+            } else { // BR
+                 q = (apply_quad_transform(q - vec2(0.5, -0.5), custom_br) * 0.5) + vec2(0.5, -0.5);
+            }
+            
+            // Apply the global zoom/scale here
+            return (q / 2.0) * anim_scale; 
+        }
+        // Sphinx (21)
+        else if (variation_id == 21) {
+            p *= 2.0 * anim_scale;
+            mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
+            if (p.x + p.y > 0.0) {
+                if (p.x - p.y > 0.0) { p = R90 * p + vec2(0.0, 1.0); } 
+                else { p = p + vec2(-1.0, 0.0); }
+            } else {
+                if (p.x - p.y > 0.0) { p = p + vec2(1.0, 0.0); } 
+                else { p = R90 * p + vec2(0.0, -1.0); }
+            }
+            return p / 2.0;
+        }
+        // T-Tetromino (22)
+        else if (variation_id == 22) {
+            p *= 2.0 * anim_scale;
+            mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
+            if (p.x >= 0.0 && p.y >= 0.0) { p = R90 * p + vec2(0.0, 1.0); } 
+            else if (p.x < 0.0 && p.y >= 0.0) { p = R90 * p + vec2(0.0, -1.0); } 
+            else if (p.x < 0.0 && p.y < 0.0) { p = -p; } 
+            else { p = p + vec2(-1.0, 1.0); }
+            return p / 2.0;
+        }
+        // Sierpinski Carpet (23)
+        else if (variation_id == 23) {
+            p = (p * anim_scale + 0.5) * 3.0; 
+            vec2 i = floor(p);
+            if (i.x == 1.0 && i.y == 1.0) { return uv; }
+            return fract(p) - 0.5;
+        }
+        // Gosper Island (24)
+        else if (variation_id == 24) {
+            p = p + 0.5; 
+            float GOSPER_SCALE = 2.64575 * anim_scale; 
+            mat2 R60 = mat2(vec2(0.5, 0.866025), vec2(-0.866025, 0.5));
+            vec2 p_hex = to_hex_grid(p);
+            vec2 p_scaled = p_hex * GOSPER_SCALE;
+            vec2 f = fract(p_scaled);
+            vec2 i = floor(p_scaled);
+            vec2 i_sq = vec2(i.x - floor(i.y / 2.0), i.y);
+            int tile_index = int(mod(i_sq.x + i_sq.y * 2.0, 7.0));
+            vec2 c_offset = vec2(0.0); 
+            if (tile_index == 1) { c_offset = vec2(1.0, 0.0); }
+            else if (tile_index == 2) { c_offset = vec2(0.0, 1.0); }
+            else if (tile_index == 3) { c_offset = vec2(-1.0, 1.0); }
+            else if (tile_index == 4) { c_offset = vec2(-1.0, 0.0); }
+            else if (tile_index == 5) { c_offset = vec2(0.0, -1.0); }
+            else if (tile_index == 6) { c_offset = vec2(1.0, -1.0); }
+            vec2 f_unskew = mat2(vec2(1.0, 0.0), vec2(-0.5 / 0.866025, 1.0 / 0.866025)) * f;
+            vec2 result = (R60 * f_unskew) + c_offset;
+            result = result / GOSPER_SCALE; 
+            return result - 0.5;
+        }
+        // Carpet Corners (25)
+        else if (variation_id == 25) {
+            p = (p * anim_scale + 0.5) * 3.0;
+            vec2 i = floor(p);
+            if ( (i.x == 0.0 || i.x == 2.0) && (i.y == 0.0 || i.y == 2.0) ) { return fract(p) - 0.5; }
+            return uv; 
+        }
+        // Carpet Cross (26)
+        else if (variation_id == 26) {
+            p = (p * anim_scale + 0.5) * 3.0;
+            vec2 i = floor(p);
+            if (i.x == 1.0 || i.y == 1.0) { return fract(p) - 0.5; }
+            return uv;
+        }
+        // Pentagonal (27)
+        else if (variation_id == 27) {
+            float scale = 1.618034 * anim_scale;
+            vec2 c1 = vec2(0.0, 0.5); vec2 c2 = vec2(0.4755, 0.1545); vec2 c3 = vec2(0.2939, -0.4045);
+            vec2 c4 = vec2(-0.2939, -0.4045); vec2 c5 = vec2(-0.4755, 0.1545);
+            float d1 = distance(p, c1); float d2 = distance(p, c2); float d3 = distance(p, c3);
+            float d4 = distance(p, c4); float d5 = distance(p, c5);
+            vec2 closest = c1; float min_d = d1;
+            if (d2 < min_d) { min_d = d2; closest = c2; }
+            if (d3 < min_d) { min_d = d3; closest = c3; }
+            if (d4 < min_d) { min_d = d4; closest = c4; }
+            if (d5 < min_d) { closest = c5; }
+            return closest + (p - closest) / scale;
+        }
+        // Diagonal Carpet (28)
+        else if (variation_id == 28) {
+            p = (p * anim_scale + 0.5) * 3.0;
+            vec2 i = floor(p);
+            if ( (i.x == 1.0 && i.y != 1.0) || (i.y == 1.0 && i.x != 1.0) ) { return uv; }
+            return fract(p) - 0.5;
+        }
+        // Penrose Star (29)
+        else if (variation_id == 29) {
+            float scale = 1.8 * anim_scale; 
+            vec2 c1 = vec2(0.0, 0.5); vec2 c2 = vec2(0.4755, 0.1545); vec2 c3 = vec2(0.2939, -0.4045);
+            vec2 c4 = vec2(-0.2939, -0.4045); vec2 c5 = vec2(-0.4755, 0.1545);
+            float d1 = distance(p, c1); float d2 = distance(p, c2); float d3 = distance(p, c3);
+            float d4 = distance(p, c4); float d5 = distance(p, c5);
+            vec2 closest = c1; float min_d = d1;
+            if (d2 < min_d) { min_d = d2; closest = c2; }
+            if (d3 < min_d) { min_d = d3; closest = c3; }
+            if (d4 < min_d) { min_d = d4; closest = c4; }
+            if (d5 < min_d) { closest = c5; }
+            return closest + (p - closest) / scale;
+        }
+        // Hex Tile (30)
+        else if (variation_id == 30) {
+            float SCALE = 3.0 * anim_scale;
+            vec2 p_hex = to_hex_grid(p);
+            p_hex *= SCALE;
+            vec2 f = fract(p_hex);
+            vec2 i = floor(p_hex);
+            vec2 i_sq = vec2(i.x - floor(i.y / 2.0), i.y);
+            int tile_index = int(mod(i_sq.x + i_sq.y * 2.0, 7.0));
+            if (tile_index == 0) { return uv * SCALE; }
+            vec2 f_unskew = mat2(vec2(1.0, 0.0), vec2(-0.5 / 0.866025, 1.0 / 0.866025)) * f;
+            return f_unskew - 0.5;
+        }
+        // Twindragon (31)
+        else if (variation_id == 31) {
+            p *= 2.0 * anim_scale;
+            mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
+            if (p.x < 0.0) { p = R90 * p + vec2(0.0, 1.0); } 
+            else { p = p + vec2(-1.0, 0.0); }
+            return p / 2.0;
+        }
+    }
+    // --- END REP-TILES GROUP ---
+    
+    // IMPORTANT: You must REMOVE the standalone "else if (variation_id == 20)" block
+    // that was below this, because it is now handled inside the group above!
+	else if (variation_id == 32) { // Clifford
+        // 1. Calculate animated values
+        float anim_a = clifford_a + sin(time * clifford_a_speed);
+        float anim_b = clifford_b + sin(time * clifford_b_speed);
+        float anim_c = clifford_c + sin(time * clifford_c_speed);
+        float anim_d = clifford_d + sin(time * clifford_d_speed);
 
-		if (p.x >= 0.0 && p.y >= 0.0) { // Top-right quadrant -> rotate -90 deg, translate
-			p = vec2(p.y, -p.x) + vec2(-1.0, 1.0);
-		} else if (p.x < 0.0 && p.y >= 0.0) { // Top-left quadrant -> translate only
-			p = p + vec2(1.0, -1.0);
-		} else if (p.x < 0.0 && p.y < 0.0) { // Bottom-left quadrant -> translate only
-			p = p + vec2(1.0, 1.0);
-		} else { // Bottom-right quadrant -> rotate +90 deg, translate
-			p = vec2(-p.y, p.x) + vec2(-1.0, -1.0);
-		}
-		// Return the transformed coordinate (divided by 2 because the base shape is usually [-1,1])
-		return p / 2.0;
-	}
-	// --- END L-TROMINO ---
-	
-	// --- ADD CUSTOM 2x2 (Mode 20) ---
-	else if (mode == 20) {
-		vec2 p = uv * 2.0; // Map centered uv from [-0.5, 0.5] to [-1, 1]
+        // 2. Apply formula
+        return vec2(sin(anim_a * uv.y) + anim_c * cos(anim_a * uv.x),
+                    sin(anim_b * uv.x) + anim_d * cos(anim_b * uv.y));
+    }
+	else if (variation_id == 33) { // DeJong
+    // 1. Calculate all animated values
+    float anim_a = dejong_a + sin(time * dejong_a_speed);
+    float anim_b = dejong_b + sin(time * dejong_b_speed);
+    float anim_c = dejong_c + sin(time * dejong_c_speed);
+    float anim_d = dejong_d + sin(time * dejong_d_speed);
 
-		if (p.x > 0.0 && p.y > 0.0) { // Top-Right (TR)
-			// Map p from [0,1] to [-1,1], apply transform, map back
-			p = (apply_quad_transform(p - vec2(0.5, 0.5), c_tr) * 0.5) + vec2(0.5, 0.5);
-		} else if (p.x <= 0.0 && p.y > 0.0) { // Top-Left (TL)
-			p = (apply_quad_transform(p - vec2(-0.5, 0.5), c_tl) * 0.5) + vec2(-0.5, 0.5);
-		} else if (p.x <= 0.0 && p.y <= 0.0) { // Bottom-Left (BL)
-			p = (apply_quad_transform(p - vec2(-0.5, -0.5), c_bl) * 0.5) + vec2(-0.5, -0.5);
-		} else { // Bottom-Right (BR)
-			p = (apply_quad_transform(p - vec2(0.5, -0.5), c_br) * 0.5) + vec2(0.5, -0.5);
-		}
-		
-		return p / 2.0; // Scale back down
-	}
-	// --- END CUSTOM 2x2 ---
-	// --- ADD SPHINX (Mode 21) ---
-	else if (mode == 21) { // Sphinx
-		// The Sphinx uses 4 smaller copies, rotated and translated.
-		// We divide the plane into 4 triangular regions using two diagonal lines.
-		vec2 p = uv; // Input is in [-0.5, 0.5]
-		p *= 2.0; // Scale up to [-1, 1] for easier math
+    // 2. Apply parameters
+    return vec2(sin(anim_a * uv.y) - cos(anim_b * uv.x),
+                sin(anim_c * uv.x) - cos(anim_d * uv.y));
+}
+	else if (variation_id == 34) { // Truchet (Multi-Mode)
+        // 1. Calculate animated values
+        float anim_scale = max(0.1, truchet_scale + sin(time * truchet_scale_speed));
+        float anim_rotate = truchet_rotate + sin(time * truchet_rotate_speed);
+        float anim_strength = truchet_strength + sin(time * truchet_strength_speed);
+        
+        int mode = int(truchet_mode);
+        
+        // --- Mode 0: Displacement ---
+        if (mode == 0) {
+            vec2 p = uv;
+            p = p * rotate(radians(anim_rotate));
+            p = p * anim_scale;
+            
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+            
+            float r = rand(i);
+            
+            vec2 c1, c2;
+            if (r > 0.5) { c1 = vec2(0.0, 1.0); c2 = vec2(1.0, 0.0); }
+            else { c1 = vec2(0.0, 0.0); c2 = vec2(1.0, 1.0); }
 
-		// Define a 90-degree rotation matrix
-		mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
+            vec2 g = normalize(f - c1) - normalize(f - c2);
+            vec2 displacement = g * rotate(radians(anim_rotate)) * anim_strength;
 
-		// Check which triangular region the point is in
-		if (p.x + p.y > 0.0) {
-			if (p.x - p.y > 0.0) {
-				// Top-Right triangle
-				p = R90 * p + vec2(0.0, 1.0);
-			} else {
-				// Top-Left triangle
-				p = p + vec2(-1.0, 0.0);
-			}
-		} else {
-			if (p.x - p.y > 0.0) {
-				// Bottom-Right triangle
-				p = p + vec2(1.0, 0.0);
-			} else {
-				// Bottom-Left triangle
-				p = R90 * p + vec2(0.0, -1.0);
-			}
-		}
-		// Scale the result back down to [-0.5, 0.5]
-		return p / 2.0;
-	}
-	// --- END SPHINX ---
-	
-	// --- ADD T-TETROMINO (Mode 22) ---
-	else if (mode == 22) { // T-tetromino
-		vec2 p = uv * 2.0; // Scale up to [-1, 1]
-
-		// Define a 90-degree rotation matrix
-		mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
-		
-		// The T-tetromino also divides the space into 4 quadrants
-		if (p.x >= 0.0 && p.y >= 0.0) { // Top-Right
-			p = R90 * p + vec2(0.0, 1.0);
-		} else if (p.x < 0.0 && p.y >= 0.0) { // Top-Left
-			p = R90 * p + vec2(0.0, -1.0);
-		} else if (p.x < 0.0 && p.y < 0.0) { // Bottom-Left
-			p = -p; // Rotate 180 degrees
-		} else { // Bottom-Right
-			p = p + vec2(-1.0, 1.0);
-		}
-		
-		return p / 2.0; // Scale back down
-	}
-	// --- END T-TETROMINO ---
-	
-	// --- ADD SIERPINSKI CARPET (Mode 23) ---
-	// --- ADD SIERPINSKI CARPET (Mode 23) ---
-	else if (mode == 23) { // Sierpinski Carpet
-		// Map uv from [-0.5, 0.5] to [0, 3]
-		vec2 p = (uv + 0.5) * 3.0;
-
-		// Find the grid cell index (0, 1, or 2)
-		vec2 i = floor(p);
-
-		// Check if we are in the center square (1, 1)
-		if (i.x == 1.0 && i.y == 1.0) {
-			// In the center square, return the original coordinate.
-			// This "hole" will not iterate/zoom, causing it to fade out.
-			return uv; 
-		}
-
-		// Not in the center. Get the position within the sub-square [0, 1]
-		vec2 f = fract(p);
-		
-		// Map the position back to the [-0.5, 0.5] range
-		return f - 0.5;
-	}
-	// --- END SIERPINSKI CARPET ---
-	
-	// --- ADD GOSPER ISLAND (Mode 24) ---
-	else if (mode == 24) { // Gosper Island
-		// This logic is based on 7 tiles (1 center, 6 surrounding)
-		// It's easier to work in a [0, 1] space
-		vec2 p = uv + 0.5; // Map from [-0.5, 0.5] to [0, 1]
-
-		// Use a scaling factor (sqrt(7))
-		float GOSPER_SCALE = 2.64575; // sqrt(7)
-		// Rotation matrix for 60 degrees
-		mat2 R60 = mat2(vec2(0.5, 0.866025), vec2(-0.866025, 0.5));
-		
-		vec2 p_hex = to_hex_grid(p); // Skew coordinates
-		vec2 p_scaled = p_hex * GOSPER_SCALE;
-		vec2 f = fract(p_scaled);
-		vec2 i = floor(p_scaled);
-
-		// Map from hex grid index back to square grid index
-		vec2 i_sq = vec2(i.x - floor(i.y / 2.0), i.y);
-
-		int tile_index = int(mod(i_sq.x + i_sq.y * 2.0, 7.0));
-		
-		vec2 c_offset = vec2(0.0, 0.0); // Center offset
-
-		if (tile_index == 1) { c_offset = vec2(1.0, 0.0); }
-		else if (tile_index == 2) { c_offset = vec2(0.0, 1.0); }
-		else if (tile_index == 3) { c_offset = vec2(-1.0, 1.0); }
-		else if (tile_index == 4) { c_offset = vec2(-1.0, 0.0); }
-		else if (tile_index == 5) { c_offset = vec2(0.0, -1.0); }
-		else if (tile_index == 6) { c_offset = vec2(1.0, -1.0); }
-		// tile_index == 0 is the center, no offset
-
-		// Un-skew the fractional part
-		vec2 f_unskew = mat2(vec2(1.0, 0.0), vec2(-0.5 / 0.866025, 1.0 / 0.866025)) * f;
-
-		// Apply transform: rotate based on tile, add offset, scale down
-		vec2 result = (R60 * f_unskew) + c_offset;
-		result = result / GOSPER_SCALE;
-
-		// Map back to [-0.5, 0.5]
-		return result - 0.5;
-	}
-	// --- END GOSPER ISLAND ---
-	// --- ADD CARPET (CORNERS) (Mode 25) ---
-	else if (mode == 25) { // Sierpinski Carpet (Corners)
-		// Map uv from [-0.5, 0.5] to [0, 3]
-		vec2 p = (uv + 0.5) * 3.0; 
-		vec2 i = floor(p);
-		
-		// Keep only if BOTH i.x and i.y are 0 or 2 (the four corners)
-		if ( (i.x == 0.0 || i.x == 2.0) && (i.y == 0.0 || i.y == 2.0) ) {
-			return fract(p) - 0.5; // Map [0, 1] back to [-0.5, 0.5]
-		}
-		return uv; // In hole, return original
-	}
-	// --- ADD CARPET (CROSS) (Mode 26) ---
-	else if (mode == 26) { // Sierpinski Carpet (Cross)
-		// Map uv from [-0.5, 0.5] to [0, 3]
-		vec2 p = (uv + 0.5) * 3.0;
-		vec2 i = floor(p);
-		
-		// Keep if i.x OR i.y is 1 (center column or center row)
-		if (i.x == 1.0 || i.y == 1.0) {
-			return fract(p) - 0.5; // Map [0, 1] back to [-0.5, 0.5]
-		}
-		return uv; // In hole (corners), return original
-	}
-	// --- END CARPET (CROSS) ---
-	
-	// --- ADD PENTAGONAL TILE (Mode 27) ---
-	else if (mode == 27) { // 5-Point / Pentagonal Tile
-		vec2 p = uv; // Input is in [-0.5, 0.5]
-		
-		// We'll use a fixed scale, the Golden Ratio is great for 5-fold symmetry
-		float scale = 1.618034; 
-		
-		// Define 5 points (vertices of a pentagon)
-		// We scale them down by 0.5 to fit nicely in the [-0.5, 0.5] space
-		vec2 c1 = vec2( 0.0,  0.5);
-		vec2 c2 = vec2( 0.4755,  0.1545);
-		vec2 c3 = vec2( 0.2939, -0.4045);
-		vec2 c4 = vec2(-0.2939, -0.4045);
-		vec2 c5 = vec2(-0.4755,  0.1545);
-
-		// Find the closest center point
-		float d1 = distance(p, c1);
-		float d2 = distance(p, c2);
-		float d3 = distance(p, c3);
-		float d4 = distance(p, c4);
-		float d5 = distance(p, c5);
-
-		vec2 closest_center = c1;
-		float min_dist = d1;
-
-		if (d2 < min_dist) { min_dist = d2; closest_center = c2; }
-		if (d3 < min_dist) { min_dist = d3; closest_center = c3; }
-		if (d4 < min_dist) { min_dist = d4; closest_center = c4; }
-		if (d5 < min_dist) { closest_center = c5; }
-
-		// Map the point: Scale it towards the closest center
-		p = closest_center + (p - closest_center) / scale;
-
-		return p;
-	}
-	// --- END PENTAGONAL TILE ---
-	
-	else if (mode == 28) { // Diagonal Carpet (Center + 4 Corners)
-		// Map uv from [-0.5, 0.5] to [0, 3]
-		vec2 p = (uv + 0.5) * 3.0; 
-		vec2 i = floor(p);
-		
-		// Check if we are in an edge square (i.x == 1 AND i.y != 1) OR (i.y == 1 AND i.x != 1)
-		if ( (i.x == 1.0 && i.y != 1.0) || (i.y == 1.0 && i.x != 1.0) ) {
-			return uv; // In hole, return original
-		}
-
-		// Otherwise, we are in a corner or the center, so apply the transform
-		return fract(p) - 0.5; // Map [0, 1] back to [-0.5, 0.5]
-	}
-	// --- END DIAGONAL CARPET ---
-	
-	// --- ADD PENROSE STAR (Mode 29) ---
-	else if (mode == 29) { // 5-Point / Penrose Star
-		vec2 p = uv; 
-		
-		// Use a different scale from Pentagonal Tile
-		float scale = 1.8; // Pentagonal was 1.618, let's try this
-		
-		// Define 5 points (vertices of a pentagon)
-		vec2 c1 = vec2( 0.0,  0.5);
-		vec2 c2 = vec2( 0.4755,  0.1545);
-		vec2 c3 = vec2( 0.2939, -0.4045);
-		vec2 c4 = vec2(-0.2939, -0.4045);
-		vec2 c5 = vec2(-0.4755,  0.1545);
-
-		// Find the closest center point
-		float d1 = distance(p, c1);
-		float d2 = distance(p, c2);
-		float d3 = distance(p, c3);
-		float d4 = distance(p, c4);
-		float d5 = distance(p, c5);
-
-		vec2 closest_center = c1;
-		float min_dist = d1;
-
-		if (d2 < min_dist) { min_dist = d2; closest_center = c2; }
-		if (d3 < min_dist) { min_dist = d3; closest_center = c3; }
-		if (d4 < min_dist) { min_dist = d4; closest_center = c4; }
-		if (d5 < min_dist) { closest_center = c5; }
-
-		// Map the point: Scale it towards the closest center
-		p = closest_center + (p - closest_center) / scale;
-
-		return p;
-	}
-	// --- END PENROSE STAR ---
-	
-	else if (mode == 30) { // Hex Tile
-		// This logic is based on 7 tiles (1 center, 6 surrounding)
-		// We use a scale factor of 3 for this tiling.
-		float SCALE = 3.0;
-
-		vec2 p = to_hex_grid(uv); // Skew coordinates
-		p *= SCALE;
-		
-		vec2 f = fract(p); // Fractional part
-		vec2 i = floor(p); // Integer part
-		
-		// Map from hex grid index back to square grid index
-		vec2 i_sq = vec2(i.x - floor(i.y / 2.0), i.y);
-
-		// Check if we are in the center tile (index 0)
-		int tile_index = int(mod(i_sq.x + i_sq.y * 2.0, 7.0));
-		
-		if (tile_index == 0) {
-			// Center tile: just scale
-			return uv * SCALE;
-		}
-
-		// Not in the center. Un-skew the fractional part.
-		vec2 f_unskew = mat2(vec2(1.0, 0.0), vec2(-0.5 / 0.866025, 1.0 / 0.866025)) * f;
-		
-		// Map back to [-0.5, 0.5]
-		return f_unskew - 0.5;
-	}
-	// --- END HEX TILE ---
-	
-	// --- ADD TWINDRAGON (Mode 31) ---
-	else if (mode == 31) { // Twindragon Tile
-		vec2 p = uv * 2.0; // Scale up to [-1, 1]
-
-		// 90-degree rotation matrix
-		mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
-		
-		// The Twindragon is two tiles (one rotated) mapped to quadrants
-		if (p.x < 0.0) {
-			// Left side (TL & BL quadrants) -> Rotated tile
-			p = R90 * p + vec2(0.0, 1.0);
-		} else {
-			// Right side (TR & BR quadrants) -> Base tile
-			p = p + vec2(-1.0, 0.0);
-		}
-		
-		return p / 2.0; // Scale back down
-	}
-	// --- END TWINDRAGON ---
-	else if (mode == 32) { // Clifford
-		return vec2(sin(cl_a * uv.y) + cl_c * cos(cl_a * uv.x),
-					sin(cl_b * uv.x) + cl_d * cos(cl_b * uv.y));
-	}
-	else if (mode == 33) { // DeJong
-		return vec2(sin(dj_a * uv.y) - cos(dj_b * uv.x),
-					sin(dj_c * uv.x) - cos(dj_d * uv.y));
-					}
-	else if (mode == 34) { // Truchet (Multi-Mode)
-		
-		int truchet_mode = int(tr_mode); // Cast float to int
-		
-		// --- Mode 1: Perfect Displacement (The one you liked) ---
-		if (truchet_mode == 1) {
-			vec2 p = uv;
-			p = p * rotate(radians(tr_rotate));
-			p = p * tr_scale;
-			
-			vec2 i = floor(p);
-			vec2 f = fract(p);
-			
-			float r = rand(i);
-			
-			vec2 c1, c2;
-			if (r > 0.5) { c1 = vec2(0.0, 1.0); c2 = vec2(1.0, 0.0); }
-			else { c1 = vec2(0.0, 0.0); c2 = vec2(1.0, 1.0); }
-
-			vec2 g = normalize(f - c1) - normalize(f - c2);
-			vec2 displacement = g * rotate(radians(tr_rotate)) * tr_strength;
-
-			return uv + displacement;
-		} 
-		
-		// --- Mode 2: 90-degree rotate (Sharp angles) ---
-		else if (truchet_mode == 2) {
-			vec2 p = uv;
-			p = p * rotate(radians(tr_rotate));
-			p = p * tr_scale;
-			
-			vec2 i = floor(p);
-			vec2 f = fract(p);
-			
-			float r = rand(i);
-			if (r > 0.5) {
-				f = vec2(f.y, 1.0 - f.x); 
-			}
-			
-			return (i + f) / tr_scale * rotate(radians(-tr_rotate));
-		} 
-		
-		// --- Mode 3: f.xy = f.yx swap (Straight lines, curved feel) ---
-		else if (truchet_mode == 3) {
-			vec2 p = uv;
-			p = p * rotate(radians(tr_rotate));
-			p = p * tr_scale;
-			
-			vec2 i = floor(p);
-			vec2 f = fract(p);
-			
-			float r = rand(i);
-			if (r > 0.5) {
-				f.x = 1.0 - f.x;
-			}
-			if (f.x > f.y) {
-				f.xy = f.yx;
-			}
-			
-			return (i + f) / tr_scale * rotate(radians(-tr_rotate));
-		}
-		
-		return uv; // Fallback in case mode is out of range
-	}
-	return uv;
-	}
+            return uv + displacement;
+        } 
+        // --- Mode 1: 90-degree rotate ---
+        else if (mode == 1) {
+            vec2 p = uv;
+            p = p * rotate(radians(anim_rotate));
+            p = p * anim_scale;
+            
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+            
+            float r = rand(i);
+            if (r > 0.5) {
+                f = vec2(f.y, 1.0 - f.x); 
+            }
+            
+            // Calculate the final result
+            vec2 result = (i + f) / anim_scale * rotate(radians(-anim_rotate));
+            
+            // Mix between original and result based on strength
+            return mix(uv, result, anim_strength);
+        } 
+        // --- Mode 2: Swap ---
+        else if (mode == 2) {
+            vec2 p = uv;
+            p = p * rotate(radians(anim_rotate));
+            p = p * anim_scale;
+            
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+            
+            float r = rand(i);
+            if (r > 0.5) {
+                f.x = 1.0 - f.x;
+            }
+            if (f.x > f.y) {
+                f.xy = f.yx;
+            }
+            
+            // Calculate the final result
+            vec2 result = (i + f) / anim_scale * rotate(radians(-anim_rotate));
+            
+            // Mix between original and result based on strength
+            return mix(uv, result, anim_strength);
+        }
+        return uv;
+    }
+	return uv; 
+}
 vec2 random(vec2 st) {
     st = vec2(dot(st, vec2(127.1,311.7)),
               dot(st, vec2(269.5,183.3)));
@@ -822,9 +1109,7 @@ float perlin_noise(vec2 st) {
 // --- Main Shader Logic ---
 void fragment() {
 	// Reconstruct matrices from their column vectors first
-	mat2 julian_mat_a = mat2(julian_mat_a_col1, julian_mat_a_col2);
-	mat2 julian_mat_b = mat2(julian_mat_b_col1, julian_mat_b_col2);
-
+	
 	vec4 final_color;
 	vec4 start_pattern_color;
 	
@@ -902,8 +1187,52 @@ void fragment() {
 		transformed_uv += pre_translate;
 
 		// Apply Variations
-		vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a, wave_frequency_a, wave_amplitude_a, wave_speed_a, wave_type_a, julian_power_a, julian_dist_a, julian_mat_a, julian_trans_a, fisheye_strength_a, polar_offset_a, var_a_mirror_x, var_a_mirror_y, var_a_kaleidoscope_slices, mobius_a_a, mobius_b_a, mobius_c_a, mobius_d_a, cellular_weave_grid_size_a, cellular_weave_threshold_a, cellular_weave_iterations_a, blur_amount_a, heart_scale_a, heart_rotation_a, heart_strength_a, apollonian_scale_a, ap_c1_a, ap_c2_a, ap_c3_a, custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a, clifford_a_a, clifford_b_a, clifford_c_a, clifford_d_a, dejong_a_a, dejong_b_a, dejong_c_a, dejong_d_a, truchet_scale_a, truchet_rotate_a, truchet_strength_a, truchet_mode_a);
-		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b, wave_frequency_b, wave_amplitude_b, wave_speed_b, wave_type_b, julian_power_b, julian_dist_b, julian_mat_b, julian_trans_b, fisheye_strength_b, polar_offset_b, var_b_mirror_x, var_b_mirror_y, var_b_kaleidoscope_slices, mobius_a_b, mobius_b_b, mobius_c_b, mobius_d_b, cellular_weave_grid_size_b, cellular_weave_threshold_b, cellular_weave_iterations_b, blur_amount_b, heart_scale_b, heart_rotation_b, heart_strength_b, apollonian_scale_b, ap_c1_b, ap_c2_b, ap_c3_b, custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b, clifford_a_b, clifford_b_b, clifford_c_b, clifford_d_b, dejong_a_b, dejong_b_b, dejong_c_b, dejong_d_b, truchet_scale_b, truchet_rotate_b, truchet_strength_b, truchet_mode_b);
+vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a,
+	sinusoidal_scale_a, sinusoidal_scale_a_speed, sinusoidal_strength_a, sinusoidal_strength_a_speed,
+    spherical_strength_a, spherical_strength_a_speed, spherical_center_x_a, spherical_center_x_a_speed, spherical_center_y_a, spherical_center_y_a_speed,
+	swirl_radius_scale_a, swirl_radius_scale_a_speed, swirl_angle_scale_a, swirl_angle_scale_a_speed,
+	tangent_scale_a, tangent_scale_a_speed, tangent_strength_a, tangent_strength_a_speed,
+	wave_type_a, wave_frequency_a, wave_frequency_a_speed, wave_amplitude_a, wave_amplitude_a_speed, wave_phase_a, wave_phase_a_speed,
+    julian_power_a, julian_power_a_speed, julian_dist_a, julian_dist_a_speed, julian_a_a, julian_a_a_speed, julian_b_a, julian_b_a_speed, julian_c_a, julian_c_a_speed, julian_d_a, julian_d_a_speed, julian_e_a, julian_e_a_speed, julian_f_a, julian_f_a_speed,
+    fisheye_strength_a, fisheye_strength_a_speed, polar_offset_a, polar_offset_a_speed,
+    var_a_mirror_x, var_a_mirror_y, var_a_mirror_rotation, var_a_mirror_rotation_speed, var_a_kaleidoscope_slices, var_a_kaleidoscope_rotation, var_a_kaleidoscope_rotation_speed,
+    mobius_re_a_a, mobius_re_a_a_speed, mobius_im_a_a, mobius_im_a_a_speed, mobius_re_b_a, mobius_re_b_a_speed, mobius_im_b_a, mobius_im_b_a_speed, mobius_re_c_a, mobius_re_c_a_speed, mobius_im_c_a, mobius_im_c_a_speed, mobius_re_d_a, mobius_re_d_a_speed, mobius_im_d_a, mobius_im_d_a_speed,
+    cellular_weave_grid_size_a, cellular_weave_grid_size_a_speed, cellular_weave_threshold_a, cellular_weave_threshold_a_speed, cellular_weave_iterations_a, cellular_weave_iterations_a_speed,
+    blur_amount_a,
+    heart_scale_a, heart_scale_a_speed, heart_rotation_a, heart_rotation_a_speed, heart_strength_a, heart_strength_a_speed,
+    apollonian_scale_a, apollonian_scale_a_speed, ap_c1x_a, ap_c1x_a_speed, ap_c1y_a, ap_c1y_a_speed, ap_c2x_a, ap_c2x_a_speed, ap_c2y_a, ap_c2y_a_speed, ap_c3x_a, ap_c3x_a_speed, ap_c3y_a, ap_c3y_a_speed,
+    arctangent_scale_a, arctangent_scale_a_speed, arctangent_strength_a, arctangent_strength_a_speed,
+    cosine_scale_a, cosine_scale_a_speed, cosine_strength_a, cosine_strength_a_speed,
+    hyperbolic_cosine_scale_a, hyperbolic_cosine_scale_a_speed, hyperbolic_cosine_strength_a, hyperbolic_cosine_strength_a_speed,
+    hyperbolic_sine_scale_a, hyperbolic_sine_scale_a_speed, hyperbolic_sine_strength_a, hyperbolic_sine_strength_a_speed,
+    custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a,
+    clifford_a_a, clifford_a_a_speed, clifford_b_a, clifford_b_a_speed, clifford_c_a, clifford_c_a_speed, clifford_d_a, clifford_d_a_speed,
+    dejong_a_a, dejong_a_a_speed, dejong_b_a, dejong_b_a_speed, dejong_c_a, dejong_c_a_speed, dejong_d_a, dejong_d_a_speed,
+    truchet_scale_a, truchet_scale_a_speed, truchet_rotate_a, truchet_rotate_a_speed, truchet_strength_a, truchet_strength_a_speed, truchet_mode_a,
+	reptile_scale_a, reptile_scale_a_speed, reptile_rotate_a, reptile_rotate_a_speed);
+vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
+	sinusoidal_scale_b, sinusoidal_scale_b_speed, sinusoidal_strength_b, sinusoidal_strength_b_speed,
+    spherical_strength_b, spherical_strength_b_speed, spherical_center_x_b, spherical_center_x_b_speed, spherical_center_y_b, spherical_center_y_b_speed,
+	swirl_radius_scale_b, swirl_radius_scale_b_speed, swirl_angle_scale_b, swirl_angle_scale_b_speed,
+	tangent_scale_b, tangent_scale_b_speed, tangent_strength_b, tangent_strength_b_speed,
+	wave_type_b, wave_frequency_b, wave_frequency_b_speed, wave_amplitude_b, wave_amplitude_b_speed, wave_phase_b, wave_phase_b_speed,
+    julian_power_b, julian_power_b_speed, julian_dist_b, julian_dist_b_speed, julian_a_b, julian_a_b_speed, julian_b_b, julian_b_b_speed, julian_c_b, julian_c_b_speed, julian_d_b, julian_d_b_speed, julian_e_b, julian_e_b_speed, julian_f_b, julian_f_b_speed,
+    fisheye_strength_b, fisheye_strength_b_speed, polar_offset_b, polar_offset_b_speed,
+    var_b_mirror_x, var_b_mirror_y, var_b_mirror_rotation, var_b_mirror_rotation_speed, var_b_kaleidoscope_slices, var_b_kaleidoscope_rotation, var_b_kaleidoscope_rotation_speed,
+    mobius_re_a_b, mobius_re_a_b_speed, mobius_im_a_b, mobius_im_a_b_speed, mobius_re_b_b, mobius_re_b_b_speed, mobius_im_b_b, mobius_im_b_b_speed, mobius_re_c_b, mobius_re_c_b_speed, mobius_im_c_b, mobius_im_c_b_speed, mobius_re_d_b, mobius_re_d_b_speed, mobius_im_d_b, mobius_im_d_b_speed,
+    cellular_weave_grid_size_b, cellular_weave_grid_size_b_speed, cellular_weave_threshold_b, cellular_weave_threshold_b_speed, cellular_weave_iterations_b, cellular_weave_iterations_b_speed,
+    blur_amount_b,
+    heart_scale_b, heart_scale_b_speed, heart_rotation_b, heart_rotation_b_speed, heart_strength_b, heart_strength_b_speed,
+    apollonian_scale_b, apollonian_scale_b_speed, ap_c1x_b, ap_c1x_b_speed, ap_c1y_b, ap_c1y_b_speed, ap_c2x_b, ap_c2x_b_speed, ap_c2y_b, ap_c2y_b_speed, ap_c3x_b, ap_c3x_b_speed, ap_c3y_b, ap_c3y_b_speed,
+    arctangent_scale_b, arctangent_scale_b_speed, arctangent_strength_b, arctangent_strength_b_speed,
+    cosine_scale_b, cosine_scale_b_speed, cosine_strength_b, cosine_strength_b_speed,
+    hyperbolic_cosine_scale_b, hyperbolic_cosine_scale_b_speed, hyperbolic_cosine_strength_b, hyperbolic_cosine_strength_b_speed,
+    hyperbolic_sine_scale_b, hyperbolic_sine_scale_b_speed, hyperbolic_sine_strength_b, hyperbolic_sine_strength_b_speed,
+    custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b,
+    clifford_a_b, clifford_a_b_speed, clifford_b_b, clifford_b_b_speed, clifford_c_b, clifford_c_b_speed, clifford_d_b, clifford_d_b_speed,
+    dejong_a_b, dejong_a_b_speed, dejong_b_b, dejong_b_b_speed, dejong_c_b, dejong_c_b_speed, dejong_d_b, dejong_d_b_speed,
+    truchet_scale_b, truchet_scale_b_speed, truchet_rotate_b, truchet_rotate_b_speed, truchet_strength_b, truchet_strength_b_speed, truchet_mode_b,
+	reptile_scale_b, reptile_scale_b_speed, reptile_rotate_b, reptile_rotate_b_speed);
 		
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
 		
