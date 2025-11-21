@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 2.3
+const PROGRAM_VERSION = 2.5
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -21,7 +21,36 @@ const INVERSE_VARIATIONS = [1 ]
 @onready var world_env: WorldEnvironment = %WorldEnvironment
 @onready var camera_3d: Camera3D = %Camera3D
 @onready var pause_animation_check: CheckBox = %PauseAnimationCheck
-
+@onready var randomize_controls_container: VBoxContainer = %RandomizeControlsContainer
+@onready var randomize_toggle_button: Button = %RandomizeToggleButton
+@onready var randomize_speed_check: CheckBox = %RandomizeSpeedCheck
+@onready var randomize_colors_check: CheckBox = %RandomizeColorsCheck
+@onready var randomize_startup_check: CheckBox = %RandomizeOnStartupCheck
+const PREFS_PATH = "user://prefs.cfg" # File path for persistent settings
+@onready var randomize_params_check: CheckBox = %RandomizeParamsCheck
+@onready var randomize_variations_check: CheckBox = %RandomizeVariationsCheck
+@onready var displacement_slider: HSlider = %DisplacementSlider
+@onready var displacement_spinbox: SpinBox = %DisplacementSpinBox
+var displacement_strength: float = 0.2
+@onready var emission_slider: HSlider = %EmissionSlider
+@onready var emission_spinbox: SpinBox = %EmissionSpinBox
+var emission_strength: float = 0.0
+@onready var height_offset_slider: HSlider = %HeightOffsetSlider
+@onready var height_offset_spinbox: SpinBox = %HeightOffsetSpinBox
+var height_offset: float = -0.5
+@onready var smoothness_slider: HSlider = %SmoothnessSlider
+@onready var smoothness_spinbox: SpinBox = %SmoothnessSpinBox
+var displacement_smoothness: float = 0.0
+@onready var auto_rotate_check: CheckBox = %AutoRotateCheck
+@onready var rotate_speed_slider: HSlider = %RotateSpeedSlider
+var auto_rotate_active: bool = false
+var rotate_speed: float = 0.5
+@onready var dynamic_material_check: CheckBox = %DynamicMaterialCheck
+var use_dynamic_material: bool = false
+@onready var grade_background_check: CheckBox = %GradeBackgroundCheck
+var grade_background_active: bool = false
+@onready var limit_top_check: CheckBox = %LimitTopCheck
+var limit_to_top: bool = false
 
 # --- Node References ---
 # Main Layout
@@ -363,13 +392,13 @@ func _ready() -> void:
 	var window_size = get_viewport().get_visible_rect().size
 	var viewport_3d = display_container_3d.get_child(0) as SubViewport
 	var feedback_material = ShaderMaterial.new()
-	var mesh_material = StandardMaterial3D.new()
+	
 	var initial_normal_img: Image
 	var current_fractal_texture
 	var post_save_material = ShaderMaterial.new()
 
 	# --- NOW, THE REST OF THE CODE CAN RUN ---
-	
+	randomize_controls_container.visible = false
 	# --- Ensure WorldEnvironment has an Environment ---
 	if is_instance_valid(world_env) and not is_instance_valid(world_env.environment):
 		print("WARNING: WorldEnvironment has no Environment resource. Creating one.")
@@ -513,40 +542,50 @@ func _ready() -> void:
 	tangent_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	reptile_vars_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	reptile_vars_b.value_updated.connect(_on_variation_param_changed.bind("b"))
-	
-	
-	
-	# --- ADD THIS 3D MESH SETUP ---
-	mesh_material.normal_enabled = true
-	mesh_material.normal_scale = 1.0
-	
-	# --- START OF THE FIX ---
-	if window_size.x > 0 and window_size.y > 0:
-		initial_normal_img = Image.create(int(window_size.x), int(window_size.y), false, Image.FORMAT_RGBA8)
-		if is_instance_valid(initial_normal_img):
-			normal_map_texture = ImageTexture.create_from_image(initial_normal_img)
-		else:
-			printerr("ERROR: Failed to create initial_normal_img!")
+	randomize_startup_check.toggled.connect(func(_p): save_user_prefs())
+	randomize_speed_check.toggled.connect(func(_p): save_user_prefs())
+	randomize_colors_check.toggled.connect(func(_p): save_user_prefs())
+	randomize_variations_check.toggled.connect(func(_p): save_user_prefs())
+	randomize_params_check.toggled.connect(func(_p): save_user_prefs())
+	dynamic_material_check.toggled.connect(func(b): use_dynamic_material = b)
+	grade_background_check.toggled.connect(func(b): grade_background_active = b)
+	limit_top_check.toggled.connect(func(b): limit_to_top = b)
 
-		if is_instance_valid(mesh_material):
-			current_fractal_texture = final_output.get_texture()
-			mesh_material.albedo_texture = current_fractal_texture
-			if is_instance_valid(normal_map_material) and is_instance_valid(current_fractal_texture):
-				normal_map_material.set_shader_parameter("height_map", current_fractal_texture)
-				normal_map_material.set_shader_parameter("strength", normal_map_strength)
-				print("Setting normal strength: ", normal_map_strength)
-			
-			mesh_material.normal_texture = normal_map_viewport.get_texture()
-		else:
-			printerr("ERROR: mesh_material is NOT valid in _ready()!")
-	else:
-		printerr("ERROR: window_size is invalid for creating initial normal map image!")
-
-	if is_instance_valid(fractal_mesh):
-		fractal_mesh.set_surface_override_material(0, mesh_material)
-	else:
-		print("ERROR: FractalMesh node not found! Check the path.")
-	# --- END ADJUSTED 3D MESH SETUP ---
+	
+	displacement_slider.value_changed.connect(func(v): 
+		displacement_strength = v
+		displacement_spinbox.set_value_no_signal(v)
+	)
+	displacement_spinbox.value_changed.connect(func(v): 
+		displacement_strength = v
+		displacement_slider.set_value_no_signal(v)
+	)
+	emission_slider.value_changed.connect(func(v): 
+		emission_strength = v
+		emission_spinbox.set_value_no_signal(v)
+)
+	emission_spinbox.value_changed.connect(func(v): 
+		emission_strength = v
+		emission_slider.set_value_no_signal(v)
+)
+	height_offset_slider.value_changed.connect(func(v): 
+		height_offset = v
+		height_offset_spinbox.set_value_no_signal(v)
+)
+	height_offset_spinbox.value_changed.connect(func(v): 
+		height_offset = v
+		height_offset_slider.set_value_no_signal(v)
+)
+	smoothness_slider.value_changed.connect(func(v): 
+		displacement_smoothness = v
+		smoothness_spinbox.set_value_no_signal(v)
+)
+	smoothness_spinbox.value_changed.connect(func(v): 
+		displacement_smoothness = v
+		smoothness_slider.set_value_no_signal(v)
+)
+	auto_rotate_check.toggled.connect(func(b): auto_rotate_active = b)
+	rotate_speed_slider.value_changed.connect(func(v): rotate_speed = v)
 	
 
 	
@@ -573,7 +612,7 @@ func _ready() -> void:
 	
 	# Call reset_visuals() at the end to load defaults and update the UI
 	reset_visuals() 
-	
+	var should_randomize = load_user_prefs()
 	# Set initial 3D properties AFTER reset_visuals() has loaded the defaults
 	_update_light()
 	_update_camera()
@@ -586,6 +625,13 @@ func _ready() -> void:
 	reseed_pattern()
 	
 	setup_animations()
+	if should_randomize:
+		print("Startup Randomization Enabled: Generating new image...")
+		# We verify the UI state is synced before running
+		_on_randomize_button_pressed()
+	else:
+		# Standard reseed if not randomizing
+		reseed_pattern()
 
 func _get_control_string_from_id(var_id: int) -> String:
 	for key in VariationManager.VARIATIONS:
@@ -667,6 +713,12 @@ func _save_3d_view_web() -> void:
 		composite_viewport.size = screen_size
 		composite_rect.texture = temp_tex_2d
 		composite_material.set_shader_parameter("foreground_texture", temp_tex_3d)
+		# --- NEW: Pass Grading Options to Composite ---
+		composite_material.set_shader_parameter("grade_background", grade_background_active)
+		composite_material.set_shader_parameter("brightness", brightness)
+		composite_material.set_shader_parameter("contrast", contrast)
+		composite_material.set_shader_parameter("saturation", saturation)
+		
 		
 		# Set to update once, then wait for the *next* frame's draw cycle to complete
 		composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE) 
@@ -777,6 +829,11 @@ func _save_3d_view_desktop(path: String) -> void:
 		composite_viewport.size = screen_size
 		composite_rect.texture = temp_tex_2d
 		composite_material.set_shader_parameter("foreground_texture", temp_tex_3d)
+		# --- NEW: Pass Grading Options to Composite ---
+		composite_material.set_shader_parameter("grade_background", grade_background_active)
+		composite_material.set_shader_parameter("brightness", brightness)
+		composite_material.set_shader_parameter("contrast", contrast)
+		composite_material.set_shader_parameter("saturation", saturation)
 
 		# Set to update once, then wait for the *next* frame's draw cycle to complete
 		composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE)
@@ -877,28 +934,66 @@ func _on_shape_selected(shape_index: int):
 
 	match shape_index:
 		0: # Sphere
-			new_mesh = SphereMesh.new()
-			# You might want to set radius, height, radial_segments etc. here
-			# e.g., (new_mesh as SphereMesh).radius = 0.5
-		1: # Cube
-			new_mesh = BoxMesh.new()
-			# You might want to set size here
-			# e.g., (new_mesh as BoxMesh).size = Vector3(1, 1, 1)
-		2: # Quad
-			new_mesh = QuadMesh.new()
-			# You might want to set size here
-			# e.g., (new_mesh as QuadMesh).size = Vector2(1, 1)
-		3: # Prism
-			new_mesh = PrismMesh.new()
-			# You might want to set size here
-			# e.g., (new_mesh as PrismMesh).size = Vector3(1, 1, 1)
+			var m = SphereMesh.new()
+			m.radius = 0.5
+			m.height = 1.0
+			# High subdivision for smooth spikes
+			m.radial_segments = 128
+			m.rings = 64 
+			new_mesh = m
+			
+		1: # Cube (Triplanar / All Sides)
+			var m = BoxMesh.new()
+			m.size = Vector3(2.0, 2.0, 2.0) # A nice uniform cube
+			
+			# High detail on ALL axes
+			m.subdivide_width = 100
+			m.subdivide_height = 100
+			m.subdivide_depth = 100
+			new_mesh = m
+			
+		2: # Quad (Now "Solid Block")
+			var m = BoxMesh.new()
+			m.size = Vector3(2, 0.5, 2) # Wide and flat, like a slab base
+			
+			# High subdivision on top/bottom to show detail
+			m.subdivide_width = 200
+			m.subdivide_depth = 200
+			
+			# Low subdivision on sides (we just want straight walls)
+			m.subdivide_height = 1 
+			new_mesh = m
+			
+		3: # Prism (Triplanar / All Sides)
+			var m = PrismMesh.new()
+			m.size = Vector3(2.0, 2.0, 2.0)
+			
+			# High detail on ALL axes
+			m.subdivide_width = 64
+			m.subdivide_height = 64
+			m.subdivide_depth = 64
+			new_mesh = m
+			
 		4: # Torus
-			new_mesh = TorusMesh.new()
-			# You might want to set inner_radius, outer_radius, rings, ring_segments
-			# e.g., (new_mesh as TorusMesh).outer_radius = 0.5
+			var m = TorusMesh.new()
+			m.outer_radius = 0.5
+			m.inner_radius = 0.25
+			# High subdivision for smooth rings
+			m.rings = 128
+			m.ring_segments = 64
+			new_mesh = m
 
 	if new_mesh:
 		fractal_mesh.mesh = new_mesh
+		
+		# --- NEW: Configure Shader Mode ---
+		var mat = fractal_mesh.get_surface_override_material(0) as ShaderMaterial
+		if mat:
+			# Enable "Terrain Mode" ONLY if the shape is Quad (Index 2)
+			var is_terrain = (shape_index == 2)
+			mat.set_shader_parameter("use_terrain_mode", is_terrain)
+		# ----------------------------------
+		
 		print("Changed mesh shape to index: ", shape_index)
 	else:
 		printerr("ERROR: Invalid shape index received: ", shape_index)
@@ -969,7 +1064,87 @@ func _update_feedback_ranges_in_ui():
 	feedback_amount_slider.set_value_no_signal(feedback_amount)
 	feedback_amount_spinbox.set_value_no_signal(feedback_amount)
 
+func _on_randomize_button_pressed() -> void:
+	var include_speed = randomize_speed_check.button_pressed
+	var include_variations = randomize_variations_check.button_pressed
+	var include_params = randomize_params_check.button_pressed
+	var randomize_colors = randomize_colors_check.button_pressed
+	
+	# 1. Randomize Colors
+	if randomize_colors:
+		grad_col_tl = Color(randf(), randf(), randf())
+		grad_col_tr = Color(randf(), randf(), randf())
+		grad_col_bl = Color(randf(), randf(), randf())
+		grad_col_br = Color(randf(), randf(), randf())
+		
+		grad_col_tl_picker.color = grad_col_tl
+		grad_col_tr_picker.color = grad_col_tr
+		grad_col_bl_picker.color = grad_col_bl
+		grad_col_br_picker.color = grad_col_br
 
+	# 2. Randomize Variations (Switch Types)
+	if include_variations:
+		# Randomize Variation A Selection
+		if var_a_dropdown.item_count > 0:
+			var rand_idx = randi() % var_a_dropdown.item_count
+			var_a_dropdown.select(rand_idx)
+			_on_var_a_dropdown_item_selected(rand_idx)
+			
+			if var_a_dropdown.get_item_text(rand_idx) == "Rep-Tiles":
+				var rand_rep = randi() % rep_tile_dropdown_a.item_count
+				rep_tile_dropdown_a.select(rand_rep)
+				_on_rep_tile_dropdown_a_item_selected(rand_rep)
+
+		# Randomize Variation B Selection
+		if var_b_dropdown.item_count > 0:
+			var rand_idx = randi() % var_b_dropdown.item_count
+			var_b_dropdown.select(rand_idx)
+			_on_var_b_dropdown_item_selected(rand_idx)
+			
+			if var_b_dropdown.get_item_text(rand_idx) == "Rep-Tiles":
+				var rand_rep = randi() % rep_tile_dropdown_b.item_count
+				rep_tile_dropdown_b.select(rand_rep)
+				_on_rep_tile_dropdown_b_item_selected(rand_rep)
+
+	# 3. Smart Feedback Reset (NOW OUTSIDE THE IF BLOCK)
+	# This ensures it runs even if you are only randomizing parameters
+	var target_feedback = 0.8
+	if include_speed:
+		target_feedback = 0.9
+		
+	# If our target is higher than the allowed Max, raise the Max!
+	if target_feedback > feedback_max:
+		feedback_max = target_feedback
+		feedback_range_max_spinbox.set_value_no_signal(target_feedback)
+		_update_feedback_ranges_in_ui() 
+		
+	# Apply the value
+	feedback_amount = target_feedback
+	feedback_amount_slider.set_value_no_signal(target_feedback)
+	feedback_amount_spinbox.set_value_no_signal(target_feedback)
+
+
+	# 4. Randomize Parameters (Sliders)
+	if include_params:
+		var control_string_a = _get_control_string_from_id(variation_mode_a)
+		if control_string_a != "" and var_a_panels.has(control_string_a):
+			var panel = var_a_panels[control_string_a]
+			if panel.has_method("randomize_settings"):
+				panel.randomize_settings(include_speed)
+
+		var control_string_b = _get_control_string_from_id(variation_mode_b)
+		if control_string_b != "" and var_b_panels.has(control_string_b):
+			var panel = var_b_panels[control_string_b]
+			if panel.has_method("randomize_settings"):
+				panel.randomize_settings(include_speed)
+				
+		# Randomize Mix only if params are enabled
+		var_mix_slider.value = randf_range(0.2, 0.8)
+
+	# 5. Reseed
+	reseed_pattern()
+	print("Randomized settings!")
+	
 func reset_visuals() -> void:
 	if default_settings == null:
 		printerr("ERROR: Default Settings resource not assigned in Inspector!")
@@ -1054,6 +1229,10 @@ func reset_visuals() -> void:
 	# --- Finally, update the UI ---
 	time = 0.0
 	update_ui_from_state()
+	# Ensure 3D toggles are synced
+	limit_to_top = default_settings.limit_to_top if "limit_to_top" in default_settings else false
+	use_dynamic_material = default_settings.use_dynamic_material if "use_dynamic_material" in default_settings else false
+	grade_background_active = default_settings.grade_background_active if "grade_background_active" in default_settings else false
 	reseed_pattern()
 
 func reseed_pattern() -> void:
@@ -1106,7 +1285,15 @@ func update_ui_from_state() -> void:
 			"cam_y_rot": camera_y_rotation,
 			"cam_fov": camera_fov,
 			"show_2d_bg": show_2d_background,
-			"save_res_index": save_resolution_index
+			"save_res_index": save_resolution_index,
+			# --- NEW: 3D VALUES ---
+			"disp_str": displacement_strength,
+			"height_off": height_offset,
+			"smooth": displacement_smoothness,
+			"limit_top": limit_to_top,
+			"emit_str": emission_strength,
+			"dyn_mat": use_dynamic_material,
+			"grade_bg": grade_background_active,
 			
 		}
 		values.merge(_auto_params_a, true) # Add all "A" auto-params
@@ -1260,7 +1447,28 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	camera_fov_spinbox.set_value_no_signal(initial_values.get("cam_fov", 75.0))
 
 	%BackgroundCheckBox.set_pressed_no_signal(initial_values.get("show_2d_bg", false))
+	# --- NEW: 3D SLIDERS & CHECKS ---
+	displacement_slider.set_value_no_signal(initial_values.get("disp_str", 0.2))
+	displacement_spinbox.set_value_no_signal(initial_values.get("disp_str", 0.2))
 	
+	height_offset_slider.set_value_no_signal(initial_values.get("height_off", -0.5))
+	height_offset_spinbox.set_value_no_signal(initial_values.get("height_off", -0.5))
+	
+	smoothness_slider.set_value_no_signal(initial_values.get("smooth", 0.0))
+	smoothness_spinbox.set_value_no_signal(initial_values.get("smooth", 0.0))
+	
+	emission_slider.set_value_no_signal(initial_values.get("emit_str", 0.0))
+	emission_spinbox.set_value_no_signal(initial_values.get("emit_str", 0.0))
+	
+	# Update the Checkbox Visuals
+	limit_top_check.set_pressed_no_signal(initial_values.get("limit_top", false))
+	dynamic_material_check.set_pressed_no_signal(initial_values.get("dyn_mat", false))
+	grade_background_check.set_pressed_no_signal(initial_values.get("grade_bg", false))
+
+	# CRITICAL: Update the variables to match!
+	limit_to_top = limit_top_check.button_pressed
+	use_dynamic_material = dynamic_material_check.button_pressed
+	grade_background_active = grade_background_check.button_pressed
 func _on_save_button_pressed() -> void:
 	if OS.has_feature("web"):
 		if is_3d_view:
@@ -1535,6 +1743,22 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	post_process_save_viewport.size = Vector2i(1, 1)
 
 func _process(delta: float) -> void:
+	# --- AUTO ROTATION LOGIC ---
+	if auto_rotate_active and is_3d_view and not animation_paused:
+		# Increment the Y Rotation variable
+		camera_y_rotation += rotate_speed * delta * 30.0 # *30 to make the slider feel responsive
+		
+		# Wrap around 360 to keep numbers clean
+		if camera_y_rotation > 360.0: camera_y_rotation -= 360.0
+		elif camera_y_rotation < 0.0: camera_y_rotation += 360.0
+		
+		# Update the UI slider so it visually spins (optional, but nice feedback)
+		# Note: We use set_value_no_signal to prevent a loop if you had logic there
+		%CameraYRotSlider.set_value_no_signal(camera_y_rotation)
+		camera_y_rot_spinbox.set_value_no_signal(camera_y_rotation)
+		
+		# Actually move the camera
+		_update_camera()
 	if OS.has_feature("web"):
 		# --- Existing Mailbox Check for Files ---
 		var b64_data = JavaScriptBridge.eval("window.loadedImageData || null")
@@ -1565,7 +1789,9 @@ func _process(delta: float) -> void:
 			else:
 				print("Control Error: Pasted clipboard text is not a valid preset.")
 		# --- END NEW Mailbox Check ---
-	if not animation_paused:
+	# Only use real-time if we are NOT recording.
+	# If we ARE recording, the Timer will handle the time steps manually.
+	if not animation_paused and not is_recording:
 		time += delta
 	# print("2. Process is using pre_translate: ", pre_translate) # DEBUG
 
@@ -1649,45 +1875,36 @@ func _process(delta: float) -> void:
 
 	final_output.texture = target_viewport.get_texture()
 	is_a_source = not is_a_source
-# # --- NEW 3D MESH UPDATE (GPU-ONLY) ---
+
+	# --- NEW 3D MESH UPDATE (DISPLACEMENT + COLOR) ---
+	var mesh_material = fractal_mesh.get_surface_override_material(0) as ShaderMaterial
 	
-
-
-	var mesh_material = fractal_mesh.get_surface_override_material(0)
-	if is_instance_valid(mesh_material):
-
-		# Determine the viewport that was just rendered TO in this frame
+	if is_instance_valid(mesh_material) and is_3d_view:
+		# Determine the viewport that was just rendered TO
 		var rendered_viewport = viewport_b if is_a_source else viewport_a 
-		# (Note: is_a_source was flipped just before this block)
-
-		# 1. Get the texture directly from the viewport that was just rendered
 		var current_texture = rendered_viewport.get_texture()
 
-		# Check if the texture is valid *before* proceeding
-		if not is_instance_valid(current_texture):
-			if is_3d_view:
-				printerr("ERROR in _process: rendered_viewport texture is invalid!")
-			return # Stop processing this mesh update if texture is bad
-
-		# 2. Set the albedo (color) texture
-		mesh_material.albedo_texture = current_texture
-
-		# 3. Pass texture and strength into the normal map shader
-		if is_instance_valid(normal_map_material):
-			# We already checked current_texture is valid above
-			normal_map_material.set_shader_parameter("height_map", current_texture)
-			normal_map_material.set_shader_parameter("strength", normal_map_strength)
-		else:
-			if is_3d_view:
-				printerr("ERROR in _process: normal_map_material is NOT valid!")
-
-		# 4. Get the *result* from the NormalMapViewport and set it
-		mesh_material.normal_texture = normal_map_viewport.get_texture()
-
-	else:
-		if is_3d_view:
-			printerr("ERROR: mesh_material is null in _process!")
-	# --- END 3D MESH UPDATE ---
+		if is_instance_valid(current_texture):
+			# 1. Texture & Strength
+			mesh_material.set_shader_parameter("fractal_texture", current_texture)
+			mesh_material.set_shader_parameter("displacement_strength", displacement_strength)
+			mesh_material.set_shader_parameter("displacement_offset", height_offset)
+			
+			# 2. Smoothing & Detail
+			mesh_material.set_shader_parameter("displacement_smoothness", displacement_smoothness)
+			
+			# 3. Toggles & Materials
+			# --- THIS WAS LIKELY MISSING: ---
+			mesh_material.set_shader_parameter("limit_displacement_to_top", limit_to_top)
+			
+			# --------------------------------
+			mesh_material.set_shader_parameter("use_dynamic_material", use_dynamic_material)
+			mesh_material.set_shader_parameter("emission_energy", emission_strength)
+			
+			# 4. Color Grading
+			mesh_material.set_shader_parameter("brightness", brightness)
+			mesh_material.set_shader_parameter("contrast", contrast)
+			mesh_material.set_shader_parameter("saturation", saturation)
 
 func _load_image_from_base64(b64_string: String) -> void:
 	if not "," in b64_string:
@@ -1842,7 +2059,14 @@ func _gather_preset_data() -> Dictionary:
 		"camera_x_rotation": camera_x_rotation,
 		"camera_y_rotation": camera_y_rotation,
 		"camera_fov": camera_fov,
-		"show_2d_background": show_2d_background
+		"show_2d_background": show_2d_background,
+		"displacement_strength": displacement_strength,
+		"height_offset": height_offset,
+		"displacement_smoothness": displacement_smoothness,
+		"limit_to_top": limit_to_top,
+		"emission_strength": emission_strength,
+		"use_dynamic_material": use_dynamic_material,
+		"grade_background_active": grade_background_active,
 		
 	}
 	data.merge(_auto_params_a, true) # Add all "A" auto-params
@@ -2465,7 +2689,15 @@ func _on_custom_bl_b_item_selected(index: int):
 func _on_custom_br_b_item_selected(index: int):
 	custom_br_b_id = index
 
+func _on_randomize_toggle_button_pressed():
+	# Toggle visibility
+	randomize_controls_container.visible = not randomize_controls_container.visible
 
+	# Optional: Change arrow direction text
+	if randomize_controls_container.visible:
+		randomize_toggle_button.text = "Randomizer Settings ▲"
+	else:
+		randomize_toggle_button.text = "Randomizer ▼"
 
 func _on_gradient_toggle_button_pressed():
 	gradient_controls_container.visible = not gradient_controls_container.visible
@@ -2945,37 +3177,33 @@ func _on_record_timer_timeout():
 	if not is_recording:
 		return
 
-	var final_image: Image = null # Will hold the image to save
-	var final_path: String = recording_dir.path_join("frame_%05d.png" % frame_counter) # Path to save to
+	var final_image: Image = null
+	var final_path: String = recording_dir.path_join("frame_%05d.png" % frame_counter)
 
 	if is_3d_view:
-		# --- START: 3D RECORDING LOGIC (Adapted from _save_3d_view_desktop) ---
+		# --- 3D RECORDING LOGIC ---
 		var viewport_3d = display_container_3d.get_child(0) as SubViewport
 		if not is_instance_valid(viewport_3d):
 			printerr("ERROR (Record): Could not find 3D viewport.")
 			return
 
-		await RenderingServer.frame_post_draw # Wait for 3D to render this frame
+		await RenderingServer.frame_post_draw
 
 		var texture_3d = viewport_3d.get_texture()
 		if not is_instance_valid(texture_3d):
-			printerr("ERROR (Record): Invalid 3D viewport texture.")
 			return
 		var image_3d = texture_3d.get_image()
 		if not is_instance_valid(image_3d) or image_3d.is_empty():
-			printerr("ERROR (Record): Failed to get valid Image from 3D viewport.")
 			return
 		image_3d = image_3d.duplicate()
 
 		if show_2d_background:
-			# We need to composite the 3D view over the 2D view
-			var texture_2d = final_output.get_texture() # final_output is the 2D view
+			# --- COMPOSITING LOGIC ---
+			var texture_2d = final_output.get_texture()
 			if not is_instance_valid(texture_2d):
-				printerr("ERROR (Record): Invalid 2D background texture.")
 				return
 			var image_2d = texture_2d.get_image()
 			if not is_instance_valid(image_2d) or image_2d.is_empty():
-				printerr("ERROR (Record): Failed to get valid Image from 2D background.")
 				return
 			image_2d = image_2d.duplicate()
 
@@ -2983,29 +3211,31 @@ func _on_record_timer_timeout():
 			var temp_tex_3d = ImageTexture.create_from_image(image_3d)
 
 			if not is_instance_valid(temp_tex_2d) or not is_instance_valid(temp_tex_3d):
-				printerr("ERROR (Record): Failed to create temporary ImageTextures for compositing.")
 				return
 
-			# Use the post_process_save_viewport for compositing
 			var composite_viewport = post_process_save_viewport
 			var composite_rect = composite_viewport.get_node("ShaderRect")
 			var composite_material = composite_rect.material as ShaderMaterial
 
-			# CRITICAL: Ensure the compositing shader is active
 			var composite_shader = preload("res://Composite3DOver2D.gdshader")
 			if composite_material.shader != composite_shader:
 				composite_material.shader = composite_shader
 
 			var screen_size = image_2d.get_size() 
 			if screen_size.x <= 0 or screen_size.y <= 0:
-				printerr("ERROR (Record): Invalid image size for compositing: ", screen_size)
 				return
 
 			composite_viewport.size = screen_size
 			composite_rect.texture = temp_tex_2d
 			composite_material.set_shader_parameter("foreground_texture", temp_tex_3d)
+			
+			# --- NEW: Pass Grading Options to Composite (The Fix) ---
+			composite_material.set_shader_parameter("grade_background", grade_background_active)
+			composite_material.set_shader_parameter("brightness", brightness)
+			composite_material.set_shader_parameter("contrast", contrast)
+			composite_material.set_shader_parameter("saturation", saturation)
+			# --------------------------------------------------------
 
-			# Render one frame of the composite
 			composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE)
 			await get_tree().process_frame
 			await RenderingServer.frame_post_draw 
@@ -3015,34 +3245,29 @@ func _on_record_timer_timeout():
 			if is_instance_valid(composite_texture):
 				final_image = composite_texture.get_image()
 			
-			composite_viewport.size = Vector2i(1, 1) # Reset size
+			composite_viewport.size = Vector2i(1, 1)
 
-		else: # 3D view, but not showing 2D background
+		else: # 3D view, no background
 			final_image = image_3d
-		# --- END: 3D RECORDING LOGIC ---
 
 	else:
-		# --- START: 2D RECORDING LOGIC (Your original code) ---
+		# --- 2D RECORDING LOGIC ---
 		var source_viewport = viewport_a if is_a_source else viewport_b
 		var raw_fractal_texture = source_viewport.get_texture()
 		
 		if not is_instance_valid(raw_fractal_texture):
-			print("Failed to get raw 2D texture for frame ", frame_counter)
 			return
 		
 		post_process_save_viewport.size = source_viewport.size
 		var post_save_material = post_process_save_viewport.get_node("ShaderRect").material as ShaderMaterial
 		var post_save_rect = post_process_save_viewport.get_node("ShaderRect")
 
-		# CRITICAL: Ensure the 2D post-process shader is active
-		# (in case 3D recording was used last and changed it)
 		var post_shader = preload("res://post_process.gdshader")
 		if post_save_material.shader != post_shader:
 			post_save_material.shader = post_shader
 
 		post_save_rect.texture = raw_fractal_texture
 
-		# Set all the color grading & post-fx parameters
 		post_save_material.set_shader_parameter("brightness", brightness)
 		post_save_material.set_shader_parameter("contrast", contrast)
 		post_save_material.set_shader_parameter("saturation", saturation)
@@ -3054,51 +3279,100 @@ func _on_record_timer_timeout():
 		await RenderingServer.frame_post_draw
 
 		final_image = post_process_save_viewport.get_texture().get_image()
-		# --- END: 2D RECORDING LOGIC ---
 
-
-	# --- FINAL SAVE STEP (for both 2D and 3D) ---
+	# --- SAVE ---
 	if not is_instance_valid(final_image) or final_image.is_empty():
-		print("Failed to get final image (2D or 3D) for frame ", frame_counter)
 		return
 
-	# Save the frame as a PNG
 	var err = final_image.save_png(final_path)
 	if err != OK:
 		print("Error saving PNG frame: ", err)
 	
 	frame_counter += 1
+	# --- NEW: Manual Time Step ---
+	# We force the time forward by exactly 1/60th of a second.
+	# This ensures the video plays at normal speed, even if your PC lags while saving.
+	if not animation_paused:
+		time += 0.016666 # (1.0 / 60.0)
 
 func _stitch_frames_to_video(save_path: String):
-	# This function runs the FFmpeg command-line tool
 	var global_rec_dir = ProjectSettings.globalize_path(recording_dir)
-	# var global_output_path = ProjectSettings.globalize_path(video_output_path) # <-- DELETE THIS
 	var input_path = global_rec_dir.path_join("frame_%05d.png")
 	
-	# These are the arguments for FFmpeg
+	# 1. Determine the correct command/path for FFmpeg
+	var ffmpeg_cmd = "ffmpeg" # Default for Windows/Linux
+	
+	if OS.get_name() == "macOS":
+		# Check common Mac locations (Homebrew installs)
+		if FileAccess.file_exists("/opt/homebrew/bin/ffmpeg"):
+			ffmpeg_cmd = "/opt/homebrew/bin/ffmpeg" # Apple Silicon
+		elif FileAccess.file_exists("/usr/local/bin/ffmpeg"):
+			ffmpeg_cmd = "/usr/local/bin/ffmpeg"    # Intel Mac
+		# Else fallback to just "ffmpeg" and hope for the best
+	
+	# 2. Prepare Arguments
 	var ffmpeg_args = [
-		"-y", # Overwrite output file if it exists
-		"-framerate", "60", # Input FPS (must match your Timer)
-		"-i", input_path,   # Input files
-		"-c:v", "libx264",  # Video codec
-		"-pix_fmt", "yuv420p", # Pixel format for compatibility
-		save_path  # Output file
+		"-y", 
+		"-framerate", "60", 
+		"-i", input_path,   
+		"-c:v", "libx264",  
+		"-pix_fmt", "yuv420p", 
+		save_path  
 	]
 	
-	# Try to execute FFmpeg
+	# 3. Execute
 	var output = []
-	print("Running FFmpeg... Command: ffmpeg " + " ".join(ffmpeg_args))
-	var exit_code = OS.execute("ffmpeg", ffmpeg_args, output, true) # true = blocking
+	print("Running FFmpeg... Command: ", ffmpeg_cmd)
+	var exit_code = OS.execute(ffmpeg_cmd, ffmpeg_args, output, true)
 	
 	if exit_code == 0:
 		print("Video saved successfully to: ", save_path)
 		OS.shell_open(save_path)
 	else:
-		print("--- FFMPEG FAILED ---")
-		print("FFmpeg may not be installed or is not in your system's PATH.")
-		print("Your PNG frames are safe in: ", global_rec_dir)
-		OS.shell_open(global_rec_dir) # Open the PNG folder instead
-
+		printerr("--- FFMPEG FAILED ---")
+		printerr("Exit Code: ", exit_code)
+		printerr("Output: ", output)
+		
+		# 4. Mac-Specific Error Message
+		if OS.get_name() == "macOS":
+			OS.alert("Video creation failed. \n\nMac Users: Please ensure FFmpeg is installed via Homebrew ('brew install ffmpeg'). \n\nIf it is installed, your Mac's security settings might be blocking it. Try running 'ffmpeg' once in your Terminal to approve it.", "Export Error")
+		else:
+			OS.alert("FFmpeg failed to stitch video. Please check if FFmpeg is installed correctly.", "Export Error")
+			
+		OS.shell_open(global_rec_dir) # Open the PNG folder so they at least have the frames
 
 func _on_pause_animation_check_toggled(button_pressed: bool):
 	animation_paused = button_pressed
+
+func save_user_prefs():
+	var config = ConfigFile.new()
+	config.set_value("randomizer", "on_startup", randomize_startup_check.button_pressed)
+	config.set_value("randomizer", "include_speed", randomize_speed_check.button_pressed)
+	config.set_value("randomizer", "include_colors", randomize_colors_check.button_pressed)
+	config.set_value("randomizer", "include_variations", randomize_variations_check.button_pressed)
+	# --- NEW ---
+	config.set_value("randomizer", "include_params", randomize_params_check.button_pressed)
+	
+	config.save(PREFS_PATH)
+
+func load_user_prefs():
+	var config = ConfigFile.new()
+	var err = config.load(PREFS_PATH)
+	
+	if err == OK:
+		var on_startup = config.get_value("randomizer", "on_startup", false)
+		var inc_speed = config.get_value("randomizer", "include_speed", false)
+		var inc_colors = config.get_value("randomizer", "include_colors", false)
+		var inc_vars = config.get_value("randomizer", "include_variations", true)
+		# --- NEW ---
+		var inc_params = config.get_value("randomizer", "include_params", true) # Default True
+		
+		randomize_startup_check.set_pressed_no_signal(on_startup)
+		randomize_speed_check.set_pressed_no_signal(inc_speed)
+		randomize_colors_check.set_pressed_no_signal(inc_colors)
+		randomize_variations_check.set_pressed_no_signal(inc_vars)
+		# --- NEW ---
+		randomize_params_check.set_pressed_no_signal(inc_params)
+		
+		return on_startup
+	return false

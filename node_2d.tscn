@@ -1,4 +1,4 @@
-[gd_scene load_steps=155 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=157 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -8,6 +8,7 @@
 [ext_resource type="Shader" uid="uid://m48sth4ixbgv" path="res://NormalMap.gdshader" id="4_0hol4"]
 [ext_resource type="PackedScene" uid="uid://dkd3sc3vxx6jf" path="res://VariationPanel.tscn" id="5_rj586"]
 [ext_resource type="Script" uid="uid://di65wpry5ixo0" path="res://VariationParameter.gd" id="6_4d7sh"]
+[ext_resource type="Shader" uid="uid://dr08robqa1tts" path="res://fractal_3d_displacement.gdshader" id="6_ir8iy"]
 
 [sub_resource type="Resource" id="Resource_rj586"]
 script = ExtResource("6_4d7sh")
@@ -1379,10 +1380,30 @@ metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Environment" id="Environment_0e48y"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_epypp"]
+[sub_resource type="SphereMesh" id="SphereMesh_4d7sh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hqns4"]
+render_priority = 0
+shader = ExtResource("6_ir8iy")
+shader_parameter/displacement_strength = 0.5
+shader_parameter/displacement_offset = -0.5
+shader_parameter/displacement_smoothness = 0.0
+shader_parameter/use_dynamic_material = false
+shader_parameter/use_terrain_mode = false
+shader_parameter/limit_displacement_to_top = false
+shader_parameter/roughness = 0.5
+shader_parameter/metallic = 0.0
+shader_parameter/emission_energy = 1.0
+shader_parameter/brightness = 1.0
+shader_parameter/contrast = 1.0
+shader_parameter/saturation = 1.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kdubu"]
 shader = ExtResource("3_q6r6c")
+shader_parameter/brightness = 1.0
+shader_parameter/contrast = 1.0
+shader_parameter/saturation = 1.0
+shader_parameter/grade_background = false
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_q6r6c"]
 shader = ExtResource("4_0hol4")
@@ -1474,10 +1495,14 @@ text = "Light X Angle "
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+min_value = -180.0
+max_value = 180.0
 
 [node name="LightXAngleSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightXAngleContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+min_value = -180.0
+max_value = 180.0
 
 [node name="LightYAngleContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
 layout_mode = 2
@@ -1490,10 +1515,14 @@ text = "Light Y Angle"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+min_value = -180.0
+max_value = 180.0
 
 [node name="LightYAngleSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightYAngleContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+min_value = -180.0
+max_value = 180.0
 
 [node name="LightEnergyContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
 layout_mode = 2
@@ -1506,10 +1535,14 @@ text = "Light Power"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+max_value = 40.0
+step = 0.001
 
 [node name="LightEnergySpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightEnergyContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+max_value = 40.0
+step = 0.001
 
 [node name="ShadowCheckBox" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
 unique_name_in_owner = true
@@ -1547,6 +1580,8 @@ size_flags_horizontal = 3
 [node name="CameraXRotSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraXRotContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+min_value = -180.0
+max_value = 180.0
 
 [node name="CameraYRotContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
 layout_mode = 2
@@ -1559,10 +1594,14 @@ text = "Cam Y Rotate"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+min_value = -180.0
+max_value = 180.0
 
 [node name="CameraYRotSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/CameraYRotContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+min_value = -180.0
+max_value = 180.0
 
 [node name="CameraFovContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
 layout_mode = 2
@@ -1588,6 +1627,109 @@ text = "Color Picker"
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Displacement Strength" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VBoxContainer"]
+layout_mode = 2
+text = "Displacement Strength"
+
+[node name="DisplacementSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+value = 0.20000000000000018
+
+[node name="DisplacementSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+value = 0.20000000000000018
+
+[node name="Glow  Emission" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+text = "Glow / Emission"
+
+[node name="EmissionSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.001
+
+[node name="EmissionSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.001
+
+[node name="Height Offset" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+text = "Height Offset"
+
+[node name="HeightOffsetSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.001
+value = -0.5
+
+[node name="HeightOffsetSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.001
+value = -0.5
+
+[node name="Smoothness" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+text = "Smoothness"
+
+[node name="SmoothnessSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.001
+
+[node name="SmoothnessSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.001
+
+[node name="AutoRotateCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Auto-Rotate"
+
+[node name="RotateSpeedSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+value = 0.5
+
+[node name="DynamicMaterialCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Dynamic Surface"
+
+[node name="GradeBackgroundCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Match BG Color"
+
+[node name="LimitTopCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Limit Top"
+
 [node name="StartPattern" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 layout_mode = 2
 
@@ -1596,7 +1738,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 2.3"
+text = "V 2.5"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -1629,6 +1771,45 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "Pause Anim"
+
+[node name="RandomizeToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Randomizer"
+
+[node name="RandomizeControlsContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RandomizeButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeControlsContainer"]
+layout_mode = 2
+text = "Randomize"
+
+[node name="RandomizeVariationsCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Include Variations"
+
+[node name="RandomizeParamsCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Include Variables"
+
+[node name="RandomizeSpeedCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Include Animation"
+
+[node name="RandomizeColorsCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Randomize Colors"
+
+[node name="RandomizeOnStartupCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Randomize on Startup"
 
 [node name="HSeparator7" type="HSeparator" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 layout_mode = 2
@@ -2395,14 +2576,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1.0
 step = 0.001
-value = 0.02
+value = 0.8
 
 [node name="FeedbackAmountSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.001
-value = 0.02
+value = 0.8
 
 [node name="FeedbackRangeContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
@@ -2756,7 +2937,8 @@ current = true
 [node name="FractalMesh" type="MeshInstance3D" parent="HSplitContainer/Control/Display_3D_Container/3DViewport/Node3D"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.06, 0.05, -0.445)
-mesh = SubResource("SphereMesh_epypp")
+mesh = SubResource("SphereMesh_4d7sh")
+surface_material_override/0 = SubResource("ShaderMaterial_hqns4")
 script = ExtResource("3_epypp")
 
 [node name="ViewportA" type="SubViewport" parent="."]
@@ -2850,6 +3032,8 @@ wait_time = 0.017
 [connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer/ViewToggleButton" to="." method="_on_view_toggle_toggled"]
 [connection signal="item_selected" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer/HSeparator7/StartPatternDropdown" to="." method="_on_start_pattern_dropdown_item_selected"]
 [connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer/HSeparator7/ResetOnDragCheck" to="." method="_on_reset_on_drag_check_toggled"]
+[connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeToggleButton" to="." method="_on_randomize_toggle_button_pressed"]
+[connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeControlsContainer/RandomizeButton" to="." method="_on_randomize_button_pressed"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/LoadImageButton" to="." method="_on_load_image_button_pressed"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientToggleButton" to="." method="_on_gradient_toggle_button_pressed"]
 [connection signal="color_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer16/GradColTLPicker" to="." method="_on_grad_col_tl_picker_color_changed"]

@@ -185,3 +185,40 @@ func get_slider(param_name: String) -> HSlider:
 
 func get_spinbox(param_name: String) -> SpinBox:
 	return spinboxes.get(param_name)
+
+# --- Randomize Logic ---
+func randomize_settings(include_speed: bool):
+	for param in parameters:
+		# 1. Randomize the Main Control
+		if param.control_type == VariationParameter.ControlType.SLIDER:
+			# Pick a random float between Min and Max
+			var random_val = randf_range(param.min, param.max)
+			
+			# Set the slider value directly. 
+			# This automagically triggers the 'value_changed' signal, 
+			# which updates the SpinBox AND emits our 'value_updated' signal to Control.gd.
+			if controls.has(param.name):
+				controls[param.name].value = random_val
+				
+		elif param.control_type == VariationParameter.ControlType.DROPDOWN:
+			# Pick a random index
+			var random_idx = randi() % param.dropdown_options.size()
+			
+			if controls.has(param.name):
+				controls[param.name].select(random_idx)
+				# OptionButton doesn't always emit signal when changed via code, 
+				# so we force it manually just in case.
+				controls[param.name].item_selected.emit(random_idx)
+
+		# 2. Randomize Speed (if enabled)
+		if param.add_speed_control:
+			var speed_name = param.name + "_speed"
+			if controls.has(speed_name):
+				if include_speed:
+					# Speed sliders created in _generate_controls default to -1.0 to 1.0
+					var random_speed = randf_range(-1.0, 1.0)
+					controls[speed_name].value = random_speed
+				else:
+					# If we aren't randomizing speed, should we reset it to 0?
+					# Let's set it to 0 so the image doesn't go crazy unexpectedly.
+					controls[speed_name].value = 0.0

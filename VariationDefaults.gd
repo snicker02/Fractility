@@ -6,9 +6,9 @@ class_name VariationDefaults
 @export var variation_mode_b: int = 1  # Spherical ID
 @export var start_pattern_mode: int = 0
 @export var variation_mix: float = 0.5
-@export var feedback_amount: float = 0.02
+@export var feedback_amount: float = 0.8
 @export var feedback_min: float = 0.0
-@export var feedback_max: float = 0.1
+@export var feedback_max: float = 0.95
 @export var seamless_tiling: bool = true
 @export var mirror_tiling: bool = false
 @export var reset_on_drag_enabled: bool = true

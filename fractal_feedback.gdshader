@@ -1256,18 +1256,13 @@ vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
 		// --- END TILING ---
 
 		// --- FINAL MIXING LOGIC (THE FIX) ---
-		vec4 transformed_color = texture(previous_frame, final_uv);
+		// --- FINAL MIXING LOGIC (UNIFIED) ---
+		// We now ALWAYS mix with the fresh start_pattern_color.
+		// This ensures the fractal looks the same whether it is moving or still,
+		// and prevents the "muddy" look.
 		
-		if (is_animating) {
-			// ANIMATION MODE: Mix the transformed frame with the FRESH start pattern.
-			// This prevents motion blur/mud.
-			final_color = mix(start_pattern_color, transformed_color, feedback_amount);
-		} else {
-			// RECURSIVE MODE: Mix the transformed frame with the PREVIOUS frame.
-			// This creates the fractal detail.
-			vec4 original_color = texture(previous_frame, UV);
-			final_color = mix(original_color, transformed_color, feedback_amount);
-		}
+		vec4 transformed_color = texture(previous_frame, final_uv);
+		final_color = mix(start_pattern_color, transformed_color, feedback_amount);
 	}
 
 	COLOR = final_color;
