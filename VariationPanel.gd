@@ -216,7 +216,7 @@ func randomize_settings(include_speed: bool):
 			if controls.has(speed_name):
 				if include_speed:
 					# Speed sliders created in _generate_controls default to -1.0 to 1.0
-					var random_speed = randf_range(-1.0, 1.0)
+					var random_speed = randf_range(-0.1, 0.1)
 					controls[speed_name].value = random_speed
 				else:
 					# If we aren't randomizing speed, should we reset it to 0?

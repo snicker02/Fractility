@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 2.5
+const PROGRAM_VERSION = 2.7
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -31,7 +31,7 @@ const PREFS_PATH = "user://prefs.cfg" # File path for persistent settings
 @onready var randomize_variations_check: CheckBox = %RandomizeVariationsCheck
 @onready var displacement_slider: HSlider = %DisplacementSlider
 @onready var displacement_spinbox: SpinBox = %DisplacementSpinBox
-var displacement_strength: float = 0.2
+var displacement_strength: float = 0.0
 @onready var emission_slider: HSlider = %EmissionSlider
 @onready var emission_spinbox: SpinBox = %EmissionSpinBox
 var emission_strength: float = 0.0
@@ -51,6 +51,87 @@ var use_dynamic_material: bool = false
 var grade_background_active: bool = false
 @onready var limit_top_check: CheckBox = %LimitTopCheck
 var limit_to_top: bool = false
+@onready var mandel_controls: VBoxContainer = %MandelbulbControls # (Or whatever path you used)
+@onready var mandel_power_slider: HSlider = %MandelPowerSlider
+@onready var mandel_power_spinbox: SpinBox = %MandelPowerSpinBox
+var mandel_power: float = 3.0
+var is_raymarching: bool = false
+@onready var mandel_mix_slider: HSlider = %MandelMixSlider
+@onready var mandel_scale_slider: HSlider = %MandelScaleSlider
+@onready var standard_mesh_controls: VBoxContainer = %StandardMeshControls
+
+@onready var mandel_mix_spinbox: SpinBox = %MandelMixSpinBox
+@onready var mandel_scale_spinbox: SpinBox = %MandelScaleSpinBox
+@onready var rotate_speed_spinbox: SpinBox = %RotateSpeedSpinBox
+var auto_rotate_vector: Vector3 = Vector3(0, 1, 0) # Default to Y-axis spin
+@onready var iter_slider: HSlider = %IterSlider
+@onready var iter_spinbox: SpinBox = %IterSpinBox
+var ray_iterations: int = 12
+@onready var ab_params: VBoxContainer = %AmazingBoxParams
+@onready var ab_fold_slider: HSlider = %ABFoldLimitSlider
+@onready var ab_fold_spinbox: SpinBox = %ABFoldLimitSpinBox # <--- NEW
+@onready var ab_rad_slider: HSlider = %ABFixedRadSlider
+@onready var ab_rad_spinbox: SpinBox = %ABFixedRadSpinBox   # <--- NEW
+
+var ab_fold_limit: float = 1.0
+var ab_fixed_radius: float = 1.0
+
+@onready var quality_dropdown: OptionButton = %QualityDropdown
+var current_step_speed: float = 0.25 # Default to Balanced
+
+# Wave Variables
+@onready var as_wave_str_x_slider: HSlider = %ASWaveStrXSlider
+@onready var as_wave_str_x_spinbox: SpinBox = %ASWaveStrXSpinBox
+@onready var as_wave_str_y_slider: HSlider = %ASWaveStrYSlider
+@onready var as_wave_str_y_spinbox: SpinBox = %ASWaveStrYSpinBox
+@onready var as_wave_str_z_slider: HSlider = %ASWaveStrZSlider
+@onready var as_wave_str_z_spinbox: SpinBox = %ASWaveStrZSpinBox
+
+@onready var as_wave_freq_x_slider: HSlider = %ASWaveFreqXSlider
+@onready var as_wave_freq_x_spinbox: SpinBox = %ASWaveFreqXSpinBox
+@onready var as_wave_freq_y_slider: HSlider = %ASWaveFreqYSlider
+@onready var as_wave_freq_y_spinbox: SpinBox = %ASWaveFreqYSpinBox
+@onready var as_wave_freq_z_slider: HSlider = %ASWaveFreqZSlider
+@onready var as_wave_freq_z_spinbox: SpinBox = %ASWaveFreqZSpinBox
+
+var as_wave_str: Vector3 = Vector3.ZERO
+var as_wave_freq: Vector3 = Vector3(4.0, 4.0, 4.0)
+
+# --- Amazing Surf Variables ---
+@onready var as_params: VBoxContainer = %AmazingSurfParams
+@onready var as_fold_slider: HSlider = %ASFoldLimitSlider
+@onready var as_fold_spinbox: SpinBox = %ASFoldLimitSpinBox # <--- NEW
+
+@onready var as_rot_x_slider: HSlider = %ASRotXSlider
+@onready var as_rot_x_spinbox: SpinBox = %ASRotXSpinBox     # <--- NEW
+@onready var as_rot_y_slider: HSlider = %ASRotYSlider
+@onready var as_rot_y_spinbox: SpinBox = %ASRotYSpinBox     # <--- NEW
+@onready var as_rot_z_slider: HSlider = %ASRotZSlider
+@onready var as_rot_z_spinbox: SpinBox = %ASRotZSpinBox     # <--- NEW
+
+var as_fold_limit: float = 1.0
+var as_rotate: Vector3 = Vector3.ZERO
+@onready var as_julia_x_slider: HSlider = %ASJuliaXSlider
+@onready var as_julia_x_spinbox: SpinBox = %ASJuliaXSpinBox
+@onready var as_julia_y_slider: HSlider = %ASJuliaYSlider
+@onready var as_julia_y_spinbox: SpinBox = %ASJuliaYSpinBox
+@onready var as_julia_z_slider: HSlider = %ASJuliaZSlider
+@onready var as_julia_z_spinbox: SpinBox = %ASJuliaZSpinBox
+
+var as_julia: Vector3 = Vector3.ZERO
+
+# Twist Variables
+@onready var as_twist_x_slider: HSlider = %ASTwistXSlider
+@onready var as_twist_x_spinbox: SpinBox = %ASTwistXSpinBox
+@onready var as_twist_y_slider: HSlider = %ASTwistYSlider
+@onready var as_twist_y_spinbox: SpinBox = %ASTwistYSpinBox
+@onready var as_twist_z_slider: HSlider = %ASTwistZSlider
+@onready var as_twist_z_spinbox: SpinBox = %ASTwistZSpinBox
+
+var as_twist: Vector3 = Vector3.ZERO
+
+var mandel_texture_intensity: float = 0.5
+var mandel_texture_scale: float = 1.0
 
 # --- Node References ---
 # Main Layout
@@ -208,13 +289,14 @@ var is_recording: bool = false
 var frame_counter: int = 0
 var recording_dir: String = "user://recordings/"
 #var video_output_path: String = "user://recordings/output.mp4"
-@onready var normal_strength_spinbox: SpinBox = %NormalStrengthSpinBox
+
 @onready var light_x_angle_spinbox: SpinBox = %LightXAngleSpinBox
 @onready var light_y_angle_spinbox: SpinBox = %LightYAngleSpinBox
 @onready var light_energy_spinbox: SpinBox = %LightEnergySpinBox
 @onready var camera_dist_spinbox: SpinBox = %CameraDistSpinBox
 @onready var camera_x_rot_spinbox: SpinBox = %CameraXRotSpinBox
 @onready var camera_y_rot_spinbox: SpinBox = %CameraYRotSpinBox
+@onready var camera_z_rot_spinbox: SpinBox = %CameraZRotSpinBox
 @onready var camera_fov_spinbox: SpinBox = %CameraFovSpinBox
 @onready var clifford_controls_container_a: VBoxContainer = %CliffordControlsContainerA
 @onready var clifford_controls_container_b: VBoxContainer = %CliffordControlsContainerB
@@ -255,6 +337,7 @@ var mirror_x: bool = false
 var mirror_y: bool = false
 var kaleidoscope_on: bool = false
 var kaleidoscope_slices: float = 6.0
+@onready var raymarch_core_params: VBoxContainer = %RaymarchCoreParams
 
 var background_texture: Texture2D
 var file_dialog_mode: String = "save"
@@ -314,9 +397,10 @@ var normal_map_strength: float
 
 
 # --- 3D Camera Controls ---
-var camera_distance: float = 0.5 # How far the camera is from the center
+var camera_distance: float = 3.5 # How far the camera is from the center
 var camera_x_rotation: float = 0.0 # Rotation around the horizontal axis (pitch)
 var camera_y_rotation: float = 0.0 # Rotation around the vertical axis (yaw)
+var camera_z_rotation: float = 0.0
 var camera_fov: float = 75.0 # Field of View
 
 # --- 3D Background Control ---
@@ -339,16 +423,20 @@ func _set_platform_feedback_defaults() -> void:
 
 func _update_camera() -> void:
 	if is_instance_valid(camera_3d):
-		# Reset rotation first to avoid gimbal lock issues
+		# Reset rotation first
 		camera_3d.rotation = Vector3.ZERO
 		
-		# Apply Y rotation (yaw)
+		# 1. Yaw (Y-Axis)
 		camera_3d.rotate_y(deg_to_rad(camera_y_rotation))
 		
-		# Apply X rotation (pitch) - rotate around the camera's local X-axis
+		# 2. Pitch (Local X-Axis)
 		camera_3d.rotate_object_local(Vector3.RIGHT, deg_to_rad(camera_x_rotation))
 		
-		# Move the camera backwards along its local Z-axis
+		# 3. Roll (Local Z-Axis) -- NEW
+		# We use Vector3.BACK because in Godot, the camera looks towards -Z.
+		camera_3d.rotate_object_local(Vector3.BACK, deg_to_rad(camera_z_rotation))
+		
+		# Move the camera backwards along its new local Z-axis
 		camera_3d.position = camera_3d.global_transform.basis.z * camera_distance
 		
 		# Set Field of View
@@ -433,8 +521,8 @@ func _ready() -> void:
 	viewport_b.size = window_size
 	# --- END FIX ---
 	
-	if is_instance_valid(viewport_3d):
-		viewport_3d.size = window_size
+	#if is_instance_valid(viewport_3d):
+		#viewport_3d.size = window_size
 
 	feedback_material.shader = load("res://fractal_feedback.gdshader")
 	%ViewportA.get_node("ShaderRect").material = feedback_material
@@ -550,7 +638,6 @@ func _ready() -> void:
 	dynamic_material_check.toggled.connect(func(b): use_dynamic_material = b)
 	grade_background_check.toggled.connect(func(b): grade_background_active = b)
 	limit_top_check.toggled.connect(func(b): limit_to_top = b)
-
 	
 	displacement_slider.value_changed.connect(func(v): 
 		displacement_strength = v
@@ -563,31 +650,306 @@ func _ready() -> void:
 	emission_slider.value_changed.connect(func(v): 
 		emission_strength = v
 		emission_spinbox.set_value_no_signal(v)
-)
+	)
 	emission_spinbox.value_changed.connect(func(v): 
 		emission_strength = v
 		emission_slider.set_value_no_signal(v)
-)
+	)
 	height_offset_slider.value_changed.connect(func(v): 
 		height_offset = v
 		height_offset_spinbox.set_value_no_signal(v)
-)
+	)
 	height_offset_spinbox.value_changed.connect(func(v): 
 		height_offset = v
 		height_offset_slider.set_value_no_signal(v)
-)
+	)
 	smoothness_slider.value_changed.connect(func(v): 
 		displacement_smoothness = v
 		smoothness_spinbox.set_value_no_signal(v)
-)
+	)
 	smoothness_spinbox.value_changed.connect(func(v): 
 		displacement_smoothness = v
 		smoothness_slider.set_value_no_signal(v)
-)
-	auto_rotate_check.toggled.connect(func(b): auto_rotate_active = b)
-	rotate_speed_slider.value_changed.connect(func(v): rotate_speed = v)
+	)
+	auto_rotate_check.toggled.connect(func(b): 
+		auto_rotate_active = b
+		if b:
+			# When turned ON, pick a random rotation axis!
+			# We use ranges like -0.5 to 0.5 to keep it somewhat steady but tumbling.
+			auto_rotate_vector = Vector3(
+				randf_range(-0.5, 0.5), # X (Pitch)
+				1.0,                    # Y (Yaw - Always keep some spin)
+				randf_range(-0.5, 0.5)  # Z (Roll)
+			).normalized()
+		else:
+			# When turned OFF, reset to simple turntable (just in case)
+			auto_rotate_vector = Vector3(0, 1, 0)
+	)
+	
+	# Sync Slider and SpinBox
+	rotate_speed_slider.value_changed.connect(func(v): 
+		rotate_speed = v
+		rotate_speed_spinbox.set_value_no_signal(v)
+	)
+	rotate_speed_spinbox.value_changed.connect(func(v): 
+		rotate_speed = v
+		rotate_speed_slider.set_value_no_signal(v)
+	)
+	
+	%CameraZRotSlider.value_changed.connect(func(v): 
+		camera_z_rotation = v
+		_update_camera() # Update instantly
+	)
+	
+	# --- Mandelbulb Texture Controls ---
+		# --- Mandelbulb Texture Controls (Two-Way Sync) ---
+	
+	# Mix (Intensity)
+	mandel_mix_slider.value_changed.connect(func(v): 
+		mandel_texture_intensity = v
+		mandel_mix_spinbox.set_value_no_signal(v)
+	)
+	mandel_mix_spinbox.value_changed.connect(func(v): 
+		mandel_texture_intensity = v
+		mandel_mix_slider.set_value_no_signal(v)
+	)
+	
 	
 
+
+	# Scale
+	mandel_scale_slider.value_changed.connect(func(v): 
+		mandel_texture_scale = v
+		mandel_scale_spinbox.set_value_no_signal(v)
+	)
+	mandel_scale_spinbox.value_changed.connect(func(v): 
+		mandel_texture_scale = v
+		mandel_scale_slider.set_value_no_signal(v)
+	)
+	# --- Raymarch Advanced Controls ---
+	# 1. Iterations (Detail)
+	if iter_slider:
+		iter_slider.value_changed.connect(func(v): 
+			ray_iterations = int(v)
+			if iter_spinbox: iter_spinbox.set_value_no_signal(v) # Sync SpinBox
+		)
+	if iter_spinbox:
+		iter_spinbox.value_changed.connect(func(v):
+			ray_iterations = int(v)
+			if iter_slider: iter_slider.set_value_no_signal(v) # Sync Slider
+		)
+	
+	# 2. Folding Limit
+	if ab_fold_slider:
+		ab_fold_slider.value_changed.connect(func(v): 
+			ab_fold_limit = v
+			if ab_fold_spinbox: ab_fold_spinbox.set_value_no_signal(v)
+		)
+	if ab_fold_spinbox:
+		ab_fold_spinbox.value_changed.connect(func(v):
+			ab_fold_limit = v
+			if ab_fold_slider: ab_fold_slider.set_value_no_signal(v)
+		)
+
+	# Fixed Radius
+	if ab_rad_slider:
+		ab_rad_slider.value_changed.connect(func(v): 
+			ab_fixed_radius = v
+			if ab_rad_spinbox: ab_rad_spinbox.set_value_no_signal(v)
+		)
+	if ab_rad_spinbox:
+		ab_rad_spinbox.value_changed.connect(func(v):
+			ab_fixed_radius = v
+			if ab_rad_slider: ab_rad_slider.set_value_no_signal(v)
+		)
+
+	# --- Amazing Surf Connections ---
+	# Folding Limit
+	if as_fold_slider:
+		as_fold_slider.value_changed.connect(func(v): 
+			as_fold_limit = v
+			if as_fold_spinbox: as_fold_spinbox.set_value_no_signal(v)
+		)
+	if as_fold_spinbox:
+		as_fold_spinbox.value_changed.connect(func(v):
+			as_fold_limit = v
+			if as_fold_slider: as_fold_slider.set_value_no_signal(v)
+		)
+
+	# Rotation X
+	if as_rot_x_slider:
+		as_rot_x_slider.value_changed.connect(func(v): 
+			as_rotate.x = v
+			if as_rot_x_spinbox: as_rot_x_spinbox.set_value_no_signal(v)
+		)
+	if as_rot_x_spinbox:
+		as_rot_x_spinbox.value_changed.connect(func(v):
+			as_rotate.x = v
+			if as_rot_x_slider: as_rot_x_slider.set_value_no_signal(v)
+		)
+
+	# Rotation Y
+	if as_rot_y_slider:
+		as_rot_y_slider.value_changed.connect(func(v): 
+			as_rotate.y = v
+			if as_rot_y_spinbox: as_rot_y_spinbox.set_value_no_signal(v)
+		)
+	if as_rot_y_spinbox:
+		as_rot_y_spinbox.value_changed.connect(func(v):
+			as_rotate.y = v
+			if as_rot_y_slider: as_rot_y_slider.set_value_no_signal(v)
+		)
+
+	# Rotation Z
+	if as_rot_z_slider:
+		as_rot_z_slider.value_changed.connect(func(v): 
+			as_rotate.z = v
+			if as_rot_z_spinbox: as_rot_z_spinbox.set_value_no_signal(v)
+		)
+	if as_rot_z_spinbox:
+		as_rot_z_spinbox.value_changed.connect(func(v):
+			as_rotate.z = v
+			if as_rot_z_slider: as_rot_z_slider.set_value_no_signal(v)
+	)
+	# Julia X
+	if as_julia_x_slider:
+		as_julia_x_slider.value_changed.connect(func(v): 
+			as_julia.x = v
+			if as_julia_x_spinbox: as_julia_x_spinbox.set_value_no_signal(v)
+		)
+	if as_julia_x_spinbox:
+		as_julia_x_spinbox.value_changed.connect(func(v):
+			as_julia.x = v
+			if as_julia_x_slider: as_julia_x_slider.set_value_no_signal(v)
+		)
+
+	# Julia Y
+	if as_julia_y_slider:
+		as_julia_y_slider.value_changed.connect(func(v): 
+			as_julia.y = v
+			if as_julia_y_spinbox: as_julia_y_spinbox.set_value_no_signal(v)
+		)
+	if as_julia_y_spinbox:
+		as_julia_y_spinbox.value_changed.connect(func(v):
+			as_julia.y = v
+			if as_julia_y_slider: as_julia_y_slider.set_value_no_signal(v)
+		)
+
+	# Julia Z
+	if as_julia_z_slider:
+		as_julia_z_slider.value_changed.connect(func(v): 
+			as_julia.z = v
+			if as_julia_z_spinbox: as_julia_z_spinbox.set_value_no_signal(v)
+		)
+	if as_julia_z_spinbox:
+		as_julia_z_spinbox.value_changed.connect(func(v):
+			as_julia.z = v
+			if as_julia_z_slider: as_julia_z_slider.set_value_no_signal(v)
+	)
+	
+	# Twist X
+	if as_twist_x_slider:
+		as_twist_x_slider.value_changed.connect(func(v): 
+			as_twist.x = v
+			if as_twist_x_spinbox: as_twist_x_spinbox.set_value_no_signal(v)
+		)
+	if as_twist_x_spinbox:
+		as_twist_x_spinbox.value_changed.connect(func(v):
+			as_twist.x = v
+			if as_twist_x_slider: as_twist_x_slider.set_value_no_signal(v)
+		)
+
+	# Twist Y
+	if as_twist_y_slider:
+		as_twist_y_slider.value_changed.connect(func(v): 
+			as_twist.y = v
+			if as_twist_y_spinbox: as_twist_y_spinbox.set_value_no_signal(v)
+		)
+	if as_twist_y_spinbox:
+		as_twist_y_spinbox.value_changed.connect(func(v):
+			as_twist.y = v
+			if as_twist_y_slider: as_twist_y_slider.set_value_no_signal(v)
+		)
+
+	# Twist Z (Existing)
+	if as_twist_z_slider:
+		as_twist_z_slider.value_changed.connect(func(v): 
+			as_twist.z = v
+			if as_twist_z_spinbox: as_twist_z_spinbox.set_value_no_signal(v)
+		)
+	if as_twist_z_spinbox:
+		as_twist_z_spinbox.value_changed.connect(func(v):
+			as_twist.z = v
+			if as_twist_z_slider: as_twist_z_slider.set_value_no_signal(v)
+		)
+	# --- WAVE STRENGTH (X, Y, Z) ---
+	if as_wave_str_x_slider:
+		as_wave_str_x_slider.value_changed.connect(func(v): 
+			as_wave_str.x = v
+			if as_wave_str_x_spinbox: as_wave_str_x_spinbox.set_value_no_signal(v)
+		)
+	if as_wave_str_x_spinbox:
+		as_wave_str_x_spinbox.value_changed.connect(func(v):
+			as_wave_str.x = v
+			if as_wave_str_x_slider: as_wave_str_x_slider.set_value_no_signal(v)
+		)
+
+	if as_wave_str_y_slider:
+		as_wave_str_y_slider.value_changed.connect(func(v): 
+			as_wave_str.y = v
+			if as_wave_str_y_spinbox: as_wave_str_y_spinbox.set_value_no_signal(v)
+		)
+	if as_wave_str_y_spinbox:
+		as_wave_str_y_spinbox.value_changed.connect(func(v):
+			as_wave_str.y = v
+			if as_wave_str_y_slider: as_wave_str_y_slider.set_value_no_signal(v)
+		)
+
+	if as_wave_str_z_slider:
+		as_wave_str_z_slider.value_changed.connect(func(v): 
+			as_wave_str.z = v
+			if as_wave_str_z_spinbox: as_wave_str_z_spinbox.set_value_no_signal(v)
+		)
+	if as_wave_str_z_spinbox:
+		as_wave_str_z_spinbox.value_changed.connect(func(v):
+			as_wave_str.z = v
+			if as_wave_str_z_slider: as_wave_str_z_slider.set_value_no_signal(v)
+		)
+
+	# --- WAVE FREQUENCY (X, Y, Z) ---
+	if as_wave_freq_x_slider:
+		as_wave_freq_x_slider.value_changed.connect(func(v): 
+			as_wave_freq.x = v
+			if as_wave_freq_x_spinbox: as_wave_freq_x_spinbox.set_value_no_signal(v)
+		)
+	if as_wave_freq_x_spinbox:
+		as_wave_freq_x_spinbox.value_changed.connect(func(v):
+			as_wave_freq.x = v
+			if as_wave_freq_x_slider: as_wave_freq_x_slider.set_value_no_signal(v)
+		)
+
+	if as_wave_freq_y_slider:
+		as_wave_freq_y_slider.value_changed.connect(func(v): 
+			as_wave_freq.y = v
+			if as_wave_freq_y_spinbox: as_wave_freq_y_spinbox.set_value_no_signal(v)
+		)
+	if as_wave_freq_y_spinbox:
+		as_wave_freq_y_spinbox.value_changed.connect(func(v):
+			as_wave_freq.y = v
+			if as_wave_freq_y_slider: as_wave_freq_y_slider.set_value_no_signal(v)
+		)
+
+	if as_wave_freq_z_slider:
+		as_wave_freq_z_slider.value_changed.connect(func(v): 
+			as_wave_freq.z = v
+			if as_wave_freq_z_spinbox: as_wave_freq_z_spinbox.set_value_no_signal(v)
+		)
+	if as_wave_freq_z_spinbox:
+		as_wave_freq_z_spinbox.value_changed.connect(func(v):
+			as_wave_freq.z = v
+			if as_wave_freq_z_slider: as_wave_freq_z_slider.set_value_no_signal(v)
+		)
+		
 	
 	file_dialog.file_selected.connect(_on_file_dialog_file_selected)
 		
@@ -632,7 +994,37 @@ func _ready() -> void:
 	else:
 		# Standard reseed if not randomizing
 		reseed_pattern()
+		
+	mandel_power_slider.value_changed.connect(func(v): 
+		mandel_power = v
+		mandel_power_spinbox.set_value_no_signal(v)
+	)
+	mandel_power_spinbox.value_changed.connect(func(v): 
+		mandel_power = v
+		mandel_power_slider.set_value_no_signal(v)
+	)
+	if is_instance_valid(camera_3d):
+		camera_3d.near = 0.001 # Default is 0.05, which is too far for fractals
+	# --- Setup Quality Dropdown ---
+	if quality_dropdown:
+		quality_dropdown.clear()
+		quality_dropdown.add_item("Performance (Fast)") # ID 0
+		quality_dropdown.add_item("Balanced (Default)") # ID 1
+		quality_dropdown.add_item("High Quality")       # ID 2
+		quality_dropdown.add_item("Ultra (Slow)")       # ID 3
+		
+		quality_dropdown.select(1) # Default to Balanced
+		
+		quality_dropdown.item_selected.connect(_on_quality_changed)
 
+func _on_quality_changed(index: int):
+	match index:
+		0: current_step_speed = 0.6  # Fast, creates holes/noise
+		1: current_step_speed = 0.35 # Good balance
+		2: current_step_speed = 0.2  # Very clean
+		3: current_step_speed = 0.12 # Cinematic / 4090 only
+	
+	print("Quality changed. Step speed: ", current_step_speed)
 func _get_control_string_from_id(var_id: int) -> String:
 	for key in VariationManager.VARIATIONS:
 		var data = VariationManager.VARIATIONS[key]
@@ -675,18 +1067,38 @@ func _save_3d_view_web() -> void:
 		if not is_instance_valid(texture_2d):
 			printerr("ERROR: Invalid 2D background texture.")
 			return
+		
+		# 1. Get the Master Size (The size of the background image)
 		var image_2d = texture_2d.get_image()
-		if not is_instance_valid(image_2d) or image_2d.is_empty():
-			printerr("ERROR: Failed to get valid Image from 2D background.")
-			return
-		image_2d = image_2d.duplicate() # Ensure stable copy
+		var target_size = image_2d.get_size()
+		
+		# 2. MAGIC FIX: Force the 3D Viewport to match the Background Size!
+		# We must disable the UI container stretch so we can manually resize the viewport
+		var original_stretch = display_container_3d.stretch
+		var original_3d_size = viewport_3d.size
+		
+		display_container_3d.stretch = false # Unlock size
+		viewport_3d.size = target_size       # Force match 2D resolution
+		
+		# 3. Wait for Godot to render the frame at the new resolution
+		await RenderingServer.frame_post_draw
+		await RenderingServer.frame_post_draw
+		
+		# 4. Capture the 3D image (Now it is the perfect size and aspect ratio!)
+		var texture_3d_resized = viewport_3d.get_texture()
+		image_3d = texture_3d_resized.get_image().duplicate()
 
-		# --- Create temporary textures from the image copies ---
+		# 5. Restore the Live View to normal
+		viewport_3d.size = original_3d_size
+		display_container_3d.stretch = original_stretch
+
+		# --- PROCEED WITH COMPOSITING ---
+		image_2d = image_2d.duplicate() 
 		var temp_tex_2d = ImageTexture.create_from_image(image_2d)
 		var temp_tex_3d = ImageTexture.create_from_image(image_3d)
 
 		if not is_instance_valid(temp_tex_2d) or not is_instance_valid(temp_tex_3d):
-			printerr("ERROR: Failed to create temporary ImageTextures for compositing.")
+			printerr("ERROR: Failed to create temporary ImageTextures.")
 			return
 
 		# --- Setup Composite Viewport ---
@@ -697,51 +1109,39 @@ func _save_3d_view_web() -> void:
 		if not is_instance_valid(composite_rect) or not is_instance_valid(composite_material):
 			printerr("ERROR: Composite viewport nodes/material not valid.")
 			return
-			
-		# Ensure the correct shader is assigned (might have been changed by 2D save)
+
+		# Ensure the correct shader is assigned
 		var composite_shader = preload("res://Composite3DOver2D.gdshader")
 		if composite_material.shader != composite_shader:
-			print("Re-assigning composite shader.")
 			composite_material.shader = composite_shader
 
-		var screen_size = image_2d.get_size() # Use image size
-		if screen_size.x <= 0 or screen_size.y <= 0:
-			printerr("ERROR: Invalid image size for compositing: ", screen_size)
-			return
-
-		# --- Configure, Force Render Once, and Wait ---
-		composite_viewport.size = screen_size
+		# Use the TARGET SIZE (Background size) for the final output
+		composite_viewport.size = target_size
 		composite_rect.texture = temp_tex_2d
 		composite_material.set_shader_parameter("foreground_texture", temp_tex_3d)
-		# --- NEW: Pass Grading Options to Composite ---
+		
+		# Pass Grading Options
 		composite_material.set_shader_parameter("grade_background", grade_background_active)
 		composite_material.set_shader_parameter("brightness", brightness)
 		composite_material.set_shader_parameter("contrast", contrast)
 		composite_material.set_shader_parameter("saturation", saturation)
-		
-		
-		# Set to update once, then wait for the *next* frame's draw cycle to complete
-		composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE) 
-		await get_tree().process_frame       # Wait for next physics/process frame
-		await RenderingServer.frame_post_draw # Wait for draw commands to be submitted
-		await RenderingServer.frame_post_draw # Wait for drawing to actually finish
 
-		# --- Get Result ---
+		# Render
+		composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE)
+		await get_tree().process_frame       
+		await RenderingServer.frame_post_draw 
+		await RenderingServer.frame_post_draw 
+
+		# Get Result
 		var composite_texture = composite_viewport.get_texture()
 		if is_instance_valid(composite_texture):
 			final_image = composite_texture.get_image()
-			if not is_instance_valid(final_image) or final_image.is_empty():
-				printerr("ERROR: Failed to get valid image from composite texture after waiting.")
-				final_image = null 
-		else:
-			printerr("ERROR: Failed to get composite texture from viewport after waiting.")
-
-		# --- Cleanup ---
-		composite_viewport.size = Vector2i(1, 1) # Reset size
-		# No need to change update mode back unless you use UPDATE_ONCE elsewhere
+		
+		# Cleanup
+		composite_viewport.size = Vector2i(1, 1)
 
 	else: # Not showing 2D background
-		final_image = image_3d # Use the duplicated image
+		final_image = image_3d
 
 	# --- Actual Saving ---
 	if not is_instance_valid(final_image) or final_image.is_empty():
@@ -762,104 +1162,102 @@ func _save_3d_view_web() -> void:
 # ============================================
 
 func _save_3d_view_desktop(path: String) -> void:
-	print("Starting 3D desktop save...")
+	print("Starting High-Resolution 3D Save...")
+	
 	var viewport_3d = display_container_3d.get_child(0) as SubViewport
 	if not is_instance_valid(viewport_3d):
-		printerr("ERROR: Could not find 3D viewport to save.")
+		printerr("ERROR: Could not find 3D viewport.")
 		return
 
-	# --- Wait for current rendering to settle ---
-	await get_tree().process_frame
+	# --- STEP 1: CALCULATE THE TARGET RESOLUTION ---
+	# We ignore the current 3D view size and calculate the desire High-Res size
+	# based on your "Resolution" dropdown and the window aspect ratio.
+	var base_width = 1024 * pow(2, save_resolution_index)
+	var window_size = get_viewport().get_visible_rect().size
+	var aspect_ratio = window_size.y / window_size.x
+	var render_height = int(base_width * aspect_ratio)
+	var target_size = Vector2i(base_width, render_height)
+	
+	print("Rendering at Target Resolution: ", target_size)
+
+	# --- STEP 2: RENDER 3D AT TARGET RESOLUTION ---
+	# We temporarily resize the 3D viewport to the massive target size
+	var original_stretch = display_container_3d.stretch
+	var original_3d_size = viewport_3d.size
+	
+	display_container_3d.stretch = false # Uncouple from UI
+	viewport_3d.size = target_size       # Force High-Res Size
+	
+	# Wait for the high-res frame to render
 	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	
+	# Capture the High-Res 3D Image
+	var texture_3d = viewport_3d.get_texture()
+	var image_3d = texture_3d.get_image().duplicate()
+	
+	# Restore the Live View
+	viewport_3d.size = original_3d_size
+	display_container_3d.stretch = original_stretch
 
 	var final_image: Image = null
 
-	# --- Get Image Data FIRST and Duplicate ---
-	var texture_3d = viewport_3d.get_texture()
-	if not is_instance_valid(texture_3d):
-		printerr("ERROR: Invalid 3D viewport texture.")
-		return
-	var image_3d = texture_3d.get_image()
-	if not is_instance_valid(image_3d) or image_3d.is_empty():
-		printerr("ERROR: Failed to get valid Image from 3D viewport.")
-		return
-	image_3d = image_3d.duplicate() # Ensure we have a stable copy
-
 	if show_2d_background:
-		print("Compositing 3D view over 2D background for save...")
+		print("Compositing 3D view over 2D background...")
+		
+		# Get the current 2D background
 		var texture_2d = final_output.get_texture()
-		if not is_instance_valid(texture_2d):
-			printerr("ERROR: Invalid 2D background texture.")
-			return
-		var image_2d = texture_2d.get_image()
-		if not is_instance_valid(image_2d) or image_2d.is_empty():
-			printerr("ERROR: Failed to get valid Image from 2D background.")
-			return
-		image_2d = image_2d.duplicate() # Ensure stable copy
-
-		# --- Create temporary textures from the image copies ---
+		var image_2d = texture_2d.get_image().duplicate()
+		
+		# Resize the 2D background to match the High-Res 3D render
+		# (This ensures they are the exact same size so no squishing happens)
+		image_2d.resize(target_size.x, target_size.y, Image.INTERPOLATE_CUBIC)
+		
 		var temp_tex_2d = ImageTexture.create_from_image(image_2d)
 		var temp_tex_3d = ImageTexture.create_from_image(image_3d)
-
-		if not is_instance_valid(temp_tex_2d) or not is_instance_valid(temp_tex_3d):
-			printerr("ERROR: Failed to create temporary ImageTextures for compositing.")
-			return
 
 		# --- Setup Composite Viewport ---
 		var composite_viewport = post_process_save_viewport
 		var composite_rect = composite_viewport.get_node("ShaderRect")
 		var composite_material = composite_rect.material as ShaderMaterial
 
-		if not is_instance_valid(composite_rect) or not is_instance_valid(composite_material):
-			printerr("ERROR: Composite viewport nodes/material not valid.")
-			return
-
-		# Ensure the correct shader is assigned (might have been changed by 2D save)
+		# Ensure the correct shader is assigned
 		var composite_shader = preload("res://Composite3DOver2D.gdshader")
 		if composite_material.shader != composite_shader:
-			print("Re-assigning composite shader.")
 			composite_material.shader = composite_shader
 
-		var screen_size = image_2d.get_size() # Use image size
-		if screen_size.x <= 0 or screen_size.y <= 0:
-			printerr("ERROR: Invalid image size for compositing: ", screen_size)
-			return
-
-		# --- Configure, Force Render Once, and Wait ---
-		composite_viewport.size = screen_size
+		# Set Composite Viewport to the Target Size
+		composite_viewport.size = target_size
 		composite_rect.texture = temp_tex_2d
 		composite_material.set_shader_parameter("foreground_texture", temp_tex_3d)
-		# --- NEW: Pass Grading Options to Composite ---
+		
+		# Pass Grading Options
 		composite_material.set_shader_parameter("grade_background", grade_background_active)
 		composite_material.set_shader_parameter("brightness", brightness)
 		composite_material.set_shader_parameter("contrast", contrast)
 		composite_material.set_shader_parameter("saturation", saturation)
 
-		# Set to update once, then wait for the *next* frame's draw cycle to complete
+		# Render the final composite
 		composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE)
-		await get_tree().process_frame       # Wait for next physics/process frame
-		await RenderingServer.frame_post_draw # Wait for draw commands to be submitted
-		await RenderingServer.frame_post_draw # Wait for drawing to actually finish
+		await get_tree().process_frame       
+		await RenderingServer.frame_post_draw 
+		await RenderingServer.frame_post_draw 
 
-		# --- Get Result ---
+		# Get Result
 		var composite_texture = composite_viewport.get_texture()
 		if is_instance_valid(composite_texture):
 			final_image = composite_texture.get_image()
-			if not is_instance_valid(final_image) or final_image.is_empty():
-				printerr("ERROR: Failed to get valid image from composite texture after waiting.")
-				final_image = null
-		else:
-			printerr("ERROR: Failed to get composite texture from viewport after waiting.")
+		
+		# Cleanup
+		composite_viewport.size = Vector2i(1, 1)
 
-		# --- Cleanup ---
-		composite_viewport.size = Vector2i(1, 1) # Reset size
+	else: 
+		# If no background, just use the High-Res 3D image
+		final_image = image_3d 
 
-	else: # Not showing 2D background
-		final_image = image_3d # Use the duplicated image
-
-	# --- Actual Saving ---
+	# --- STEP 3: SAVE TO DISK ---
 	if not is_instance_valid(final_image) or final_image.is_empty():
-		printerr("ERROR: Could not get final, valid image for saving.")
+		printerr("ERROR: Could not get final image.")
 		return
 
 	var error = final_image.save_png(path)
@@ -887,8 +1285,8 @@ func _on_main_control_resized():
 	
 	
 	var viewport_3d = display_container_3d.get_child(0) as SubViewport
-	if is_instance_valid(viewport_3d):
-		viewport_3d.size = new_size
+	#if is_instance_valid(viewport_3d):
+		#viewport_3d.size = new_size
 	# --- NEW (GPU-ONLY) ---
 	# Just resize the NormalMapViewport. The shader will handle the rest.
 	normal_map_viewport.size = new_size
@@ -927,76 +1325,132 @@ func _on_load_image_button_pressed() -> void:
 
 func _on_shape_selected(shape_index: int):
 	if not is_instance_valid(fractal_mesh):
-		printerr("ERROR: FractalMesh is not valid, cannot change shape.")
 		return
 
 	var new_mesh: Mesh = null
 
+	# --- STEP 1: CREATE GEOMETRY ---
 	match shape_index:
 		0: # Sphere
 			var m = SphereMesh.new()
 			m.radius = 0.5
 			m.height = 1.0
-			# High subdivision for smooth spikes
 			m.radial_segments = 128
 			m.rings = 64 
 			new_mesh = m
-			
-		1: # Cube (Triplanar / All Sides)
+		1: # Cube
 			var m = BoxMesh.new()
-			m.size = Vector3(2.0, 2.0, 2.0) # A nice uniform cube
-			
-			# High detail on ALL axes
+			m.size = Vector3(2.0, 2.0, 2.0)
 			m.subdivide_width = 100
 			m.subdivide_height = 100
 			m.subdivide_depth = 100
 			new_mesh = m
-			
-		2: # Quad (Now "Solid Block")
+		2: # Quad
 			var m = BoxMesh.new()
-			m.size = Vector3(2, 0.5, 2) # Wide and flat, like a slab base
-			
-			# High subdivision on top/bottom to show detail
+			m.size = Vector3(2, 0.5, 2)
 			m.subdivide_width = 200
 			m.subdivide_depth = 200
-			
-			# Low subdivision on sides (we just want straight walls)
 			m.subdivide_height = 1 
 			new_mesh = m
-			
-		3: # Prism (Triplanar / All Sides)
+		3: # Prism
 			var m = PrismMesh.new()
 			m.size = Vector3(2.0, 2.0, 2.0)
-			
-			# High detail on ALL axes
 			m.subdivide_width = 64
 			m.subdivide_height = 64
 			m.subdivide_depth = 64
 			new_mesh = m
-			
 		4: # Torus
 			var m = TorusMesh.new()
 			m.outer_radius = 0.5
 			m.inner_radius = 0.25
-			# High subdivision for smooth rings
 			m.rings = 128
 			m.ring_segments = 64
 			new_mesh = m
+		5, 6, 7, 8: # Raymarching Shapes
+			var m = BoxMesh.new()
+			m.size = Vector3(20.0, 20.0, 20.0)
+			new_mesh = m
 
+	# --- STEP 2: APPLY MATERIALS & UI ---
 	if new_mesh:
 		fractal_mesh.mesh = new_mesh
 		
-		# --- NEW: Configure Shader Mode ---
-		var mat = fractal_mesh.get_surface_override_material(0) as ShaderMaterial
-		if mat:
-			# Enable "Terrain Mode" ONLY if the shape is Quad (Index 2)
-			var is_terrain = (shape_index == 2)
-			mat.set_shader_parameter("use_terrain_mode", is_terrain)
-		# ----------------------------------
+		# Always show Main Container
+		mandel_controls.visible = true 
 		
+		# Ensure Mix/Scale Sliders are visible
+		if mandel_mix_slider: mandel_mix_slider.get_parent().visible = true
+		if mandel_scale_slider: mandel_scale_slider.get_parent().visible = true
+		
+		# Default: Hide Raymarch-specific panels
+		if ab_params: ab_params.visible = false
+		if as_params: as_params.visible = false
+
+		# --- NORMAL MESHES (0-4) ---
+		if shape_index < 5:
+			var mat = ShaderMaterial.new()
+			mat.shader = load("res://fractal_3d_displacement.gdshader")
+			fractal_mesh.set_surface_override_material(0, mat)
+			
+			is_raymarching = false
+			
+			# SHOW Standard Controls (Height, Glow, etc)
+			if standard_mesh_controls: standard_mesh_controls.visible = true
+
+			# HIDE Raymarch Core Sliders
+			if raymarch_core_params: raymarch_core_params.visible = false
+			else:
+				# Fallback
+				if mandel_power_slider: mandel_power_slider.visible = false
+				if mandel_power_spinbox: mandel_power_spinbox.visible = false
+				if iter_slider: iter_slider.visible = false
+				if iter_spinbox: iter_spinbox.visible = false
+			
+			if shape_index == 2: # Quad
+				mat.set_shader_parameter("use_terrain_mode", true)
+			else:
+				mat.set_shader_parameter("use_terrain_mode", false)
+
+		# --- RAYMARCHING SHAPES (5-8) ---
+		else:
+			var mat = ShaderMaterial.new()
+			is_raymarching = true
+			
+			# HIDE Standard Controls (Height, Glow, etc don't apply)
+			if standard_mesh_controls: standard_mesh_controls.visible = false
+			
+			# SHOW Raymarch Core Sliders
+			if raymarch_core_params: raymarch_core_params.visible = true
+			else:
+				if mandel_power_slider: mandel_power_slider.visible = true
+				if mandel_power_spinbox: mandel_power_spinbox.visible = true
+				if iter_slider: iter_slider.visible = true
+				if iter_spinbox: iter_spinbox.visible = true
+			
+			if shape_index == 5:
+				mat.shader = load("res://raymarch_mandelbulb.gdshader")
+			elif shape_index == 6:
+				mat.shader = load("res://raymarch_menger.gdshader")
+			# Show the modifiers (Rotate/Twist/Wave) for EVERY raymarcher (5, 6, 7, 8)
+			if as_params: as_params.visible = true
+			
+			# Only show "Fold/Radius" for Amazing Box (7)
+			if ab_params: ab_params.visible = (shape_index == 7)
+
+			# -- LOAD SHADERS --
+			if shape_index == 5:
+				mat.shader = load("res://raymarch_mandelbulb.gdshader")
+			elif shape_index == 6:
+				mat.shader = load("res://raymarch_menger.gdshader")
+			elif shape_index == 7:
+				mat.shader = load("res://raymarch_amazingbox.gdshader")
+			elif shape_index == 8:
+				mat.shader = load("res://raymarch_amazingsurf.gdshader")
+			
+			fractal_mesh.set_surface_override_material(0, mat)
+			
 		print("Changed mesh shape to index: ", shape_index)
-	else:
-		printerr("ERROR: Invalid shape index received: ", shape_index)
+	
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("reset_visuals"):
 		self.reset_visuals.call()
@@ -1005,6 +1459,9 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_ui"):
 		self.toggle_ui.call()
 func _on_viewport_gui_input(event: InputEvent) -> void:
+	# --- 3D CAMERA CONTROLS ---
+	# Standard 2D Fractal Controls (Pan/Zoom the Texture)
+	
 	if event is InputEventMouseMotion and event.button_mask & MOUSE_BUTTON_MASK_LEFT:
 		var relative_motion = event.relative / get_viewport_rect().size
 		if move_post_translate:
@@ -1025,19 +1482,13 @@ func _on_viewport_gui_input(event: InputEvent) -> void:
 			if event.pressed:
 				var base_delta = 0.005 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -0.005
 				
-				# --- NEW ZOOM LOGIC ---
-				# 1. Determine which variation is dominant
 				var dominant_variation_id = variation_mode_a
 				if variation_mix >= 0.5:
 					dominant_variation_id = variation_mode_b
 				
-				# 2. Check if the dominant variation is "normal" or "inversive"
 				var zoom_delta = base_delta
 				if not dominant_variation_id in INVERSE_VARIATIONS:
-					# It's a "normal" variation (like Truchet).
-					# Flip the delta so wheel-up zooms in (decreases scale).
 					zoom_delta *= -1.0
-				# --- END NEW LOGIC ---
 
 				if event.ctrl_pressed:
 					if event.shift_pressed: pre_rotation += zoom_delta * 5.0
@@ -1223,6 +1674,7 @@ func reset_visuals() -> void:
 	camera_distance = default_settings.camera_distance
 	camera_x_rotation = default_settings.camera_x_rotation
 	camera_y_rotation = default_settings.camera_y_rotation
+	camera_z_rotation = default_settings.camera_z_rotation if "camera_z_rotation" in default_settings else 0.0
 	camera_fov = default_settings.camera_fov
 	show_2d_background = default_settings.show_2d_background
 
@@ -1283,6 +1735,7 @@ func update_ui_from_state() -> void:
 			"cam_dist": camera_distance,
 			"cam_x_rot": camera_x_rotation,
 			"cam_y_rot": camera_y_rotation,
+			"cam_z_rot": camera_z_rotation,
 			"cam_fov": camera_fov,
 			"show_2d_bg": show_2d_background,
 			"save_res_index": save_resolution_index,
@@ -1434,19 +1887,32 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	%LightColorPicker.color = initial_values.get("light_color", Color.WHITE)
 	%ShadowCheckBox.set_pressed_no_signal(initial_values.get("light_shadows", true))
 
-	%NormalStrengthSlider.set_value_no_signal(initial_values.get("normal_strength", 1.0))
-	normal_strength_spinbox.set_value_no_signal(initial_values.get("normal_strength", 1.0))
+	#%NormalStrengthSlider.set_value_no_signal(initial_values.get("normal_strength", 1.0))
+	#normal_strength_spinbox.set_value_no_signal(initial_values.get("normal_strength", 1.0))
 
-	%CameraDistSlider.set_value_no_signal(initial_values.get("cam_dist", 2.5))
-	camera_dist_spinbox.set_value_no_signal(initial_values.get("cam_dist", 2.5))
+	%CameraDistSlider.set_value_no_signal(initial_values.get("cam_dist", 3.5))
+	camera_dist_spinbox.set_value_no_signal(initial_values.get("cam_dist", 3.5))
 	%CameraXRotSlider.set_value_no_signal(initial_values.get("cam_x_rot", 0.0))
 	camera_x_rot_spinbox.set_value_no_signal(initial_values.get("cam_x_rot", 0.0))
 	%CameraYRotSlider.set_value_no_signal(initial_values.get("cam_y_rot", 0.0))
 	camera_y_rot_spinbox.set_value_no_signal(initial_values.get("cam_y_rot", 0.0))
+	%CameraZRotSlider.set_value_no_signal(initial_values.get("cam_z_rot", 0.0))
+	camera_z_rot_spinbox.set_value_no_signal(initial_values.get("cam_z_rot", 0.0))
 	%CameraFovSlider.set_value_no_signal(initial_values.get("cam_fov", 75.0))
 	camera_fov_spinbox.set_value_no_signal(initial_values.get("cam_fov", 75.0))
 
 	%BackgroundCheckBox.set_pressed_no_signal(initial_values.get("show_2d_bg", false))
+	
+	# --- Mandelbulb UI Init ---
+	# (Existing lines for sliders...)
+	mandel_mix_slider.set_value_no_signal(initial_values.get("tex_int", 0.5))
+	mandel_scale_slider.set_value_no_signal(initial_values.get("tex_scale", 1.0))
+	
+	# (NEW lines for spinboxes)
+	mandel_mix_spinbox.set_value_no_signal(initial_values.get("tex_int", 0.5))
+	mandel_scale_spinbox.set_value_no_signal(initial_values.get("tex_scale", 1.0))
+	
+	
 	# --- NEW: 3D SLIDERS & CHECKS ---
 	displacement_slider.set_value_no_signal(initial_values.get("disp_str", 0.2))
 	displacement_spinbox.set_value_no_signal(initial_values.get("disp_str", 0.2))
@@ -1484,8 +1950,8 @@ func _on_save_button_pressed() -> void:
 			var base_width = 1024 * pow(2, save_resolution_index)
 			
 			# 2. Get the current window aspect ratio
-			var window_size = get_viewport().get_visible_rect().size
-			var aspect_ratio = window_size.y / window_size.x
+			var view_size = display_container_3d.size
+			var aspect_ratio = view_size.y / view_size.x
 			
 			# 3. Calculate the new height
 			var render_height = int(base_width * aspect_ratio)
@@ -1585,8 +2051,8 @@ func _on_file_dialog_file_selected(path: String) -> void:
 			var base_width = 1024 * pow(2, save_resolution_index)
 			
 			# 2. Get the current window aspect ratio
-			var window_size = get_viewport().get_visible_rect().size
-			var aspect_ratio = window_size.y / window_size.x
+			var view_size = display_container_3d.size
+			var aspect_ratio = view_size.y / view_size.x
 			
 			# 3. Calculate the new height
 			var render_height = int(base_width * aspect_ratio)
@@ -1745,17 +2211,28 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 func _process(delta: float) -> void:
 	# --- AUTO ROTATION LOGIC ---
 	if auto_rotate_active and is_3d_view and not animation_paused:
-		# Increment the Y Rotation variable
-		camera_y_rotation += rotate_speed * delta * 30.0 # *30 to make the slider feel responsive
+		var speed_mult = rotate_speed * delta * 30.0
 		
-		# Wrap around 360 to keep numbers clean
+		# Apply rotation to all axes based on the random vector
+		camera_x_rotation += auto_rotate_vector.x * speed_mult
+		camera_y_rotation += auto_rotate_vector.y * speed_mult
+		camera_z_rotation += auto_rotate_vector.z * speed_mult
+		
+		# Wrap variables to keep numbers clean
 		if camera_y_rotation > 360.0: camera_y_rotation -= 360.0
-		elif camera_y_rotation < 0.0: camera_y_rotation += 360.0
+		if camera_x_rotation > 360.0: camera_x_rotation -= 360.0
+		if camera_z_rotation > 360.0: camera_z_rotation -= 360.0
 		
-		# Update the UI slider so it visually spins (optional, but nice feedback)
-		# Note: We use set_value_no_signal to prevent a loop if you had logic there
+		# Update UI sliders visually
+		%CameraXRotSlider.set_value_no_signal(camera_x_rotation)
+		camera_x_rot_spinbox.set_value_no_signal(camera_x_rotation)
+		
 		%CameraYRotSlider.set_value_no_signal(camera_y_rotation)
 		camera_y_rot_spinbox.set_value_no_signal(camera_y_rotation)
+		
+		%CameraZRotSlider.set_value_no_signal(camera_z_rotation)
+		# If you added a CameraZRotSpinBox, update it here too:
+		camera_z_rot_spinbox.set_value_no_signal(camera_z_rotation)
 		
 		# Actually move the camera
 		_update_camera()
@@ -1879,33 +2356,76 @@ func _process(delta: float) -> void:
 	# --- NEW 3D MESH UPDATE (DISPLACEMENT + COLOR) ---
 	var mesh_material = fractal_mesh.get_surface_override_material(0) as ShaderMaterial
 	
-	if is_instance_valid(mesh_material) and is_3d_view:
-		# Determine the viewport that was just rendered TO
-		var rendered_viewport = viewport_b if is_a_source else viewport_a 
-		var current_texture = rendered_viewport.get_texture()
+	if is_instance_valid(mesh_material):
+		var current_shape = shape_selector_button.selected
+		
+		# --- 1. CRITICAL: SEND TEXTURE TO EVERYONE ---
+		var tex = viewport_b.get_texture() if is_a_source else viewport_a.get_texture()
+		mesh_material.set_shader_parameter("fractal_texture", tex)
 
-		if is_instance_valid(current_texture):
-			# 1. Texture & Strength
-			mesh_material.set_shader_parameter("fractal_texture", current_texture)
-			mesh_material.set_shader_parameter("displacement_strength", displacement_strength)
+		# --- 2. UNIVERSAL PARAMS ---
+		mesh_material.set_shader_parameter("brightness", brightness)
+		mesh_material.set_shader_parameter("contrast", contrast)
+		mesh_material.set_shader_parameter("saturation", saturation)
+		
+		# --- TEXTURE & DISPLACEMENT (UNIFIED) ---
+		mesh_material.set_shader_parameter("texture_intensity", mandel_texture_intensity)
+		mesh_material.set_shader_parameter("texture_scale", mandel_texture_scale)
+		
+		# *** THIS IS THE CHANGE ***
+		# We use 'displacement_strength' (the main slider variable)
+		# instead of 'mandel_displacement' (the one we deleted).
+		mesh_material.set_shader_parameter("displacement_strength", displacement_strength)
+		mesh_material.set_shader_parameter("displacement_smoothness", displacement_smoothness)
+		mesh_material.set_shader_parameter("emission_energy", emission_strength)
+
+		# --- 3. RAYMARCH SPECIFIC PARAMS ---
+		if is_raymarching:
+			mesh_material.set_shader_parameter("step_speed", current_step_speed)
+			# Send Light Data
+			if light_3d:
+				var light_dir = light_3d.global_transform.basis.z
+				mesh_material.set_shader_parameter("light_direction", light_dir)
+				var l_col = Vector3(light_color.r, light_color.g, light_color.b)
+				mesh_material.set_shader_parameter("light_color_val", l_col)
+				mesh_material.set_shader_parameter("light_energy_val", light_energy)
+
+			# Send Core Fractal Data
+			mesh_material.set_shader_parameter("power", mandel_power)
+			mesh_material.set_shader_parameter("iterations", ray_iterations)
+			
+			# Shape Specifics
+			if current_shape == 7: # Amazing Box
+				mesh_material.set_shader_parameter("folding_limit", ab_fold_limit)
+				mesh_material.set_shader_parameter("fixed_radius", ab_fixed_radius)
+				mesh_material.set_shader_parameter("min_radius", 0.5)
+				
+			# We send these to 5, 6, 7, and 8 now!
+			mesh_material.set_shader_parameter("fold_rotate", as_rotate)
+			mesh_material.set_shader_parameter("twist", as_twist)
+			mesh_material.set_shader_parameter("wave_strength", as_wave_str)
+			mesh_material.set_shader_parameter("wave_frequency", as_wave_freq)
+			mesh_material.set_shader_parameter("julia_offset", as_julia)
+
+			# --- SHAPE SPECIFIC EXTRAS ---
+			if current_shape == 7: # Amazing Box
+				mesh_material.set_shader_parameter("folding_limit", ab_fold_limit)
+				mesh_material.set_shader_parameter("fixed_radius", ab_fixed_radius)
+				mesh_material.set_shader_parameter("min_radius", 0.5)
+				
+			elif current_shape == 8: # Amazing Surf
+				# Surf needs Fold Limit too
+				mesh_material.set_shader_parameter("folding_limit", as_fold_limit)
+				mesh_material.set_shader_parameter("julia_offset", as_julia)
+				mesh_material.set_shader_parameter("twist", as_twist)
+				mesh_material.set_shader_parameter("wave_strength", as_wave_str)
+				mesh_material.set_shader_parameter("wave_frequency", as_wave_freq)
+		else:
+			# --- 4. NORMAL MESH SPECIFIC PARAMS ---
+			# Normal displacement shader needs 'displacement_offset' specifically
 			mesh_material.set_shader_parameter("displacement_offset", height_offset)
-			
-			# 2. Smoothing & Detail
-			mesh_material.set_shader_parameter("displacement_smoothness", displacement_smoothness)
-			
-			# 3. Toggles & Materials
-			# --- THIS WAS LIKELY MISSING: ---
 			mesh_material.set_shader_parameter("limit_displacement_to_top", limit_to_top)
-			
-			# --------------------------------
 			mesh_material.set_shader_parameter("use_dynamic_material", use_dynamic_material)
-			mesh_material.set_shader_parameter("emission_energy", emission_strength)
-			
-			# 4. Color Grading
-			mesh_material.set_shader_parameter("brightness", brightness)
-			mesh_material.set_shader_parameter("contrast", contrast)
-			mesh_material.set_shader_parameter("saturation", saturation)
-
 func _load_image_from_base64(b64_string: String) -> void:
 	if not "," in b64_string:
 		print("Error: Invalid Base64 string format (missing comma).")
@@ -2058,6 +2578,7 @@ func _gather_preset_data() -> Dictionary:
 		"camera_distance": camera_distance,
 		"camera_x_rotation": camera_x_rotation,
 		"camera_y_rotation": camera_y_rotation,
+		"camera_z_rotation": camera_z_rotation,
 		"camera_fov": camera_fov,
 		"show_2d_background": show_2d_background,
 		"displacement_strength": displacement_strength,
@@ -2067,7 +2588,8 @@ func _gather_preset_data() -> Dictionary:
 		"emission_strength": emission_strength,
 		"use_dynamic_material": use_dynamic_material,
 		"grade_background_active": grade_background_active,
-		
+		"tex_int": mandel_texture_intensity,
+		"tex_scale": mandel_texture_scale,
 	}
 	data.merge(_auto_params_a, true) # Add all "A" auto-params
 	data.merge(_auto_params_b, true) # Add all "B" auto-params
@@ -2658,6 +3180,10 @@ func _populate_all_dropdowns():
 	shape_selector_button.add_item("Quad")   # Index 2
 	shape_selector_button.add_item("Prism")  # Index 3
 	shape_selector_button.add_item("Torus")  # Index 4
+	shape_selector_button.add_item("Mandelbulb (Raymarch)") # Index 5
+	shape_selector_button.add_item("Menger Sponge (Raymarch)") # Index 6 
+	shape_selector_button.add_item("Amazing Box (Raymarch)") # Index 7
+	shape_selector_button.add_item("Amazing Surf (Raymarch)") # Index 8
 	
 
 func _get_id_from_name(var_name: String) -> int:
@@ -2814,10 +3340,7 @@ func _on_resolution_dropdown_item_selected(index: int):
 # --- 3D Controls Signals ---
 # =================================================================
 
-# --- 3D Shape Dropdown ---
-# (You already have this function, just connect the signal)
-# func _on_shape_selected(shape_index: int):
-# ...
+
 
 # --- 2D Background Checkbox ---
 func _on_background_check_box_toggled(button_pressed: bool):
@@ -2828,8 +3351,7 @@ func _on_background_check_box_toggled(button_pressed: bool):
 # --- Normal Strength ---
 func _on_normal_strength_changed(value: float):
 	normal_map_strength = value
-	%NormalStrengthSlider.set_value_no_signal(value) # Assuming slider is %NormalStrengthSlider
-	normal_strength_spinbox.set_value_no_signal(value)
+
 
 func _on_normal_strength_slider_value_changed(value: float):
 	_on_normal_strength_changed(value)
@@ -2917,6 +3439,7 @@ func _on_camera_y_rot_changed(value: float):
 	camera_y_rotation = value
 	%CameraYRotSlider.set_value_no_signal(value) # Assuming slider is %CameraYRotSlider
 	camera_y_rot_spinbox.set_value_no_signal(value)
+	camera_z_rot_spinbox.set_value_no_signal(value)
 	_update_camera() # Call helper
 
 func _on_camera_y_rot_slider_value_changed(value: float):
@@ -2924,6 +3447,21 @@ func _on_camera_y_rot_slider_value_changed(value: float):
 
 func _on_camera_y_rot_spinbox_value_changed(value: float):
 	_on_camera_y_rot_changed(value)
+	
+func _on_camera_z_rot_changed(value: float):
+	camera_z_rotation = value
+	%CameraZRotSlider.set_value_no_signal(value)
+	
+	if camera_z_rot_spinbox:
+		camera_z_rot_spinbox.set_value_no_signal(value)
+		
+	_update_camera()
+
+func _on_camera_z_rot_slider_value_changed(value: float):
+	_on_camera_z_rot_changed(value)
+
+func _on_camera_z_rot_spinbox_value_changed(value: float):
+	_on_camera_z_rot_changed(value)
 
 # --- Camera FOV ---
 func _on_camera_fov_changed(value: float):
