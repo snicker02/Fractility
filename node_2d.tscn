@@ -1,4 +1,4 @@
-[gd_scene load_steps=157 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=159 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -8,6 +8,7 @@
 [ext_resource type="Shader" uid="uid://m48sth4ixbgv" path="res://NormalMap.gdshader" id="4_0hol4"]
 [ext_resource type="PackedScene" uid="uid://dkd3sc3vxx6jf" path="res://VariationPanel.tscn" id="5_rj586"]
 [ext_resource type="Script" uid="uid://di65wpry5ixo0" path="res://VariationParameter.gd" id="6_4d7sh"]
+[ext_resource type="Script" uid="uid://diswo4orl2u13" path="res://FreeLookCamera.gd" id="6_hqns4"]
 [ext_resource type="Shader" uid="uid://dr08robqa1tts" path="res://fractal_3d_displacement.gdshader" id="6_ir8iy"]
 
 [sub_resource type="Resource" id="Resource_rj586"]
@@ -1379,6 +1380,9 @@ metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Environment" id="Environment_0e48y"]
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_4d7sh"]
+radius = 0.05
+
 [sub_resource type="SphereMesh" id="SphereMesh_4d7sh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hqns4"]
@@ -1452,6 +1456,16 @@ layout_mode = 2
 
 [node name="Container3DControls" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
+layout_mode = 2
+
+[node name="GameStartButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Start Game"
+
+[node name="ScoreLabel" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="3D Shape" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
@@ -2261,7 +2275,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 2.7"
+text = "V 2.8"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -3461,6 +3475,14 @@ unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 current = true
 near = 0.001
+script = ExtResource("6_hqns4")
+
+[node name="PlayerHitbox" type="Area3D" parent="HSplitContainer/Control/Display_3D_Container/3DViewport/Node3D/Camera3D"]
+unique_name_in_owner = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HSplitContainer/Control/Display_3D_Container/3DViewport/Node3D/Camera3D/PlayerHitbox"]
+unique_name_in_owner = true
+shape = SubResource("SphereShape3D_4d7sh")
 
 [node name="FractalMesh" type="MeshInstance3D" parent="HSplitContainer/Control/Display_3D_Container/3DViewport/Node3D"]
 unique_name_in_owner = true

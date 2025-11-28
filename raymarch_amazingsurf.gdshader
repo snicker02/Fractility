@@ -182,6 +182,10 @@ void fragment() {
 		final_col = mix(final_col, vec3(0.0), fog);
 		
 		ALBEDO = apply_color_grading(final_col);
+		vec4 world_pos = MODEL_MATRIX * vec4(p, 1.0);
+		vec4 view_pos = VIEW_MATRIX * world_pos;
+		vec4 clip_pos = PROJECTION_MATRIX * view_pos;
+		DEPTH = clip_pos.z / clip_pos.w;
 	} else {
 		discard;
 	}

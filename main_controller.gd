@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 2.7
+const PROGRAM_VERSION = 2.8
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -78,6 +78,145 @@ var ab_fixed_radius: float = 1.0
 
 @onready var quality_dropdown: OptionButton = %QualityDropdown
 var current_step_speed: float = 0.25 # Default to Balanced
+
+
+
+# --- MINI GAME VARIABLES ---
+@onready var game_start_btn: Button = %GameStartButton # Make sure to set Unique Name
+@onready var score_label: Label = %ScoreLabel          # Make sure to set Unique Name
+@onready var player_hitbox: Area3D = %Camera3D/PlayerHitbox # Update path if needed
+
+var game_score: int = 0
+var game_max_orbs: int = 10
+var game_active: bool = false
+var game_orbs: Array[Node3D] = []
+
+func spawn_orb():
+	var orb = Area3D.new()
+	var mesh_inst = MeshInstance3D.new()
+	var collider = CollisionShape3D.new()
+	
+	# --- 1. RANDOM SHAPE (Now Smaller!) ---
+	var shape_type = randi() % 3
+	var mesh_geo
+	var col_shape
+	
+	if shape_type == 0: 
+		# CRYSTAL (Tiny Gem)
+		var m = SphereMesh.new()
+		m.radius = 0.12  # Was 0.25
+		m.height = 0.3   # Was 0.5
+		m.radial_segments = 4
+		m.rings = 2
+		mesh_geo = m
+		col_shape = SphereShape3D.new()
+		col_shape.radius = 0.12
+		
+	elif shape_type == 1:
+		# DATA CUBE (Tiny Box)
+		var m = BoxMesh.new()
+		m.size = Vector3(0.2, 0.2, 0.2) # Was 0.35
+		mesh_geo = m
+		col_shape = BoxShape3D.new()
+		col_shape.size = m.size
+		
+	else:
+		# PYRAMID (Tiny Shard)
+		var m = PrismMesh.new()
+		m.size = Vector3(0.2, 0.2, 0.05) # Was 0.4
+		mesh_geo = m
+		col_shape = BoxShape3D.new()
+		col_shape.size = Vector3(0.2, 0.2, 0.1)
+
+	mesh_inst.mesh = mesh_geo
+	collider.shape = col_shape
+
+	# --- 2. MATERIAL (Glowing Neon) ---
+	var mat = StandardMaterial3D.new()
+	var hue = randf_range(0.3, 0.6) # Green -> Cyan -> Blue range
+	mat.albedo_color = Color.from_hsv(hue, 1.0, 1.0)
+	
+	mat.roughness = 0.1
+	mat.metallic = 0.8 # More metallic for that "artifact" look
+	mat.emission_enabled = true
+	mat.emission = Color.from_hsv(hue, 1.0, 1.0)
+	mat.emission_energy_multiplier = 2.0
+	mat.rim_enabled = true
+	mat.rim = 0.5
+	
+	mesh_inst.material_override = mat
+	
+	# Build Tree
+	orb.add_child(mesh_inst)
+	orb.add_child(collider)
+	
+	# --- 3. SPIN ANIMATION ---
+	var tween = orb.create_tween().set_loops()
+	var rand_time = randf_range(1.5, 3.0) # Spin slightly faster since they are smaller
+	tween.tween_property(mesh_inst, "rotation", Vector3(0, TAU, TAU), rand_time).as_relative()
+
+	# --- 4. SMART POSITIONING ---
+	var spawn_range = 2.0 
+	var current_shape = shape_selector_button.selected
+	
+	if current_shape == 5: spawn_range = 1.1 
+	elif current_shape == 6: spawn_range = 0.9 
+	elif current_shape == 7: spawn_range = 2.0
+	elif current_shape == 8: spawn_range = 2.5
+	
+	orb.position = Vector3(
+		randf_range(-spawn_range, spawn_range),
+		randf_range(-spawn_range, spawn_range),
+		randf_range(-spawn_range, spawn_range)
+	)
+	
+	%Camera3D.get_parent().add_child(orb) 
+	game_orbs.append(orb)
+	
+	orb.area_entered.connect(func(area): 
+		if area == %Camera3D.get_node("PlayerHitbox"):
+			collect_orb(orb)
+	)
+
+func start_mini_game():
+	# Clear old game
+	for orb in game_orbs:
+		if is_instance_valid(orb): orb.queue_free()
+	game_orbs.clear()
+	
+	game_score = 0
+	game_active = true
+	score_label.visible = true
+	score_label.text = "Orbs: 0 / " + str(game_max_orbs)
+	
+	# Spawn new orbs
+	for i in range(game_max_orbs):
+		spawn_orb()
+		
+	print("Game Started! Find the orbs inside the fractal.")
+
+func collect_orb(orb: Node3D):
+	if not game_active: return
+	
+	# Play a sound here if you have an AudioStreamPlayer!
+	
+	orb.queue_free() # Remove orb
+	game_orbs.erase(orb)
+	
+	game_score += 1
+	score_label.text = "Orbs: " + str(game_score) + " / " + str(game_max_orbs)
+	
+	if game_score >= game_max_orbs:
+		win_game()
+
+func win_game():
+	game_active = false
+	score_label.text = "YOU WIN! All Fractals Collected!"
+	
+	# Victory visual effect?
+	# Let's spin the camera crazy for a second!
+	auto_rotate_active = true
+	rotate_speed = 2.0
 
 # Wave Variables
 @onready var as_wave_str_x_slider: HSlider = %ASWaveStrXSlider
@@ -638,6 +777,9 @@ func _ready() -> void:
 	dynamic_material_check.toggled.connect(func(b): use_dynamic_material = b)
 	grade_background_check.toggled.connect(func(b): grade_background_active = b)
 	limit_top_check.toggled.connect(func(b): limit_to_top = b)
+	
+	if game_start_btn:
+		game_start_btn.pressed.connect(start_mini_game)
 	
 	displacement_slider.value_changed.connect(func(v): 
 		displacement_strength = v
