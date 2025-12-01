@@ -1,5 +1,9 @@
 shader_type canvas_item;
 
+struct VariationResult {
+	vec2 uv;
+	float dist; // For Orbit Trap / Escape Time
+};
 // --- Uniforms ---
 uniform sampler2D previous_frame : filter_linear;
 uniform int variation_mode_a = 0;
@@ -14,6 +18,17 @@ uniform bool show_grid = false;
 uniform bool show_circles = true;
 uniform sampler2D background_texture;
 uniform bool is_animating = false;
+uniform float escape_limit = 4.0; // The "Trap" radius
+uniform bool use_escape_time = false; // Toggle
+uniform int escape_shape = 0; // 0=Circle, 1=Square, 2=Cross, 3=Diamond
+uniform float escape_smoothness : hint_range(0.0, 2.0) = 0.1; // How soft the edge is
+uniform bool escape_invert = false; // Toggle tunnel vs island
+
+
+
+
+
+
 
 // Start Pattern Uniforms
 uniform float circle_count = 4.0;
@@ -112,16 +127,16 @@ uniform float polar_offset_b_speed;
 
 // Symmetry Uniforms
 
-uniform float var_a_mirror_x; 
-uniform float var_a_mirror_y; 
+uniform float var_a_mirror_x;
+uniform float var_a_mirror_y;
 uniform float var_a_mirror_rotation;
 uniform float var_a_mirror_rotation_speed;
 uniform float var_a_kaleidoscope_slices;
 uniform float var_a_kaleidoscope_rotation;
 uniform float var_a_kaleidoscope_rotation_speed;
 
-uniform float var_b_mirror_x; 
-uniform float var_b_mirror_y; 
+uniform float var_b_mirror_x;
+uniform float var_b_mirror_y;
 uniform float var_b_mirror_rotation;
 uniform float var_b_mirror_rotation_speed;
 uniform float var_b_kaleidoscope_slices;
@@ -400,6 +415,22 @@ uniform float tangent_scale_b_speed;
 uniform float tangent_strength_b;
 uniform float tangent_strength_b_speed;
 
+// Popcorn A Uniforms
+uniform float popcorn_scale_a;
+uniform float popcorn_scale_a_speed;
+uniform float popcorn_strength_a;
+uniform float popcorn_strength_a_speed;
+uniform float popcorn_density_a; // Controls the "grain" size
+uniform float popcorn_density_a_speed;
+
+// Popcorn B Uniforms
+uniform float popcorn_scale_b;
+uniform float popcorn_scale_b_speed;
+uniform float popcorn_strength_b;
+uniform float popcorn_strength_b_speed;
+uniform float popcorn_density_b;
+uniform float popcorn_density_b_speed;
+
 // --- Helper Functions ---
 mat2 rotate(float angle) {
 	return mat2(vec2(cos(angle), -sin(angle)), vec2(sin(angle), cos(angle)));
@@ -451,7 +482,7 @@ vec2 apply_variation(vec2 uv, int variation_id,
 	float spherical_strength, float spherical_strength_speed,
     float spherical_center_x, float spherical_center_x_speed,
     float spherical_center_y, float spherical_center_y_speed,
-	// Swirl 
+	// Swirl
     float swirl_radius_scale, float swirl_radius_scale_speed,
     float swirl_angle_scale, float swirl_angle_scale_speed,
 	// Tangent
@@ -514,8 +545,15 @@ vec2 apply_variation(vec2 uv, int variation_id,
     float truchet_rotate, float truchet_rotate_speed,
     float truchet_strength, float truchet_strength_speed,
     float truchet_mode,
+
+
 	// Rep-Tile General
     float reptile_scale, float reptile_scale_speed, float reptile_rotate, float reptile_rotate_speed,
+// Popcorn
+    float popcorn_scale, float popcorn_scale_speed,
+    float popcorn_strength, float popcorn_strength_speed,
+    float popcorn_density, float popcorn_density_speed,
+
 ) {
 	if (variation_id == 0) { // Sinusoidal
     // 1. Calculate animated values
@@ -533,7 +571,7 @@ vec2 apply_variation(vec2 uv, int variation_id,
 
     // 2. Reconstruct center vec2
     vec2 center = vec2(anim_center_x, anim_center_y);
-    
+
     // 3. Apply logic
     vec2 p = uv - center;
     float r2 = dot(p, p);
@@ -545,7 +583,7 @@ vec2 apply_variation(vec2 uv, int variation_id,
     // 1. Calculate animated values
     float anim_radius_scale = swirl_radius_scale + sin(time * swirl_radius_scale_speed);
     float anim_angle_scale = swirl_angle_scale + sin(time * swirl_angle_scale_speed);
-    
+
     // 2. Apply logic
     float r = length(uv);
     float angle = atan(uv.y, uv.x);
@@ -581,11 +619,11 @@ vec2 apply_variation(vec2 uv, int variation_id,
 		float anim_d = julian_d + sin(time * julian_d_speed);
 		float anim_e = julian_e + sin(time * julian_e_speed);
 		float anim_f = julian_f + sin(time * julian_f_speed);
-		
+
 		// 2. Re-create the matrix and vector
 		mat2 julian_mat = mat2(vec2(anim_a, anim_c), vec2(anim_b, anim_d));
 		vec2 julian_trans = vec2(anim_e, anim_f);
-		
+
 		// 3. Call the julian function with the animated values
 		if (anim_power == 0.0) { return uv; }
 		float _cN = anim_dist / anim_power * 0.5;
@@ -608,23 +646,23 @@ vec2 apply_variation(vec2 uv, int variation_id,
 	} else if (variation_id == 7) { // Mirror
     // 1. Calculate and apply animated rotation
     float anim_rotation = mirror_rotation + (time * mirror_rotation_speed);
-    vec2 p = uv * rotate(radians(anim_rotation)); 
+    vec2 p = uv * rotate(radians(anim_rotation));
 
     // 2. Apply mirror logic (check if float is > 0.5)
-    if (mirror_x > 0.5) { p.x = abs(p.x); } 
-    if (mirror_y > 0.5) { p.y = abs(p.y); } 
+    if (mirror_x > 0.5) { p.x = abs(p.x); }
+    if (mirror_y > 0.5) { p.y = abs(p.y); }
     return p;
 	} else if (variation_id == 8) { // Kaleidoscope
 		// 1. Calculate animated rotation
     float anim_rotation = kaleidoscope_rotation + (time * kaleidoscope_rotation_speed);
-    
+
     // 2. Apply rotation to the coordinate system (using your 'vec * mat' syntax)
-    vec2 p = uv * rotate(radians(anim_rotation)); 
+    vec2 p = uv * rotate(radians(anim_rotation));
 
     // 3. Apply kaleidoscope logic to the rotated coordinates
     // Note: We use the non-animated 'kaleidoscope_slices' for stability
     if (kaleidoscope_slices <= 0.0) { return p; } // Return just the rotated UVs
-    
+
     float angle = atan(p.y, p.x);
     float r = length(p);
     float slice_angle = PI / kaleidoscope_slices;
@@ -632,7 +670,7 @@ vec2 apply_variation(vec2 uv, int variation_id,
     angle = abs(angle - slice_angle);
     p.x = r * cos(angle);
     p.y = r * sin(angle);
-    
+
     // 4. Return the sliced, rotated coordinates
     return p;
 }    else if (variation_id == 9) { // Mobius
@@ -655,15 +693,15 @@ vec2 apply_variation(vec2 uv, int variation_id,
         // 3. Run the original Mobius logic with the new vec2s
         // u = a*z + b
         vec2 u = vec2(m_a.x * uv.x - m_a.y * uv.y, m_a.x * uv.y + m_a.y * uv.x) + m_b;
-        
+
         // v = c*z + d
         vec2 v = vec2(m_c.x * uv.x - m_c.y * uv.y, m_c.x * uv.y + m_c.y * uv.x) + m_d;
-        
+
         // Calculate 1 / |v|^2, and protect from division by zero
         float d = dot(v, v);
         if (d < 1e-9) { return uv; } // Return original if denominator is too small
         float inv_d = 1.0 / d;
-        
+
         // Return u / v, which is (u * conjugate(v)) / |v|^2
         return vec2(u.x * v.x + u.y * v.y, u.y * v.x - u.x * v.y) * inv_d;
     } else if (variation_id == 10) { // Cellular Weave
@@ -688,11 +726,11 @@ vec2 apply_variation(vec2 uv, int variation_id,
         neighbor_sum += get_cell_value(grid_p, vec2(-1.0,  1.0)) > 0.5 ? 1.0 : 0.0;
         neighbor_sum += get_cell_value(grid_p, vec2( 0.0,  1.0)) > 0.5 ? 1.0 : 0.0;
         neighbor_sum += get_cell_value(grid_p, vec2( 1.0,  1.0)) > 0.5 ? 1.0 : 0.0;
-        
+
         // 1. Define both possible outcomes
         float angle = neighbor_sum * 0.1;
         vec2 twisted_p = mat2(vec2(cos(angle), sin(angle)), vec2(-sin(angle), cos(angle))) * p;
-        
+
         vec2 cell_center = (grid_p + 0.5) / anim_grid;
         vec2 pulled_p = mix(p, cell_center, 0.1);
 
@@ -722,27 +760,27 @@ vec2 apply_variation(vec2 uv, int variation_id,
     p.y *= -1.0;
     p = vec2(cos(radians(anim_rotation)) * p.x - sin(radians(anim_rotation)) * p.y,
                sin(radians(anim_rotation)) * p.x + cos(radians(anim_rotation)) * p.y);
-    
+
     // --- Heart Shape Formula ---
     float x = p.x;
     float y = p.y;
-    
+
     float heart_val = pow(x*x + y*y - 1.0, 3.0) - x*x * pow(y, 3.0);
-    
+
     vec2 displacement = normalize(vec2(
         3.0 * pow(x*x + y*y - 1.0, 2.0) * (2.0*x) - 2.0*x*pow(y, 3.0),
         3.0 * pow(x*x + y*y - 1.0, 2.0) * (2.0*y) - x*x * 3.0*pow(y, 2.0)
     ));
-    
+
     if (heart_val < 0.0) {
         displacement *= -1.0;
     }
-    
+
     // 3. Apply animated strength
     return uv + displacement * anim_strength * 0.1; // *0.1 to keep it subtle
 }
 else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
-    vec2 p = uv; 
+    vec2 p = uv;
 
     // 1. Calculate all animated values
     float anim_scale = apollonian_scale + sin(time * apollonian_scale_speed);
@@ -771,7 +809,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
     } else {
         closest_center = c3;
     }
-    
+
     // 4. Map the point
     if (abs(anim_scale) < 1e-6) { return p; } // Protect from divide by zero
     p = closest_center + (p - closest_center) / anim_scale;
@@ -794,7 +832,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
     float anim_strength = tangent_strength + sin(time * tangent_strength_speed);
 
     // 2. Apply parameters
-    // We simply multiply uv by scale. If the user sets scale to ~1.57 (PI/2), 
+    // We simply multiply uv by scale. If the user sets scale to ~1.57 (PI/2),
     // they will get the extreme stretching effect.
     return tan(uv * anim_scale) * anim_strength;
 }
@@ -829,17 +867,17 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 	// --- REP-TILES GROUP ---
     // Now INCLUDES ID 20 (Custom 2x2)
     if (variation_id >= 19 && variation_id <= 31) {
-        
+
         // 1. Calculate Animated Transforms
         float anim_scale = max(0.01, reptile_scale + sin(time * reptile_scale_speed));
         float anim_rot = reptile_rotate + sin(time * reptile_rotate_speed);
-        
+
         // 2. Apply global rotation to UV
         vec2 p = uv * rotate(radians(anim_rot));
-        
+
         // L-Tromino (19)
-        if (variation_id == 19) { 
-            p *= 2.0 * anim_scale; 
+        if (variation_id == 19) {
+            p *= 2.0 * anim_scale;
             if (p.x >= 0.0 && p.y >= 0.0) { p = vec2(p.y, -p.x) + vec2(-1.0, 1.0); }
             else if (p.x < 0.0 && p.y >= 0.0) { p = p + vec2(1.0, -1.0); }
             else if (p.x < 0.0 && p.y < 0.0) { p = p + vec2(1.0, 1.0); }
@@ -849,7 +887,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         // Custom 2x2 (20) - NEWLY ADDED HERE
         else if (variation_id == 20) {
             // For ID 20, we apply scale at the END to preserve the 0.5 offsets
-            vec2 q = p * 2.0; 
+            vec2 q = p * 2.0;
 
             if (q.x > 0.0 && q.y > 0.0) { // TR
                  q = (apply_quad_transform(q - vec2(0.5, 0.5), custom_tr) * 0.5) + vec2(0.5, 0.5);
@@ -860,19 +898,19 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
             } else { // BR
                  q = (apply_quad_transform(q - vec2(0.5, -0.5), custom_br) * 0.5) + vec2(0.5, -0.5);
             }
-            
+
             // Apply the global zoom/scale here
-            return (q / 2.0) * anim_scale; 
+            return (q / 2.0) * anim_scale;
         }
         // Sphinx (21)
         else if (variation_id == 21) {
             p *= 2.0 * anim_scale;
             mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
             if (p.x + p.y > 0.0) {
-                if (p.x - p.y > 0.0) { p = R90 * p + vec2(0.0, 1.0); } 
+                if (p.x - p.y > 0.0) { p = R90 * p + vec2(0.0, 1.0); }
                 else { p = p + vec2(-1.0, 0.0); }
             } else {
-                if (p.x - p.y > 0.0) { p = p + vec2(1.0, 0.0); } 
+                if (p.x - p.y > 0.0) { p = p + vec2(1.0, 0.0); }
                 else { p = R90 * p + vec2(0.0, -1.0); }
             }
             return p / 2.0;
@@ -881,23 +919,23 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         else if (variation_id == 22) {
             p *= 2.0 * anim_scale;
             mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
-            if (p.x >= 0.0 && p.y >= 0.0) { p = R90 * p + vec2(0.0, 1.0); } 
-            else if (p.x < 0.0 && p.y >= 0.0) { p = R90 * p + vec2(0.0, -1.0); } 
-            else if (p.x < 0.0 && p.y < 0.0) { p = -p; } 
+            if (p.x >= 0.0 && p.y >= 0.0) { p = R90 * p + vec2(0.0, 1.0); }
+            else if (p.x < 0.0 && p.y >= 0.0) { p = R90 * p + vec2(0.0, -1.0); }
+            else if (p.x < 0.0 && p.y < 0.0) { p = -p; }
             else { p = p + vec2(-1.0, 1.0); }
             return p / 2.0;
         }
         // Sierpinski Carpet (23)
         else if (variation_id == 23) {
-            p = (p * anim_scale + 0.5) * 3.0; 
+            p = (p * anim_scale + 0.5) * 3.0;
             vec2 i = floor(p);
             if (i.x == 1.0 && i.y == 1.0) { return uv; }
             return fract(p) - 0.5;
         }
         // Gosper Island (24)
         else if (variation_id == 24) {
-            p = p + 0.5; 
-            float GOSPER_SCALE = 2.64575 * anim_scale; 
+            p = p + 0.5;
+            float GOSPER_SCALE = 2.64575 * anim_scale;
             mat2 R60 = mat2(vec2(0.5, 0.866025), vec2(-0.866025, 0.5));
             vec2 p_hex = to_hex_grid(p);
             vec2 p_scaled = p_hex * GOSPER_SCALE;
@@ -905,7 +943,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
             vec2 i = floor(p_scaled);
             vec2 i_sq = vec2(i.x - floor(i.y / 2.0), i.y);
             int tile_index = int(mod(i_sq.x + i_sq.y * 2.0, 7.0));
-            vec2 c_offset = vec2(0.0); 
+            vec2 c_offset = vec2(0.0);
             if (tile_index == 1) { c_offset = vec2(1.0, 0.0); }
             else if (tile_index == 2) { c_offset = vec2(0.0, 1.0); }
             else if (tile_index == 3) { c_offset = vec2(-1.0, 1.0); }
@@ -914,7 +952,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
             else if (tile_index == 6) { c_offset = vec2(1.0, -1.0); }
             vec2 f_unskew = mat2(vec2(1.0, 0.0), vec2(-0.5 / 0.866025, 1.0 / 0.866025)) * f;
             vec2 result = (R60 * f_unskew) + c_offset;
-            result = result / GOSPER_SCALE; 
+            result = result / GOSPER_SCALE;
             return result - 0.5;
         }
         // Carpet Corners (25)
@@ -922,7 +960,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
             p = (p * anim_scale + 0.5) * 3.0;
             vec2 i = floor(p);
             if ( (i.x == 0.0 || i.x == 2.0) && (i.y == 0.0 || i.y == 2.0) ) { return fract(p) - 0.5; }
-            return uv; 
+            return uv;
         }
         // Carpet Cross (26)
         else if (variation_id == 26) {
@@ -954,7 +992,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         }
         // Penrose Star (29)
         else if (variation_id == 29) {
-            float scale = 1.8 * anim_scale; 
+            float scale = 1.8 * anim_scale;
             vec2 c1 = vec2(0.0, 0.5); vec2 c2 = vec2(0.4755, 0.1545); vec2 c3 = vec2(0.2939, -0.4045);
             vec2 c4 = vec2(-0.2939, -0.4045); vec2 c5 = vec2(-0.4755, 0.1545);
             float d1 = distance(p, c1); float d2 = distance(p, c2); float d3 = distance(p, c3);
@@ -983,13 +1021,13 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         else if (variation_id == 31) {
             p *= 2.0 * anim_scale;
             mat2 R90 = mat2(vec2(0.0, 1.0), vec2(-1.0, 0.0));
-            if (p.x < 0.0) { p = R90 * p + vec2(0.0, 1.0); } 
+            if (p.x < 0.0) { p = R90 * p + vec2(0.0, 1.0); }
             else { p = p + vec2(-1.0, 0.0); }
             return p / 2.0;
         }
     }
     // --- END REP-TILES GROUP ---
-    
+
     // IMPORTANT: You must REMOVE the standalone "else if (variation_id == 20)" block
     // that was below this, because it is now handled inside the group above!
 	else if (variation_id == 32) { // Clifford
@@ -1019,20 +1057,20 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         float anim_scale = max(0.1, truchet_scale + sin(time * truchet_scale_speed));
         float anim_rotate = truchet_rotate + sin(time * truchet_rotate_speed);
         float anim_strength = truchet_strength + sin(time * truchet_strength_speed);
-        
+
         int mode = int(truchet_mode);
-        
+
         // --- Mode 0: Displacement ---
         if (mode == 0) {
             vec2 p = uv;
             p = p * rotate(radians(anim_rotate));
             p = p * anim_scale;
-            
+
             vec2 i = floor(p);
             vec2 f = fract(p);
-            
+
             float r = rand(i);
-            
+
             vec2 c1, c2;
             if (r > 0.5) { c1 = vec2(0.0, 1.0); c2 = vec2(1.0, 0.0); }
             else { c1 = vec2(0.0, 0.0); c2 = vec2(1.0, 1.0); }
@@ -1041,36 +1079,36 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
             vec2 displacement = g * rotate(radians(anim_rotate)) * anim_strength;
 
             return uv + displacement;
-        } 
+        }
         // --- Mode 1: 90-degree rotate ---
         else if (mode == 1) {
             vec2 p = uv;
             p = p * rotate(radians(anim_rotate));
             p = p * anim_scale;
-            
+
             vec2 i = floor(p);
             vec2 f = fract(p);
-            
+
             float r = rand(i);
             if (r > 0.5) {
-                f = vec2(f.y, 1.0 - f.x); 
+                f = vec2(f.y, 1.0 - f.x);
             }
-            
+
             // Calculate the final result
             vec2 result = (i + f) / anim_scale * rotate(radians(-anim_rotate));
-            
+
             // Mix between original and result based on strength
             return mix(uv, result, anim_strength);
-        } 
+        }
         // --- Mode 2: Swap ---
         else if (mode == 2) {
             vec2 p = uv;
             p = p * rotate(radians(anim_rotate));
             p = p * anim_scale;
-            
+
             vec2 i = floor(p);
             vec2 f = fract(p);
-            
+
             float r = rand(i);
             if (r > 0.5) {
                 f.x = 1.0 - f.x;
@@ -1078,16 +1116,39 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
             if (f.x > f.y) {
                 f.xy = f.yx;
             }
-            
+
             // Calculate the final result
             vec2 result = (i + f) / anim_scale * rotate(radians(-anim_rotate));
-            
+
             // Mix between original and result based on strength
             return mix(uv, result, anim_strength);
         }
         return uv;
+			}
+	else if (variation_id == 35) { // Popcorn
+		// 1. Calculate animated values
+		float anim_scale = max(0.01, popcorn_scale + sin(time * popcorn_scale_speed));
+		float anim_strength = popcorn_strength + sin(time * popcorn_strength_speed);
+		float anim_density = popcorn_density + sin(time * popcorn_density_speed);
+
+		// 2. Apply Scale
+		vec2 p = uv / anim_scale;
+
+		// 3. Popcorn Formula
+		// x = x - c * sin(y + tan(3 * y))
+		// y = y - c * sin(x + tan(3 * x))
+		// We use 'anim_density' instead of the hardcoded 3.0
+
+		float dx = anim_strength * sin(p.y + tan(anim_density * p.y));
+		float dy = anim_strength * sin(p.x + tan(anim_density * p.x));
+
+		p.x -= dx;
+		p.y -= dy;
+
+		return p * anim_scale;
+
     }
-	return uv; 
+	return uv;
 }
 vec2 random(vec2 st) {
     st = vec2(dot(st, vec2(127.1,311.7)),
@@ -1109,10 +1170,10 @@ float perlin_noise(vec2 st) {
 // --- Main Shader Logic ---
 void fragment() {
 	// Reconstruct matrices from their column vectors first
-	
+
 	vec4 final_color;
 	vec4 start_pattern_color;
-	
+
 	// --- STEP 1: Calculate the Start Pattern (ALWAYS) ---
 	// We calculate this every frame so it's always available.
 	if (start_pattern_mode == 0) { // Gradient + Grid
@@ -1126,7 +1187,7 @@ void fragment() {
 				start_pattern_color *= 1.5;
 			}
 		}
-	} 
+	}
 	else if (start_pattern_mode == 1) { // Circles
 		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
 		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
@@ -1158,10 +1219,10 @@ void fragment() {
 		vec4 top_mix_B = mix(grad_col_br, grad_col_bl, UV.x);
 		vec4 bottom_mix_B = mix(grad_col_tr, grad_col_tl, UV.x);
 		vec4 gradient_color_B = mix(top_mix_B, bottom_mix_B, UV.y);
-		float d = distance(UV, vec2(0.5)) * 2.0; 
+		float d = distance(UV, vec2(0.5)) * 2.0;
 		float v = fract(d * circle_grid_scale);
 		float half_width = circle_grid_radius * 0.5;
-		float ring_value = smoothstep(0.5 - half_width - circle_grid_softness, 0.5 - half_width, v) - 
+		float ring_value = smoothstep(0.5 - half_width - circle_grid_softness, 0.5 - half_width, v) -
 						   smoothstep(0.5 + half_width, 0.5 + half_width + circle_grid_softness, v);
 		start_pattern_color = mix(gradient_color_B, gradient_color_A, ring_value);
 	}
@@ -1178,7 +1239,7 @@ void fragment() {
 	if (time < 0.1) {
 		// On the first frame, the final color *is* the start pattern
 		final_color = start_pattern_color;
-	} 
+	}
 	else {
 		// On subsequent frames, run the feedback loop
 		vec2 transformed_uv = UV - vec2(0.5); // Center coordinates
@@ -1209,7 +1270,7 @@ vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a,
     clifford_a_a, clifford_a_a_speed, clifford_b_a, clifford_b_a_speed, clifford_c_a, clifford_c_a_speed, clifford_d_a, clifford_d_a_speed,
     dejong_a_a, dejong_a_a_speed, dejong_b_a, dejong_b_a_speed, dejong_c_a, dejong_c_a_speed, dejong_d_a, dejong_d_a_speed,
     truchet_scale_a, truchet_scale_a_speed, truchet_rotate_a, truchet_rotate_a_speed, truchet_strength_a, truchet_strength_a_speed, truchet_mode_a,
-	reptile_scale_a, reptile_scale_a_speed, reptile_rotate_a, reptile_rotate_a_speed);
+	reptile_scale_a, reptile_scale_a_speed, reptile_rotate_a, reptile_rotate_a_speed, popcorn_scale_a, popcorn_scale_a_speed, popcorn_strength_a, popcorn_strength_a_speed, popcorn_density_a, popcorn_density_a_speed);
 vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
 	sinusoidal_scale_b, sinusoidal_scale_b_speed, sinusoidal_strength_b, sinusoidal_strength_b_speed,
     spherical_strength_b, spherical_strength_b_speed, spherical_center_x_b, spherical_center_x_b_speed, spherical_center_y_b, spherical_center_y_b_speed,
@@ -1232,10 +1293,34 @@ vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
     clifford_a_b, clifford_a_b_speed, clifford_b_b, clifford_b_b_speed, clifford_c_b, clifford_c_b_speed, clifford_d_b, clifford_d_b_speed,
     dejong_a_b, dejong_a_b_speed, dejong_b_b, dejong_b_b_speed, dejong_c_b, dejong_c_b_speed, dejong_d_b, dejong_d_b_speed,
     truchet_scale_b, truchet_scale_b_speed, truchet_rotate_b, truchet_rotate_b_speed, truchet_strength_b, truchet_strength_b_speed, truchet_mode_b,
-	reptile_scale_b, reptile_scale_b_speed, reptile_rotate_b, reptile_rotate_b_speed);
-		
+	reptile_scale_b, reptile_scale_b_speed, reptile_rotate_b, reptile_rotate_b_speed,
+	popcorn_scale_b, popcorn_scale_b_speed, popcorn_strength_b, popcorn_strength_b_speed, popcorn_density_b, popcorn_density_b_speed);
+
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
-		
+
+		// --- ESCAPE TIME LOGIC (NEW) ---
+		// --- ORBIT TRAP SHAPE LOGIC ---
+		float dist = 0.0;
+		vec2 p_centered = mixed_uv; // Already centered relative to transform
+
+		if (escape_shape == 0) {
+			// Circle (Standard Radius)
+			dist = length(p_centered);
+		}
+		else if (escape_shape == 1) {
+			// Square (Box Trap) - max of x or y
+			dist = max(abs(p_centered.x), abs(p_centered.y));
+		}
+		else if (escape_shape == 2) {
+			// Cross / Axes (Stalk Trap) - min of x or y
+			// This creates "plus sign" shapes
+			dist = min(abs(p_centered.x), abs(p_centered.y));
+		}
+		else if (escape_shape == 3) {
+			// Diamond (Manhattan Distance)
+			dist = (abs(p_centered.x) + abs(p_centered.y)) * 0.7; // 0.7 scales it to match others
+		}
+
 		// Apply Post-Transforms
 		mixed_uv *= rotate(post_rotation);
 		mixed_uv /= post_scale;
@@ -1260,9 +1345,28 @@ vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
 		// We now ALWAYS mix with the fresh start_pattern_color.
 		// This ensures the fractal looks the same whether it is moving or still,
 		// and prevents the "muddy" look.
-		
+
 		vec4 transformed_color = texture(previous_frame, final_uv);
-		final_color = mix(start_pattern_color, transformed_color, feedback_amount);
+		if (use_escape_time) {
+			// 1. Calculate the Mask (0.0 = Safe, 1.0 = Escaped)
+			float mask = smoothstep(escape_limit, escape_limit + escape_smoothness, dist);
+
+			// 2. Handle Inversion
+			if (escape_invert) {
+				mask = 1.0 - mask;
+			}
+
+			// 3. Mix Feedback with the Background (Start Pattern)
+			// mask 0.0 = Show Feedback
+			// mask 1.0 = Show Background (Start Pattern)
+			vec4 feedback_result = mix(start_pattern_color, transformed_color, feedback_amount);
+
+			final_color = mix(feedback_result, start_pattern_color, mask);
+
+		} else {
+			// Normal Feedback (No Trap)
+			final_color = mix(start_pattern_color, transformed_color, feedback_amount);
+		}
 	}
 
 	COLOR = final_color;

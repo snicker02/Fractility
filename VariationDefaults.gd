@@ -2,8 +2,8 @@ extends Resource
 class_name VariationDefaults
 
 ## --- Main Controls ---
-@export var variation_mode_a: int = 0 #Sinusoidal ID
-@export var variation_mode_b: int = 1  # Spherical ID
+@export var variation_mode_a: int = 0 # Sinusoidal ID
+@export var variation_mode_b: int = 1 # Spherical ID
 @export var start_pattern_mode: int = 0
 @export var variation_mix: float = 0.5
 @export var feedback_amount: float = 0.8
@@ -27,6 +27,13 @@ class_name VariationDefaults
 @export var circle_grid_scale: float = 8.0
 @export var circle_grid_radius: float = 0.4
 @export var circle_grid_softness: float = 0.05
+
+## --- Escape Time (Orbit Trap) ---
+@export var use_escape_time: bool = false
+@export var escape_limit: float = 4.0
+@export var escape_shape: int = 0
+@export var escape_smoothness: float = 0.1
+@export var escape_invert: bool = false
 
 ## --- Transforms ---
 @export var pre_scale: float = 1.0
@@ -107,6 +114,13 @@ class_name VariationDefaults
 @export var custom_bl_a_id: int = 0
 @export var custom_br_a_id: int = 0
 
+@export var popcorn_scale_a: float = 1.0
+@export var popcorn_scale_a_speed: float = 0.0
+@export var popcorn_strength_a: float = 0.1
+@export var popcorn_strength_a_speed: float = 0.0
+@export var popcorn_density_a: float = 3.0
+@export var popcorn_density_a_speed: float = 0.0
+
 
 ## --- Variation B ---
 @export var var_b_mirror_x: bool = false
@@ -162,6 +176,14 @@ class_name VariationDefaults
 @export var custom_tr_b_id: int = 0
 @export var custom_bl_b_id: int = 0
 @export var custom_br_b_id: int = 0
+
+@export var popcorn_scale_b: float = 1.0
+@export var popcorn_scale_b_speed: float = 0.0
+@export var popcorn_strength_b: float = 0.1
+@export var popcorn_strength_b_speed: float = 0.0
+@export var popcorn_density_b: float = 3.0
+@export var popcorn_density_b_speed: float = 0.0
+
 ## --- Truchet A ---
 @export var truchet_scale_a: float = 2.0
 @export var truchet_rotate_a: float = 0.0
@@ -174,7 +196,7 @@ class_name VariationDefaults
 @export var truchet_strength_b: float = 0.1
 @export var truchet_mode_b: float = 1.0
 
-## --- 3D Controls ---
+## --- 3D Controls (General) ---
 @export var light_x_rotation: float = 0.0
 @export var light_y_rotation: float = 0.0
 @export var light_energy: float = 1.0
@@ -184,5 +206,33 @@ class_name VariationDefaults
 @export var camera_distance: float = 3.5
 @export var camera_x_rotation: float = 0.0
 @export var camera_y_rotation: float = 0.0
+@export var camera_z_rotation: float = 0.0 # Added Z
 @export var camera_fov: float = 75.0
 @export var show_2d_background: bool = false
+
+## --- 3D Surface / Material ---
+@export var displacement_strength: float = 0.2
+@export var height_offset: float = -0.5
+@export var displacement_smoothness: float = 0.0
+@export var limit_to_top: bool = false
+@export var emission_strength: float = 0.0
+@export var use_dynamic_material: bool = false
+@export var grade_background_active: bool = false
+
+## --- Raymarching (3D Fractals) ---
+@export var mandel_power: float = 3.0
+@export var ray_iterations: int = 12
+@export var mandel_texture_intensity: float = 0.5
+@export var mandel_texture_scale: float = 1.0
+
+# Amazing Box / Surf Settings
+@export var ab_fold_limit: float = 1.0
+@export var ab_fixed_radius: float = 1.0
+
+# Chaos Modifiers (ASurf & Others)
+@export var as_fold_limit: float = 1.0
+@export var as_rotate: Vector3 = Vector3.ZERO
+@export var as_twist: Vector3 = Vector3.ZERO
+@export var as_wave_strength: Vector3 = Vector3.ZERO
+@export var as_wave_frequency: Vector3 = Vector3(4.0, 4.0, 4.0)
+@export var as_julia: Vector3 = Vector3.ZERO

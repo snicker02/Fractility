@@ -1,4 +1,4 @@
-[gd_scene load_steps=159 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=165 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -513,6 +513,36 @@ add_speed_control = true
 default = 1.0
 min = -5.0
 max = 5.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_kq1c5"]
+script = ExtResource("6_4d7sh")
+name = "popcorn_scale_a"
+label = "Scale"
+add_speed_control = true
+default = 1.0
+min = 0.1
+max = 5.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ornx7"]
+script = ExtResource("6_4d7sh")
+name = "popcorn_strength_a"
+label = "Strength"
+add_speed_control = true
+default = 0.1
+min = 0.0
+max = 1.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_cnnru"]
+script = ExtResource("6_4d7sh")
+name = "popcorn_density_a"
+label = "Density"
+add_speed_control = true
+default = 3.0
+min = 1.0
+max = 20.0
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_nlac5"]
@@ -1197,6 +1227,36 @@ add_speed_control = true
 default = 1.0
 min = -5.0
 max = 5.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_540hr"]
+script = ExtResource("6_4d7sh")
+name = "popcorn_scale_b"
+label = "Scale"
+add_speed_control = true
+default = 1.0
+min = 0.1
+max = 5.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_6ip5v"]
+script = ExtResource("6_4d7sh")
+name = "popcorn_strength_b"
+label = "Strength"
+add_speed_control = true
+default = 0.1
+min = 0.0
+max = 1.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_q5dlx"]
+script = ExtResource("6_4d7sh")
+name = "popcorn_density_b"
+label = "Density"
+add_speed_control = true
+default = 3.0
+min = 1.0
+max = 20.0
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ojpun"]
@@ -2275,7 +2335,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 2.8"
+text = "V 2.9"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -2732,6 +2792,12 @@ layout_mode = 2
 panel_title = "Polar A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_c7o6v")])
 
+[node name="PopcornControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Popcorn A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_kq1c5"), SubResource("Resource_ornx7"), SubResource("Resource_cnnru")])
+
 [node name="RepTilePanelA" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -2958,6 +3024,12 @@ layout_mode = 2
 panel_title = "Polar B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_5i8vy")])
 
+[node name="PopcornControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Popcorn B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_540hr"), SubResource("Resource_6ip5v"), SubResource("Resource_q5dlx")])
+
 [node name="RepTilePanelB" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -3164,6 +3236,56 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 text = "Mirror Tile"
+
+[node name="HSeparator9" type="HSeparator" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer18" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="EscapeTimeCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer18"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Use Escape Time"
+
+[node name="EscapeLimitSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer18"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 10.0
+step = 0.001
+value = 4.0
+
+[node name="EscapeLimitSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer18"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 10.0
+step = 0.001
+value = 4.0
+
+[node name="EscapeShapeDropdown" type="OptionButton" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer18"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Softness" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer18"]
+layout_mode = 2
+text = "Softness"
+
+[node name="EscapeSmoothSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer18"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="EscapeSmoothSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer18"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="EscapeInvertCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer18"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Invert Trap"
 
 [node name="HSeparator2" type="HSeparator" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 layout_mode = 2

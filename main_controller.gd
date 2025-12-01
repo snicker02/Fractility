@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 2.8
+const PROGRAM_VERSION = 2.9
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -76,9 +76,24 @@ var ray_iterations: int = 12
 var ab_fold_limit: float = 1.0
 var ab_fixed_radius: float = 1.0
 
+@onready var escape_time_check: CheckBox = %EscapeTimeCheck
+@onready var escape_limit_slider: HSlider = %EscapeLimitSlider
+@onready var escape_limit_spinbox: SpinBox = %EscapeLimitSpinBox # Uncomment if you add one
+
+var use_escape_time: bool = false
+var escape_limit: float = 4.0
+
+@onready var escape_shape_dropdown: OptionButton = %EscapeShapeDropdown
+var escape_shape: int = 0
+
 @onready var quality_dropdown: OptionButton = %QualityDropdown
 var current_step_speed: float = 0.25 # Default to Balanced
+@onready var escape_smooth_slider: HSlider = %EscapeSmoothSlider
+@onready var escape_smooth_spinbox: SpinBox = %EscapeSmoothSpinBox
+@onready var escape_invert_check: CheckBox = %EscapeInvertCheck
 
+var escape_smoothness: float = 0.1
+var escape_invert: bool = false
 
 
 # --- MINI GAME VARIABLES ---
@@ -421,6 +436,8 @@ var mandel_texture_scale: float = 1.0
 @onready var hyperbolic_sine_controls_container_b: VBoxContainer = %HyperbolicSineControlsContainerB
 @onready var swirl_controls_container_a: VBoxContainer = %SwirlControlsContainerA
 @onready var swirl_controls_container_b: VBoxContainer = %SwirlControlsContainerB
+@onready var popcorn_controls_container_a: VBoxContainer = %PopcornControlsContainerA
+@onready var popcorn_controls_container_b: VBoxContainer = %PopcornControlsContainerB
 @onready var reptile_vars_a: VBoxContainer = %RepTilePanelA.get_node("VariationPanel")
 @onready var reptile_vars_b: VBoxContainer = %RepTilePanelB.get_node("VariationPanel")
 
@@ -694,6 +711,7 @@ func _ready() -> void:
 		"spherical": spherical_controls_container_a,
 		"swirl": swirl_controls_container_a,
 		"tangent": tangent_controls_container_a,
+		"popcorn": popcorn_controls_container_a,
 		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
 	}
 	
@@ -720,6 +738,7 @@ func _ready() -> void:
 		"spherical": spherical_controls_container_b,
 		"swirl": swirl_controls_container_b,
 		"tangent": tangent_controls_container_b,
+		"popcorn": popcorn_controls_container_b,
 		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
 	}
 	
@@ -777,7 +796,10 @@ func _ready() -> void:
 	dynamic_material_check.toggled.connect(func(b): use_dynamic_material = b)
 	grade_background_check.toggled.connect(func(b): grade_background_active = b)
 	limit_top_check.toggled.connect(func(b): limit_to_top = b)
-	
+	if popcorn_controls_container_a:
+		popcorn_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	if popcorn_controls_container_b:
+		popcorn_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	if game_start_btn:
 		game_start_btn.pressed.connect(start_mini_game)
 	
@@ -1092,6 +1114,51 @@ func _ready() -> void:
 			if as_wave_freq_z_slider: as_wave_freq_z_slider.set_value_no_signal(v)
 		)
 		
+	# --- Escape Time Connections ---
+	if escape_time_check:
+		escape_time_check.toggled.connect(func(b): use_escape_time = b)
+		
+	# 1. Slider -> Variable + SpinBox
+	if escape_limit_slider:
+		escape_limit_slider.value_changed.connect(func(v): 
+			escape_limit = v
+			if escape_limit_spinbox: escape_limit_spinbox.set_value_no_signal(v)
+		)
+
+	# 2. SpinBox -> Variable + Slider
+	if escape_limit_spinbox:
+		escape_limit_spinbox.value_changed.connect(func(v):
+			escape_limit = v
+			if escape_limit_slider: escape_limit_slider.set_value_no_signal(v)
+		)
+	
+	if escape_shape_dropdown:
+		escape_shape_dropdown.clear()
+		escape_shape_dropdown.add_item("Circle")   # 0
+		escape_shape_dropdown.add_item("Square")   # 1
+		escape_shape_dropdown.add_item("Cross")    # 2
+		escape_shape_dropdown.add_item("Diamond")  # 3
+		
+		escape_shape_dropdown.item_selected.connect(func(index): 
+			escape_shape = index
+		)
+	if escape_smooth_slider:
+		escape_smooth_slider.value_changed.connect(func(v): 
+			escape_smoothness = v
+			if escape_smooth_spinbox: escape_smooth_spinbox.set_value_no_signal(v)
+		)
+	if escape_smooth_spinbox:
+		escape_smooth_spinbox.value_changed.connect(func(v):
+			escape_smoothness = v
+			if escape_smooth_slider: escape_smooth_slider.set_value_no_signal(v)
+		)
+	if escape_invert_check:
+		escape_invert_check.toggled.connect(func(b): escape_invert = b)
+		
+		
+		
+	
+	
 	
 	file_dialog.file_selected.connect(_on_file_dialog_file_selected)
 		
@@ -1315,8 +1382,7 @@ func _save_3d_view_desktop(path: String) -> void:
 	# We ignore the current 3D view size and calculate the desire High-Res size
 	# based on your "Resolution" dropdown and the window aspect ratio.
 	var base_width = 1024 * pow(2, save_resolution_index)
-	var window_size = get_viewport().get_visible_rect().size
-	var aspect_ratio = window_size.y / window_size.x
+	var aspect_ratio = 9.0 / 16.0
 	var render_height = int(base_width * aspect_ratio)
 	var target_size = Vector2i(base_width, render_height)
 	
@@ -2091,9 +2157,9 @@ func _on_save_button_pressed() -> void:
 			# 1. Get the base width from the dropdown
 			var base_width = 1024 * pow(2, save_resolution_index)
 			
-			# 2. Get the current window aspect ratio
-			var view_size = display_container_3d.size
-			var aspect_ratio = view_size.y / view_size.x
+			# 2. Force 16:9 Aspect Ratio
+			# This guarantees 2048x1152 instead of calculating based on window shape
+			var aspect_ratio = 9.0 / 16.0
 			
 			# 3. Calculate the new height
 			var render_height = int(base_width * aspect_ratio)
@@ -2192,9 +2258,8 @@ func _on_file_dialog_file_selected(path: String) -> void:
 			# 1. Get the base width from the dropdown
 			var base_width = 1024 * pow(2, save_resolution_index)
 			
-			# 2. Get the current window aspect ratio
-			var view_size = display_container_3d.size
-			var aspect_ratio = view_size.y / view_size.x
+			# 2. Force 16:9 Aspect Ratio
+			var aspect_ratio = 9.0 / 16.0
 			
 			# 3. Calculate the new height
 			var render_height = int(base_width * aspect_ratio)
@@ -2280,6 +2345,7 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("grad_col_bl", grad_col_bl)
 	save_material.set_shader_parameter("grad_col_br", grad_col_br)
 	save_material.set_shader_parameter("background_texture", background_texture)
+	save_material.set_shader_parameter("escape_shape", escape_shape)
 	for param_name in _auto_params_a:
 		save_material.set_shader_parameter(param_name,_auto_params_a[param_name])
 	
@@ -2294,7 +2360,11 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("custom_tr_a", custom_tr_a_id)
 	save_material.set_shader_parameter("custom_bl_a", custom_bl_a_id)
 	save_material.set_shader_parameter("custom_br_a", custom_br_a_id)
-
+	save_material.set_shader_parameter("use_escape_time", use_escape_time)
+	save_material.set_shader_parameter("escape_limit", escape_limit)
+	save_material.set_shader_parameter("escape_smoothness", escape_smoothness)
+	save_material.set_shader_parameter("escape_invert", escape_invert)
+	
 	# Var B Params
 	save_material.set_shader_parameter("blur_amount_b", blur_amount_b)
 
@@ -2420,8 +2490,15 @@ func _process(delta: float) -> void:
 	var previous_frame_texture = source_viewport.get_texture()
 	var target_material = target_viewport.get_node("ShaderRect").material as ShaderMaterial
 	var is_animating = not _speed_controls.is_empty()
-	
+	# --- SEND ESCAPE TIME PARAMS ---
+	target_material.set_shader_parameter("use_escape_time", use_escape_time)
+	target_material.set_shader_parameter("escape_limit", escape_limit)
 	target_material.set_shader_parameter("is_animating", is_animating)
+	target_material.set_shader_parameter("escape_shape", escape_shape)
+	target_material.set_shader_parameter("escape_smoothness", escape_smoothness)
+	target_material.set_shader_parameter("escape_invert", escape_invert)
+	
+	
 	# Send Auto-Params for A
 	for param_name in _auto_params_a:
 			target_material.set_shader_parameter(param_name, _auto_params_a[param_name])

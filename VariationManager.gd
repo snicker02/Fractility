@@ -46,6 +46,7 @@ const VARIATIONS = {
 	"Swirl":            { "id": 2, "controls": "swirl" },
 	"Tangent":          { "id": 15, "controls": "tangent" },
 	"Truchet": { "id": 34, "controls": "truchet" },
+	"Popcorn": { "id": 35, "controls": "popcorn" },
 	"Wave":             { "id": 3, "controls": "wave" },
 }
 
