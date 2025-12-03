@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 2.9
+const PROGRAM_VERSION = 3.0
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -348,7 +348,6 @@ var mandel_texture_scale: float = 1.0
 @onready var tangent_controls_container_a: VBoxContainer = %TangentControlsContainerA
 @onready var tangent_controls_container_b: VBoxContainer = %TangentControlsContainerB
 
-
 # Symmetry Control Containers
 @onready var var_a_mirror_controls: VBoxContainer = %VarAMirrorControlsContainer
 @onready var var_a_kaleidoscope_controls: VBoxContainer = %VarAKaleidoscopeControlsContainer
@@ -440,7 +439,10 @@ var mandel_texture_scale: float = 1.0
 @onready var popcorn_controls_container_b: VBoxContainer = %PopcornControlsContainerB
 @onready var reptile_vars_a: VBoxContainer = %RepTilePanelA.get_node("VariationPanel")
 @onready var reptile_vars_b: VBoxContainer = %RepTilePanelB.get_node("VariationPanel")
-
+@onready var lazy_mega_controls_container_a: VBoxContainer = %LazyMegaControlsContainerA
+@onready var lazy_mega_controls_container_b: VBoxContainer = %LazyMegaControlsContainerB
+@onready var glynn_sim_controls_container_a: VBoxContainer = %GlynnSimControlsContainerA
+@onready var glynn_sim_controls_container_b: VBoxContainer = %GlynnSimControlsContainerB
 var is_recording: bool = false
 var frame_counter: int = 0
 var recording_dir: String = "user://recordings/"
@@ -712,6 +714,8 @@ func _ready() -> void:
 		"swirl": swirl_controls_container_a,
 		"tangent": tangent_controls_container_a,
 		"popcorn": popcorn_controls_container_a,
+		"lazy_mega": lazy_mega_controls_container_a,
+		"glynn_sim": glynn_sim_controls_container_a,
 		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
 	}
 	
@@ -739,6 +743,8 @@ func _ready() -> void:
 		"swirl": swirl_controls_container_b,
 		"tangent": tangent_controls_container_b,
 		"popcorn": popcorn_controls_container_b,
+		"lazy_mega": lazy_mega_controls_container_b,
+		"glynn_sim": glynn_sim_controls_container_b,
 		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
 	}
 	
@@ -786,6 +792,11 @@ func _ready() -> void:
 	swirl_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	tangent_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	tangent_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	lazy_mega_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	lazy_mega_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	glynn_sim_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	glynn_sim_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	
 	reptile_vars_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	reptile_vars_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	randomize_startup_check.toggled.connect(func(_p): save_user_prefs())

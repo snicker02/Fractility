@@ -1,4 +1,4 @@
-[gd_scene load_steps=165 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=199 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -236,6 +236,54 @@ default = 2.0
 min = 0.0
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
+[sub_resource type="Resource" id="Resource_s1om5"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "glynn_ring_mode_a"
+label = "Ring Mode"
+dropdown_options = PackedStringArray("EMPTY", "TEXTURE", "STRIPES", "CHECKERS", "DOTS", "PLASMA", "SPIRAL")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_yl3ei"]
+script = ExtResource("6_4d7sh")
+name = "glynn_radius_a"
+label = "Radius"
+add_speed_control = true
+default = 0.5
+min = 0.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_m4a6d"]
+script = ExtResource("6_4d7sh")
+name = "glynn_thickness_a"
+label = "Thickness"
+add_speed_control = true
+default = 0.05
+min = 0.0
+max = 1.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ph30p"]
+script = ExtResource("6_4d7sh")
+name = "glynn_contrast_a"
+label = "Contrast"
+add_speed_control = true
+default = 0.5
+min = 0.0
+max = 1.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_1ec2h"]
+script = ExtResource("6_4d7sh")
+name = "glynn_pow_a"
+label = "Pow"
+add_speed_control = true
+default = 1.5
+min = 0.0
+max = 5.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
 [sub_resource type="Resource" id="Resource_n63ng"]
 script = ExtResource("6_4d7sh")
 name = "heart_scale_a"
@@ -398,6 +446,111 @@ label = "Rotation"
 add_speed_control = true
 min = -180.0
 max = 180.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_c4wnb"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "lazy_shape_a"
+label = "Shape"
+dropdown_options = PackedStringArray("Circle", "Square", "Diamond")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_7plk7"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "lazy_inside_mode_a"
+label = "Inside Mode"
+dropdown_options = PackedStringArray("Twist", "Weave", "Hole")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_53ibr"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "lazy_outside_mode_a"
+label = "Outside Mode"
+dropdown_options = PackedStringArray("Inverse", "Weave", "None")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_5chwk"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "lazy_ring_mode_a"
+label = "Ring Mode"
+dropdown_options = PackedStringArray("Empty", "Texture", "Rings", "Rays", "Dots", "Plasma", "Spiral")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_2n56i"]
+script = ExtResource("6_4d7sh")
+name = "lazy_amount_a"
+label = "Size"
+add_speed_control = true
+default = 0.4
+min = 0.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_djas3"]
+script = ExtResource("6_4d7sh")
+name = "lazy_twist_a"
+label = "Twist"
+add_speed_control = true
+default = 5.0
+min = -20.0
+max = 20.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ohqex"]
+script = ExtResource("6_4d7sh")
+name = "lazy_spin_a"
+label = "Spin"
+add_speed_control = true
+min = -3.14
+max = 3.14
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_pl55l"]
+script = ExtResource("6_4d7sh")
+name = "lazy_space_a"
+label = "Space"
+add_speed_control = true
+min = 0.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_0sqyy"]
+script = ExtResource("6_4d7sh")
+name = "lazy_offset_x_a"
+label = "Offset X"
+add_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_oilbd"]
+script = ExtResource("6_4d7sh")
+name = "lazy_offset_y_a"
+label = "Offset Y"
+add_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ileqp"]
+script = ExtResource("6_4d7sh")
+name = "lazy_ring_spin_a"
+label = "Ring Spin"
+add_speed_control = true
+min = -6.28
+max = 6.28
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_f3pq4"]
+script = ExtResource("6_4d7sh")
+name = "lazy_edge_softness_a"
+label = "Edge Softness"
+min = 0.0
+max = 1.0
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_bxemi"]
@@ -950,6 +1103,54 @@ default = 2.0
 min = 0.0
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
+[sub_resource type="Resource" id="Resource_awqbt"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "glynn_ring_mode_b"
+label = "Ring Mode"
+dropdown_options = PackedStringArray("Empty", "Texture", "Stripes", "Checkers", "Dots", "Plasma", "Spiral")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_p6xvf"]
+script = ExtResource("6_4d7sh")
+name = "glynn_radius_b"
+label = "Radius"
+add_speed_control = true
+default = 0.5
+min = 0.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_hq8ct"]
+script = ExtResource("6_4d7sh")
+name = "glynn_thickness_b"
+label = "Thickness"
+add_speed_control = true
+default = 0.05
+min = 0.0
+max = 1.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_dmhti"]
+script = ExtResource("6_4d7sh")
+name = "glynn_contrast_b"
+label = "Contrast"
+add_speed_control = true
+default = 0.5
+min = 0.0
+max = 1.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_6qmhe"]
+script = ExtResource("6_4d7sh")
+name = "glynn_pow_b"
+label = "Pow"
+add_speed_control = true
+default = 1.5
+min = 0.0
+max = 5.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
 [sub_resource type="Resource" id="Resource_td2a2"]
 script = ExtResource("6_4d7sh")
 name = "heart_scale_b"
@@ -1112,6 +1313,112 @@ label = "Rotation"
 add_speed_control = true
 min = -180.0
 max = 180.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_j1mq8"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "lazy_shape_b"
+label = "Shape"
+dropdown_options = PackedStringArray("Circle", "Square", "Diamond")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_jik6k"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "lazy_inside_mode_b"
+label = "Inside Mode"
+dropdown_options = PackedStringArray("Twist", "Weave", "Hole")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_hd8li"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "lazy_outside_mode_b"
+label = "Outside Mode"
+dropdown_options = PackedStringArray("Inverse", "Weave", "None")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_vbp07"]
+script = ExtResource("6_4d7sh")
+control_type = 1
+name = "lazy_ring_mode_b"
+label = "Ring Mode"
+dropdown_options = PackedStringArray("Empty", "Texture", "Rings", "Rays", "Dots", "Plasma", "Spiral")
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ctgg3"]
+script = ExtResource("6_4d7sh")
+name = "lazy_amount_b"
+label = "Size"
+add_speed_control = true
+default = 0.4
+min = 0.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_shleb"]
+script = ExtResource("6_4d7sh")
+name = "lazy_twist_b"
+label = "Twist"
+add_speed_control = true
+default = 5.0
+min = -20.0
+max = 20.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_4pqki"]
+script = ExtResource("6_4d7sh")
+name = "lazy_spin_b"
+label = "Spin"
+add_speed_control = true
+default = 3.14
+min = -6.28
+max = 6.28
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_yxl61"]
+script = ExtResource("6_4d7sh")
+name = "lazy_space_b"
+label = "Space"
+add_speed_control = true
+min = 0.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_7vfuv"]
+script = ExtResource("6_4d7sh")
+name = "lazy_offset_x_b"
+label = "Offset X"
+add_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ludm0"]
+script = ExtResource("6_4d7sh")
+name = "lazy_offset_y_b"
+label = "Offset Y"
+add_speed_control = true
+min = -2.0
+max = 2.0
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_88rqo"]
+script = ExtResource("6_4d7sh")
+name = "lazy_ring_spin_b"
+label = "Ring Spin"
+add_speed_control = true
+min = -6.28
+max = 6.28
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_fc4gm"]
+script = ExtResource("6_4d7sh")
+name = "lazy_edge_softness_b"
+label = "Edge Softness"
+min = 0.0
+max = 1.0
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_jinwr"]
@@ -2335,7 +2642,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 2.9"
+text = "V 3.0"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -2744,6 +3051,12 @@ layout_mode = 2
 panel_title = "Fisheye A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_qgxp6")])
 
+[node name="GlynnSimControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "GlynnSim A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_s1om5"), SubResource("Resource_yl3ei"), SubResource("Resource_m4a6d"), SubResource("Resource_ph30p"), SubResource("Resource_1ec2h")])
+
 [node name="HeartControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -2773,6 +3086,12 @@ unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Kaleidoscope A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_6jj3b"), SubResource("Resource_5mre3")])
+
+[node name="LazyMegaControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Lazy Mega A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_c4wnb"), SubResource("Resource_7plk7"), SubResource("Resource_53ibr"), SubResource("Resource_5chwk"), SubResource("Resource_2n56i"), SubResource("Resource_djas3"), SubResource("Resource_ohqex"), SubResource("Resource_pl55l"), SubResource("Resource_0sqyy"), SubResource("Resource_oilbd"), SubResource("Resource_ileqp"), SubResource("Resource_f3pq4")])
 
 [node name="VarAMirrorControlsContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
@@ -2976,6 +3295,12 @@ layout_mode = 2
 panel_title = "Fisheye B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_akb8o")])
 
+[node name="GlynnSimControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "GlynnSim B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_awqbt"), SubResource("Resource_p6xvf"), SubResource("Resource_hq8ct"), SubResource("Resource_dmhti"), SubResource("Resource_6qmhe")])
+
 [node name="HeartControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -3005,6 +3330,12 @@ unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Kaleidoscope B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_oqqhv"), SubResource("Resource_2l1wp")])
+
+[node name="LazyMegaControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Lazy Mega B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_j1mq8"), SubResource("Resource_jik6k"), SubResource("Resource_hd8li"), SubResource("Resource_vbp07"), SubResource("Resource_ctgg3"), SubResource("Resource_shleb"), SubResource("Resource_4pqki"), SubResource("Resource_yxl61"), SubResource("Resource_7vfuv"), SubResource("Resource_ludm0"), SubResource("Resource_88rqo"), SubResource("Resource_fc4gm")])
 
 [node name="VarBMirrorControlsContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true

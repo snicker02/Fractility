@@ -431,6 +431,53 @@ uniform float popcorn_strength_b_speed;
 uniform float popcorn_density_b;
 uniform float popcorn_density_b_speed;
 
+// Lazy Mega A
+uniform int lazy_shape_a;
+uniform int lazy_inside_mode_a;
+uniform int lazy_outside_mode_a;
+uniform float lazy_amount_a; uniform float lazy_amount_a_speed;
+uniform float lazy_twist_a; uniform float lazy_twist_a_speed;
+uniform float lazy_spin_a; uniform float lazy_spin_a_speed;
+uniform float lazy_space_a; uniform float lazy_space_a_speed;
+uniform float lazy_offset_x_a;
+uniform float lazy_offset_y_a;
+uniform int lazy_ring_mode_a;
+uniform float lazy_ring_spin_a; uniform float lazy_ring_spin_a_speed;
+uniform float lazy_edge_softness_a;
+
+// Lazy Mega B
+uniform int lazy_shape_b;
+uniform int lazy_inside_mode_b;
+uniform int lazy_outside_mode_b;
+uniform float lazy_amount_b; uniform float lazy_amount_b_speed;
+uniform float lazy_twist_b; uniform float lazy_twist_b_speed;
+uniform float lazy_spin_b; uniform float lazy_spin_b_speed;
+uniform float lazy_space_b; uniform float lazy_space_b_speed;
+uniform float lazy_offset_x_b;
+uniform float lazy_offset_y_b;
+uniform int lazy_ring_mode_b;
+uniform float lazy_ring_spin_b;
+uniform float lazy_ring_spin_b_speed;
+uniform float lazy_edge_softness_b;
+
+// GlynnSim A
+uniform float glynn_radius_a; uniform float glynn_radius_a_speed;
+uniform float glynn_thickness_a; uniform float glynn_thickness_a_speed;
+uniform float glynn_contrast_a; uniform float glynn_contrast_a_speed;
+uniform float glynn_pow_a; uniform float glynn_pow_a_speed;
+uniform float glynn_phi1_a; uniform float glynn_phi1_a_speed;
+uniform float glynn_phi2_a; uniform float glynn_phi2_a_speed;
+uniform int glynn_ring_mode_a;
+
+// GlynnSim B (Copy A variables but with _b suffix)
+uniform float glynn_radius_b; uniform float glynn_radius_b_speed;
+uniform float glynn_thickness_b; uniform float glynn_thickness_b_speed;
+uniform float glynn_contrast_b; uniform float glynn_contrast_b_speed;
+uniform float glynn_pow_b; uniform float glynn_pow_b_speed;
+uniform float glynn_phi1_b; uniform float glynn_phi1_b_speed;
+uniform float glynn_phi2_b; uniform float glynn_phi2_b_speed;
+uniform int glynn_ring_mode_b;
+
 // --- Helper Functions ---
 mat2 rotate(float angle) {
 	return mat2(vec2(cos(angle), -sin(angle)), vec2(sin(angle), cos(angle)));
@@ -475,84 +522,98 @@ vec2 apply_quad_transform(vec2 p, int transform_id) {
 
 // --- REVISED: The function signature is now back to its original, simpler form ---
 vec2 apply_variation(vec2 uv, int variation_id,
-	// Sinusoidal (NEW)
-    float sinusoidal_scale, float sinusoidal_scale_speed,
-    float sinusoidal_strength, float sinusoidal_strength_speed,
+	// Sinusoidal
+	float sinusoidal_scale, float sinusoidal_scale_speed,
+	float sinusoidal_strength, float sinusoidal_strength_speed,
 	// Spherical
 	float spherical_strength, float spherical_strength_speed,
-    float spherical_center_x, float spherical_center_x_speed,
-    float spherical_center_y, float spherical_center_y_speed,
+	float spherical_center_x, float spherical_center_x_speed,
+	float spherical_center_y, float spherical_center_y_speed,
 	// Swirl
-    float swirl_radius_scale, float swirl_radius_scale_speed,
-    float swirl_angle_scale, float swirl_angle_scale_speed,
+	float swirl_radius_scale, float swirl_radius_scale_speed,
+	float swirl_angle_scale, float swirl_angle_scale_speed,
 	// Tangent
-    float tangent_scale, float tangent_scale_speed,
-    float tangent_strength, float tangent_strength_speed,
-    // Wave
-    int wave_type, float wave_frequency, float wave_frequency_speed, float wave_amplitude, float wave_amplitude_speed, float wave_phase, float wave_phase_speed,
-    // Julian
-    float julian_power, float julian_power_speed, float julian_dist, float julian_dist_speed,
-    float julian_a, float julian_a_speed, float julian_b, float julian_b_speed,
-    float julian_c, float julian_c_speed, float julian_d, float julian_d_speed,
-    float julian_e, float julian_e_speed, float julian_f, float julian_f_speed,
-    // Fisheye / Polar
-    float fisheye_strength, float fisheye_strength_speed, float polar_offset, float polar_offset_speed,
-    // Symmetry (NEW)
-    float mirror_x, float mirror_y, float mirror_rotation, float mirror_rotation_speed,
-    float kaleidoscope_slices, float kaleidoscope_rotation, float kaleidoscope_rotation_speed,
-    // Mobius
-    float mobius_re_a, float mobius_re_a_speed, float mobius_im_a, float mobius_im_a_speed,
-    float mobius_re_b, float mobius_re_b_speed, float mobius_im_b, float mobius_im_b_speed,
-    float mobius_re_c, float mobius_re_c_speed, float mobius_im_c, float mobius_im_c_speed,
-    float mobius_re_d, float mobius_re_d_speed, float mobius_im_d, float mobius_im_d_speed,
-    // Cellular Weave
-    float cellular_grid_size, float cellular_grid_size_speed,
-    float cellular_threshold, float cellular_threshold_speed,
-    float cellular_iterations, float cellular_iterations_speed,
-    // Blur
-    float blur_amount,
-    // Heart
-    float heart_scale, float heart_scale_speed,
-    float heart_rotation, float heart_rotation_speed,
-    float heart_strength, float heart_strength_speed,
-    // Apollonian
-    float apollonian_scale, float apollonian_scale_speed,
-    float ap_c1x, float ap_c1x_speed, float ap_c1y, float ap_c1y_speed,
-    float ap_c2x, float ap_c2x_speed, float ap_c2y, float ap_c2y_speed,
-    float ap_c3x, float ap_c3x_speed, float ap_c3y, float ap_c3y_speed,
-    // ArcTangent
-    float arctangent_scale, float arctangent_scale_speed,
-    float arctangent_strength, float arctangent_strength_speed,
-    // Cosine
-    float cosine_scale, float cosine_scale_speed,
-    float cosine_strength, float cosine_strength_speed,
-    // Hyperbolic Cosine
-    float hyperbolic_cosine_scale, float hyperbolic_cosine_scale_speed,
-    float hyperbolic_cosine_strength, float hyperbolic_cosine_strength_speed,
-    // Hyperbolic Sine
-    float hyperbolic_sine_scale, float hyperbolic_sine_scale_speed,
-    float hyperbolic_sine_strength, float hyperbolic_sine_strength_speed,
-    // Custom 2x2
-    int custom_tl, int custom_tr, int custom_bl, int custom_br,
-    // Clifford
+	float tangent_scale, float tangent_scale_speed,
+	float tangent_strength, float tangent_strength_speed,
+	// Wave
+	int wave_type, float wave_frequency, float wave_frequency_speed, float wave_amplitude, float wave_amplitude_speed, float wave_phase, float wave_phase_speed,
+	// Julian
+	float julian_power, float julian_power_speed, float julian_dist, float julian_dist_speed,
+	float julian_a, float julian_a_speed, float julian_b, float julian_b_speed,
+	float julian_c, float julian_c_speed, float julian_d, float julian_d_speed,
+	float julian_e, float julian_e_speed, float julian_f, float julian_f_speed,
+	// Fisheye / Polar
+	float fisheye_strength, float fisheye_strength_speed, float polar_offset, float polar_offset_speed,
+	// Symmetry
+	float mirror_x, float mirror_y, float mirror_rotation, float mirror_rotation_speed,
+	float kaleidoscope_slices, float kaleidoscope_rotation, float kaleidoscope_rotation_speed,
+	// Mobius
+	float mobius_re_a, float mobius_re_a_speed, float mobius_im_a, float mobius_im_a_speed,
+	float mobius_re_b, float mobius_re_b_speed, float mobius_im_b, float mobius_im_b_speed,
+	float mobius_re_c, float mobius_re_c_speed, float mobius_im_c, float mobius_im_c_speed,
+	float mobius_re_d, float mobius_re_d_speed, float mobius_im_d, float mobius_im_d_speed,
+	// Cellular Weave
+	float cellular_grid_size, float cellular_grid_size_speed,
+	float cellular_threshold, float cellular_threshold_speed,
+	float cellular_iterations, float cellular_iterations_speed,
+	// Blur
+	float blur_amount,
+	// Heart
+	float heart_scale, float heart_scale_speed,
+	float heart_rotation, float heart_rotation_speed,
+	float heart_strength, float heart_strength_speed,
+	// Apollonian
+	float apollonian_scale, float apollonian_scale_speed,
+	float ap_c1x, float ap_c1x_speed, float ap_c1y, float ap_c1y_speed,
+	float ap_c2x, float ap_c2x_speed, float ap_c2y, float ap_c2y_speed,
+	float ap_c3x, float ap_c3x_speed, float ap_c3y, float ap_c3y_speed,
+	// ArcTangent
+	float arctangent_scale, float arctangent_scale_speed,
+	float arctangent_strength, float arctangent_strength_speed,
+	// Cosine
+	float cosine_scale, float cosine_scale_speed,
+	float cosine_strength, float cosine_strength_speed,
+	// Hyperbolic Cosine
+	float hyperbolic_cosine_scale, float hyperbolic_cosine_scale_speed,
+	float hyperbolic_cosine_strength, float hyperbolic_cosine_strength_speed,
+	// Hyperbolic Sine
+	float hyperbolic_sine_scale, float hyperbolic_sine_scale_speed,
+	float hyperbolic_sine_strength, float hyperbolic_sine_strength_speed,
+	// Custom 2x2
+	int custom_tl, int custom_tr, int custom_bl, int custom_br,
+	// Clifford
 	float clifford_a, float clifford_a_speed, float clifford_b, float clifford_b_speed,
-    float clifford_c, float clifford_c_speed, float clifford_d, float clifford_d_speed,
+	float clifford_c, float clifford_c_speed, float clifford_d, float clifford_d_speed,
 	// DeJong
-    float dejong_a, float dejong_a_speed, float dejong_b, float dejong_b_speed,
-    float dejong_c, float dejong_c_speed, float dejong_d, float dejong_d_speed,
-    // Truchet
-    float truchet_scale, float truchet_scale_speed,
-    float truchet_rotate, float truchet_rotate_speed,
-    float truchet_strength, float truchet_strength_speed,
-    float truchet_mode,
-
-
-	// Rep-Tile General
-    float reptile_scale, float reptile_scale_speed, float reptile_rotate, float reptile_rotate_speed,
-// Popcorn
-    float popcorn_scale, float popcorn_scale_speed,
-    float popcorn_strength, float popcorn_strength_speed,
-    float popcorn_density, float popcorn_density_speed,
+	float dejong_a, float dejong_a_speed, float dejong_b, float dejong_b_speed,
+	float dejong_c, float dejong_c_speed, float dejong_d, float dejong_d_speed,
+	// Truchet
+	float truchet_scale, float truchet_scale_speed,
+	float truchet_rotate, float truchet_rotate_speed,
+	float truchet_strength, float truchet_strength_speed,
+	float truchet_mode,
+	// Reptile
+	float reptile_scale, float reptile_scale_speed, float reptile_rotate, float reptile_rotate_speed,
+	// Popcorn
+	float popcorn_scale, float popcorn_scale_speed,
+	float popcorn_strength, float popcorn_strength_speed,
+	float popcorn_density, float popcorn_density_speed,
+	// GlynnSim
+    float glynn_radius, float glynn_thickness, float glynn_contrast,
+	float glynn_pow, float glynn_phi1, float glynn_phi2,
+	float glynn_radius_speed, float glynn_thickness_speed, float glynn_contrast_speed,
+	float glynn_pow_speed, float glynn_phi1_speed, float glynn_phi2_speed,
+	int glynn_ring_mode,
+	// Lazy Mega
+	int lazy_shape, int lazy_inside_mode, int lazy_outside_mode,
+	float lazy_amount, float lazy_amount_speed,
+	float lazy_twist, float lazy_twist_speed,
+	float lazy_spin, float lazy_spin_speed,
+	float lazy_space, float lazy_space_speed,
+	float lazy_offset_x, float lazy_offset_y,
+	int lazy_ring_mode,
+	float lazy_ring_spin, float lazy_ring_spin_speed,
+	float lazy_edge_softness,
 
 ) {
 	if (variation_id == 0) { // Sinusoidal
@@ -1146,8 +1207,179 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 		p.y -= dy;
 
 		return p * anim_scale;
+	}
+		else if (variation_id == 36) { // Lazy Mega (Soft Edges + Ring Spin)
+        // 1. Animate Variables
+        float anim_amt = max(0.01, lazy_amount + sin(time * lazy_amount_speed));
+        float anim_space = max(0.0, lazy_space + sin(time * lazy_space_speed));
+        float anim_twist = lazy_twist + sin(time * lazy_twist_speed);
+        float anim_spin = lazy_spin + sin(time * lazy_spin_speed);
+        float anim_ring_spin = lazy_ring_spin + (time * lazy_ring_spin_speed); // Continuous spin
 
+        // 2. Center
+        vec2 offset = vec2(lazy_offset_x, lazy_offset_y);
+        vec2 p = uv - offset;
+
+        // 3. Distance
+        float dist = 0.0;
+        if (lazy_shape == 0) dist = length(p);
+        else if (lazy_shape == 1) dist = max(abs(p.x), abs(p.y));
+        else dist = abs(p.x) + abs(p.y);
+
+        // Boundaries
+        float inner_edge = anim_amt;
+        float outer_edge = anim_amt + anim_space;
+        float soft = max(0.001, lazy_edge_softness); // Avoid div by zero
+
+        // --- BLENDING MASKS ---
+        // We calculate a blend factor for each zone transition
+        float mask_inside = 1.0 - smoothstep(inner_edge - soft, inner_edge, dist);
+        float mask_ring = smoothstep(inner_edge - soft, inner_edge, dist) * (1.0 - smoothstep(outer_edge, outer_edge + soft, dist));
+        float mask_outside = smoothstep(outer_edge, outer_edge + soft, dist);
+
+        vec2 result = vec2(0.0);
+
+        // --- ZONE 1: INSIDE ---
+        if (mask_inside > 0.01) {
+            vec2 p_in = p;
+            if (lazy_inside_mode == 0) { // Twist
+                float a = atan(p.y, p.x) + anim_spin + anim_twist * (inner_edge - dist);
+                p_in = vec2(cos(a), sin(a)) * dist;
+            } else if (lazy_inside_mode == 1) { // Travis
+                p_in += sin(p.yx * 10.0 + anim_spin) * 0.1 * anim_twist;
+            }
+            result += p_in * mask_inside;
+        }
+
+        // --- ZONE 2: RING ---
+        if (mask_ring > 0.01) {
+            vec2 p_ring = p;
+            // Apply independent Ring Spin
+            p_ring = p_ring * rotate(anim_ring_spin);
+
+            if (lazy_ring_mode == 0) p_ring = vec2(10000.0); // Empty
+            else if (lazy_ring_mode == 1) p_ring = p_ring * (inner_edge / max(0.001, dist));
+            else if (lazy_ring_mode == 2) { // Stripes
+                 if (sin(dist * 50.0 + anim_spin) > 0.0) p_ring = vec2(10000.0);
+            }
+            else if (lazy_ring_mode == 3) { // Checkers
+                 float a = atan(p.y, p.x);
+                 if (sin(dist * 20.0) * sin(a * 10.0) > 0.0) p_ring = vec2(10000.0);
+            }// --- NEW PATTERNS ---
+			else if (lazy_ring_mode == 4) { // DOTS
+				// Create a grid of circles
+				vec2 grid = fract(p_ring * 10.0) - 0.5;
+				if (length(grid) < 0.3) return vec2(10000.0);
+			}
+			else if (lazy_ring_mode == 5) { // PLASMA
+				// Organic blobs using sine waves
+				float v = sin(p_ring.x * 20.0 + time) + sin(p_ring.y * 20.0 + time);
+				if (v > 0.0) return vec2(10000.0);
+			}
+			else if (lazy_ring_mode == 6) { // SPIRAL
+				// Twisting stripes
+				float a = atan(p_ring.y, p_ring.x);
+				// Combine angle and distance to create a spiral
+				if (sin(a * 10.0 + dist * 40.0) > 0.0) return vec2(10000.0);
+			}
+            result += p_ring * mask_ring;
+        }
+
+        // --- ZONE 3: OUTSIDE ---
+        if (mask_outside > 0.01) {
+            vec2 p_out = p;
+            if (lazy_outside_mode == 0) { // Inverse
+                float r = anim_amt * (1.0 + anim_space / max(0.001, dist));
+                p_out = p * (r / dist);
+            }
+            else if (lazy_outside_mode == 1) { // Travis
+                p_out += cos(p.xy * 5.0 + anim_spin) * 0.1;
+            }
+            result += p_out * mask_outside;
+        }
+
+        return result + offset;
     }
+	else if (variation_id == 37) { // GlynnSim (Tuned Granular)
+		// 1. Animate Variables
+		float anim_radius = max(0.001, glynn_radius + sin(time * glynn_radius_speed));
+		float anim_thickness = max(0.0, glynn_thickness + sin(time * glynn_thickness_speed));
+		// Contrast controls the "density" of the tears (0.0 = All Stretch, 1.0 = No Stretch)
+		float anim_contrast = clamp(glynn_contrast + sin(time * glynn_contrast_speed), 0.0, 1.0);
+		float anim_pow = glynn_pow + sin(time * glynn_pow_speed);
+
+		// 2. Distance & Zones
+		// Use the centered UV for distance to ensure ring is circular
+		vec2 p = uv; // You can add an offset here later if you want moveable center
+		float r = length(p);
+
+		float inner_edge = anim_radius;
+		float outer_edge = anim_radius + anim_thickness;
+
+		// --- ZONE 1: INSIDE (Hole) ---
+		if (r < inner_edge) {
+			// Map hole to source
+			return uv * (1.0 / inner_edge);
+		}
+
+		// --- ZONE 2: THE RING ---
+		else if (r < outer_edge) {
+            // Use the passed argument 'glynn_ring_mode'
+			if (glynn_ring_mode == 0) return vec2(10000.0); // EMPTY
+
+			else if (glynn_ring_mode == 1) return uv * (inner_edge / r); // TEXTURE
+
+			else if (glynn_ring_mode == 2) { // STRIPES
+                if (sin(r * 50.0 + time) > 0.0) return vec2(10000.0);
+            }
+			else if (glynn_ring_mode == 3) { // CHECKERS
+				float a = atan(uv.y, uv.x);
+				if (sin(r * 20.0) * sin(a * 10.0) > 0.0) return vec2(10000.0);
+			}
+            else if (glynn_ring_mode == 4) { // DOTS
+				vec2 grid = fract(uv * 10.0) - 0.5;
+				if (length(grid) < 0.3) return vec2(10000.0);
+			}
+            else if (glynn_ring_mode == 5) { // PLASMA
+				float v = sin(uv.x * 20.0 + time) + sin(uv.y * 20.0 + time);
+				if (v > 0.0) return vec2(10000.0);
+			}
+            else if (glynn_ring_mode == 6) { // SPIRAL
+				float a = atan(uv.y, uv.x);
+				if (sin(a * 10.0 + r * 40.0) > 0.0) return vec2(10000.0);
+			}
+
+            return uv * (inner_edge / r); // Default
+		}
+
+		// --- ZONE 3: OUTSIDE (The GlynnSim Effect) ---
+		else {
+			// 1. Shift Space (Push outside away to make room for ring)
+			// Map current radius 'r' back to where it starts after the thickness
+			float shifted_r = r - anim_thickness;
+			vec2 p_shifted = uv * (shifted_r / r);
+
+			// 2. Glynn Math
+			// Alpha gets smaller as you go further out
+			float alpha = inner_edge / max(0.0001, shifted_r);
+
+			// 3. Probabilistic Tearing (The "Glynn" Look)
+			// We use a very high multiplier (500.0) to get fine "sand" grain
+			float rnd = rand(uv * 500.0);
+
+			// Calculate threshold based on distance and power
+			float threshold = anim_contrast * pow(alpha, abs(anim_pow));
+
+			if (rnd > threshold) {
+				// Option A: The "Solid" part (Pass through)
+				return p_shifted;
+			} else {
+				// Option B: The "Torn" part (Stretched)
+				// This pulls pixels from far away into the gap
+				return p_shifted / (alpha * alpha);
+			}
+		}
+	}
 	return uv;
 }
 vec2 random(vec2 st) {
@@ -1169,13 +1401,10 @@ float perlin_noise(vec2 st) {
 // --- Main Shader Logic ---
 // --- Main Shader Logic ---
 void fragment() {
-	// Reconstruct matrices from their column vectors first
-
 	vec4 final_color;
 	vec4 start_pattern_color;
 
-	// --- STEP 1: Calculate the Start Pattern (ALWAYS) ---
-	// We calculate this every frame so it's always available.
+	// --- STEP 1: Calculate the Start Pattern ---
 	if (start_pattern_mode == 0) { // Gradient + Grid
 		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
 		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
@@ -1204,7 +1433,7 @@ void fragment() {
 		if (textureSize(background_texture, 0).x > 1) {
 			start_pattern_color = texture(background_texture, UV);
 		} else {
-			start_pattern_color = vec4(0.0, 0.0, 0.0, 1.0); // Default to black
+			start_pattern_color = vec4(0.0, 0.0, 0.0, 1.0);
 		}
 	}
 	else if (start_pattern_mode == 3) { // Perlin Noise
@@ -1212,7 +1441,7 @@ void fragment() {
 		n = (n + 1.0) * 0.5;
 		start_pattern_color = vec4(vec3(n), 1.0);
 	}
-	else if (start_pattern_mode == 4) { // Concentric Rings (Full Color)
+	else if (start_pattern_mode == 4) { // Concentric Rings
 		vec4 top_mix_A = mix(grad_col_tl, grad_col_tr, UV.x);
 		vec4 bottom_mix_A = mix(grad_col_bl, grad_col_br, UV.x);
 		vec4 gradient_color_A = mix(top_mix_A, bottom_mix_A, UV.y);
@@ -1227,98 +1456,106 @@ void fragment() {
 		start_pattern_color = mix(gradient_color_B, gradient_color_A, ring_value);
 	}
 	else {
-		// Default case
 		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
 		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
 		start_pattern_color = mix(top_mix, bottom_mix, UV.y);
 	}
-	// --- END STEP 1 ---
 
-
-	// --- STEP 2: Calculate the Feedback ---
+	// --- STEP 2: Calculate Feedback ---
 	if (time < 0.1) {
-		// On the first frame, the final color *is* the start pattern
 		final_color = start_pattern_color;
 	}
 	else {
-		// On subsequent frames, run the feedback loop
-		vec2 transformed_uv = UV - vec2(0.5); // Center coordinates
+		vec2 transformed_uv = UV - vec2(0.5);
 		transformed_uv *= rotate(pre_rotation);
 		transformed_uv /= pre_scale;
 		transformed_uv += pre_translate;
 
-		// Apply Variations
-vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a,
-	sinusoidal_scale_a, sinusoidal_scale_a_speed, sinusoidal_strength_a, sinusoidal_strength_a_speed,
-    spherical_strength_a, spherical_strength_a_speed, spherical_center_x_a, spherical_center_x_a_speed, spherical_center_y_a, spherical_center_y_a_speed,
-	swirl_radius_scale_a, swirl_radius_scale_a_speed, swirl_angle_scale_a, swirl_angle_scale_a_speed,
-	tangent_scale_a, tangent_scale_a_speed, tangent_strength_a, tangent_strength_a_speed,
-	wave_type_a, wave_frequency_a, wave_frequency_a_speed, wave_amplitude_a, wave_amplitude_a_speed, wave_phase_a, wave_phase_a_speed,
-    julian_power_a, julian_power_a_speed, julian_dist_a, julian_dist_a_speed, julian_a_a, julian_a_a_speed, julian_b_a, julian_b_a_speed, julian_c_a, julian_c_a_speed, julian_d_a, julian_d_a_speed, julian_e_a, julian_e_a_speed, julian_f_a, julian_f_a_speed,
-    fisheye_strength_a, fisheye_strength_a_speed, polar_offset_a, polar_offset_a_speed,
-    var_a_mirror_x, var_a_mirror_y, var_a_mirror_rotation, var_a_mirror_rotation_speed, var_a_kaleidoscope_slices, var_a_kaleidoscope_rotation, var_a_kaleidoscope_rotation_speed,
-    mobius_re_a_a, mobius_re_a_a_speed, mobius_im_a_a, mobius_im_a_a_speed, mobius_re_b_a, mobius_re_b_a_speed, mobius_im_b_a, mobius_im_b_a_speed, mobius_re_c_a, mobius_re_c_a_speed, mobius_im_c_a, mobius_im_c_a_speed, mobius_re_d_a, mobius_re_d_a_speed, mobius_im_d_a, mobius_im_d_a_speed,
-    cellular_weave_grid_size_a, cellular_weave_grid_size_a_speed, cellular_weave_threshold_a, cellular_weave_threshold_a_speed, cellular_weave_iterations_a, cellular_weave_iterations_a_speed,
-    blur_amount_a,
-    heart_scale_a, heart_scale_a_speed, heart_rotation_a, heart_rotation_a_speed, heart_strength_a, heart_strength_a_speed,
-    apollonian_scale_a, apollonian_scale_a_speed, ap_c1x_a, ap_c1x_a_speed, ap_c1y_a, ap_c1y_a_speed, ap_c2x_a, ap_c2x_a_speed, ap_c2y_a, ap_c2y_a_speed, ap_c3x_a, ap_c3x_a_speed, ap_c3y_a, ap_c3y_a_speed,
-    arctangent_scale_a, arctangent_scale_a_speed, arctangent_strength_a, arctangent_strength_a_speed,
-    cosine_scale_a, cosine_scale_a_speed, cosine_strength_a, cosine_strength_a_speed,
-    hyperbolic_cosine_scale_a, hyperbolic_cosine_scale_a_speed, hyperbolic_cosine_strength_a, hyperbolic_cosine_strength_a_speed,
-    hyperbolic_sine_scale_a, hyperbolic_sine_scale_a_speed, hyperbolic_sine_strength_a, hyperbolic_sine_strength_a_speed,
-    custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a,
-    clifford_a_a, clifford_a_a_speed, clifford_b_a, clifford_b_a_speed, clifford_c_a, clifford_c_a_speed, clifford_d_a, clifford_d_a_speed,
-    dejong_a_a, dejong_a_a_speed, dejong_b_a, dejong_b_a_speed, dejong_c_a, dejong_c_a_speed, dejong_d_a, dejong_d_a_speed,
-    truchet_scale_a, truchet_scale_a_speed, truchet_rotate_a, truchet_rotate_a_speed, truchet_strength_a, truchet_strength_a_speed, truchet_mode_a,
-	reptile_scale_a, reptile_scale_a_speed, reptile_rotate_a, reptile_rotate_a_speed, popcorn_scale_a, popcorn_scale_a_speed, popcorn_strength_a, popcorn_strength_a_speed, popcorn_density_a, popcorn_density_a_speed);
-vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
-	sinusoidal_scale_b, sinusoidal_scale_b_speed, sinusoidal_strength_b, sinusoidal_strength_b_speed,
-    spherical_strength_b, spherical_strength_b_speed, spherical_center_x_b, spherical_center_x_b_speed, spherical_center_y_b, spherical_center_y_b_speed,
-	swirl_radius_scale_b, swirl_radius_scale_b_speed, swirl_angle_scale_b, swirl_angle_scale_b_speed,
-	tangent_scale_b, tangent_scale_b_speed, tangent_strength_b, tangent_strength_b_speed,
-	wave_type_b, wave_frequency_b, wave_frequency_b_speed, wave_amplitude_b, wave_amplitude_b_speed, wave_phase_b, wave_phase_b_speed,
-    julian_power_b, julian_power_b_speed, julian_dist_b, julian_dist_b_speed, julian_a_b, julian_a_b_speed, julian_b_b, julian_b_b_speed, julian_c_b, julian_c_b_speed, julian_d_b, julian_d_b_speed, julian_e_b, julian_e_b_speed, julian_f_b, julian_f_b_speed,
-    fisheye_strength_b, fisheye_strength_b_speed, polar_offset_b, polar_offset_b_speed,
-    var_b_mirror_x, var_b_mirror_y, var_b_mirror_rotation, var_b_mirror_rotation_speed, var_b_kaleidoscope_slices, var_b_kaleidoscope_rotation, var_b_kaleidoscope_rotation_speed,
-    mobius_re_a_b, mobius_re_a_b_speed, mobius_im_a_b, mobius_im_a_b_speed, mobius_re_b_b, mobius_re_b_b_speed, mobius_im_b_b, mobius_im_b_b_speed, mobius_re_c_b, mobius_re_c_b_speed, mobius_im_c_b, mobius_im_c_b_speed, mobius_re_d_b, mobius_re_d_b_speed, mobius_im_d_b, mobius_im_d_b_speed,
-    cellular_weave_grid_size_b, cellular_weave_grid_size_b_speed, cellular_weave_threshold_b, cellular_weave_threshold_b_speed, cellular_weave_iterations_b, cellular_weave_iterations_b_speed,
-    blur_amount_b,
-    heart_scale_b, heart_scale_b_speed, heart_rotation_b, heart_rotation_b_speed, heart_strength_b, heart_strength_b_speed,
-    apollonian_scale_b, apollonian_scale_b_speed, ap_c1x_b, ap_c1x_b_speed, ap_c1y_b, ap_c1y_b_speed, ap_c2x_b, ap_c2x_b_speed, ap_c2y_b, ap_c2y_b_speed, ap_c3x_b, ap_c3x_b_speed, ap_c3y_b, ap_c3y_b_speed,
-    arctangent_scale_b, arctangent_scale_b_speed, arctangent_strength_b, arctangent_strength_b_speed,
-    cosine_scale_b, cosine_scale_b_speed, cosine_strength_b, cosine_strength_b_speed,
-    hyperbolic_cosine_scale_b, hyperbolic_cosine_scale_b_speed, hyperbolic_cosine_strength_b, hyperbolic_cosine_strength_b_speed,
-    hyperbolic_sine_scale_b, hyperbolic_sine_scale_b_speed, hyperbolic_sine_strength_b, hyperbolic_sine_strength_b_speed,
-    custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b,
-    clifford_a_b, clifford_a_b_speed, clifford_b_b, clifford_b_b_speed, clifford_c_b, clifford_c_b_speed, clifford_d_b, clifford_d_b_speed,
-    dejong_a_b, dejong_a_b_speed, dejong_b_b, dejong_b_b_speed, dejong_c_b, dejong_c_b_speed, dejong_d_b, dejong_d_b_speed,
-    truchet_scale_b, truchet_scale_b_speed, truchet_rotate_b, truchet_rotate_b_speed, truchet_strength_b, truchet_strength_b_speed, truchet_mode_b,
-	reptile_scale_b, reptile_scale_b_speed, reptile_rotate_b, reptile_rotate_b_speed,
-	popcorn_scale_b, popcorn_scale_b_speed, popcorn_strength_b, popcorn_strength_b_speed, popcorn_density_b, popcorn_density_b_speed);
+		// --- APPLY VARIATION A ---
+		vec2 uv_a = apply_variation(transformed_uv + translate_a, variation_mode_a,
+			sinusoidal_scale_a, sinusoidal_scale_a_speed, sinusoidal_strength_a, sinusoidal_strength_a_speed,
+			spherical_strength_a, spherical_strength_a_speed, spherical_center_x_a, spherical_center_x_a_speed, spherical_center_y_a, spherical_center_y_a_speed,
+			swirl_radius_scale_a, swirl_radius_scale_a_speed, swirl_angle_scale_a, swirl_angle_scale_a_speed,
+			tangent_scale_a, tangent_scale_a_speed, tangent_strength_a, tangent_strength_a_speed,
+			wave_type_a, wave_frequency_a, wave_frequency_a_speed, wave_amplitude_a, wave_amplitude_a_speed, wave_phase_a, wave_phase_a_speed,
+			julian_power_a, julian_power_a_speed, julian_dist_a, julian_dist_a_speed, julian_a_a, julian_a_a_speed, julian_b_a, julian_b_a_speed, julian_c_a, julian_c_a_speed, julian_d_a, julian_d_a_speed, julian_e_a, julian_e_a_speed, julian_f_a, julian_f_a_speed,
+			fisheye_strength_a, fisheye_strength_a_speed, polar_offset_a, polar_offset_a_speed,
+			var_a_mirror_x, var_a_mirror_y, var_a_mirror_rotation, var_a_mirror_rotation_speed, var_a_kaleidoscope_slices, var_a_kaleidoscope_rotation, var_a_kaleidoscope_rotation_speed,
+			mobius_re_a_a, mobius_re_a_a_speed, mobius_im_a_a, mobius_im_a_a_speed, mobius_re_b_a, mobius_re_b_a_speed, mobius_im_b_a, mobius_im_b_a_speed, mobius_re_c_a, mobius_re_c_a_speed, mobius_im_c_a, mobius_im_c_a_speed, mobius_re_d_a, mobius_re_d_a_speed, mobius_im_d_a, mobius_im_d_a_speed,
+			cellular_weave_grid_size_a, cellular_weave_grid_size_a_speed, cellular_weave_threshold_a, cellular_weave_threshold_a_speed, cellular_weave_iterations_a, cellular_weave_iterations_a_speed,
+			blur_amount_a,
+			heart_scale_a, heart_scale_a_speed, heart_rotation_a, heart_rotation_a_speed, heart_strength_a, heart_strength_a_speed,
+			apollonian_scale_a, apollonian_scale_a_speed, ap_c1x_a, ap_c1x_a_speed, ap_c1y_a, ap_c1y_a_speed, ap_c2x_a, ap_c2x_a_speed, ap_c2y_a, ap_c2y_a_speed, ap_c3x_a, ap_c3x_a_speed, ap_c3y_a, ap_c3y_a_speed,
+			arctangent_scale_a, arctangent_scale_a_speed, arctangent_strength_a, arctangent_strength_a_speed,
+			cosine_scale_a, cosine_scale_a_speed, cosine_strength_a, cosine_strength_a_speed,
+			hyperbolic_cosine_scale_a, hyperbolic_cosine_scale_a_speed, hyperbolic_cosine_strength_a, hyperbolic_cosine_strength_a_speed,
+			hyperbolic_sine_scale_a, hyperbolic_sine_scale_a_speed, hyperbolic_sine_strength_a, hyperbolic_sine_strength_a_speed,
+			custom_tl_a, custom_tr_a, custom_bl_a, custom_br_a,
+			clifford_a_a, clifford_a_a_speed, clifford_b_a, clifford_b_a_speed, clifford_c_a, clifford_c_a_speed, clifford_d_a, clifford_d_a_speed,
+			dejong_a_a, dejong_a_a_speed, dejong_b_a, dejong_b_a_speed, dejong_c_a, dejong_c_a_speed, dejong_d_a, dejong_d_a_speed,
+			truchet_scale_a, truchet_scale_a_speed, truchet_rotate_a, truchet_rotate_a_speed, truchet_strength_a, truchet_strength_a_speed, truchet_mode_a,
+			reptile_scale_a, reptile_scale_a_speed, reptile_rotate_a, reptile_rotate_a_speed,
+			popcorn_scale_a, popcorn_scale_a_speed, popcorn_strength_a, popcorn_strength_a_speed, popcorn_density_a, popcorn_density_a_speed,
+			// --- GLYNNSIM A ---
+    glynn_radius_a, glynn_thickness_a, glynn_contrast_a, glynn_pow_a, glynn_phi1_a, glynn_phi2_a,
+    glynn_radius_a_speed, glynn_thickness_a_speed, glynn_contrast_a_speed, glynn_pow_a_speed, glynn_phi1_a_speed, glynn_phi2_a_speed, glynn_ring_mode_a,
+
+    // --- LAZY MEGA A ---
+    lazy_shape_a, lazy_inside_mode_a, lazy_outside_mode_a, lazy_amount_a, lazy_amount_a_speed, lazy_twist_a, lazy_twist_a_speed, lazy_spin_a, lazy_spin_a_speed, lazy_space_a, lazy_space_a_speed, lazy_offset_x_a, lazy_offset_y_a,
+    lazy_ring_mode_a, lazy_ring_spin_a, lazy_ring_spin_a_speed, lazy_edge_softness_a
+);
+
+		// --- APPLY VARIATION B ---
+		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
+			sinusoidal_scale_b, sinusoidal_scale_b_speed, sinusoidal_strength_b, sinusoidal_strength_b_speed,
+			spherical_strength_b, spherical_strength_b_speed, spherical_center_x_b, spherical_center_x_b_speed, spherical_center_y_b, spherical_center_y_b_speed,
+			swirl_radius_scale_b, swirl_radius_scale_b_speed, swirl_angle_scale_b, swirl_angle_scale_b_speed,
+			tangent_scale_b, tangent_scale_b_speed, tangent_strength_b, tangent_strength_b_speed,
+			wave_type_b, wave_frequency_b, wave_frequency_b_speed, wave_amplitude_b, wave_amplitude_b_speed, wave_phase_b, wave_phase_b_speed,
+			julian_power_b, julian_power_b_speed, julian_dist_b, julian_dist_b_speed, julian_a_b, julian_a_b_speed, julian_b_b, julian_b_b_speed, julian_c_b, julian_c_b_speed, julian_d_b, julian_d_b_speed, julian_e_b, julian_e_b_speed, julian_f_b, julian_f_b_speed,
+			fisheye_strength_b, fisheye_strength_b_speed, polar_offset_b, polar_offset_b_speed,
+			var_b_mirror_x, var_b_mirror_y, var_b_mirror_rotation, var_b_mirror_rotation_speed, var_b_kaleidoscope_slices, var_b_kaleidoscope_rotation, var_b_kaleidoscope_rotation_speed,
+			mobius_re_a_b, mobius_re_a_b_speed, mobius_im_a_b, mobius_im_a_b_speed, mobius_re_b_b, mobius_re_b_b_speed, mobius_im_b_b, mobius_im_b_b_speed, mobius_re_c_b, mobius_re_c_b_speed, mobius_im_c_b, mobius_im_c_b_speed, mobius_re_d_b, mobius_re_d_b_speed, mobius_im_d_b, mobius_im_d_b_speed,
+			cellular_weave_grid_size_b, cellular_weave_grid_size_b_speed, cellular_weave_threshold_b, cellular_weave_threshold_b_speed, cellular_weave_iterations_b, cellular_weave_iterations_b_speed,
+			blur_amount_b,
+			heart_scale_b, heart_scale_b_speed, heart_rotation_b, heart_rotation_b_speed, heart_strength_b, heart_strength_b_speed,
+			apollonian_scale_b, apollonian_scale_b_speed, ap_c1x_b, ap_c1x_b_speed, ap_c1y_b, ap_c1y_b_speed, ap_c2x_b, ap_c2x_b_speed, ap_c2y_b, ap_c2y_b_speed, ap_c3x_b, ap_c3x_b_speed, ap_c3y_b, ap_c3y_b_speed,
+			arctangent_scale_b, arctangent_scale_b_speed, arctangent_strength_b, arctangent_strength_b_speed,
+			cosine_scale_b, cosine_scale_b_speed, cosine_strength_b, cosine_strength_b_speed,
+			hyperbolic_cosine_scale_b, hyperbolic_cosine_scale_b_speed, hyperbolic_cosine_strength_b, hyperbolic_cosine_strength_b_speed,
+			hyperbolic_sine_scale_b, hyperbolic_sine_scale_b_speed, hyperbolic_sine_strength_b, hyperbolic_sine_strength_b_speed,
+			custom_tl_b, custom_tr_b, custom_bl_b, custom_br_b,
+			clifford_a_b, clifford_a_b_speed, clifford_b_b, clifford_b_b_speed, clifford_c_b, clifford_c_b_speed, clifford_d_b, clifford_d_b_speed,
+			dejong_a_b, dejong_a_b_speed, dejong_b_b, dejong_b_b_speed, dejong_c_b, dejong_c_b_speed, dejong_d_b, dejong_d_b_speed,
+			truchet_scale_b, truchet_scale_b_speed, truchet_rotate_b, truchet_rotate_b_speed, truchet_strength_b, truchet_strength_b_speed, truchet_mode_b,
+			reptile_scale_b, reptile_scale_b_speed, reptile_rotate_b, reptile_rotate_b_speed,
+			popcorn_scale_b, popcorn_scale_b_speed, popcorn_strength_b, popcorn_strength_b_speed, popcorn_density_b, popcorn_density_b_speed,
+			// --- GLYNNSIM B ---
+    glynn_radius_b, glynn_thickness_b, glynn_contrast_b, glynn_pow_b, glynn_phi1_b, glynn_phi2_b,
+    glynn_radius_b_speed, glynn_thickness_b_speed, glynn_contrast_b_speed, glynn_pow_b_speed, glynn_phi1_b_speed, glynn_phi2_b_speed, glynn_ring_mode_b,
+
+    // --- LAZY MEGA B ---
+    lazy_shape_b, lazy_inside_mode_b, lazy_outside_mode_b, lazy_amount_b, lazy_amount_b_speed, lazy_twist_b, lazy_twist_b_speed, lazy_spin_b, lazy_spin_b_speed, lazy_space_b, lazy_space_b_speed, lazy_offset_x_b, lazy_offset_y_b,
+    lazy_ring_mode_b, lazy_ring_spin_b, lazy_ring_spin_b_speed, lazy_edge_softness_b
+);
 
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
 
-		// --- ESCAPE TIME LOGIC (NEW) ---
 		// --- ORBIT TRAP SHAPE LOGIC ---
 		float dist = 0.0;
-		vec2 p_centered = mixed_uv; // Already centered relative to transform
+		vec2 p_centered = mixed_uv;
 
-		if (escape_shape == 0) {
-			// Circle (Standard Radius)
+		if (escape_shape == 0) { // Circle
 			dist = length(p_centered);
 		}
-		else if (escape_shape == 1) {
-			// Square (Box Trap) - max of x or y
+		else if (escape_shape == 1) { // Square
 			dist = max(abs(p_centered.x), abs(p_centered.y));
 		}
-		else if (escape_shape == 2) {
-			// Cross / Axes (Stalk Trap) - min of x or y
-			// This creates "plus sign" shapes
+		else if (escape_shape == 2) { // Cross
 			dist = min(abs(p_centered.x), abs(p_centered.y));
 		}
-		else if (escape_shape == 3) {
-			// Diamond (Manhattan Distance)
-			dist = (abs(p_centered.x) + abs(p_centered.y)) * 0.7; // 0.7 scales it to match others
+		else if (escape_shape == 3) { // Diamond
+			dist = (abs(p_centered.x) + abs(p_centered.y)) * 0.7;
 		}
 
 		// Apply Post-Transforms
@@ -1326,7 +1563,7 @@ vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
 		mixed_uv /= post_scale;
 		mixed_uv += post_translate;
 
-		vec2 final_uv = mixed_uv + vec2(0.5); // De-center coordinates
+		vec2 final_uv = mixed_uv + vec2(0.5);
 
 		// --- TILING LOGIC ---
 		if (mirror_tiling) {
@@ -1338,33 +1575,16 @@ vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
 		} else if (seamless_tiling) {
 			final_uv = fract(final_uv);
 		}
-		// --- END TILING ---
 
-		// --- FINAL MIXING LOGIC (THE FIX) ---
-		// --- FINAL MIXING LOGIC (UNIFIED) ---
-		// We now ALWAYS mix with the fresh start_pattern_color.
-		// This ensures the fractal looks the same whether it is moving or still,
-		// and prevents the "muddy" look.
-
+		// --- FINAL MIXING ---
 		vec4 transformed_color = texture(previous_frame, final_uv);
+
 		if (use_escape_time) {
-			// 1. Calculate the Mask (0.0 = Safe, 1.0 = Escaped)
 			float mask = smoothstep(escape_limit, escape_limit + escape_smoothness, dist);
-
-			// 2. Handle Inversion
-			if (escape_invert) {
-				mask = 1.0 - mask;
-			}
-
-			// 3. Mix Feedback with the Background (Start Pattern)
-			// mask 0.0 = Show Feedback
-			// mask 1.0 = Show Background (Start Pattern)
+			if (escape_invert) { mask = 1.0 - mask; }
 			vec4 feedback_result = mix(start_pattern_color, transformed_color, feedback_amount);
-
 			final_color = mix(feedback_result, start_pattern_color, mask);
-
 		} else {
-			// Normal Feedback (No Trap)
 			final_color = mix(start_pattern_color, transformed_color, feedback_amount);
 		}
 	}

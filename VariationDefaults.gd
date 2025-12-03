@@ -236,3 +236,67 @@ class_name VariationDefaults
 @export var as_wave_strength: Vector3 = Vector3.ZERO
 @export var as_wave_frequency: Vector3 = Vector3(4.0, 4.0, 4.0)
 @export var as_julia: Vector3 = Vector3.ZERO
+
+## --- Lazy Mega (A) ---
+@export var lazy_shape_a: int = 0       # 0=Circle, 1=Square, 2=Diamond
+@export var lazy_inside_mode_a: int = 0 # 0=Twist, 1=Travis, 2=Hole
+@export var lazy_outside_mode_a: int = 0 # 0=Inverse, 1=Travis, 2=None
+@export var lazy_amount_a: float = 0.5  # The size of the boundary
+@export var lazy_twist_a: float = 0.2
+@export var lazy_spin_a: float = 0.1
+@export var lazy_space_a: float = 0.4
+@export var lazy_offset_a: Vector2 = Vector2(0.1, 0.2)
+@export var lazy_amount_a_speed: float = 0.0
+@export var lazy_twist_a_speed: float = 0.0
+@export var lazy_spin_a_speed: float = 0.0
+@export var lazy_space_a_speed: float = 0.0
+@export var lazy_ring_mode_a: int = 0 # 0=Empty, 1=Texture, 2=Rings, 3=Rays
+@export var lazy_ring_spin_a: float = 0.0
+@export var lazy_ring_spin_a_speed: float = 0.0
+@export var lazy_edge_softness_a: float = 0.0
+## --- Lazy Mega (B) ---
+@export var lazy_shape_b: int = 0
+@export var lazy_inside_mode_b: int = 0
+@export var lazy_outside_mode_b: int = 0
+@export var lazy_amount_b: float = 0.5
+@export var lazy_twist_b: float = 0.2
+@export var lazy_spin_b: float = 0.1
+@export var lazy_space_b: float = 0.4
+@export var lazy_offset_b: Vector2 = Vector2(0.1, 0.2)
+@export var lazy_amount_b_speed: float = 0.0
+@export var lazy_twist_b_speed: float = 0.0
+@export var lazy_spin_b_speed: float = 0.0
+@export var lazy_space_b_speed: float = 0.0
+@export var lazy_ring_mode_b: int = 0
+@export var lazy_ring_spin_b: float = 0.0
+@export var lazy_ring_spin_b_speed: float = 0.0
+@export var lazy_edge_softness_b: float = 0.0
+## --- GlynnSim A ---
+@export var glynn_radius_a: float = 1.0
+@export var glynn_thickness_a: float = 0.1
+@export var glynn_contrast_a: float = 0.5
+@export var glynn_pow_a: float = 1.5
+@export var glynn_phi1_a: float = 110.0
+@export var glynn_phi2_a: float = 150.0
+@export var glynn_radius_a_speed: float = 0.0
+@export var glynn_thickness_a_speed: float = 0.0
+@export var glynn_contrast_a_speed: float = 0.0
+@export var glynn_pow_a_speed: float = 0.0
+@export var glynn_phi1_a_speed: float = 0.0
+@export var glynn_phi2_a_speed: float = 0.0
+@export var glynn_ring_mode_a: int = 0
+
+## --- GlynnSim B ---
+@export var glynn_radius_b: float = 1.0
+@export var glynn_thickness_b: float = 0.1
+@export var glynn_contrast_b: float = 0.5
+@export var glynn_pow_b: float = 1.5
+@export var glynn_phi1_b: float = 110.0
+@export var glynn_phi2_b: float = 150.0
+@export var glynn_radius_b_speed: float = 0.0
+@export var glynn_thickness_b_speed: float = 0.0
+@export var glynn_contrast_b_speed: float = 0.0
+@export var glynn_pow_b_speed: float = 0.0
+@export var glynn_phi1_b_speed: float = 0.0
+@export var glynn_phi2_b_speed: float = 0.0
+@export var glynn_ring_mode_b: int = 0

@@ -47,6 +47,8 @@ const VARIATIONS = {
 	"Tangent":          { "id": 15, "controls": "tangent" },
 	"Truchet": { "id": 34, "controls": "truchet" },
 	"Popcorn": { "id": 35, "controls": "popcorn" },
+	"Lazy Mega": { "id": 36, "controls": "lazy_mega" },
+	"Glynn Sim": { "id": 37, "controls": "glynn_sim" },
 	"Wave":             { "id": 3, "controls": "wave" },
 }
 
