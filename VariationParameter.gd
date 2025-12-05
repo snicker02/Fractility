@@ -1,24 +1,26 @@
 @tool
-class_name VariationParameter
 extends Resource
+class_name VariationParameter
 
-# --- Defines the control types ---
-enum ControlType { SLIDER, DROPDOWN }
+enum ControlType {
+	SLIDER,
+	DROPDOWN,
+	CHECKBOX
+}
+
 @export var control_type: ControlType = ControlType.SLIDER
+@export var name: String = ""
+@export var label: String = ""
+@export var add_speed_control: bool = false
 
-# --- These properties are for ALL control types ---
-@export var name: String
-@export var label: String
+# --- HIGH PRECISION SLIDER SETTINGS ---
+# The "0.00001" tells Godot to allow 5 decimal places.
+# "or_greater/less" allows you to type numbers outside the slider range if needed.
 
-# --- NEW: This checkbox will auto-create a speed slider ---
-# This is the property your new VariationPanel.gd script is looking for.
-@export var add_speed_control: bool = false 
+@export_range(-10000.0, 10000.0, 0.00001, "or_greater", "or_less") var default: float = 0.0
+@export_range(-10000.0, 10000.0, 0.00001, "or_greater", "or_less") var min: float = 0.0
+@export_range(-10000.0, 10000.0, 0.00001, "or_greater", "or_less") var max: float = 1.0
+@export_range(0.00001, 100.0, 0.00001, "or_greater") var step: float = 0.01
 
-# --- These properties are for SLIDERS ---
-@export var default: float = 0.0
-@export var min: float = -10.0
-@export var max: float = 10.0
-@export var step: float = 0.001
-
-# --- These properties are for DROPDOWNS ---
-@export var dropdown_options: PackedStringArray
+# Dropdown settings
+@export var dropdown_options: PackedStringArray = []

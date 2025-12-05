@@ -478,14 +478,83 @@ uniform float glynn_phi1_b; uniform float glynn_phi1_b_speed;
 uniform float glynn_phi2_b; uniform float glynn_phi2_b_speed;
 uniform int glynn_ring_mode_b;
 
+// Nebula A
+uniform float nebula_scale_a; uniform float nebula_scale_a_speed;
+uniform float nebula_speed_a; uniform float nebula_speed_a_speed;
+uniform float nebula_detail_a; uniform float nebula_detail_a_speed;
+uniform float nebula_distortion_a; uniform float nebula_distortion_a_speed;
+uniform float nebula_swirl_a; uniform float nebula_swirl_a_speed;
+uniform float nebula_stars_a;
+// Nebula B
+uniform float nebula_scale_b; uniform float nebula_scale_b_speed;
+uniform float nebula_speed_b; uniform float nebula_speed_b_speed;
+uniform float nebula_detail_b; uniform float nebula_detail_b_speed;
+uniform float nebula_distortion_b; uniform float nebula_distortion_b_speed;
+uniform float nebula_swirl_b; uniform float nebula_swirl_b_speed;
+uniform float nebula_stars_b;uniform float nebula_filaments_a;
+uniform float nebula_filaments_b;
+// Jigsaw A
+uniform float jigsaw_scale_a; uniform float jigsaw_scale_a_speed;
+uniform float jigsaw_tab_size_a; uniform float jigsaw_tab_size_a_speed;
+uniform float jigsaw_distortion_a; uniform float jigsaw_distortion_a_speed;
+uniform float jigsaw_outline_a;
+// Jigsaw B
+uniform float jigsaw_scale_b; uniform float jigsaw_scale_b_speed;
+uniform float jigsaw_tab_size_b; uniform float jigsaw_tab_size_b_speed;
+uniform float jigsaw_distortion_b; uniform float jigsaw_distortion_b_speed;
+uniform float jigsaw_outline_b;
+
+
+
+
+
+
 // --- Helper Functions ---
-mat2 rotate(float angle) {
-	return mat2(vec2(cos(angle), -sin(angle)), vec2(sin(angle), cos(angle)));
+vec2 random(vec2 st) {
+    st = vec2(dot(st, vec2(127.1,311.7)),
+              dot(st, vec2(269.5,183.3)));
+    return -1.0 + 2.0 * fract(sin(st) * 43758.5453123);
 }
 // Simple pseudo-random number function
 float rand(vec2 co){
     return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
 }
+float perlin_noise(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+    vec2 u = f*f*(3.0-2.0*f);
+    return mix( mix( dot( random(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
+                     dot( random(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
+                mix( dot( random(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
+                     dot( random(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
+}
+// FBM: Fractal Brownian Motion (Cloud Maker)
+float fbm(vec2 st, int octaves, float ridge_mix) {
+	float value = 0.0;
+	float amplitude = 0.5;
+
+	for (int i = 0; i < octaves; i++) {
+		// Get base noise (-1 to 1)
+		float n = perlin_noise(st);
+
+		// "Ridge" math: 1.0 - abs(n) creates sharp peaks like mountains/lightning
+		float ridge = 1.0 - abs(n);
+
+		// Mix between Puffy (n) and Sharp (ridge)
+		// We map 'n' from -1..1 to 0..1 for smoother blending
+		float final_n = mix(n * 0.5 + 0.5, ridge, ridge_mix);
+
+		value += amplitude * final_n;
+		st *= 2.0;
+		amplitude *= 0.5;
+	}
+	return value;
+}
+
+mat2 rotate(float angle) {
+	return mat2(vec2(cos(angle), -sin(angle)), vec2(sin(angle), cos(angle)));
+}
+
 
 
 
@@ -615,6 +684,17 @@ vec2 apply_variation(vec2 uv, int variation_id,
 	float lazy_ring_spin, float lazy_ring_spin_speed,
 	float lazy_edge_softness,
 
+	// Nebula
+	float nebula_scale, float nebula_scale_speed,
+    float nebula_speed, float nebula_speed_speed,
+    float nebula_detail, float nebula_detail_speed,
+    float nebula_distortion, float nebula_distortion_speed,
+	float nebula_swirl, float nebula_swirl_speed, float nebula_filaments,
+
+	//Jigsaw
+	float jigsaw_scale, float jigsaw_scale_speed,
+    float jigsaw_tab_size, float jigsaw_tab_size_speed,
+    float jigsaw_distortion, float jigsaw_distortion_speed, float jigsaw_outline
 ) {
 	if (variation_id == 0) { // Sinusoidal
     // 1. Calculate animated values
@@ -1380,22 +1460,127 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 			}
 		}
 	}
+	else if (variation_id == 38) { // Nebula (Galaxy Mode)
+		float anim_scale = nebula_scale + sin(time * nebula_scale_speed);
+		float anim_time_shift = time * nebula_speed + (time * nebula_speed_speed);
+		float anim_distort = nebula_distortion + sin(time * nebula_distortion_speed);
+		float anim_swirl = nebula_swirl + sin(time * nebula_swirl_speed);
+
+		vec2 p = uv * anim_scale;
+
+		// Swirl Logic (Keep this)
+		float r_len = length(p);
+		if (abs(anim_swirl) > 0.01) {
+			p = p * rotate(r_len * anim_swirl);
+		}
+
+		// Domain Warping with FILAMENTS
+		int octaves = int(clamp(nebula_detail, 1.0, 8.0));
+
+		// Pass 'nebula_filaments' into fbm
+		float q = fbm(p + vec2(anim_time_shift, 0.0), octaves, nebula_filaments);
+		float r = fbm(p + vec2(q) + vec2(0.0, anim_time_shift), octaves, nebula_filaments);
+
+		return uv + vec2(q, r) * anim_distort;
+	}
+
+	else if (variation_id == 39) { // Jigsaw (True Pieces)
+		float anim_scale = max(1.0, jigsaw_scale + sin(time * jigsaw_scale_speed));
+		float anim_tab_size = jigsaw_tab_size + sin(time * jigsaw_tab_size_speed); 
+		float anim_distort = jigsaw_distortion + sin(time * jigsaw_distortion_speed);
+		
+		// 1. Base Grid
+		vec2 p = uv * anim_scale;
+		vec2 cell_id = floor(p);
+		vec2 f = fract(p) - 0.5; // Local coords (-0.5 to 0.5)
+		
+		// 2. Determine Ownership (Who owns this pixel?)
+		// We check neighbors to see if their "Tab" overlaps us.
+		vec2 final_id = cell_id;
+		float dist_to_edge = 1.0; // For drawing the outline later
+		
+		// Helper directions: Right, Left, Top, Bottom
+		vec2 dirs[4] = {vec2(1,0), vec2(-1,0), vec2(0,1), vec2(0,-1)};
+		
+		for (int i = 0; i < 4; i++) {
+			vec2 dir = dirs[i];
+			// Position of the edge relative to cell center
+			vec2 edge_pos = dir * 0.5; 
+			
+			// Unique seed for this specific edge (shared by both neighbors)
+			// We calculate a unique ID for the edge between cells
+			vec2 edge_seed = cell_id + edge_pos;
+			
+			// Randomly decide: Tab Out (1) or Tab In (-1)?
+			float r = rand(edge_seed);
+			float has_tab = (r > 0.5) ? 1.0 : -1.0; 
+			
+			// We define the tab "Out" direction relative to positive axes
+			// If dir is positive (Right/Down), 'has_tab' 1 means sticking OUT of current cell
+			
+			// Calculate distance to the "Tab Circle" center
+			// The tab center is slightly offset from the edge
+			vec2 tab_center = edge_pos + (dir * has_tab * 0.1); // 0.1 pushes center in/out
+			float d = distance(f, tab_center);
+			
+			// Check if we are inside the tab
+			if (d < anim_tab_size) {
+				// We are inside the circle. 
+				// If the tab belongs to the neighbor, we adopt neighbor's ID.
+				
+				// Logic: 
+				// If I am checking Right neighbor (dir=1,0)
+				// And has_tab is -1 (Pointing Left, into me)
+				// Then this pixel belongs to the Right Neighbor.
+				
+				// This simplified check handles all 4 directions:
+				// If the tab points opposite to the direction we are checking, it's the neighbor's.
+				if (has_tab * (dir.x + dir.y) < 0.0) {
+					final_id = cell_id + dir;
+				}
+			}
+			
+			// Track closest distance for the outline effect
+			dist_to_edge = min(dist_to_edge, abs(d - anim_tab_size));
+		}
+		
+		// 3. Apply Distortion (Scramble the pieces)
+		// Now that we know which piece we belong to (final_id), we apply that piece's rotation.
+		
+		// Reconstruct Global UV relative to the *Piece Center*
+		vec2 piece_center = (final_id + 0.5);
+		vec2 uv_relative = (p - piece_center);
+		
+		if (abs(anim_distort) > 0.001) {
+			// Random rotation per piece
+			float rot = (rand(final_id) - 0.5) * anim_distort * 3.14;
+			uv_relative = uv_relative * rotate(rot);
+		}
+		
+		// 4. Final Mapping
+		vec2 result = (piece_center + uv_relative) / anim_scale;
+		
+		// 5. Draw Outline
+		// 'dist_to_edge' was calculated in the loop (distance to the nearest tab edge)
+		// We also need to check distance to the straight grid lines for non-tab edges
+		
+		// Re-calculate distance to box edge if we didn't find a tab
+		vec2 dist_to_box = 0.5 - abs(f);
+		float min_box_dist = min(dist_to_box.x, dist_to_box.y);
+		
+		// Combine: The true edge is the minimum of the Box edge OR the Tab edge
+		float final_edge_dist = min(dist_to_edge, min_box_dist);
+		
+		if (final_edge_dist < jigsaw_outline) {
+			return vec2(10000.0); // Signal to draw black
+		}
+		
+		return result;
+	}
+
 	return uv;
 }
-vec2 random(vec2 st) {
-    st = vec2(dot(st, vec2(127.1,311.7)),
-              dot(st, vec2(269.5,183.3)));
-    return -1.0 + 2.0 * fract(sin(st) * 43758.5453123);
-}
-float perlin_noise(vec2 st) {
-    vec2 i = floor(st);
-    vec2 f = fract(st);
-    vec2 u = f*f*(3.0-2.0*f);
-    return mix( mix( dot( random(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
-                     dot( random(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
-                mix( dot( random(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
-                     dot( random(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
-}
+
 
 // --- Main Shader Logic ---
 // --- Main Shader Logic ---
@@ -1502,7 +1687,18 @@ void fragment() {
 
     // --- LAZY MEGA A ---
     lazy_shape_a, lazy_inside_mode_a, lazy_outside_mode_a, lazy_amount_a, lazy_amount_a_speed, lazy_twist_a, lazy_twist_a_speed, lazy_spin_a, lazy_spin_a_speed, lazy_space_a, lazy_space_a_speed, lazy_offset_x_a, lazy_offset_y_a,
-    lazy_ring_mode_a, lazy_ring_spin_a, lazy_ring_spin_a_speed, lazy_edge_softness_a
+    lazy_ring_mode_a, lazy_ring_spin_a, lazy_ring_spin_a_speed, lazy_edge_softness_a,
+	// Nebula A
+    nebula_scale_a, nebula_scale_a_speed,
+    nebula_speed_a, nebula_speed_a_speed,
+    nebula_detail_a, nebula_detail_a_speed,
+    nebula_distortion_a, nebula_distortion_a_speed,
+	nebula_swirl_a, nebula_swirl_a_speed, nebula_filaments_a,
+
+	// Jigsaw A
+    jigsaw_scale_a, jigsaw_scale_a_speed,
+    jigsaw_tab_size_a, jigsaw_tab_size_a_speed,
+    jigsaw_distortion_a, jigsaw_distortion_a_speed, jigsaw_outline_a
 );
 
 		// --- APPLY VARIATION B ---
@@ -1536,7 +1732,18 @@ void fragment() {
 
     // --- LAZY MEGA B ---
     lazy_shape_b, lazy_inside_mode_b, lazy_outside_mode_b, lazy_amount_b, lazy_amount_b_speed, lazy_twist_b, lazy_twist_b_speed, lazy_spin_b, lazy_spin_b_speed, lazy_space_b, lazy_space_b_speed, lazy_offset_x_b, lazy_offset_y_b,
-    lazy_ring_mode_b, lazy_ring_spin_b, lazy_ring_spin_b_speed, lazy_edge_softness_b
+    lazy_ring_mode_b, lazy_ring_spin_b, lazy_ring_spin_b_speed, lazy_edge_softness_b,
+	nebula_scale_b, nebula_scale_b_speed,
+    nebula_speed_b, nebula_speed_b_speed,
+    nebula_detail_b, nebula_detail_b_speed,
+    nebula_distortion_b, nebula_distortion_b_speed,
+	nebula_swirl_b, nebula_swirl_b_speed, nebula_filaments_b,
+	
+	
+	// Jigsaw B
+    jigsaw_scale_b, jigsaw_scale_b_speed,
+    jigsaw_tab_size_b, jigsaw_tab_size_b_speed,
+    jigsaw_distortion_b, jigsaw_distortion_b_speed, jigsaw_outline_b
 );
 
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
@@ -1577,7 +1784,13 @@ void fragment() {
 		}
 
 		// --- FINAL MIXING ---
-		vec4 transformed_color = texture(previous_frame, final_uv);
+		vec4 transformed_color;
+		if (final_uv.x > 5000.0) {
+			// It's an outline! Draw Black (or Outline Color)
+			transformed_color = vec4(0.0, 0.0, 0.0, 1.0); 
+		} else {
+			transformed_color = texture(previous_frame, final_uv);
+		}
 
 		if (use_escape_time) {
 			float mask = smoothstep(escape_limit, escape_limit + escape_smoothness, dist);
@@ -1588,6 +1801,19 @@ void fragment() {
 			final_color = mix(start_pattern_color, transformed_color, feedback_amount);
 		}
 	}
+// --- NEBULA STARS ---
+	// Add stars if we are in Nebula mode (ID 38) and density > 0
+	float star_density = 0.0;
+	if (variation_mode_a == 38) star_density += nebula_stars_a;
+	if (variation_mode_b == 38) star_density += nebula_stars_b;
 
+	if (star_density > 0.00001) {
+		// Simple high-frequency noise threshold
+		float star_rnd = rand(UV * 100.0 + time * 0.1); // Twinkling
+		if (star_rnd > (1.0 - star_density)) {
+			// Add a bright white star
+			final_color += vec4(1.0);
+		}
+	}
 	COLOR = final_color;
 }

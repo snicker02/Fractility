@@ -1,4 +1,4 @@
-[gd_scene load_steps=199 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=221 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -19,6 +19,8 @@ add_speed_control = true
 default = 1.5
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_t3mf0"]
@@ -28,6 +30,8 @@ label = "C1 X"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_kejda"]
@@ -38,6 +42,8 @@ add_speed_control = true
 default = 5.0
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_uqk8q"]
@@ -48,6 +54,8 @@ add_speed_control = true
 default = -0.433
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_6uidu"]
@@ -58,6 +66,8 @@ add_speed_control = true
 default = -0.25
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_qu7as"]
@@ -68,6 +78,8 @@ add_speed_control = true
 default = 0.433
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_lyuya"]
@@ -78,6 +90,8 @@ add_speed_control = true
 default = -0.25
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_122lf"]
@@ -86,7 +100,9 @@ name = "arctangent_scale_a"
 label = "Scale"
 add_speed_control = true
 default = 1.0
-min = 0.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_r3ryn"]
@@ -95,7 +111,9 @@ name = "arctangent_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_0fsb4"]
@@ -106,6 +124,8 @@ add_speed_control = true
 default = 10.0
 min = 2.0
 max = 100.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_vl5tj"]
@@ -114,8 +134,9 @@ name = "cellular_weave_threshold_a"
 label = "Threshold"
 add_speed_control = true
 default = 4.0
-min = 0.0
 max = 8.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_16pp4"]
@@ -125,6 +146,9 @@ label = "Iterations"
 add_speed_control = true
 default = 1.0
 min = 1.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_4d7sh"]
@@ -135,6 +159,8 @@ add_speed_control = true
 default = -1.7
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ir8iy"]
@@ -145,6 +171,8 @@ add_speed_control = true
 default = 1.7
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_hqns4"]
@@ -155,6 +183,8 @@ add_speed_control = true
 default = -0.5
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_x0ka3"]
@@ -165,6 +195,8 @@ add_speed_control = true
 default = -1.2
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_1m5r5"]
@@ -173,8 +205,9 @@ name = "cosine_scale_a"
 label = "Scale"
 add_speed_control = true
 default = 3.142
-min = 0.0
 max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_2wyoe"]
@@ -183,8 +216,9 @@ name = "cosine_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_0h7mo"]
@@ -195,6 +229,8 @@ add_speed_control = true
 default = 1.4
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_nr8wp"]
@@ -205,6 +241,8 @@ add_speed_control = true
 default = 2.3
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_d2bti"]
@@ -215,6 +253,8 @@ add_speed_control = true
 default = 1.5
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ta5nu"]
@@ -225,6 +265,8 @@ add_speed_control = true
 default = -0.6
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_qgxp6"]
@@ -233,7 +275,9 @@ name = "fisheye_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 2.0
-min = 0.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_s1om5"]
@@ -241,6 +285,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "glynn_ring_mode_a"
 label = "Ring Mode"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("EMPTY", "TEXTURE", "STRIPES", "CHECKERS", "DOTS", "PLASMA", "SPIRAL")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -250,8 +297,9 @@ name = "glynn_radius_a"
 label = "Radius"
 add_speed_control = true
 default = 0.5
-min = 0.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_m4a6d"]
@@ -260,8 +308,8 @@ name = "glynn_thickness_a"
 label = "Thickness"
 add_speed_control = true
 default = 0.05
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ph30p"]
@@ -270,8 +318,8 @@ name = "glynn_contrast_a"
 label = "Contrast"
 add_speed_control = true
 default = 0.5
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_1ec2h"]
@@ -280,8 +328,9 @@ name = "glynn_pow_a"
 label = "Pow"
 add_speed_control = true
 default = 1.5
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_n63ng"]
@@ -292,6 +341,8 @@ add_speed_control = true
 default = 0.3
 min = 0.2
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_wnn4a"]
@@ -301,6 +352,8 @@ label = "Rotation"
 add_speed_control = true
 min = -180.0
 max = 180.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_1aygh"]
@@ -309,8 +362,9 @@ name = "heart_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 0.5
-min = 0.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_0dcxc"]
@@ -319,8 +373,9 @@ name = "hyperbolic_cosine_scale_a"
 label = "Scale"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_j2pq0"]
@@ -329,8 +384,9 @@ name = "hyperbolic_cosine_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ld5wt"]
@@ -339,8 +395,9 @@ name = "hyperbolic_sine_scale_a"
 label = "Scale"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_wcv2n"]
@@ -349,8 +406,46 @@ name = "hyperbolic_sine_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_2aqrj"]
+script = ExtResource("6_4d7sh")
+name = "jigsaw_scale_a"
+label = "Scale"
+add_speed_control = true
+default = 5.0
+min = 1.0
+max = 20.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_sadjv"]
+script = ExtResource("6_4d7sh")
+name = "jigsaw_tab_size_a"
+label = "Tab Size"
+add_speed_control = true
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_siusr"]
+script = ExtResource("6_4d7sh")
+name = "jigsaw_distortion_a"
+label = "Distortion"
+add_speed_control = true
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_l75je"]
+script = ExtResource("6_4d7sh")
+name = "jigsaw_outline_a"
+label = "Outline"
+default = 0.06999999999970896
+max = 0.1000000000003638
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_qilgh"]
@@ -361,6 +456,8 @@ add_speed_control = true
 default = 2.0
 min = -50.0
 max = 50.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_4qosj"]
@@ -371,6 +468,8 @@ add_speed_control = true
 default = 1.0
 min = -5.0
 max = 8.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_cjlbh"]
@@ -381,6 +480,8 @@ add_speed_control = true
 default = 1.0
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_kfelt"]
@@ -390,6 +491,8 @@ label = "B"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ytlpd"]
@@ -399,6 +502,8 @@ label = "C"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_2v765"]
@@ -409,6 +514,8 @@ add_speed_control = true
 default = 1.0
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_b8fb0"]
@@ -418,6 +525,8 @@ label = "E"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ma08v"]
@@ -427,6 +536,8 @@ label = "F"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_6jj3b"]
@@ -434,9 +545,9 @@ script = ExtResource("6_4d7sh")
 name = "var_a_kaleidoscope_slices"
 label = "Slices"
 default = 6.0
-min = 0.0
 max = 100.0
 step = 1.0
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_5mre3"]
@@ -446,6 +557,8 @@ label = "Rotation"
 add_speed_control = true
 min = -180.0
 max = 180.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_c4wnb"]
@@ -453,6 +566,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "lazy_shape_a"
 label = "Shape"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Circle", "Square", "Diamond")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -461,6 +577,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "lazy_inside_mode_a"
 label = "Inside Mode"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Twist", "Weave", "Hole")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -469,6 +588,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "lazy_outside_mode_a"
 label = "Outside Mode"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Inverse", "Weave", "None")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -477,6 +599,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "lazy_ring_mode_a"
 label = "Ring Mode"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Empty", "Texture", "Rings", "Rays", "Dots", "Plasma", "Spiral")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -486,8 +611,9 @@ name = "lazy_amount_a"
 label = "Size"
 add_speed_control = true
 default = 0.4
-min = 0.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_djas3"]
@@ -498,6 +624,8 @@ add_speed_control = true
 default = 5.0
 min = -20.0
 max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ohqex"]
@@ -507,6 +635,8 @@ label = "Spin"
 add_speed_control = true
 min = -3.14
 max = 3.14
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_pl55l"]
@@ -514,8 +644,9 @@ script = ExtResource("6_4d7sh")
 name = "lazy_space_a"
 label = "Space"
 add_speed_control = true
-min = 0.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_0sqyy"]
@@ -525,6 +656,8 @@ label = "Offset X"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_oilbd"]
@@ -534,6 +667,8 @@ label = "Offset Y"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ileqp"]
@@ -543,14 +678,16 @@ label = "Ring Spin"
 add_speed_control = true
 min = -6.28
 max = 6.28
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_f3pq4"]
 script = ExtResource("6_4d7sh")
 name = "lazy_edge_softness_a"
 label = "Edge Softness"
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_bxemi"]
@@ -558,6 +695,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "var_a_mirror_x"
 label = "Mirror X"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Off", "On")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -566,6 +706,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "var_a_mirror_y"
 label = "Mirror Y"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Off", "On")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -576,6 +719,8 @@ label = "Rotation"
 add_speed_control = true
 min = -180.0
 max = 180.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_oixsq"]
@@ -586,6 +731,8 @@ add_speed_control = true
 default = 0.1
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_uo258"]
@@ -596,6 +743,8 @@ add_speed_control = true
 default = 0.2
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_5yc5u"]
@@ -606,6 +755,8 @@ add_speed_control = true
 default = 0.2
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_bcdmj"]
@@ -616,6 +767,8 @@ add_speed_control = true
 default = -0.12
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ysovn"]
@@ -626,6 +779,8 @@ add_speed_control = true
 default = -0.15
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_xa4jy"]
@@ -636,6 +791,8 @@ add_speed_control = true
 default = -0.15
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_4rgxs"]
@@ -646,6 +803,8 @@ add_speed_control = true
 default = 0.21
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_88olm"]
@@ -656,6 +815,78 @@ add_speed_control = true
 default = 0.1
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_hcvxu"]
+script = ExtResource("6_4d7sh")
+name = "nebula_scale_a"
+label = "Scale"
+default = 2.0
+min = 0.1
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_d5x2o"]
+script = ExtResource("6_4d7sh")
+name = "nebula_speed_a"
+label = "Flow Speed"
+add_speed_control = true
+min = -2.0
+max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_qf637"]
+script = ExtResource("6_4d7sh")
+name = "nebula_detail_a"
+label = "Detail"
+default = 5.0
+min = 1.0
+max = 8.0
+step = 1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_bs3kq"]
+script = ExtResource("6_4d7sh")
+name = "nebula_distortion_a"
+label = "Distortion"
+default = 0.5
+max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_jqeos"]
+script = ExtResource("6_4d7sh")
+name = "nebula_swirl_a"
+label = "Swirls"
+add_speed_control = true
+min = -5.0
+max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_4mm8g"]
+script = ExtResource("6_4d7sh")
+name = "nebula_stars_a"
+label = "Star Density"
+max = 0.01
+step = 0.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_2djs3"]
+script = ExtResource("6_4d7sh")
+name = "nebula_filaments_a"
+label = "Filaments"
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_c7o6v"]
@@ -666,6 +897,8 @@ add_speed_control = true
 default = 1.0
 min = -5.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_kq1c5"]
@@ -676,6 +909,8 @@ add_speed_control = true
 default = 1.0
 min = 0.1
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ornx7"]
@@ -684,8 +919,8 @@ name = "popcorn_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 0.1
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_cnnru"]
@@ -696,6 +931,8 @@ add_speed_control = true
 default = 3.0
 min = 1.0
 max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_nlac5"]
@@ -706,6 +943,8 @@ add_speed_control = true
 default = 1.0
 min = 0.1
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_er4ii"]
@@ -715,6 +954,8 @@ label = "Rotate"
 add_speed_control = true
 min = -180.0
 max = 180.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_43vxp"]
@@ -723,8 +964,9 @@ name = "sinusoidal_scale_a"
 label = "Scale"
 add_speed_control = true
 default = 3.142
-min = 0.0
 max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_sxwcl"]
@@ -733,8 +975,9 @@ name = "sinusoidal_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_b481h"]
@@ -745,6 +988,8 @@ add_speed_control = true
 default = 1.0
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_uhvdc"]
@@ -753,7 +998,8 @@ name = "spherical_center_x_a"
 label = "Center X"
 add_speed_control = true
 min = -1.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_aq07h"]
@@ -762,7 +1008,8 @@ name = "spherical_center_y_a"
 label = "Center Y"
 add_speed_control = true
 min = -1.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_5f7vl"]
@@ -771,6 +1018,10 @@ name = "swirl_radius_scale_a"
 label = "Radius Scale"
 add_speed_control = true
 default = 5.0
+min = -10.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_py13h"]
@@ -779,6 +1030,10 @@ name = "swirl_angle_scale_a"
 label = "Angle Scale"
 add_speed_control = true
 default = 2.0
+min = -10.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_iukfe"]
@@ -787,8 +1042,9 @@ name = "tangent_scale_a"
 label = "Scale"
 add_speed_control = true
 default = 1.5
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_4i6pb"]
@@ -797,8 +1053,9 @@ name = "tangent_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_24dk6"]
@@ -806,7 +1063,6 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "truchet_mode_a"
 label = "Pattern"
-min = 0.0
 max = 3.0
 step = 1.0
 dropdown_options = PackedStringArray("Displacement", "90 Deg", "Swap")
@@ -820,6 +1076,8 @@ add_speed_control = true
 default = 2.0
 min = 1.0
 max = 50.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_gt76g"]
@@ -829,6 +1087,8 @@ label = "Rotate"
 add_speed_control = true
 min = -180.0
 max = 180.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ebxd8"]
@@ -837,8 +1097,8 @@ name = "truchet_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 0.1
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_fbwgr"]
@@ -846,6 +1106,8 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "wave_type_a"
 label = "Wave type"
+min = -10.0
+max = 10.0
 step = 1.0
 dropdown_options = PackedStringArray("Vertical", "Radial", "Square")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
@@ -855,8 +1117,9 @@ script = ExtResource("6_4d7sh")
 name = "wave_frequency_a"
 label = "Frequency"
 add_speed_control = true
-min = 0.0
 max = 100.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_fshgd"]
@@ -865,8 +1128,8 @@ name = "wave_amplitude_a"
 label = "Amplitude"
 add_speed_control = true
 default = 0.1
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_lbrxf"]
@@ -874,8 +1137,9 @@ script = ExtResource("6_4d7sh")
 name = "wave_phase_a"
 label = "Phase"
 add_speed_control = true
-min = 0.0
 max = 6.28
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_5fipt"]
@@ -886,6 +1150,8 @@ add_speed_control = true
 default = 1.5
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_j02gt"]
@@ -895,6 +1161,8 @@ label = "C1 X"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_thyvg"]
@@ -905,6 +1173,8 @@ add_speed_control = true
 default = 0.5
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_nsnm2"]
@@ -915,6 +1185,8 @@ add_speed_control = true
 default = -0.433
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_f8kvm"]
@@ -925,6 +1197,8 @@ add_speed_control = true
 default = -0.25
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_3hhlv"]
@@ -935,6 +1209,8 @@ add_speed_control = true
 default = 0.433
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_d88dk"]
@@ -945,6 +1221,8 @@ add_speed_control = true
 default = -0.25
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_7ct8v"]
@@ -953,7 +1231,9 @@ name = "arctangent_scale_b"
 label = "Scale"
 add_speed_control = true
 default = 1.0
-min = 0.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_sg3tl"]
@@ -962,7 +1242,9 @@ name = "arctangent_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_5od4l"]
@@ -973,6 +1255,8 @@ add_speed_control = true
 default = 10.0
 min = 2.0
 max = 100.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_4himb"]
@@ -981,8 +1265,9 @@ name = "cellular_weave_threshold_b"
 label = "Threshold"
 add_speed_control = true
 default = 4.0
-min = 0.0
 max = 8.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_fv7tb"]
@@ -992,6 +1277,9 @@ label = "Iterations"
 add_speed_control = true
 default = 1.0
 min = 1.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_flf07"]
@@ -1002,6 +1290,8 @@ add_speed_control = true
 default = -1.7
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_k73cj"]
@@ -1012,6 +1302,8 @@ add_speed_control = true
 default = 1.7
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_rjqkl"]
@@ -1022,6 +1314,8 @@ add_speed_control = true
 default = -0.5
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_fs4d3"]
@@ -1032,6 +1326,8 @@ add_speed_control = true
 default = -1.2
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_5cr6e"]
@@ -1040,8 +1336,9 @@ name = "cosine_scale_b"
 label = "Scale"
 add_speed_control = true
 default = 3.142
-min = 0.0
 max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_fm8k7"]
@@ -1050,8 +1347,9 @@ name = "cosine_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_7vxoj"]
@@ -1062,6 +1360,8 @@ add_speed_control = true
 default = 1.4
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ei405"]
@@ -1072,6 +1372,8 @@ add_speed_control = true
 default = 2.3
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_e8dv2"]
@@ -1082,6 +1384,8 @@ add_speed_control = true
 default = 1.5
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_2nhjh"]
@@ -1092,6 +1396,8 @@ add_speed_control = true
 default = -0.6
 min = -3.0
 max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_akb8o"]
@@ -1100,7 +1406,9 @@ name = "fisheye_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 2.0
-min = 0.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_awqbt"]
@@ -1108,6 +1416,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "glynn_ring_mode_b"
 label = "Ring Mode"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Empty", "Texture", "Stripes", "Checkers", "Dots", "Plasma", "Spiral")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1117,8 +1428,9 @@ name = "glynn_radius_b"
 label = "Radius"
 add_speed_control = true
 default = 0.5
-min = 0.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_hq8ct"]
@@ -1127,8 +1439,8 @@ name = "glynn_thickness_b"
 label = "Thickness"
 add_speed_control = true
 default = 0.05
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_dmhti"]
@@ -1137,8 +1449,8 @@ name = "glynn_contrast_b"
 label = "Contrast"
 add_speed_control = true
 default = 0.5
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_6qmhe"]
@@ -1147,8 +1459,9 @@ name = "glynn_pow_b"
 label = "Pow"
 add_speed_control = true
 default = 1.5
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_td2a2"]
@@ -1159,6 +1472,8 @@ add_speed_control = true
 default = 0.3
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_c6xte"]
@@ -1168,6 +1483,8 @@ label = "Rotation"
 add_speed_control = true
 min = -180.0
 max = 180.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_inwkr"]
@@ -1178,6 +1495,8 @@ add_speed_control = true
 default = 0.5
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_r8aua"]
@@ -1186,8 +1505,9 @@ name = "hyperbolic_cosine_scale_b"
 label = "Scale"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_sduiw"]
@@ -1196,8 +1516,9 @@ name = "hyperbolic_cosine_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_b0j31"]
@@ -1206,8 +1527,9 @@ name = "hyperbolic_sine_scale_b"
 label = "Scale"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_xgqcr"]
@@ -1216,8 +1538,47 @@ name = "hyperbolic_sine_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_71iuk"]
+script = ExtResource("6_4d7sh")
+name = "jigsaw_scale_b"
+label = "Scale"
+add_speed_control = true
+default = 5.0
+min = 1.0
+max = 20.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_c0f20"]
+script = ExtResource("6_4d7sh")
+name = "jigsaw_tab_size_b"
+label = "Tab Size"
+add_speed_control = true
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_5i1yl"]
+script = ExtResource("6_4d7sh")
+name = "jigsaw_distortion_b"
+label = "Distortion"
+add_speed_control = true
+min = -1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_82a7c"]
+script = ExtResource("6_4d7sh")
+name = "jigsaw_outline_b"
+label = "Outline"
+default = 0.06999999999970896
+max = 0.1000000000003638
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_s32dh"]
@@ -1228,6 +1589,8 @@ add_speed_control = true
 default = 2.0
 min = -5.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_037st"]
@@ -1238,6 +1601,8 @@ add_speed_control = true
 default = 1.0
 min = -5.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_6orn5"]
@@ -1248,6 +1613,8 @@ add_speed_control = true
 default = 1.0
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_whnp6"]
@@ -1257,6 +1624,8 @@ label = "B"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_22e24"]
@@ -1266,6 +1635,8 @@ label = "C"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_m7xe6"]
@@ -1276,6 +1647,8 @@ add_speed_control = true
 default = 1.0
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_wqmsq"]
@@ -1285,6 +1658,8 @@ label = "E"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_fkgk1"]
@@ -1294,6 +1669,8 @@ label = "F"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_oqqhv"]
@@ -1301,9 +1678,9 @@ script = ExtResource("6_4d7sh")
 name = "var_b_kaleidoscope_slices"
 label = "Slices"
 default = 6.0
-min = 0.0
 max = 100.0
 step = 1.0
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_2l1wp"]
@@ -1313,6 +1690,8 @@ label = "Rotation"
 add_speed_control = true
 min = -180.0
 max = 180.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_j1mq8"]
@@ -1320,6 +1699,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "lazy_shape_b"
 label = "Shape"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Circle", "Square", "Diamond")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1328,6 +1710,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "lazy_inside_mode_b"
 label = "Inside Mode"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Twist", "Weave", "Hole")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1336,6 +1721,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "lazy_outside_mode_b"
 label = "Outside Mode"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Inverse", "Weave", "None")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1344,6 +1732,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "lazy_ring_mode_b"
 label = "Ring Mode"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Empty", "Texture", "Rings", "Rays", "Dots", "Plasma", "Spiral")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1353,8 +1744,9 @@ name = "lazy_amount_b"
 label = "Size"
 add_speed_control = true
 default = 0.4
-min = 0.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_shleb"]
@@ -1365,6 +1757,8 @@ add_speed_control = true
 default = 5.0
 min = -20.0
 max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_4pqki"]
@@ -1375,6 +1769,8 @@ add_speed_control = true
 default = 3.14
 min = -6.28
 max = 6.28
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_yxl61"]
@@ -1382,8 +1778,9 @@ script = ExtResource("6_4d7sh")
 name = "lazy_space_b"
 label = "Space"
 add_speed_control = true
-min = 0.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_7vfuv"]
@@ -1393,6 +1790,8 @@ label = "Offset X"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ludm0"]
@@ -1402,6 +1801,8 @@ label = "Offset Y"
 add_speed_control = true
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_88rqo"]
@@ -1411,14 +1812,16 @@ label = "Ring Spin"
 add_speed_control = true
 min = -6.28
 max = 6.28
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_fc4gm"]
 script = ExtResource("6_4d7sh")
 name = "lazy_edge_softness_b"
 label = "Edge Softness"
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_jinwr"]
@@ -1426,6 +1829,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "var_b_mirror_x"
 label = "Mirror X"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Off", "On")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1434,6 +1840,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "var_b_mirror_y"
 label = "Mirror Y"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Off", "On")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1444,6 +1853,8 @@ label = "Rotation"
 add_speed_control = true
 min = -180.0
 max = 180.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_kkr25"]
@@ -1454,6 +1865,8 @@ add_speed_control = true
 default = 0.1
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_fibx4"]
@@ -1464,6 +1877,8 @@ add_speed_control = true
 default = 0.2
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_7kqy5"]
@@ -1474,6 +1889,8 @@ add_speed_control = true
 default = 0.2
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_e1h34"]
@@ -1484,6 +1901,8 @@ add_speed_control = true
 default = -0.12
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ywe1r"]
@@ -1494,6 +1913,8 @@ add_speed_control = true
 default = -0.15
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_pjm8v"]
@@ -1504,6 +1925,8 @@ add_speed_control = true
 default = -0.15
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_nlgyc"]
@@ -1514,6 +1937,8 @@ add_speed_control = true
 default = 0.21
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_oojoh"]
@@ -1524,6 +1949,78 @@ add_speed_control = true
 default = 0.1
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_xdyyu"]
+script = ExtResource("6_4d7sh")
+name = "nebula_scale_b"
+label = "Scale"
+default = 2.0
+min = 0.1
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_b36m8"]
+script = ExtResource("6_4d7sh")
+name = "nebula_speed_b"
+label = "Flow Speed"
+add_speed_control = true
+min = -2.0
+max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ml7eq"]
+script = ExtResource("6_4d7sh")
+name = "nebula_detail_b"
+label = "Detail"
+default = 5.0
+min = 1.0
+max = 8.0
+step = 1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_43lxy"]
+script = ExtResource("6_4d7sh")
+name = "nebula_distortion_b"
+label = "Distortion"
+default = 0.5
+max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_kaf2f"]
+script = ExtResource("6_4d7sh")
+name = "nebula_swirl_b"
+label = "Swirls"
+add_speed_control = true
+min = -5.0
+max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_3r3gr"]
+script = ExtResource("6_4d7sh")
+name = "nebula_stars_b"
+label = "Star Density"
+max = 0.01
+step = 1e-05
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_iunxo"]
+script = ExtResource("6_4d7sh")
+name = "nebula_filaments_b"
+label = "Filaments"
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_5i8vy"]
@@ -1534,6 +2031,8 @@ add_speed_control = true
 default = 1.0
 min = -5.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_540hr"]
@@ -1544,6 +2043,8 @@ add_speed_control = true
 default = 1.0
 min = 0.1
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_6ip5v"]
@@ -1552,8 +2053,8 @@ name = "popcorn_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 0.1
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_q5dlx"]
@@ -1564,6 +2065,8 @@ add_speed_control = true
 default = 3.0
 min = 1.0
 max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_ojpun"]
@@ -1574,6 +2077,8 @@ add_speed_control = true
 default = 1.0
 min = 0.1
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_xke0j"]
@@ -1582,6 +2087,9 @@ name = "reptile_rotate_b"
 label = "Rotate"
 add_speed_control = true
 min = -180.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_mb0t2"]
@@ -1590,8 +2098,9 @@ name = "sinusoidal_scale_b"
 label = "Scale"
 add_speed_control = true
 default = 3.14
-min = 0.0
 max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_m2ceb"]
@@ -1600,8 +2109,9 @@ name = "sinusoidal_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_qphy4"]
@@ -1612,6 +2122,8 @@ add_speed_control = true
 default = 1.0
 min = -2.0
 max = 2.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_oxvno"]
@@ -1620,7 +2132,8 @@ name = "spherical_center_x_b"
 label = "Center X"
 add_speed_control = true
 min = -1.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_xotjc"]
@@ -1629,7 +2142,8 @@ name = "spherical_center_y_b"
 label = "Center Y"
 add_speed_control = true
 min = -1.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_e8f3a"]
@@ -1638,6 +2152,10 @@ name = "swirl_radius_scale_b"
 label = "Radius Scale"
 add_speed_control = true
 default = 5.0
+min = -10.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_mxju4"]
@@ -1646,6 +2164,10 @@ name = "swirl_angle_scale_b"
 label = "Angle Scale"
 add_speed_control = true
 default = 2.0
+min = -10.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_6knet"]
@@ -1654,8 +2176,9 @@ name = "tangent_scale_b"
 label = "Scale"
 add_speed_control = true
 default = 1.5
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_c3urr"]
@@ -1664,8 +2187,9 @@ name = "tangent_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_mryly"]
@@ -1673,7 +2197,6 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "truchet_mode_b"
 label = "Pattern"
-min = 0.0
 max = 3.0
 step = 1.0
 dropdown_options = PackedStringArray("Displacement", "90 Deg", "Swap")
@@ -1687,6 +2210,8 @@ add_speed_control = true
 default = 2.0
 min = 1.0
 max = 50.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_2hxjc"]
@@ -1696,6 +2221,8 @@ label = "Rotate"
 add_speed_control = true
 min = -180.0
 max = 180.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_2u7jv"]
@@ -1704,8 +2231,8 @@ name = "truchet_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 0.1
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_xjt7e"]
@@ -1713,6 +2240,9 @@ script = ExtResource("6_4d7sh")
 control_type = 1
 name = "wave_type_b"
 label = "Wave Type"
+min = -10.0
+max = 10.0
+step = 0.001
 dropdown_options = PackedStringArray("Vertical", "Radial", "Square")
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1722,8 +2252,9 @@ name = "wave_frequency_b"
 label = "Frequency"
 add_speed_control = true
 default = 5.0
-min = 0.0
 max = 100.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_xfyss"]
@@ -1732,8 +2263,8 @@ name = "wave_amplitude_b"
 label = "Amplitude"
 add_speed_control = true
 default = 0.1
-min = 0.0
-max = 1.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Resource" id="Resource_3ngjr"]
@@ -1741,8 +2272,9 @@ script = ExtResource("6_4d7sh")
 name = "wave_phase_b"
 label = "Phase"
 add_speed_control = true
-min = 0.0
 max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
 [sub_resource type="Environment" id="Environment_0e48y"]
@@ -2642,7 +3174,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 3.0"
+text = "V 3.1"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -3075,6 +3607,12 @@ layout_mode = 2
 panel_title = "Hyperbolic Sine A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_ld5wt"), SubResource("Resource_wcv2n")])
 
+[node name="JigsawControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Jigsaw A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_2aqrj"), SubResource("Resource_sadjv"), SubResource("Resource_siusr"), SubResource("Resource_l75je")])
+
 [node name="JulianControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -3104,6 +3642,12 @@ unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Mobius A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_oixsq"), SubResource("Resource_uo258"), SubResource("Resource_5yc5u"), SubResource("Resource_bcdmj"), SubResource("Resource_ysovn"), SubResource("Resource_xa4jy"), SubResource("Resource_4rgxs"), SubResource("Resource_88olm")])
+
+[node name="NebulaControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Nebula A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_hcvxu"), SubResource("Resource_d5x2o"), SubResource("Resource_qf637"), SubResource("Resource_bs3kq"), SubResource("Resource_jqeos"), SubResource("Resource_4mm8g"), SubResource("Resource_2djs3")])
 
 [node name="PolarControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
@@ -3319,6 +3863,12 @@ layout_mode = 2
 panel_title = "Hyperbolic Sine B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_b0j31"), SubResource("Resource_xgqcr")])
 
+[node name="JigsawControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Jigsaw B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_71iuk"), SubResource("Resource_c0f20"), SubResource("Resource_5i1yl"), SubResource("Resource_82a7c")])
+
 [node name="JulianControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -3348,6 +3898,12 @@ unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Mobius B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_kkr25"), SubResource("Resource_fibx4"), SubResource("Resource_7kqy5"), SubResource("Resource_e1h34"), SubResource("Resource_ywe1r"), SubResource("Resource_pjm8v"), SubResource("Resource_nlgyc"), SubResource("Resource_oojoh")])
+
+[node name="NebulaControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Nebula B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_xdyyu"), SubResource("Resource_b36m8"), SubResource("Resource_ml7eq"), SubResource("Resource_43lxy"), SubResource("Resource_kaf2f"), SubResource("Resource_3r3gr"), SubResource("Resource_iunxo")])
 
 [node name="PolarControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
@@ -4010,6 +4566,19 @@ unique_name_in_owner = true
 [node name="RecordTimer" type="Timer" parent="."]
 unique_name_in_owner = true
 wait_time = 0.017
+
+[node name="OverlayStopButton" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+modulate = Color(0.77254903, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -146.0
+offset_bottom = 31.0
+grow_horizontal = 0
+text = "STOP RECORDING"
 
 [connection signal="item_selected" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/ShapeSelectorButton" to="." method="_on_shape_selected"]
 [connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/BackgroundCheckBox" to="." method="_on_background_check_box_toggled"]

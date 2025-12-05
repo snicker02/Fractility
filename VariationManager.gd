@@ -49,6 +49,8 @@ const VARIATIONS = {
 	"Popcorn": { "id": 35, "controls": "popcorn" },
 	"Lazy Mega": { "id": 36, "controls": "lazy_mega" },
 	"Glynn Sim": { "id": 37, "controls": "glynn_sim" },
+	"Nebula": { "id": 38, "controls": "nebula" },
+	"Jigsaw": { "id": 39, "controls": "jigsaw" },
 	"Wave":             { "id": 3, "controls": "wave" },
 }
 

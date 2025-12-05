@@ -300,3 +300,47 @@ class_name VariationDefaults
 @export var glynn_phi1_b_speed: float = 0.0
 @export var glynn_phi2_b_speed: float = 0.0
 @export var glynn_ring_mode_b: int = 0
+
+## --- Nebula A ---
+@export var nebula_scale_a: float = 2.0
+@export var nebula_speed_a: float = 0.1
+@export var nebula_detail_a: float = 5.0 # Octaves (Layers of noise)
+@export var nebula_distortion_a: float = 0.5
+@export var nebula_scale_a_speed: float = 0.0
+@export var nebula_speed_a_speed: float = 0.0
+@export var nebula_detail_a_speed: float = 0.0
+@export var nebula_distortion_a_speed: float = 0.0
+@export var nebula_swirl_a: float = 0.0
+@export var nebula_swirl_a_speed: float = 0.0
+@export var nebula_stars_a: float = 0.0 # 0 = None, 1 = Lots of stars
+@export var nebula_filaments_a: float = 0.0 # 0=Soft, 1=Sharp
+## --- Nebula B ---
+@export var nebula_scale_b: float = 2.0
+@export var nebula_speed_b: float = 0.1
+@export var nebula_detail_b: float = 5.0
+@export var nebula_distortion_b: float = 0.5
+@export var nebula_scale_b_speed: float = 0.0
+@export var nebula_speed_b_speed: float = 0.0
+@export var nebula_detail_b_speed: float = 0.0
+@export var nebula_distortion_b_speed: float = 0.0
+@export var nebula_swirl_b: float = 0.0
+@export var nebula_swirl_b_speed: float = 0.0
+@export var nebula_stars_b: float = 0.0
+@export var nebula_filaments_b: float = 0.0
+
+## --- Jigsaw A ---
+@export var jigsaw_scale_a: float = 5.0
+@export var jigsaw_tab_size_a: float = 0.3
+@export var jigsaw_distortion_a: float = 0.0 # 0=Clean, 1=Jumbled
+@export var jigsaw_scale_a_speed: float = 0.0
+@export var jigsaw_tab_size_a_speed: float = 0.0
+@export var jigsaw_distortion_a_speed: float = 0.0
+@export var jigsaw_outline_a: float = 0.0 # 0.0 = No Line, 0.1 = Thick Line
+## --- Jigsaw B ---
+@export var jigsaw_scale_b: float = 5.0
+@export var jigsaw_tab_size_b: float = 0.3
+@export var jigsaw_distortion_b: float = 0.0
+@export var jigsaw_scale_b_speed: float = 0.0
+@export var jigsaw_tab_size_b_speed: float = 0.0
+@export var jigsaw_distortion_b_speed: float = 0.0
+@export var jigsaw_outline_b: float = 0.0

@@ -1,11 +1,13 @@
 extends Control
-const PROGRAM_VERSION = 3.0
+const PROGRAM_VERSION = 3.1
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
 
 
 # --- Node References ---
+@onready var overlay_stop_button: Button = %OverlayStopButton # (Remember to set Unique Name)
+@onready var ui_sidebar: Panel = $HSplitContainer/Panel
 @onready var viewport_a: SubViewport = %ViewportA
 @onready var viewport_b: SubViewport = %ViewportB
 @onready var final_output: TextureRect = %FinalOutput
@@ -443,6 +445,20 @@ var mandel_texture_scale: float = 1.0
 @onready var lazy_mega_controls_container_b: VBoxContainer = %LazyMegaControlsContainerB
 @onready var glynn_sim_controls_container_a: VBoxContainer = %GlynnSimControlsContainerA
 @onready var glynn_sim_controls_container_b: VBoxContainer = %GlynnSimControlsContainerB
+@onready var nebula_controls_container_a: VBoxContainer = %NebulaControlsContainerA
+@onready var nebula_controls_container_b: VBoxContainer = %NebulaControlsContainerB
+@onready var jigsaw_controls_container_a: VBoxContainer = %JigsawControlsContainerA
+@onready var jigsaw_controls_container_b: VBoxContainer = %JigsawControlsContainerB
+
+
+
+
+
+
+
+
+
+
 var is_recording: bool = false
 var frame_counter: int = 0
 var recording_dir: String = "user://recordings/"
@@ -643,6 +659,13 @@ func _ready() -> void:
 	var current_fractal_texture
 	var post_save_material = ShaderMaterial.new()
 
+
+	if overlay_stop_button:
+		overlay_stop_button.pressed.connect(func(): 
+			# Toggle the main record button OFF. 
+			# This triggers _on_record_button_toggled(false) automatically.
+			record_button.button_pressed = false 
+		)
 	# --- NOW, THE REST OF THE CODE CAN RUN ---
 	randomize_controls_container.visible = false
 	# --- Ensure WorldEnvironment has an Environment ---
@@ -716,7 +739,12 @@ func _ready() -> void:
 		"popcorn": popcorn_controls_container_a,
 		"lazy_mega": lazy_mega_controls_container_a,
 		"glynn_sim": glynn_sim_controls_container_a,
+		"nebula": nebula_controls_container_a,
+		"jigsaw": jigsaw_controls_container_a,
 		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
+		
+		
+
 	}
 	
 	var_b_panels = {
@@ -745,6 +773,8 @@ func _ready() -> void:
 		"popcorn": popcorn_controls_container_b,
 		"lazy_mega": lazy_mega_controls_container_b,
 		"glynn_sim": glynn_sim_controls_container_b,
+		"nebula": nebula_controls_container_b,
+		"jigsaw": jigsaw_controls_container_b,
 		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
 	}
 	
@@ -796,6 +826,19 @@ func _ready() -> void:
 	lazy_mega_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	glynn_sim_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	glynn_sim_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	nebula_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	nebula_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	jigsaw_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	jigsaw_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	reptile_vars_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	reptile_vars_b.value_updated.connect(_on_variation_param_changed.bind("b"))
@@ -2491,7 +2534,8 @@ func _process(delta: float) -> void:
 		# --- END NEW Mailbox Check ---
 	# Only use real-time if we are NOT recording.
 	# If we ARE recording, the Timer will handle the time steps manually.
-	if not animation_paused and not is_recording:
+	var stop_time_for_recording = is_recording and not OS.has_feature("web")
+	if not animation_paused and not stop_time_for_recording:
 		time += delta
 	# print("2. Process is using pre_translate: ", pre_translate) # DEBUG
 
@@ -3883,8 +3927,20 @@ func _on_record_button_toggled(button_pressed: bool):
 		record_button.text = "Stop Recording"
 		
 		if OS.has_feature("web"):
+			# 1. Hide the UI so we record ONLY the fractal
+			if ui_sidebar: ui_sidebar.visible = false
+			if overlay_stop_button: overlay_stop_button.visible = true
+			
+			# --- FIX: WAIT FOR RESIZE ---
+			# We wait 2 frames to ensure the canvas is stable before capturing
+			await get_tree().process_frame
+			await get_tree().process_frame
+			
+			# 3. Start the Browser Recorder
 			JavaScriptBridge.eval("startRecording();")
+			
 		else:
+			# --- DESKTOP START LOGIC (Unchanged) ---
 			frame_counter = 0
 			var full_rec_dir = ProjectSettings.globalize_path(recording_dir)
 			
@@ -3899,38 +3955,40 @@ func _on_record_button_toggled(button_pressed: bool):
 			if not dir.dir_exists("recordings"):
 				var err = dir.make_dir("recordings")
 				if err != OK:
-					printerr("Failed to create recordings directory: ", full_rec_dir, " Error: ", err)
+					printerr("Failed to create recordings directory.")
 					is_recording = false
 					record_button.set_pressed_no_signal(false)
 					record_button.text = "Start Recording"
 					return
 			
 			var rec_dir = DirAccess.open(full_rec_dir)
-			if not rec_dir:
-				printerr("Failed to open recordings directory even after creating it.")
-				return
-			
-			for file in rec_dir.get_files():
-				if file.ends_with(".png"):
-					rec_dir.remove(file)
+			if rec_dir:
+				for file in rec_dir.get_files():
+					if file.ends_with(".png"):
+						rec_dir.remove(file)
 			
 			print("Starting frame capture... Saving to: ", full_rec_dir)
 			record_timer.start()
+			
 	else:
 		# --- STOPPING RECORDING ---
 		record_button.text = "Start Recording"
 		
 		if OS.has_feature("web"):
+			# 1. Stop the Browser Recorder
 			JavaScriptBridge.eval("stopRecording();")
+			
+			# 2. Restore the UI
+			if ui_sidebar: ui_sidebar.visible = true
+			if overlay_stop_button: overlay_stop_button.visible = false
+			
 		else:
-			# On desktop, stop the timer and open the save dialog
+			# --- DESKTOP STOP LOGIC (Unchanged) ---
 			record_timer.stop()
 			print("Recording finished. %d frames saved." % frame_counter)
 			
-			# Wait a moment for the last frame to save
 			await get_tree().create_timer(0.1).timeout
 			
-			# --- OPEN THE SAVE DIALOG ---
 			file_dialog_mode = "save_animation"
 			file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
 			file_dialog.filters = PackedStringArray(["*.mp4 ; MP4 Video"])
