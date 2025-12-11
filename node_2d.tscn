@@ -1,4 +1,4 @@
-[gd_scene load_steps=221 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=223 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -2300,6 +2300,17 @@ shader_parameter/brightness = 1.0
 shader_parameter/contrast = 1.0
 shader_parameter/saturation = 1.0
 
+[sub_resource type="BoxMesh" id="BoxMesh_ir8iy"]
+subdivide_width = 1
+subdivide_height = 1
+subdivide_depth = 1
+
+[sub_resource type="MultiMesh" id="MultiMesh_hqns4"]
+transform_format = 1
+use_colors = true
+use_custom_data = true
+mesh = SubResource("BoxMesh_ir8iy")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kdubu"]
 shader = ExtResource("3_q6r6c")
 shader_parameter/brightness = 1.0
@@ -2526,14 +2537,15 @@ value = 1.0
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ASFoldingLimitContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+[node name="AS_FoldContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Folding Limit" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASFoldingLimitContainer"]
+[node name="Folding Limit" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_FoldContainer"]
 layout_mode = 2
 text = "Folding Limit"
 
-[node name="ASFoldLimitSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASFoldingLimitContainer"]
+[node name="ASFoldLimitSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_FoldContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -2541,22 +2553,26 @@ max_value = 2.0
 step = 0.01
 value = 1.0
 
-[node name="ASFoldLimitSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASFoldingLimitContainer"]
+[node name="ASFoldLimitSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_FoldContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 2.0
 step = 0.01
 value = 1.0
 
-[node name="ASRotXContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+[node name="ASRotContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ASFractal Rotate X" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotXContainer"]
+[node name="ASRotXContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer"]
+layout_mode = 2
+
+[node name="ASFractal Rotate X" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer/ASRotXContainer"]
 layout_mode = 2
 text = "Fractal Rotate X
 "
 
-[node name="ASRotXSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotXContainer"]
+[node name="ASRotXSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer/ASRotXContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -2564,22 +2580,22 @@ min_value = -180.0
 max_value = 180.0
 step = 0.001
 
-[node name="ASRotXSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotXContainer"]
+[node name="ASRotXSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer/ASRotXContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = -180.0
 max_value = 180.0
 step = 0.001
 
-[node name="ASRotYContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+[node name="ASRotYContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer"]
 layout_mode = 2
 
-[node name="ASFractal Rotate Y" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotYContainer"]
+[node name="ASFractal Rotate Y" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer/ASRotYContainer"]
 layout_mode = 2
 text = "Fractal Rotate Y
 "
 
-[node name="ASRotYSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotYContainer"]
+[node name="ASRotYSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer/ASRotYContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -2587,22 +2603,22 @@ min_value = -180.0
 max_value = 180.0
 step = 0.001
 
-[node name="ASRotYSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotYContainer"]
+[node name="ASRotYSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer/ASRotYContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = -180.0
 max_value = 180.0
 step = 0.001
 
-[node name="ASRotZContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+[node name="ASRotZContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer"]
 layout_mode = 2
 
-[node name="ASFractal Rotate Z" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotZContainer"]
+[node name="ASFractal Rotate Z" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer/ASRotZContainer"]
 layout_mode = 2
 text = "Fractal Rotate Z
 "
 
-[node name="ASRotZSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotZContainer"]
+[node name="ASRotZSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer/ASRotZContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -2610,21 +2626,25 @@ min_value = -180.0
 max_value = 180.0
 step = 0.001
 
-[node name="ASRotZSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotZContainer"]
+[node name="ASRotZSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASRotContainer/ASRotZContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = -180.0
 max_value = 180.0
 step = 0.001
 
-[node name="ASJuliaXContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+[node name="AS_JuliaContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Julia Offset X" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASJuliaXContainer"]
+[node name="ASJuliaXContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer"]
+layout_mode = 2
+
+[node name="Julia Offset X" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer/ASJuliaXContainer"]
 layout_mode = 2
 text = "Julia Offset X"
 
-[node name="ASJuliaXSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASJuliaXContainer"]
+[node name="ASJuliaXSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer/ASJuliaXContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -2632,22 +2652,22 @@ min_value = -2.0
 max_value = 2.0
 step = 0.001
 
-[node name="ASJuliaXSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASJuliaXContainer"]
+[node name="ASJuliaXSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer/ASJuliaXContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = -2.0
 max_value = 2.0
 step = 0.001
 
-[node name="ASJuliaYContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+[node name="ASJuliaYContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer"]
 layout_mode = 2
 
-[node name="Julia Offset Y" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASJuliaYContainer"]
+[node name="Julia Offset Y" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer/ASJuliaYContainer"]
 layout_mode = 2
 text = "Julia Offset Y
 "
 
-[node name="ASJuliaYSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASJuliaYContainer"]
+[node name="ASJuliaYSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer/ASJuliaYContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -2655,21 +2675,21 @@ min_value = -2.0
 max_value = 2.0
 step = 0.001
 
-[node name="ASJuliaYSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASJuliaYContainer"]
+[node name="ASJuliaYSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer/ASJuliaYContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = -2.0
 max_value = 2.0
 step = 0.001
 
-[node name="ASJuliaZContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+[node name="ASJuliaZContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer"]
 layout_mode = 2
 
-[node name="Julia Offset Z" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASJuliaZContainer"]
+[node name="Julia Offset Z" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer/ASJuliaZContainer"]
 layout_mode = 2
 text = "Julia Offset Z"
 
-[node name="ASJuliaZSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASJuliaZContainer"]
+[node name="ASJuliaZSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer/ASJuliaZContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -2677,7 +2697,7 @@ min_value = -180.0
 max_value = 180.0
 step = 0.001
 
-[node name="ASJuliaZSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASJuliaZContainer"]
+[node name="ASJuliaZSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/AS_JuliaContainer/ASJuliaZContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = -180.0
@@ -2763,12 +2783,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 max_value = 20.0
 step = 0.001
+value = 4.0
 
 [node name="ASWaveFreqXSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASWaveFreqXContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 20.0
 step = 0.001
+value = 4.0
 
 [node name="ASWaveFreqYContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
 layout_mode = 2
@@ -2783,12 +2805,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 max_value = 20.0
 step = 0.001
+value = 4.0
 
 [node name="ASWaveFreqYSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASWaveFreqYContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 20.0
 step = 0.001
+value = 4.0
 
 [node name="ASWaveFreqZContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
 layout_mode = 2
@@ -2803,12 +2827,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 max_value = 20.0
 step = 0.001
+value = 4.0
 
 [node name="ASWaveFreqZSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams/ASWaveFreqZContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 20.0
 step = 0.001
+value = 4.0
 
 [node name="ASWaveStrXContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
 layout_mode = 2
@@ -2869,6 +2895,87 @@ unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.001
+
+[node name="Wave Speed" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+layout_mode = 2
+text = "Wave Speed"
+
+[node name="WaveSpeedSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/MandelbulbControls/AmazingSurfParams"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="VoxelControls" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Grid Resolution" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+layout_mode = 2
+text = "Density"
+
+[node name="VoxelResSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 10.0
+max_value = 1500.0
+value = 100.0
+
+[node name="VoxelResSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 10.0
+max_value = 1500.0
+value = 100.0
+
+[node name="Height Scale" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+layout_mode = 2
+text = "Height Scale"
+
+[node name="VoxelHeightSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 20.0
+step = 0.1
+value = 5.0
+
+[node name="VoxelHeightSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 20.0
+step = 0.1
+value = 5.0
+
+[node name="Cube Size (Gaps)" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+layout_mode = 2
+text = "Cube Size (Gaps)"
+
+[node name="VoxelCubeScaleSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.001
+max_value = 1.0
+step = 0.001
+value = 0.2
+
+[node name="VoxelCubeScaleSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.001
+max_value = 1.0
+step = 0.001
+value = 0.2
+
+[node name="Label" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+layout_mode = 2
+text = "Voxel Glow"
+
+[node name="VoxelEmissionSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/VoxelControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.1
 
 [node name="DisplacementContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
 unique_name_in_owner = true
@@ -2979,6 +3086,27 @@ max_value = 40.0
 step = 0.001
 
 [node name="LightEnergySpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/LightEnergyContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 40.0
+step = 0.001
+
+[node name="ShadowBiasContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls"]
+layout_mode = 2
+
+[node name="Shadow Bias" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/ShadowBiasContainer"]
+layout_mode = 2
+text = "Shadow Bias"
+
+[node name="ShadowBiasSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/ShadowBiasContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.001
+value = 0.1
+
+[node name="ShadowBiasSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Container3DControls/ShadowBiasContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 40.0
@@ -3174,7 +3302,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 3.1"
+text = "V 3.2"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -4498,6 +4626,10 @@ unique_name_in_owner = true
 mesh = SubResource("SphereMesh_4d7sh")
 surface_material_override/0 = SubResource("ShaderMaterial_hqns4")
 script = ExtResource("3_epypp")
+
+[node name="VoxelGrid" type="MultiMeshInstance3D" parent="HSplitContainer/Control/Display_3D_Container/3DViewport/Node3D"]
+unique_name_in_owner = true
+multimesh = SubResource("MultiMesh_hqns4")
 
 [node name="ViewportA" type="SubViewport" parent="."]
 unique_name_in_owner = true

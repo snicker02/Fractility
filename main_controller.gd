@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 3.1
+const PROGRAM_VERSION = 3.2
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -74,9 +74,17 @@ var ray_iterations: int = 12
 @onready var ab_fold_spinbox: SpinBox = %ABFoldLimitSpinBox # <--- NEW
 @onready var ab_rad_slider: HSlider = %ABFixedRadSlider
 @onready var ab_rad_spinbox: SpinBox = %ABFixedRadSpinBox   # <--- NEW
-
+@onready var voxel_grid: MultiMeshInstance3D = %VoxelGrid # Make sure to set Unique Name in Scene!
+@onready var shadow_bias_slider: HSlider = %ShadowBiasSlider
+@onready var shadow_bias_spinbox: SpinBox = %ShadowBiasSpinBox
+var voxel_resolution: int = 100 # 100x100 = 10,000 cubes. Increase to 200 for 4090!
 var ab_fold_limit: float = 1.0
 var ab_fixed_radius: float = 1.0
+@onready var voxel_emission_slider: HSlider = %VoxelEmissionSlider
+
+@onready var as_julia_container: Control = %AS_JuliaContainer
+@onready var as_fold_container: Control = %AS_FoldContainer
+@onready var as_rotate_container: Control = %ASRotContainer
 
 @onready var escape_time_check: CheckBox = %EscapeTimeCheck
 @onready var escape_limit_slider: HSlider = %EscapeLimitSlider
@@ -96,7 +104,17 @@ var current_step_speed: float = 0.25 # Default to Balanced
 
 var escape_smoothness: float = 0.1
 var escape_invert: bool = false
-
+@onready var voxel_controls: VBoxContainer = %VoxelControls
+@onready var voxel_res_slider: HSlider = %VoxelResSlider
+@onready var voxel_res_spinbox: SpinBox = %VoxelResSpinBox
+@onready var voxel_height_slider: HSlider = %VoxelHeightSlider
+@onready var voxel_height_spinbox: SpinBox = %VoxelHeightSpinBox
+@onready var voxel_cube_scale_slider: HSlider = %VoxelCubeScaleSlider
+@onready var voxel_cube_scale_spinbox: SpinBox = %VoxelCubeScaleSpinBox
+@onready var wave_speed_slider: HSlider = %WaveSpeedSlider # Access as unique %
+var as_wave_speed: float = 1.0
+var voxel_height_scale: float = 5.0
+var voxel_cube_scale: float = 0.2
 
 # --- MINI GAME VARIABLES ---
 @onready var game_start_btn: Button = %GameStartButton # Make sure to set Unique Name
@@ -312,6 +330,7 @@ var mandel_texture_scale: float = 1.0
 @onready var load_preset_button: Button = %LoadPresetButton
 @onready var copy_preset_button: Button = %CopyPresetButton
 @onready var paste_preset_button: Button = %PastePresetButton
+
 
 # Contextual Containers
 @onready var gradient_controls_container: VBoxContainer = %GradientControlsContainer
@@ -713,6 +732,26 @@ func _ready() -> void:
 	post_process_material.shader = load("res://post_process.gdshader")
 	final_output.material = post_process_material
 	
+	# In _ready():
+	if voxel_emission_slider:
+		voxel_emission_slider.value_changed.connect(func(v): 
+			emission_strength = v # We can still reuse the variable, just controlled by a different slider!
+		)
+	
+	# --- Shadow Bias Control ---
+	if shadow_bias_slider:
+		# Set initial value from the slider
+		if light_3d:
+			light_3d.shadow_bias = shadow_bias_slider.value
+			
+		shadow_bias_slider.value_changed.connect(func(v):
+			if light_3d:
+				light_3d.shadow_bias = v
+				# Also helpful: "Normal Bias" usually helps with acne on curved surfaces
+				# We can link them or set a safe default.
+				light_3d.shadow_normal_bias = v * 2.0 
+		)
+	
 	var_a_panels = {
 		"apollonian": apollonian_controls_container_a,
 		"arctangent": arctangent_controls_container_a,
@@ -921,7 +960,8 @@ func _ready() -> void:
 	
 	# --- Mandelbulb Texture Controls ---
 		# --- Mandelbulb Texture Controls (Two-Way Sync) ---
-	
+	# Build the grid on startup
+	setup_voxel_grid()
 	# Mix (Intensity)
 	mandel_mix_slider.value_changed.connect(func(v): 
 		mandel_texture_intensity = v
@@ -931,8 +971,45 @@ func _ready() -> void:
 		mandel_texture_intensity = v
 		mandel_mix_slider.set_value_no_signal(v)
 	)
-	
-	
+	if voxel_res_slider:
+		# Changing resolution requires rebuilding the whole mesh!
+		# We use 'drag_ended' or just update immediately if your PC is fast.
+		# For 4090, immediate update is usually fine up to 200x200.
+		voxel_res_slider.value_changed.connect(func(v): 
+			voxel_resolution = int(v)
+			if voxel_res_spinbox: voxel_res_spinbox.set_value_no_signal(v)
+			setup_voxel_grid() # <--- REBUILD GRID
+		)
+	if voxel_res_spinbox:
+		voxel_res_spinbox.value_changed.connect(func(v):
+			voxel_resolution = int(v)
+			if voxel_res_slider: voxel_res_slider.set_value_no_signal(v)
+			setup_voxel_grid()
+		)
+		
+	if voxel_height_slider:
+		voxel_height_slider.value_changed.connect(func(v): 
+			voxel_height_scale = v
+			if voxel_height_spinbox: voxel_height_spinbox.set_value_no_signal(v)
+		)
+	if voxel_height_spinbox:
+		voxel_height_spinbox.value_changed.connect(func(v):
+			voxel_height_scale = v
+			if voxel_height_slider: voxel_height_slider.set_value_no_signal(v)
+		)
+
+	if voxel_cube_scale_slider:
+		voxel_cube_scale_slider.value_changed.connect(func(v): 
+			voxel_cube_scale = v
+			if voxel_cube_scale_spinbox: voxel_cube_scale_spinbox.set_value_no_signal(v)
+		)
+	if voxel_cube_scale_spinbox:
+		voxel_cube_scale_spinbox.value_changed.connect(func(v):
+			voxel_cube_scale = v
+			if voxel_cube_scale_slider: voxel_cube_scale_slider.set_value_no_signal(v)
+		)
+	if wave_speed_slider:
+		wave_speed_slider.value_changed.connect(func(v): as_wave_speed = v)
 
 
 	# Scale
@@ -1632,87 +1709,136 @@ func _on_shape_selected(shape_index: int):
 			var m = BoxMesh.new()
 			m.size = Vector3(20.0, 20.0, 20.0)
 			new_mesh = m
+			
+		9: # Voxel Grid
+			is_raymarching = false
+			fractal_mesh.visible = false 
+			
+			# 1. Show Voxel Controls
+			if voxel_controls: voxel_controls.visible = true
+			
+			
+			# 2. Hide Standard Mesh / Raymarch Core (Junk)
+			if standard_mesh_controls: standard_mesh_controls.visible = false
+			if raymarch_core_params: raymarch_core_params.visible = false
+			if ab_params: ab_params.visible = false # Amazing Box panel
+
+			# --- 3. THE "JUST WHAT I WANT" LOGIC ---
+			
+			# A. Turn ON the Modifiers Panel (Parent)
+			if as_params: as_params.visible = true 
+			
+			# B. Turn OFF the specific sub-sections we hate
+			if as_julia_container: as_julia_container.visible = false
+			if as_fold_container: as_fold_container.visible = false
+			if as_rotate_container: as_rotate_container.visible = false
+			# C. (Optional) Turn ON the sections we want (Twist/Wave) 
+			# (They are usually visible by default, but good to be safe)
+			# if as_twist_container: as_twist_container.visible = true
+			
+			# 4. Show Main
+			mandel_controls.visible = true 
+		
+			if voxel_grid:
+				voxel_grid.visible = true
+				var mat = ShaderMaterial.new()
+				mat.shader = load("res://voxel_visualizer.gdshader")
+				voxel_grid.material_override = mat
 
 	# --- STEP 2: APPLY MATERIALS & UI ---
-	if new_mesh:
-		fractal_mesh.mesh = new_mesh
+	
+	# 1. GLOBAL RESET: Turn OFF all special panels first
+	# This prevents "Ghost UI" from showing up where it shouldn't.
+	if ab_params: ab_params.visible = false
+	if as_params: as_params.visible = false
+	if raymarch_core_params: raymarch_core_params.visible = false
+	if voxel_controls: voxel_controls.visible = false
+	
+	# 2. VOXEL GRID LOGIC (ID 9)
+	if shape_index == 9:
+		is_raymarching = false
+		fractal_mesh.visible = false
 		
-		# Always show Main Container
-		mandel_controls.visible = true 
+		# Show Main Controls
+		mandel_controls.visible = true
+		if voxel_controls: voxel_controls.visible = true
 		
-		# Ensure Mix/Scale Sliders are visible
-		if mandel_mix_slider: mandel_mix_slider.get_parent().visible = true
-		if mandel_scale_slider: mandel_scale_slider.get_parent().visible = true
+		# --- SHOW CHAOS MODIFIERS (Twist/Wave) ---
+		if as_params: as_params.visible = true # <--- CHANGE THIS TO TRUE!
 		
-		# Default: Hide Raymarch-specific panels
-		if ab_params: ab_params.visible = false
-		if as_params: as_params.visible = false
+		# Hide irrelevant stuff
+		if raymarch_core_params: raymarch_core_params.visible = false
+		if standard_mesh_controls: standard_mesh_controls.visible = false # Keep standard for Emission
+		
+		if voxel_grid:
+			voxel_grid.visible = true
+			var mat = ShaderMaterial.new()
+			mat.shader = load("res://voxel_visualizer.gdshader")
+			voxel_grid.material_override = mat
 
-		# --- NORMAL MESHES (0-4) ---
-		if shape_index < 5:
+	# 3. STANDARD MESH / RAYMARCH LOGIC (0-8)
+	elif new_mesh:
+		fractal_mesh.mesh = new_mesh
+		fractal_mesh.visible = true
+		if voxel_grid: voxel_grid.visible = false
+		
+		# Show Main Container
+		mandel_controls.visible = true 
+
+		# --- RAYMARCHING (5, 6, 7, 8) ---
+		if shape_index >= 5:
+			is_raymarching = true
+			var mat = ShaderMaterial.new()
+			# UI: Show Core Raymarch Sliders
+			if raymarch_core_params: raymarch_core_params.visible = true
+			
+			# UI: Hide Standard Mesh Controls
+			if standard_mesh_controls: standard_mesh_controls.visible = false
+
+			# --- FIX: RESTORE CHAOS MODIFIERS ---
+			# Voxel Mode hides these children, so we MUST turn them back ON for 3D Fractals.
+			if as_params: as_params.visible = true
+			if as_julia_container: as_julia_container.visible = true
+			if as_fold_container: as_fold_container.visible = true
+			if as_rotate_container: as_rotate_container.visible = true
+			# Load Shaders
+			if shape_index == 5: mat.shader = load("res://raymarch_mandelbulb.gdshader")
+			elif shape_index == 6: mat.shader = load("res://raymarch_menger.gdshader")
+			elif shape_index == 7: mat.shader = load("res://raymarch_amazingbox.gdshader")
+			elif shape_index == 8: mat.shader = load("res://raymarch_amazingsurf.gdshader")
+			
+			fractal_mesh.set_surface_override_material(0, mat)
+			
+			# UI: Show Core Raymarch Sliders (Power, Iterations)
+			if raymarch_core_params: raymarch_core_params.visible = true
+			
+			# UI: Show Chaos Modifiers (Twist, Wave, Julia) for ALL Raymarchers
+			# This fixes the missing variables for Menger/Mandelbulb
+			if as_params: as_params.visible = true 
+			
+			# UI: Show Amazing Box Specifics (Fold/Radius) ONLY for Box (7)
+			if shape_index == 7:
+				if ab_params: ab_params.visible = true
+				
+			# UI: Hide Standard Mesh Controls
+			if standard_mesh_controls: standard_mesh_controls.visible = false
+
+		# --- STANDARD MESHES (0-4) ---
+		else:
+			is_raymarching = false
 			var mat = ShaderMaterial.new()
 			mat.shader = load("res://fractal_3d_displacement.gdshader")
 			fractal_mesh.set_surface_override_material(0, mat)
 			
-			is_raymarching = false
-			
-			# SHOW Standard Controls (Height, Glow, etc)
+			# UI: Show Standard Controls (Height, Glow)
 			if standard_mesh_controls: standard_mesh_controls.visible = true
-
-			# HIDE Raymarch Core Sliders
-			if raymarch_core_params: raymarch_core_params.visible = false
-			else:
-				# Fallback
-				if mandel_power_slider: mandel_power_slider.visible = false
-				if mandel_power_spinbox: mandel_power_spinbox.visible = false
-				if iter_slider: iter_slider.visible = false
-				if iter_spinbox: iter_spinbox.visible = false
 			
 			if shape_index == 2: # Quad
 				mat.set_shader_parameter("use_terrain_mode", true)
 			else:
 				mat.set_shader_parameter("use_terrain_mode", false)
 
-		# --- RAYMARCHING SHAPES (5-8) ---
-		else:
-			var mat = ShaderMaterial.new()
-			is_raymarching = true
-			
-			# HIDE Standard Controls (Height, Glow, etc don't apply)
-			if standard_mesh_controls: standard_mesh_controls.visible = false
-			
-			# SHOW Raymarch Core Sliders
-			if raymarch_core_params: raymarch_core_params.visible = true
-			else:
-				if mandel_power_slider: mandel_power_slider.visible = true
-				if mandel_power_spinbox: mandel_power_spinbox.visible = true
-				if iter_slider: iter_slider.visible = true
-				if iter_spinbox: iter_spinbox.visible = true
-			
-			if shape_index == 5:
-				mat.shader = load("res://raymarch_mandelbulb.gdshader")
-			elif shape_index == 6:
-				mat.shader = load("res://raymarch_menger.gdshader")
-			# Show the modifiers (Rotate/Twist/Wave) for EVERY raymarcher (5, 6, 7, 8)
-			if as_params: as_params.visible = true
-			
-			# Only show "Fold/Radius" for Amazing Box (7)
-			if ab_params: ab_params.visible = (shape_index == 7)
-
-			# -- LOAD SHADERS --
-			if shape_index == 5:
-				mat.shader = load("res://raymarch_mandelbulb.gdshader")
-			elif shape_index == 6:
-				mat.shader = load("res://raymarch_menger.gdshader")
-			elif shape_index == 7:
-				mat.shader = load("res://raymarch_amazingbox.gdshader")
-			elif shape_index == 8:
-				mat.shader = load("res://raymarch_amazingsurf.gdshader")
-			
-			fractal_mesh.set_surface_override_material(0, mat)
-			
-		print("Changed mesh shape to index: ", shape_index)
-	
+	print("Changed mesh shape to index: ", shape_index)
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("reset_visuals"):
 		self.reset_visuals.call()
@@ -2663,6 +2789,9 @@ func _process(delta: float) -> void:
 				var l_col = Vector3(light_color.r, light_color.g, light_color.b)
 				mesh_material.set_shader_parameter("light_color_val", l_col)
 				mesh_material.set_shader_parameter("light_energy_val", light_energy)
+				light_3d.shadow_bias = 0.1
+				light_3d.shadow_normal_bias = 0.2
+			if shadow_bias_slider: shadow_bias_slider.set_value_no_signal(0.1)
 
 			# Send Core Fractal Data
 			mesh_material.set_shader_parameter("power", mandel_power)
@@ -2700,6 +2829,44 @@ func _process(delta: float) -> void:
 			mesh_material.set_shader_parameter("displacement_offset", height_offset)
 			mesh_material.set_shader_parameter("limit_displacement_to_top", limit_to_top)
 			mesh_material.set_shader_parameter("use_dynamic_material", use_dynamic_material)
+			
+		
+				# Update Voxel Shader if active
+		if voxel_grid and voxel_grid.visible:
+			var voxel_mat = voxel_grid.material_override as ShaderMaterial
+			
+			if voxel_mat:
+				# 1. Texture
+				var voxel_tex = viewport_b.get_texture() if is_a_source else viewport_a.get_texture()
+				voxel_mat.set_shader_parameter("fractal_texture", voxel_tex)
+				
+				# 2. Height (Use voxel_height_scale variable)
+				# Make sure this variable is connected to your Height Slider!
+				voxel_mat.set_shader_parameter("height_scale", voxel_height_scale * displacement_strength * 10.0)
+				# Use Emission Slider for Glow
+				voxel_mat.set_shader_parameter("emission_energy", emission_strength)
+				# 3. Cube Size
+				voxel_mat.set_shader_parameter("cube_scale", voxel_cube_scale)
+				var light_dir = light_3d.global_transform.basis.z
+				mesh_material.set_shader_parameter("light_direction", light_dir)
+				var l_col = Vector3(light_color.r, light_color.g, light_color.b)
+				mesh_material.set_shader_parameter("light_color_val", l_col)
+				mesh_material.set_shader_parameter("light_energy_val", light_energy)
+				
+				# --- NEW: SEND COLOR GRADING ---
+				# These variables (brightness, contrast, saturation) are already controlled by your sliders
+				voxel_mat.set_shader_parameter("brightness", brightness)
+				voxel_mat.set_shader_parameter("contrast", contrast)
+				voxel_mat.set_shader_parameter("saturation", saturation)
+				
+				voxel_mat.set_shader_parameter("twist", as_twist)
+				voxel_mat.set_shader_parameter("wave_strength", as_wave_str)
+				voxel_mat.set_shader_parameter("wave_frequency", as_wave_freq)
+				voxel_mat.set_shader_parameter("wave_speed", as_wave_speed)
+				voxel_mat.set_shader_parameter("time", time)
+				# Optional: Send Time if you want moving waves
+				voxel_mat.set_shader_parameter("time", time)
+
 func _load_image_from_base64(b64_string: String) -> void:
 	if not "," in b64_string:
 		print("Error: Invalid Base64 string format (missing comma).")
@@ -2864,6 +3031,13 @@ func _gather_preset_data() -> Dictionary:
 		"grade_background_active": grade_background_active,
 		"tex_int": mandel_texture_intensity,
 		"tex_scale": mandel_texture_scale,
+		"shape_index": shape_selector_button.selected if shape_selector_button else 0,
+		"voxel_resolution": voxel_resolution,
+		"voxel_cube_scale": voxel_cube_scale,
+		"as_twist": {"x": as_twist.x, "y": as_twist.y, "z": as_twist.z},
+		"as_wave_str": {"x": as_wave_str.x, "y": as_wave_str.y, "z": as_wave_str.z},
+		"as_wave_freq": {"x": as_wave_freq.x, "y": as_wave_freq.y, "z": as_wave_freq.z},
+		"as_wave_speed": as_wave_speed,
 	}
 	data.merge(_auto_params_a, true) # Add all "A" auto-params
 	data.merge(_auto_params_b, true) # Add all "B" auto-params
@@ -2871,31 +3045,49 @@ func _gather_preset_data() -> Dictionary:
 
 func _apply_preset_data(data: Dictionary) -> void:
 	print("ApplyPreset: Start.")
-	print("  - Before 1st SetState: pre=%s, post=%s, a=%s, b=%s" % [pre_translate, post_translate, translate_a, translate_b])
 
-	# 1. Set state from data
+	# 1. LOAD VARIABLES
 	_set_state_from_preset_data(data)
-	print("ApplyPreset: After 1st SetState.")
-	print("  - Values: pre=%s, post=%s, a=%s, b=%s" % [pre_translate, post_translate, translate_a, translate_b])
 
-	# 2. Update UI
+	# 2. UPDATE UI SLIDERS
 	update_ui_from_state()
-	print("ApplyPreset: After UI Update.")
-	print("  - Values: pre=%s, post=%s, a=%s, b=%s" % [pre_translate, post_translate, translate_a, translate_b])
 	
 	_on_var_a_dropdown_item_selected(var_a_dropdown.selected)
 	_on_var_b_dropdown_item_selected(var_b_dropdown.selected)
 	_on_start_pattern_dropdown_item_selected(start_pattern_dropdown.selected)
 
-	
-	# 3. No need to re-apply ranges, update_ui_from_state handled it.
+	# 3. FORCE SHAPE & VIEW MODE
+	if "shape_index" in data:
+		var s_idx = int(data["shape_index"])
+		
+		# --- A. FORCE 3D VIEW ---
+		if not is_3d_view:
+			is_3d_view = true
+			_update_view_visibility() 
+
+		# --- B. UPDATE DROPDOWN & SHAPE ---
+		if shape_selector_button: 
+			shape_selector_button.selected = s_idx
+		
+		# Allow a tiny frame delay for Godot to activate the 3D viewport
+		await get_tree().process_frame
+		
+		# --- C. TRIGGER SELECTION LOGIC ---
+		_on_shape_selected(s_idx)
+		
+		# --- D. VOXEL SPECIFIC REBUILD ---
+		if s_idx == 9:
+			setup_voxel_grid()
+			
+			if voxel_grid and voxel_grid.visible:
+				var v_mat = voxel_grid.material_override as ShaderMaterial
+				if v_mat:
+					v_mat.set_shader_parameter("roughness", 1.0)
+					v_mat.set_shader_parameter("metallic", 0.0)
+
 	# 4. Reseed
 	reseed_pattern()
-	print("Preset applied successfully. Final values:")
-	print("  - Final: pre=%s, post=%s, a=%s, b=%s" % [pre_translate, post_translate, translate_a, translate_b])
-
-# --- Helper function for robust Color loading ---
-# MOVED TO CLASS LEVEL (OUTSIDE _set_state_from_preset_data)
+	print("Preset applied successfully.")
 func get_color(data: Dictionary, key: String, default_color: Color) -> Color:
 	if data.has(key):
 		var loaded_val = data[key]
@@ -2950,6 +3142,8 @@ func get_vector2(data: Dictionary, key: String, default_vector: Vector2) -> Vect
 func _set_state_from_preset_data(data: Dictionary) -> void:
 	print("  SetState: Applying data...")
 	
+	
+	if "as_wave_speed" in data: as_wave_speed = float(data["as_wave_speed"])
 	# --- CLEAR OLD AUTO-PARAMS ---
 	_auto_params_a.clear()
 	_auto_params_b.clear()
@@ -2962,16 +3156,34 @@ func _set_state_from_preset_data(data: Dictionary) -> void:
 	# This is critical so we know which variations are active.
 	for key in data:
 		var value = data[key]
-		if key in self: # Check if it's a known class variable
-			# Special handling for vectors/colors from JSON
+		if key in self: 
+			# 1. Handle Vector2 (Translate)
 			if "translate" in key or key.begins_with("ap_c"):
 				set(key, get_vector2(data, key, Vector2.ZERO))
+			
+			# 2. Handle Colors
 			elif "grad_col" in key or key == "light_color":
 				set(key, get_color(data, key, Color.WHITE))
+				
+			# --- 3. ADD THIS: Handle Vector3 (Twist/Wave) ---
+			elif key == "as_twist" or key == "as_wave_str" or key == "as_wave_freq":
+				# Manual reconstruction from dictionary to Vector3
+				var v = Vector3.ZERO
+				if value.has("x"): v.x = value["x"]
+				if value.has("y"): v.y = value["y"]
+				if value.has("z"): v.z = value["z"]
+				set(key, v)
+			# ------------------------------------------------
+			
 			else:
-				# It's a simple value (float, bool, int), just set it
-				set(key, value) # This sets variation_mode_a, etc.
+				# Simple values (float, int, bool)
+				set(key, value)
 	animation_paused = data.get("animation_paused", false)
+	
+	# --- PASTE THIS HERE (Explicitly load Voxel settings) ---
+	if "voxel_resolution" in data: voxel_resolution = int(data["voxel_resolution"])
+	if "voxel_cube_scale" in data: voxel_cube_scale = float(data["voxel_cube_scale"])
+	# --------------------------------------------------------
 
 	# --- PASS 2: Pre-populate auto-params with defaults ---
 	# Now that variation_mode_a is set, we find its panel and load its defaults.
@@ -3458,7 +3670,7 @@ func _populate_all_dropdowns():
 	shape_selector_button.add_item("Menger Sponge (Raymarch)") # Index 6 
 	shape_selector_button.add_item("Amazing Box (Raymarch)") # Index 7
 	shape_selector_button.add_item("Amazing Surf (Raymarch)") # Index 8
-	
+	shape_selector_button.add_item("Voxel Grid (Real 3D)") # Index 9
 
 func _get_id_from_name(var_name: String) -> int:
 	if VariationManager.VARIATIONS.has(var_name):
@@ -4202,3 +4414,31 @@ func load_user_prefs():
 		
 		return on_startup
 	return false
+func setup_voxel_grid():
+	if not voxel_grid: return
+	
+	var mm = voxel_grid.multimesh
+	var count = voxel_resolution * voxel_resolution
+	
+	mm.instance_count = count
+	mm.visible_instance_count = count
+	
+	var size = 20.0 # Physical size of the floor
+	var step = size / float(voxel_resolution)
+	var offset = size * 0.5
+	
+	for z in range(voxel_resolution):
+		for x in range(voxel_resolution):
+			var i = z * voxel_resolution + x
+			
+			# 1. Position
+			var pos = Vector3(x * step - offset, 0.0, z * step - offset)
+			var t = Transform3D(Basis(), pos)
+			mm.set_instance_transform(i, t)
+			
+			# 2. Custom Data (UVs)
+			# We store the 0..1 texture coordinate in the Custom Data X/Y
+			var u = float(x) / float(voxel_resolution)
+			var v = float(z) / float(voxel_resolution)
+			# Color is mostly unused since we sample texture, but CustomData is vital
+			mm.set_instance_custom_data(i, Color(u, v, 0.0, 0.0))
