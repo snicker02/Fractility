@@ -1,4 +1,4 @@
-[gd_scene load_steps=223 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=247 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -328,6 +328,144 @@ name = "glynn_pow_a"
 label = "Pow"
 add_speed_control = true
 default = 1.5
+max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_bfoml"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_mode_a"
+label = "Mode"
+default = 1.0
+min = 1.0
+max = 11.0
+step = 1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_0oep5"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_scale_x_a"
+label = "Scale X"
+add_speed_control = true
+default = 0.5
+min = -3.0
+max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_2xgaa"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_scale_y_a"
+label = "Scale Y "
+add_speed_control = true
+default = 0.5
+min = -3.0
+max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_awudv"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_x1_a"
+label = "Freq X1"
+add_speed_control = true
+default = 3.5
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ihpkt"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_y1_a"
+label = "Freq Y1"
+add_speed_control = true
+default = 3.5
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_tx8ir"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_x2_a"
+label = "Freq X2"
+add_speed_control = true
+default = 2.0
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_026ba"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_y2_a"
+label = "Freq Y2"
+add_speed_control = true
+default = 2.0
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_3ihpl"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_x3_a"
+label = "Freq X3"
+add_speed_control = true
+default = 5.0
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_mv2as"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_y3_a"
+label = "Freq Y3"
+add_speed_control = true
+default = 5.0
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_g7k5r"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_c1_a"
+label = "Color/Phase 1 "
+add_speed_control = true
+default = 5.0
+min = -10.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_y2fng"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_c2_a"
+label = "Color/Phase 2"
+add_speed_control = true
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_inosc"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_distort_a"
+label = "Log Distort"
+add_speed_control = true
+min = -5.0
 max = 5.0
 step = 0.001
 dropdown_options = PackedStringArray()
@@ -1459,6 +1597,148 @@ name = "glynn_pow_b"
 label = "Pow"
 add_speed_control = true
 default = 1.5
+max = 5.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_uxnn6"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_mode_b"
+label = "Mode"
+default = 1.0
+min = 1.0
+max = 11.0
+step = 1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_h1o1m"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_scale_x_b"
+label = "Scale X "
+add_speed_control = true
+default = 0.5
+min = -3.0
+max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_786q6"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_scale_y_b"
+label = "Scale Y"
+add_speed_control = true
+default = 0.5
+min = -3.0
+max = 3.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_acy1l"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_x1_b"
+label = "Freq X1"
+add_speed_control = true
+default = 3.5
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_7s35o"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_y1_b"
+label = "Freq Y1"
+add_speed_control = true
+default = 3.5
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_g4vqm"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_x2_b"
+label = "Freq X2"
+add_speed_control = true
+default = 2.0
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_ynv2u"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_y2_b"
+label = "Freq Y2"
+add_speed_control = true
+default = 2.0
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_kxbxb"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_x3_b"
+label = "Freq X3"
+add_speed_control = true
+default = 5.0
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_r5k6w"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_freq_y3_b"
+label = "Freq Y3"
+add_speed_control = true
+default = 5.0
+min = -20.0
+max = 20.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_w1r3g"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_c1_b"
+label = "Color/Phase 1"
+add_speed_control = true
+default = 5.0
+min = -10.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_65xph"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_c2_b"
+label = "Color/Phase 2"
+add_speed_control = true
+default = 5.0
+min = -10.0
+max = 10.0
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_y08d5"]
+script = ExtResource("6_4d7sh")
+name = "gnarl_distort_b"
+label = "Log Distort"
+add_speed_control = true
+min = -5.0
 max = 5.0
 step = 0.001
 dropdown_options = PackedStringArray()
@@ -3302,7 +3582,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 3.2"
+text = "V 3.3"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -3717,6 +3997,12 @@ layout_mode = 2
 panel_title = "GlynnSim A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_s1om5"), SubResource("Resource_yl3ei"), SubResource("Resource_m4a6d"), SubResource("Resource_ph30p"), SubResource("Resource_1ec2h")])
 
+[node name="GnarlControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Chimera A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_bfoml"), SubResource("Resource_0oep5"), SubResource("Resource_2xgaa"), SubResource("Resource_awudv"), SubResource("Resource_ihpkt"), SubResource("Resource_tx8ir"), SubResource("Resource_026ba"), SubResource("Resource_3ihpl"), SubResource("Resource_mv2as"), SubResource("Resource_g7k5r"), SubResource("Resource_y2fng"), SubResource("Resource_inosc")])
+
 [node name="HeartControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -3972,6 +4258,12 @@ unique_name_in_owner = true
 layout_mode = 2
 panel_title = "GlynnSim B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_awqbt"), SubResource("Resource_p6xvf"), SubResource("Resource_hq8ct"), SubResource("Resource_dmhti"), SubResource("Resource_6qmhe")])
+
+[node name="GnarlControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Chimera B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_uxnn6"), SubResource("Resource_h1o1m"), SubResource("Resource_786q6"), SubResource("Resource_acy1l"), SubResource("Resource_7s35o"), SubResource("Resource_g4vqm"), SubResource("Resource_ynv2u"), SubResource("Resource_kxbxb"), SubResource("Resource_r5k6w"), SubResource("Resource_w1r3g"), SubResource("Resource_65xph"), SubResource("Resource_y08d5")])
 
 [node name="HeartControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true

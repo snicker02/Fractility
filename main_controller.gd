@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 3.2
+const PROGRAM_VERSION = 3.3
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -368,7 +368,8 @@ var mandel_texture_scale: float = 1.0
 @onready var spherical_controls_container_b: VBoxContainer = %SphericalControlsContainerB
 @onready var tangent_controls_container_a: VBoxContainer = %TangentControlsContainerA
 @onready var tangent_controls_container_b: VBoxContainer = %TangentControlsContainerB
-
+@onready var gnarl_controls_container_a = %GnarlControlsContainerA 
+@onready var gnarl_controls_container_b = %GnarlControlsContainerB
 # Symmetry Control Containers
 @onready var var_a_mirror_controls: VBoxContainer = %VarAMirrorControlsContainer
 @onready var var_a_kaleidoscope_controls: VBoxContainer = %VarAKaleidoscopeControlsContainer
@@ -780,6 +781,7 @@ func _ready() -> void:
 		"glynn_sim": glynn_sim_controls_container_a,
 		"nebula": nebula_controls_container_a,
 		"jigsaw": jigsaw_controls_container_a,
+		"gnarl": gnarl_controls_container_a,
 		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
 		
 		
@@ -814,6 +816,7 @@ func _ready() -> void:
 		"glynn_sim": glynn_sim_controls_container_b,
 		"nebula": nebula_controls_container_b,
 		"jigsaw": jigsaw_controls_container_b,
+		"gnarl": gnarl_controls_container_b,
 		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
 	}
 	
@@ -869,7 +872,8 @@ func _ready() -> void:
 	nebula_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	jigsaw_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	jigsaw_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
-	
+	gnarl_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	gnarl_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	
 	
 	
@@ -2079,67 +2083,50 @@ func reseed_pattern() -> void:
 	time = 0.0 # Resets the shader time, often used for seeding noise/patterns
 
 func update_ui_from_state() -> void:
-	
-		var values = {
-			"animation_paused": animation_paused,
-			"var_a_id": variation_mode_a, # Pass ID
-			"var_b_id": variation_mode_b, # Pass ID
-			"start_pattern": start_pattern_mode,
-			"var_mix": variation_mix, "feedback": feedback_amount, "feedback_min": feedback_min, "feedback_max": feedback_max, "tiling": seamless_tiling,"mirror_tiling": mirror_tiling,
-			"reset_on_drag": reset_on_drag_enabled, "show_grid": show_start_grid, "show_circles": show_circles,
-			"pre_scale": pre_scale, "pre_rot": pre_rotation, "post_scale": post_scale, "post_rot": post_rotation,
-			"brightness": brightness, "contrast": contrast, "saturation": saturation,
-			"circle_count": circle_count, "circle_radius": circle_radius, "circle_softness": circle_softness,
-			"circle_grid_scale": circle_grid_scale,
-			"circle_grid_radius": circle_grid_radius,
-			"circle_grid_softness": circle_grid_softness,
-			"grad_tl": grad_col_tl, "grad_tr": grad_col_tr, "grad_bl": grad_col_bl, "grad_br": grad_col_br,
-			"move_post": move_post_translate, "move_pre": move_pre_translate,
-			"move_var_a": move_var_a_translate, "move_var_b": move_var_b_translate,
-			"post_mirror_x": mirror_x, "post_mirror_y": mirror_y, "post_kaleidoscope_on": kaleidoscope_on, "post_kaleidoscope_slices": kaleidoscope_slices,
-			# Var A specific
-			"blur_amount_a": blur_amount_a,
-
-			"custom_tl_a": custom_tl_a_id,
-			"custom_tr_a": custom_tr_a_id,
-			"custom_bl_a": custom_bl_a_id,
-			"custom_br_a": custom_br_a_id,
-			# Var B specific
-			"blur_amount_b": blur_amount_b,
-
-			"custom_tl_b": custom_tl_b_id,
-			"custom_tr_b": custom_tr_b_id,
-			"custom_bl_b": custom_bl_b_id,
-			"custom_br_b": custom_br_b_id,
-			# --- ADD THESE ---
-			"light_x_rot": light_x_rotation,
-			"light_y_rot": light_y_rotation,
-			"light_energy": light_energy,
-			"light_color": light_color,
-			"light_shadows": light_shadows,
-			# --- END ---
-			"normal_strength": normal_map_strength,
-			
-			"cam_dist": camera_distance,
-			"cam_x_rot": camera_x_rotation,
-			"cam_y_rot": camera_y_rotation,
-			"cam_z_rot": camera_z_rotation,
-			"cam_fov": camera_fov,
-			"show_2d_bg": show_2d_background,
-			"save_res_index": save_resolution_index,
-			# --- NEW: 3D VALUES ---
-			"disp_str": displacement_strength,
-			"height_off": height_offset,
-			"smooth": displacement_smoothness,
-			"limit_top": limit_to_top,
-			"emit_str": emission_strength,
-			"dyn_mat": use_dynamic_material,
-			"grade_bg": grade_background_active,
-			
-		}
-		values.merge(_auto_params_a, true) # Add all "A" auto-params
-		values.merge(_auto_params_b, true) # Add all "B" auto-params
-		initialize_ui(values)
+	var values = {
+		"animation_paused": animation_paused,
+		"var_a_id": variation_mode_a,
+		"var_b_id": variation_mode_b,
+		"start_pattern": start_pattern_mode,
+		"var_mix": variation_mix, "feedback": feedback_amount, "feedback_min": feedback_min, "feedback_max": feedback_max, "tiling": seamless_tiling,"mirror_tiling": mirror_tiling,
+		"reset_on_drag": reset_on_drag_enabled, "show_grid": show_start_grid, "show_circles": show_circles,
+		"pre_scale": pre_scale, "pre_rot": pre_rotation, "post_scale": post_scale, "post_rot": post_rotation,
+		"brightness": brightness, "contrast": contrast, "saturation": saturation,
+		"circle_count": circle_count, "circle_radius": circle_radius, "circle_softness": circle_softness,
+		"circle_grid_scale": circle_grid_scale,
+		"circle_grid_radius": circle_grid_radius,
+		"circle_grid_softness": circle_grid_softness,
+		"grad_tl": grad_col_tl, "grad_tr": grad_col_tr, "grad_bl": grad_col_bl, "grad_br": grad_col_br,
+		"move_post": move_post_translate, "move_pre": move_pre_translate,
+		"move_var_a": move_var_a_translate, "move_var_b": move_var_b_translate,
+		"post_mirror_x": mirror_x, "post_mirror_y": mirror_y, "post_kaleidoscope_on": kaleidoscope_on, "post_kaleidoscope_slices": kaleidoscope_slices,
+		"blur_amount_a": blur_amount_a,
+		"custom_tl_a": custom_tl_a_id, "custom_tr_a": custom_tr_a_id, "custom_bl_a": custom_bl_a_id, "custom_br_a": custom_br_a_id,
+		"blur_amount_b": blur_amount_b,
+		"custom_tl_b": custom_tl_b_id, "custom_tr_b": custom_tr_b_id, "custom_bl_b": custom_bl_b_id, "custom_br_b": custom_br_b_id,
+		"light_x_rot": light_x_rotation, "light_y_rot": light_y_rotation, "light_energy": light_energy, "light_color": light_color, "light_shadows": light_shadows,
+		"normal_strength": normal_map_strength,
+		"cam_dist": camera_distance, "cam_x_rot": camera_x_rotation, "cam_y_rot": camera_y_rotation, "cam_z_rot": camera_z_rotation, "cam_fov": camera_fov,
+		"show_2d_bg": show_2d_background, "save_res_index": save_resolution_index,
+		
+		# --- 3D / RAYMARCH VARIABLES ADDED HERE ---
+		"disp_str": displacement_strength, "height_off": height_offset, "smooth": displacement_smoothness,
+		"limit_top": limit_to_top, "emit_str": emission_strength, "dyn_mat": use_dynamic_material, "grade_bg": grade_background_active,
+		"tex_int": mandel_texture_intensity, "tex_scale": mandel_texture_scale,
+		"mandel_power": mandel_power, "ray_iter": ray_iterations,
+		"ab_fold": ab_fold_limit, "ab_rad": ab_fixed_radius,
+		"as_fold": as_fold_limit,
+		"as_rot_x": as_rotate.x, "as_rot_y": as_rotate.y, "as_rot_z": as_rotate.z,
+		"as_julia_x": as_julia.x, "as_julia_y": as_julia.y, "as_julia_z": as_julia.z,
+		"as_twist_x": as_twist.x, "as_twist_y": as_twist.y, "as_twist_z": as_twist.z,
+		"as_wave_str_x": as_wave_str.x, "as_wave_str_y": as_wave_str.y, "as_wave_str_z": as_wave_str.z,
+		"as_wave_freq_x": as_wave_freq.x, "as_wave_freq_y": as_wave_freq.y, "as_wave_freq_z": as_wave_freq.z,
+		"as_wave_speed": as_wave_speed,
+		"voxel_res": voxel_resolution, "voxel_cube": voxel_cube_scale, "voxel_height": voxel_height_scale
+	}
+	values.merge(_auto_params_a, true)
+	values.merge(_auto_params_b, true)
+	initialize_ui(values)
 		
 func _set_dropdown_selection(dropdown: OptionButton, text_to_select: String):
 	var index = _get_item_index_by_text(dropdown, text_to_select)
@@ -2319,6 +2306,60 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	dynamic_material_check.set_pressed_no_signal(initial_values.get("dyn_mat", false))
 	grade_background_check.set_pressed_no_signal(initial_values.get("grade_bg", false))
 
+	# --- NEW 3D SLIDER UPDATES ---
+	if mandel_power_slider: mandel_power_slider.set_value_no_signal(initial_values.get("mandel_power", 3.0))
+	if mandel_power_spinbox: mandel_power_spinbox.set_value_no_signal(initial_values.get("mandel_power", 3.0))
+	
+	if iter_slider: iter_slider.set_value_no_signal(initial_values.get("ray_iter", 12))
+	if iter_spinbox: iter_spinbox.set_value_no_signal(initial_values.get("ray_iter", 12))
+
+	if ab_fold_slider: ab_fold_slider.set_value_no_signal(initial_values.get("ab_fold", 1.0))
+	if ab_fold_spinbox: ab_fold_spinbox.set_value_no_signal(initial_values.get("ab_fold", 1.0))
+	if ab_rad_slider: ab_rad_slider.set_value_no_signal(initial_values.get("ab_rad", 1.0))
+	if ab_rad_spinbox: ab_rad_spinbox.set_value_no_signal(initial_values.get("ab_rad", 1.0))
+
+	if as_fold_slider: as_fold_slider.set_value_no_signal(initial_values.get("as_fold", 1.0))
+	if as_fold_spinbox: as_fold_spinbox.set_value_no_signal(initial_values.get("as_fold", 1.0))
+
+	# Rotation
+	if as_rot_x_slider: as_rot_x_slider.set_value_no_signal(initial_values.get("as_rot_x", 0.0))
+	if as_rot_x_spinbox: as_rot_x_spinbox.set_value_no_signal(initial_values.get("as_rot_x", 0.0))
+	if as_rot_y_slider: as_rot_y_slider.set_value_no_signal(initial_values.get("as_rot_y", 0.0))
+	if as_rot_y_spinbox: as_rot_y_spinbox.set_value_no_signal(initial_values.get("as_rot_y", 0.0))
+	if as_rot_z_slider: as_rot_z_slider.set_value_no_signal(initial_values.get("as_rot_z", 0.0))
+	if as_rot_z_spinbox: as_rot_z_spinbox.set_value_no_signal(initial_values.get("as_rot_z", 0.0))
+
+	# Julia
+	if as_julia_x_slider: as_julia_x_slider.set_value_no_signal(initial_values.get("as_julia_x", 0.0))
+	if as_julia_x_spinbox: as_julia_x_spinbox.set_value_no_signal(initial_values.get("as_julia_x", 0.0))
+	if as_julia_y_slider: as_julia_y_slider.set_value_no_signal(initial_values.get("as_julia_y", 0.0))
+	if as_julia_y_spinbox: as_julia_y_spinbox.set_value_no_signal(initial_values.get("as_julia_y", 0.0))
+	if as_julia_z_slider: as_julia_z_slider.set_value_no_signal(initial_values.get("as_julia_z", 0.0))
+	if as_julia_z_spinbox: as_julia_z_spinbox.set_value_no_signal(initial_values.get("as_julia_z", 0.0))
+
+	# Twist
+	if as_twist_x_slider: as_twist_x_slider.set_value_no_signal(initial_values.get("as_twist_x", 0.0))
+	if as_twist_x_spinbox: as_twist_x_spinbox.set_value_no_signal(initial_values.get("as_twist_x", 0.0))
+	if as_twist_y_slider: as_twist_y_slider.set_value_no_signal(initial_values.get("as_twist_y", 0.0))
+	if as_twist_y_spinbox: as_twist_y_spinbox.set_value_no_signal(initial_values.get("as_twist_y", 0.0))
+	if as_twist_z_slider: as_twist_z_slider.set_value_no_signal(initial_values.get("as_twist_z", 0.0))
+	if as_twist_z_spinbox: as_twist_z_spinbox.set_value_no_signal(initial_values.get("as_twist_z", 0.0))
+
+	# Wave Strength
+	if as_wave_str_x_slider: as_wave_str_x_slider.set_value_no_signal(initial_values.get("as_wave_str_x", 0.0))
+	if as_wave_str_x_spinbox: as_wave_str_x_spinbox.set_value_no_signal(initial_values.get("as_wave_str_x", 0.0))
+	if as_wave_str_y_slider: as_wave_str_y_slider.set_value_no_signal(initial_values.get("as_wave_str_y", 0.0))
+	if as_wave_str_y_spinbox: as_wave_str_y_spinbox.set_value_no_signal(initial_values.get("as_wave_str_y", 0.0))
+	if as_wave_str_z_slider: as_wave_str_z_slider.set_value_no_signal(initial_values.get("as_wave_str_z", 0.0))
+	if as_wave_str_z_spinbox: as_wave_str_z_spinbox.set_value_no_signal(initial_values.get("as_wave_str_z", 0.0))
+
+	# Voxel
+	if voxel_res_slider: voxel_res_slider.set_value_no_signal(initial_values.get("voxel_res", 100))
+	if voxel_res_spinbox: voxel_res_spinbox.set_value_no_signal(initial_values.get("voxel_res", 100))
+	if voxel_cube_scale_slider: voxel_cube_scale_slider.set_value_no_signal(initial_values.get("voxel_cube", 0.2))
+	if voxel_cube_scale_spinbox: voxel_cube_scale_spinbox.set_value_no_signal(initial_values.get("voxel_cube", 0.2))
+	if voxel_height_slider: voxel_height_slider.set_value_no_signal(initial_values.get("voxel_height", 5.0))
+	if voxel_height_spinbox: voxel_height_spinbox.set_value_no_signal(initial_values.get("voxel_height", 5.0))
 	# CRITICAL: Update the variables to match!
 	limit_to_top = limit_top_check.button_pressed
 	use_dynamic_material = dynamic_material_check.button_pressed
@@ -2932,6 +2973,7 @@ func _gather_preset_data() -> Dictionary:
 	var data = {
 		# Version & Main Controls
 		"version": PROGRAM_VERSION,
+		"is_3d_view": is_3d_view,
 		"variation_mode_a_id": variation_mode_a, # Save ID
 		"variation_mode_b_id": variation_mode_b, # Save ID
 		"start_pattern_mode": start_pattern_mode,
@@ -3038,6 +3080,15 @@ func _gather_preset_data() -> Dictionary:
 		"as_wave_str": {"x": as_wave_str.x, "y": as_wave_str.y, "z": as_wave_str.z},
 		"as_wave_freq": {"x": as_wave_freq.x, "y": as_wave_freq.y, "z": as_wave_freq.z},
 		"as_wave_speed": as_wave_speed,
+		"as_rotate": {"x": as_rotate.x, "y": as_rotate.y, "z": as_rotate.z},
+		"as_julia": {"x": as_julia.x, "y": as_julia.y, "z": as_julia.z},
+		
+		# --- FOLD LIMITS (Add these if missing too) ---
+		"ab_fold": ab_fold_limit,
+		"ab_rad": ab_fixed_radius,
+		"as_fold": as_fold_limit,
+		"mandel_power": mandel_power,
+		"ray_iter": ray_iterations,
 	}
 	data.merge(_auto_params_a, true) # Add all "A" auto-params
 	data.merge(_auto_params_b, true) # Add all "B" auto-params
@@ -3048,44 +3099,60 @@ func _apply_preset_data(data: Dictionary) -> void:
 
 	# 1. LOAD VARIABLES
 	_set_state_from_preset_data(data)
-
-	# 2. UPDATE UI SLIDERS
-	update_ui_from_state()
 	
-	_on_var_a_dropdown_item_selected(var_a_dropdown.selected)
-	_on_var_b_dropdown_item_selected(var_b_dropdown.selected)
-	_on_start_pattern_dropdown_item_selected(start_pattern_dropdown.selected)
+	# --- FIX START: Legacy 3D Detection ---
+	var should_be_3d = false
+	
+	if "is_3d_view" in data:
+		# New Presets: Trust the tag
+		should_be_3d = bool(data["is_3d_view"])
+	elif "shape_index" in data and int(data["shape_index"]) >= 1:
+		# Old Presets: If no tag, but shape is Cube(1) or higher, assume 3D.
+		# (We skip 0/Sphere because that was the default for 2D saves)
+		should_be_3d = true
 
-	# 3. FORCE SHAPE & VIEW MODE
-	if "shape_index" in data:
+	is_3d_view = should_be_3d
+	_update_view_visibility()
+	# --- FIX END ---
+
+	# 2. FORCE DROPDOWN A SELECTION
+	var var_a_name = _get_name_from_id(variation_mode_a)
+	var index_a = _get_item_index_by_text(var_a_dropdown, var_a_name)
+	if index_a != -1:
+		var_a_dropdown.select(index_a)
+		_on_var_a_dropdown_item_selected(index_a) # Force signal
+
+	# 3. FORCE DROPDOWN B SELECTION
+	var var_b_name = _get_name_from_id(variation_mode_b)
+	var index_b = _get_item_index_by_text(var_b_dropdown, var_b_name)
+	if index_b != -1:
+		var_b_dropdown.select(index_b)
+		_on_var_b_dropdown_item_selected(index_b) # Force signal
+
+	# 4. START PATTERN
+	start_pattern_dropdown.select(start_pattern_mode)
+	_on_start_pattern_dropdown_item_selected(start_pattern_mode)
+
+	# 5. RELOAD SPECIFIC SLIDERS (Overwrite defaults)
+	_reload_variation_params_from_data(data)
+	
+	# 6. SYNC SLIDERS VISUALLY
+	_sync_active_variation_sliders("a")
+	_sync_active_variation_sliders("b")
+
+	# 7. UPDATE UI (Now including 3D sliders!)
+	update_ui_from_state()
+
+	# 8. FORCE 3D SHAPE
+	if is_3d_view and "shape_index" in data:
 		var s_idx = int(data["shape_index"])
+		if shape_selector_button: shape_selector_button.selected = s_idx
 		
-		# --- A. FORCE 3D VIEW ---
-		if not is_3d_view:
-			is_3d_view = true
-			_update_view_visibility() 
-
-		# --- B. UPDATE DROPDOWN & SHAPE ---
-		if shape_selector_button: 
-			shape_selector_button.selected = s_idx
-		
-		# Allow a tiny frame delay for Godot to activate the 3D viewport
 		await get_tree().process_frame
-		
-		# --- C. TRIGGER SELECTION LOGIC ---
 		_on_shape_selected(s_idx)
 		
-		# --- D. VOXEL SPECIFIC REBUILD ---
-		if s_idx == 9:
-			setup_voxel_grid()
-			
-			if voxel_grid and voxel_grid.visible:
-				var v_mat = voxel_grid.material_override as ShaderMaterial
-				if v_mat:
-					v_mat.set_shader_parameter("roughness", 1.0)
-					v_mat.set_shader_parameter("metallic", 0.0)
+		if s_idx == 9: setup_voxel_grid()
 
-	# 4. Reseed
 	reseed_pattern()
 	print("Preset applied successfully.")
 func get_color(data: Dictionary, key: String, default_color: Color) -> Color:
@@ -3142,109 +3209,117 @@ func get_vector2(data: Dictionary, key: String, default_vector: Vector2) -> Vect
 func _set_state_from_preset_data(data: Dictionary) -> void:
 	print("  SetState: Applying data...")
 	
+	# 1. SETUP: Build a lookup table of ACTUAL script variables
+	var valid_script_vars = {}
+	for prop in get_property_list():
+		valid_script_vars[prop.name] = true
+
+	# --- PASS 1: Manual Mapping (Fixing Mismatched Names) ---
+	if "variation_mode_a_id" in data: variation_mode_a = int(data["variation_mode_a_id"])
+	if "variation_mode_b_id" in data: variation_mode_b = int(data["variation_mode_b_id"])
 	
-	if "as_wave_speed" in data: as_wave_speed = float(data["as_wave_speed"])
-	# --- CLEAR OLD AUTO-PARAMS ---
-	_auto_params_a.clear()
-	_auto_params_b.clear()
-	_speed_controls.clear()
-	if data.has("variation_mode_a_id"):
-		variation_mode_a = int(data["variation_mode_a_id"])
-	if data.has("variation_mode_b_id"):
-		variation_mode_b = int(data["variation_mode_b_id"])
-	# --- PASS 1: Load all hard-coded class variables ---
-	# This is critical so we know which variations are active.
+	if "custom_tl_a" in data: custom_tl_a_id = int(data["custom_tl_a"])
+	if "custom_tr_a" in data: custom_tr_a_id = int(data["custom_tr_a"])
+	if "custom_bl_a" in data: custom_bl_a_id = int(data["custom_bl_a"])
+	if "custom_br_a" in data: custom_br_a_id = int(data["custom_br_a"])
+	
+	if "custom_tl_b" in data: custom_tl_b_id = int(data["custom_tl_b"])
+	if "custom_tr_b" in data: custom_tr_b_id = int(data["custom_tr_b"])
+	if "custom_bl_b" in data: custom_bl_b_id = int(data["custom_bl_b"])
+	if "custom_br_b" in data: custom_br_b_id = int(data["custom_br_b"])
+	
+	if "tex_int" in data: mandel_texture_intensity = float(data["tex_int"])
+	if "tex_scale" in data: mandel_texture_scale = float(data["tex_scale"])
+	
+	# --- PASS 2: Universal Load (Exact Name Matches) ---
 	for key in data:
-		var value = data[key]
-		if key in self: 
-			# 1. Handle Vector2 (Translate)
+		if valid_script_vars.has(key):
+			var value = data[key]
+			
 			if "translate" in key or key.begins_with("ap_c"):
 				set(key, get_vector2(data, key, Vector2.ZERO))
-			
-			# 2. Handle Colors
 			elif "grad_col" in key or key == "light_color":
 				set(key, get_color(data, key, Color.WHITE))
-				
-			# --- 3. ADD THIS: Handle Vector3 (Twist/Wave) ---
-			elif key == "as_twist" or key == "as_wave_str" or key == "as_wave_freq":
-				# Manual reconstruction from dictionary to Vector3
+			
+			# --- FIX START: ADDED "as_rotate" AND "as_julia" HERE ---
+			elif key == "as_twist" or key == "as_wave_str" or key == "as_wave_freq" or key == "as_rotate" or key == "as_julia":
 				var v = Vector3.ZERO
-				if value.has("x"): v.x = value["x"]
-				if value.has("y"): v.y = value["y"]
-				if value.has("z"): v.z = value["z"]
+				if typeof(value) == TYPE_DICTIONARY:
+					if value.has("x"): v.x = value["x"]
+					if value.has("y"): v.y = value["y"]
+					if value.has("z"): v.z = value["z"]
 				set(key, v)
-			# ------------------------------------------------
+			# --- FIX END ---
 			
 			else:
-				# Simple values (float, int, bool)
 				set(key, value)
-	animation_paused = data.get("animation_paused", false)
-	
-	# --- PASTE THIS HERE (Explicitly load Voxel settings) ---
-	if "voxel_resolution" in data: voxel_resolution = int(data["voxel_resolution"])
-	if "voxel_cube_scale" in data: voxel_cube_scale = float(data["voxel_cube_scale"])
-	# --------------------------------------------------------
 
-	# --- PASS 2: Pre-populate auto-params with defaults ---
-	# Now that variation_mode_a is set, we find its panel and load its defaults.
-	var control_string_a = _get_control_string_from_id(variation_mode_a)
-	if control_string_a != "" and var_a_panels.has(control_string_a):
-		var panel_a = var_a_panels[control_string_a]
-		if panel_a is VariationPanel:
-			for param in panel_a.parameters:
-				_auto_params_a[param.name] = param.default
-
-	# Do the same for Variation B
-	var control_string_b = _get_control_string_from_id(variation_mode_b)
-	if control_string_b != "" and var_b_panels.has(control_string_b):
-		var panel_b = var_b_panels[control_string_b]
-		if panel_b is VariationPanel:
-			for param in panel_b.parameters:
-				_auto_params_b[param.name] = param.default
-
-	# --- PASS 3: Load saved auto-param values from file ---
-	for key in data:
-		var value = data[key]
-		if not (key in self): # Only check keys that are NOT class variables
-			
-			# Check if this key (e.g., "clifford_a_a_speed")
-			# exists in the parameters for the active Var A panel.
-			if _auto_params_a.has(key):
-				_auto_params_a[key] = value
-				
-				# --- ADD THIS BLOCK ---
-				# If this is a speed key and it's not zero,
-				# add it to the active speed controls.
-				if key.ends_with("_speed") and value != 0.0:
-					_speed_controls[key] = value
-				# --- END ADD ---
-				
-			# Check if this key (e.g., "clifford_b_b_speed")
-			# exists in the parameters for the active Var B panel.
-			elif _auto_params_b.has(key):
-				_auto_params_b[key] = value
-				
-				# --- ADD THIS BLOCK ---
-				if key.ends_with("_speed") and value != 0.0:
-					_speed_controls[key] = value
-
-	var preset_version = data.get("version", 0.0)
-	print("  SetState: Preset was created with version: ", preset_version)
-	
-	# Set platform-specific feedback ranges, but let loaded values override
+	# Apply constraints
 	_set_platform_feedback_defaults()
-	feedback_min = data.get("feedback_min", feedback_min)
-	feedback_max = data.get("feedback_max", feedback_max)
-	var loaded_feedback_amount = data.get("feedback_amount", feedback_amount)
-	feedback_amount = clamp(loaded_feedback_amount, feedback_min, feedback_max)
+	if "feedback_min" in data: feedback_min = data["feedback_min"]
+	if "feedback_max" in data: feedback_max = data["feedback_max"]
+	feedback_amount = clamp(feedback_amount, feedback_min, feedback_max)
 
-	# Apply 3D settings
+	# Update 3D Helpers
 	_update_light()
 	_update_camera()
 	_update_background()
+func _reload_variation_params_from_data(data: Dictionary) -> void:
+	# Loop through data and find keys ending in _a or _b that are NOT main script vars
+	var valid_script_vars = {}
+	for prop in get_property_list():
+		valid_script_vars[prop.name] = true
 
-	print("  SetState: Finished applying data.")
+	for key in data:
+		# Skip keys we already handled (like "variation_mode_a_id")
+		if valid_script_vars.has(key) or key == "variation_mode_a_id" or key == "variation_mode_b_id":
+			continue
+			
+		var value = data[key]
+		
+		# Load into A
+		if key.ends_with("_a"):
+			_auto_params_a[key] = value
+			if key.ends_with("_speed") and value != 0.0:
+				_speed_controls[key] = value
+				
+		# Load into B
+		elif key.ends_with("_b"):
+			_auto_params_b[key] = value
+			if key.ends_with("_speed") and value != 0.0:
+				_speed_controls[key] = value
+				
+				
+func _sync_active_variation_sliders(var_group: String) -> void:
+	var active_panel = null
+	var params_dict = {}
+	
+	if var_group == "a":
+		var control_string = _get_control_string_from_id(variation_mode_a)
+		if var_a_panels.has(control_string): active_panel = var_a_panels[control_string]
+		params_dict = _auto_params_a
+	else:
+		var control_string = _get_control_string_from_id(variation_mode_b)
+		if var_b_panels.has(control_string): active_panel = var_b_panels[control_string]
+		params_dict = _auto_params_b
 
+	# If the panel has a 'get_slider' method (from your setup_animations code), use it!
+	if active_panel and active_panel.has_method("get_slider"):
+		for param_name in params_dict:
+			var value = params_dict[param_name]
+			var slider = active_panel.get_slider(param_name)
+			if slider:
+				slider.set_value_no_signal(value)
+				
+				# Also sync the spinbox if it exists nearby
+				var parent = slider.get_parent()
+				if parent:
+					for child in parent.get_children():
+						if child is SpinBox:
+							child.set_value_no_signal(value)
+							
+							
+							
 
 # =================================================================
 # --- UI CONTROL LOGIC & SIGNAL CALLBACKS ---
@@ -3490,14 +3565,16 @@ func _on_var_a_dropdown_item_selected(index: int):
 			var new_control = data.get("controls")
 			if new_control != null:
 				control_string = new_control
-		
-		custom_2x2_controls_container_a.visible = false # --- ADD THIS LINE ---
+		custom_2x2_controls_container_a.visible = false 
 	
 	_update_var_a_visibility(control_string)
+	
 	if control_string != "" and var_a_panels.has(control_string):
 		var panel = var_a_panels[control_string]
 		if panel is VariationPanel:
-			# It's an auto-panel! Load its defaults.
+			# --- FIX: CLEAR OLD DATA BEFORE LOADING NEW DEFAULTS ---
+			_auto_params_a.clear() 
+			# -------------------------------------------------------
 			for param in panel.parameters:
 				_auto_params_a[param.name] = param.default
 
@@ -3535,15 +3612,16 @@ func _on_var_b_dropdown_item_selected(index: int):
 			var new_control = data.get("controls")
 			if new_control != null:
 				control_string = new_control
-		
-		custom_2x2_controls_container_b.visible = false # --- ADD THIS LINE ---
+		custom_2x2_controls_container_a.visible = false 
 	
 	_update_var_b_visibility(control_string)
 	
-	if control_string != "" and var_b_panels.has(control_string):
+	if control_string != "" and var_a_panels.has(control_string):
 		var panel = var_b_panels[control_string]
 		if panel is VariationPanel:
-			# It's an auto-panel! Load its defaults.
+			# --- FIX: CLEAR OLD DATA BEFORE LOADING NEW DEFAULTS ---
+			_auto_params_b.clear() 
+			# -------------------------------------------------------
 			for param in panel.parameters:
 				_auto_params_b[param.name] = param.default
 

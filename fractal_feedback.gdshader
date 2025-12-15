@@ -504,6 +504,58 @@ uniform float jigsaw_tab_size_b; uniform float jigsaw_tab_size_b_speed;
 uniform float jigsaw_distortion_b; uniform float jigsaw_distortion_b_speed;
 uniform float jigsaw_outline_b;
 
+// --- GNARL A (DC Gnarly) ---
+uniform int gnarl_mode_a;
+uniform float gnarl_scale_x_a;
+uniform float gnarl_scale_y_a;
+uniform float gnarl_freq_x1_a;
+uniform float gnarl_freq_y1_a;
+uniform float gnarl_freq_x2_a;
+uniform float gnarl_freq_y2_a;
+uniform float gnarl_freq_x3_a;
+uniform float gnarl_freq_y3_a;
+uniform float gnarl_c1_a;
+uniform float gnarl_c2_a;
+uniform float gnarl_distort_a;
+uniform float gnarl_scale_x_a_speed;
+uniform float gnarl_scale_y_a_speed;
+uniform float gnarl_freq_x1_a_speed;
+uniform float gnarl_freq_y1_a_speed;
+uniform float gnarl_freq_x2_a_speed;
+uniform float gnarl_freq_y2_a_speed;
+uniform float gnarl_freq_x3_a_speed;
+uniform float gnarl_freq_y3_a_speed;
+uniform float gnarl_c1_a_speed;
+uniform float gnarl_c2_a_speed;
+uniform float gnarl_distort_a_speed;
+// --- GNARL B (DC Gnarly) ---
+uniform int gnarl_mode_b;
+uniform float gnarl_scale_x_b;
+uniform float gnarl_scale_y_b;
+uniform float gnarl_freq_x1_b;
+uniform float gnarl_freq_y1_b;
+uniform float gnarl_freq_x2_b;
+uniform float gnarl_freq_y2_b;
+uniform float gnarl_freq_x3_b;
+uniform float gnarl_freq_y3_b;
+uniform float gnarl_c1_b;
+uniform float gnarl_c2_b;
+uniform float gnarl_distort_b;
+uniform float gnarl_scale_x_b_speed;
+uniform float gnarl_scale_y_b_speed;
+uniform float gnarl_freq_x1_b_speed;
+uniform float gnarl_freq_y1_b_speed;
+uniform float gnarl_freq_x2_b_speed;
+uniform float gnarl_freq_y2_b_speed;
+uniform float gnarl_freq_x3_b_speed;
+uniform float gnarl_freq_y3_b_speed;
+uniform float gnarl_c1_b_speed;
+uniform float gnarl_c2_b_speed;
+uniform float gnarl_distort_b_speed;
+
+
+
+
 
 
 
@@ -518,6 +570,9 @@ vec2 random(vec2 st) {
 // Simple pseudo-random number function
 float rand(vec2 co){
     return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+}
+float modulate(float amp, float freq, float x) {
+    return amp * cos(x * freq * 6.2831853); // 2*PI
 }
 float perlin_noise(vec2 st) {
     vec2 i = floor(st);
@@ -554,7 +609,13 @@ float fbm(vec2 st, int octaves, float ridge_mix) {
 mat2 rotate(float angle) {
 	return mat2(vec2(cos(angle), -sin(angle)), vec2(sin(angle), cos(angle)));
 }
-
+// --- HELPER: 2D Rotation Matrix ---
+mat2 rot2D(float a) {
+    float s = sin(a);
+    float c = cos(a);
+    return mat2(vec2(c, -s), vec2(s, c));
+}
+float sqr(float x) { return x * x; }
 
 
 
@@ -668,7 +729,7 @@ vec2 apply_variation(vec2 uv, int variation_id,
 	float popcorn_strength, float popcorn_strength_speed,
 	float popcorn_density, float popcorn_density_speed,
 	// GlynnSim
-    float glynn_radius, float glynn_thickness, float glynn_contrast,
+	float glynn_radius, float glynn_thickness, float glynn_contrast,
 	float glynn_pow, float glynn_phi1, float glynn_phi2,
 	float glynn_radius_speed, float glynn_thickness_speed, float glynn_contrast_speed,
 	float glynn_pow_speed, float glynn_phi1_speed, float glynn_phi2_speed,
@@ -683,19 +744,29 @@ vec2 apply_variation(vec2 uv, int variation_id,
 	int lazy_ring_mode,
 	float lazy_ring_spin, float lazy_ring_spin_speed,
 	float lazy_edge_softness,
-
 	// Nebula
 	float nebula_scale, float nebula_scale_speed,
-    float nebula_speed, float nebula_speed_speed,
-    float nebula_detail, float nebula_detail_speed,
-    float nebula_distortion, float nebula_distortion_speed,
+	float nebula_speed, float nebula_speed_speed,
+	float nebula_detail, float nebula_detail_speed,
+	float nebula_distortion, float nebula_distortion_speed,
 	float nebula_swirl, float nebula_swirl_speed, float nebula_filaments,
-
-	//Jigsaw
+	// Jigsaw
 	float jigsaw_scale, float jigsaw_scale_speed,
-    float jigsaw_tab_size, float jigsaw_tab_size_speed,
-    float jigsaw_distortion, float jigsaw_distortion_speed, float jigsaw_outline
+	float jigsaw_tab_size, float jigsaw_tab_size_speed,
+	float jigsaw_distortion, float jigsaw_distortion_speed, float jigsaw_outline,
+	// Gnarl (Total 4 args)
+	int   g_mode,
+    vec2  g_scale,    // x, y
+    vec2  g_freq1,    // x, y
+    vec2  g_freq2,    // x, y
+    vec2  g_freq3,    // x, y
+    vec2  g_c,        // c1, c2
+    float g_distort,
+	// Gnarl (Speeds)
+    vec2  g_scale_s,  vec2 g_freq1_s,  vec2 g_freq2_s,  vec2 g_freq3_s,  vec2 g_c_s,  float g_distort_s,
+
 ) {
+	vec2 p = uv;
 	if (variation_id == 0) { // Sinusoidal
     // 1. Calculate animated values
     float anim_scale = sinusoidal_scale + sin(time * sinusoidal_scale_speed);
@@ -1486,98 +1557,291 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 
 	else if (variation_id == 39) { // Jigsaw (True Pieces)
 		float anim_scale = max(1.0, jigsaw_scale + sin(time * jigsaw_scale_speed));
-		float anim_tab_size = jigsaw_tab_size + sin(time * jigsaw_tab_size_speed); 
+		float anim_tab_size = jigsaw_tab_size + sin(time * jigsaw_tab_size_speed);
 		float anim_distort = jigsaw_distortion + sin(time * jigsaw_distortion_speed);
-		
+
 		// 1. Base Grid
 		vec2 p = uv * anim_scale;
 		vec2 cell_id = floor(p);
 		vec2 f = fract(p) - 0.5; // Local coords (-0.5 to 0.5)
-		
+
 		// 2. Determine Ownership (Who owns this pixel?)
 		// We check neighbors to see if their "Tab" overlaps us.
 		vec2 final_id = cell_id;
 		float dist_to_edge = 1.0; // For drawing the outline later
-		
+
 		// Helper directions: Right, Left, Top, Bottom
 		vec2 dirs[4] = {vec2(1,0), vec2(-1,0), vec2(0,1), vec2(0,-1)};
-		
+
 		for (int i = 0; i < 4; i++) {
 			vec2 dir = dirs[i];
 			// Position of the edge relative to cell center
-			vec2 edge_pos = dir * 0.5; 
-			
+			vec2 edge_pos = dir * 0.5;
+
 			// Unique seed for this specific edge (shared by both neighbors)
 			// We calculate a unique ID for the edge between cells
 			vec2 edge_seed = cell_id + edge_pos;
-			
+
 			// Randomly decide: Tab Out (1) or Tab In (-1)?
 			float r = rand(edge_seed);
-			float has_tab = (r > 0.5) ? 1.0 : -1.0; 
-			
+			float has_tab = (r > 0.5) ? 1.0 : -1.0;
+
 			// We define the tab "Out" direction relative to positive axes
 			// If dir is positive (Right/Down), 'has_tab' 1 means sticking OUT of current cell
-			
+
 			// Calculate distance to the "Tab Circle" center
 			// The tab center is slightly offset from the edge
 			vec2 tab_center = edge_pos + (dir * has_tab * 0.1); // 0.1 pushes center in/out
 			float d = distance(f, tab_center);
-			
+
 			// Check if we are inside the tab
 			if (d < anim_tab_size) {
-				// We are inside the circle. 
+				// We are inside the circle.
 				// If the tab belongs to the neighbor, we adopt neighbor's ID.
-				
-				// Logic: 
+
+				// Logic:
 				// If I am checking Right neighbor (dir=1,0)
 				// And has_tab is -1 (Pointing Left, into me)
 				// Then this pixel belongs to the Right Neighbor.
-				
+
 				// This simplified check handles all 4 directions:
 				// If the tab points opposite to the direction we are checking, it's the neighbor's.
 				if (has_tab * (dir.x + dir.y) < 0.0) {
 					final_id = cell_id + dir;
 				}
 			}
-			
+
 			// Track closest distance for the outline effect
 			dist_to_edge = min(dist_to_edge, abs(d - anim_tab_size));
 		}
-		
+
 		// 3. Apply Distortion (Scramble the pieces)
 		// Now that we know which piece we belong to (final_id), we apply that piece's rotation.
-		
+
 		// Reconstruct Global UV relative to the *Piece Center*
 		vec2 piece_center = (final_id + 0.5);
 		vec2 uv_relative = (p - piece_center);
-		
+
 		if (abs(anim_distort) > 0.001) {
 			// Random rotation per piece
 			float rot = (rand(final_id) - 0.5) * anim_distort * 3.14;
 			uv_relative = uv_relative * rotate(rot);
 		}
-		
+
 		// 4. Final Mapping
 		vec2 result = (piece_center + uv_relative) / anim_scale;
-		
+
 		// 5. Draw Outline
 		// 'dist_to_edge' was calculated in the loop (distance to the nearest tab edge)
 		// We also need to check distance to the straight grid lines for non-tab edges
-		
+
 		// Re-calculate distance to box edge if we didn't find a tab
 		vec2 dist_to_box = 0.5 - abs(f);
 		float min_box_dist = min(dist_to_box.x, dist_to_box.y);
-		
+
 		// Combine: The true edge is the minimum of the Box edge OR the Tab edge
 		float final_edge_dist = min(dist_to_edge, min_box_dist);
-		
+
 		if (final_edge_dist < jigsaw_outline) {
 			return vec2(10000.0); // Signal to draw black
 		}
-		
+
 		return result;
 	}
+	else if (variation_id == 40) { // GNARL FRANKENSTEIN (DC + Vibration)
+        
+        // 1. Calculate Animated Values
+        float sx = g_scale.x + sin(time * g_scale_s.x);
+        float sy = g_scale.y + sin(time * g_scale_s.y);
+        
+        float fx1 = g_freq1.x + sin(time * g_freq1_s.x);
+        float fy1 = g_freq1.y + sin(time * g_freq1_s.y);
+        
+        float fx2 = g_freq2.x + sin(time * g_freq2_s.x);
+        float fy2 = g_freq2.y + sin(time * g_freq2_s.y);
+        
+        float fx3 = g_freq3.x + sin(time * g_freq3_s.x);
+        float fy3 = g_freq3.y + sin(time * g_freq3_s.y);
+        
+        float c1 = g_c.x + sin(time * g_c_s.x);
+        float c2 = g_c.y + sin(time * g_c_s.y);
+        float dist_amt = g_distort + sin(time * g_distort_s);
 
+        float x0 = p.x;
+        float y0 = p.y;
+        float x1 = 0.0;
+        float y1 = 0.0;
+        
+        // --- MODE 9: VIBRATION MONSTER ---
+        if (g_mode == 9) {
+            // Mapping Gnarl Vars to Vibration2 Params
+            float dir = c1;          // C1 = Direction 1
+            float angle = c2;        // C2 = Angle 1
+            float freq = fx1;        // Freq X1 = Base Freq
+            float amp = sx;          // Scale X = Amplitude
+            
+            // Modulation parameters (using Freq 2/3 vars)
+            float dm = fx2;          // Dir Mod
+            float tm = fy2;          // Angle Mod
+            float fm = fx3;          // Freq Mod
+            float am = fy3;          // Amp Mod
+            
+            // WAVE 1 Calculation
+            float d_along = x0 * cos(dir) + y0 * sin(dir);
+            float dirL = dir + modulate(dm, 0.1, d_along);
+            float angleL = angle + modulate(tm, 0.1, d_along);
+            float freqL = modulate(fm, 0.1, d_along); // / freq removed for stability
+            float ampL = amp + amp * modulate(am, 0.1, d_along);
+            
+            float total_angle = angleL + dirL;
+            float local_amp = ampL * sin((d_along * freq * 6.28) + freqL);
+            
+            x1 = local_amp * cos(total_angle);
+            y1 = local_amp * sin(total_angle);
+            
+            // WAVE 2 Calculation (Secondary interference layer)
+            // We reuse the variables but flipped (Y vars) to create complexity
+            float dir2 = c1 + 1.57;  // Perpendicular
+            float freq2 = fy1;
+            float amp2 = sy;
+            
+            float d_along2 = x0 * cos(dir2) + y0 * sin(dir2);
+            float dirL2 = dir2 + modulate(fy2, 0.1, d_along2);
+            
+            float total_angle2 = angle + dirL2; // Link angle to primary
+            float local_amp2 = amp2 * sin((d_along2 * freq2 * 6.28));
+            
+            x1 += local_amp2 * cos(total_angle2);
+            y1 += local_amp2 * sin(total_angle2);
+            
+            // Apply Logic: In Vibration, x1/y1 IS the displacement
+            // We don't overwrite, we Add.
+            p.x += x1;
+            p.y += y1;
+            
+            // Skip the standard Gnarl mixing below for this mode
+            return p;
+        }
+
+       // --- MODE 10: LIGHTNING GNARL (Exponential) ---
+        if (g_mode == 10) {
+            // No auto-animation (t = 0.0)
+            float t = 0.0; 
+            
+            // Exponential math creates sharp, electric spikes
+            // Damped by 0.5 to prevent blowing out to pure white
+            x1 = exp(sin(fx1 * y0)) * cos(fx2 * x0) * sx * 0.5;
+            y1 = exp(sin(fy1 * x0)) * cos(fy2 * y0) * sy * 0.5;
+            
+            // Additive mixing
+            p.x += x1;
+            p.y += y1;
+            
+            // We use standard distortion logic at the end of the function
+            // so simply return here to skip the x0/x1 average mix
+            // (or let it fall through if you want standard mixing)
+            
+            // Let's fall through to the end so Color/Distort still work!
+            // But we need to update x0/y0 for the mix
+            x0 = p.x; 
+            y0 = p.y;
+        }
+
+        // --- MODE 11: DEEP LIQUID NOISE (Multi-Layer Perlin) ---
+        else if (g_mode == 11) {
+            float t = 0.0; // No auto-animation
+            
+            // Layer 1: Base Flow (Controlled by Freq 1)
+            float n1 = perlin_noise(p * fx1);
+            
+            // Layer 2: Detail/Grit (Controlled by Freq 2)
+            // We rotate it slightly to prevent grid alignment
+            float n2 = perlin_noise((p * fx2) + vec2(43.0, 12.0));
+            
+            // Layer 3: Warp/Distortion (Controlled by Freq 3)
+            float n3 = perlin_noise((p * fx3) - vec2(15.0, 32.0));
+            
+            // Combine layers: Base + (Detail * 0.5) + (Warp * 0.25)
+            float final_noise = n1 + (n2 * 0.5) + (n3 * 0.25);
+            
+            // Map noise to an angle (0 to 2PI)
+            float angle = final_noise * 6.28;
+            
+            // Create displacement
+            x1 = cos(angle) * sx;
+            y1 = sin(angle) * sy;
+            
+            // Additive mixing feels more fluid
+            p.x += x1;
+            p.y += y1;
+            
+            // Update for final mix step
+            x0 = p.x;
+            y0 = p.y;
+        }
+        // --- MODES 1-8: DC GNARLY ---
+        float t = 0.0; // Internal flow for standard gnarl
+        
+        if (g_mode == 1) {
+            x1 = cos(fx1 * y0 + t + sin(fx2 * (y0 + sin(fx3 * y0))));
+            y1 = cos(fy1 * x0 + t + sin(fy2 * (x0 + sin(fy3 * x0))));
+        } 
+        else if (g_mode == 2) {
+            x1 = sin(fx1 * y0 + t + sin(fx2 * (y0 + cos(fx3 * y0))));
+            y1 = sin(fy1 * x0 + t + sin(fy2 * (x0 + cos(fy3 * x0))));
+        }
+        else if (g_mode == 3) {
+            x1 = cos(fx1 * y0 + t + sin(fx2 * (x0 + sin(fx3 * y0))));
+            y1 = cos(fy1 * x0 + t + sin(fy2 * (y0 + sin(fy3 * x0))));
+        }
+        else if (g_mode == 4) {
+            x1 = sin(fx1 * y0 + t + sin(sqrt(abs(fx2 * (y0 + cos(fx3 * y0))))));
+            y1 = sin(fy1 * x0 + t + sin(sqrt(abs(fy2 * (x0 + cos(fy3 * x0))))));
+        }
+        else if (g_mode == 5) { // ASINH
+            x1 = cos(fx1 * y0 + t + asinh(fx2 * (y0 + sin(fx3 * y0))));
+            y1 = cos(fy1 * x0 + asinh(fy2 * (x0 + sin(fy3 * x0))));
+        }
+        else if (g_mode == 6) { // TAN
+            x1 = cos(fx1 * y0 + t + tan(fx2 * (y0 + sin(fx3 * y0))));
+            y1 = cos(fy1 * x0 + tan(fy2 * (x0 + sin(fy3 * x0))));
+        }
+        else if (g_mode == 7) { // SQR
+            x1 = sin(fx1 * y0 + t + sin(sqr(fx2 * (y0 + cos(fx3 * y0)))));
+            y1 = sin(fy1 * x0 + t + sin(sqr(fy2 * (x0 + cos(fy3 * x0)))));
+        }
+        else { // Mode 8
+            x1 = sin(fx1 * y0 + t + sin(sqr(fx2 * (x0 + cos(fx3 * y0)))));
+            y1 = sin(fy1 * x0 + t + sin(sqr(fy2 * (y0 + cos(fy3 * x0)))));
+        }
+
+        // Apply Strength (Scale)
+        x1 *= sx;
+        y1 *= sy;
+
+        // --- STEP 1: CALCULATE BASIC SHAPE ---
+        p.x = (x0 + x1) * 0.5;
+        p.y = (y0 + y1) * 0.5;
+
+        // --- STEP 2: CALCULATE S1 ---
+        float s1 = 0.0;
+        float radius = sqrt(x1*x1 + y1*y1);
+        if (radius > 0.0001) s1 = log(radius);
+
+        // --- STEP 3: APPLY LOG DISTORTION ---
+        if (abs(dist_amt) > 0.001) {
+            p += (s1 * dist_amt) * 0.5; 
+        }
+        
+        // --- STEP 4: APPLY COLOR/PHASE WARPING ---
+        if (abs(c1) > 0.0 || abs(c2) > 0.0) {
+             float final_s1 = s1 * dist_amt; 
+             float phase_val = abs(cos(x0 + x1 * c1 + final_s1) + sin(y0 + y1 * c2 + final_s1));
+             p += vec2(sin(phase_val), cos(phase_val)) * 0.1;
+        }
+
+        return p;
+    }
 	return uv;
 }
 
@@ -1681,25 +1945,37 @@ void fragment() {
 			truchet_scale_a, truchet_scale_a_speed, truchet_rotate_a, truchet_rotate_a_speed, truchet_strength_a, truchet_strength_a_speed, truchet_mode_a,
 			reptile_scale_a, reptile_scale_a_speed, reptile_rotate_a, reptile_rotate_a_speed,
 			popcorn_scale_a, popcorn_scale_a_speed, popcorn_strength_a, popcorn_strength_a_speed, popcorn_density_a, popcorn_density_a_speed,
-			// --- GLYNNSIM A ---
-    glynn_radius_a, glynn_thickness_a, glynn_contrast_a, glynn_pow_a, glynn_phi1_a, glynn_phi2_a,
-    glynn_radius_a_speed, glynn_thickness_a_speed, glynn_contrast_a_speed, glynn_pow_a_speed, glynn_phi1_a_speed, glynn_phi2_a_speed, glynn_ring_mode_a,
-
-    // --- LAZY MEGA A ---
-    lazy_shape_a, lazy_inside_mode_a, lazy_outside_mode_a, lazy_amount_a, lazy_amount_a_speed, lazy_twist_a, lazy_twist_a_speed, lazy_spin_a, lazy_spin_a_speed, lazy_space_a, lazy_space_a_speed, lazy_offset_x_a, lazy_offset_y_a,
-    lazy_ring_mode_a, lazy_ring_spin_a, lazy_ring_spin_a_speed, lazy_edge_softness_a,
-	// Nebula A
-    nebula_scale_a, nebula_scale_a_speed,
-    nebula_speed_a, nebula_speed_a_speed,
-    nebula_detail_a, nebula_detail_a_speed,
-    nebula_distortion_a, nebula_distortion_a_speed,
-	nebula_swirl_a, nebula_swirl_a_speed, nebula_filaments_a,
-
-	// Jigsaw A
-    jigsaw_scale_a, jigsaw_scale_a_speed,
-    jigsaw_tab_size_a, jigsaw_tab_size_a_speed,
-    jigsaw_distortion_a, jigsaw_distortion_a_speed, jigsaw_outline_a
-);
+			// GlynnSim
+			glynn_radius_a, glynn_thickness_a, glynn_contrast_a, glynn_pow_a, glynn_phi1_a, glynn_phi2_a,
+			glynn_radius_a_speed, glynn_thickness_a_speed, glynn_contrast_a_speed, glynn_pow_a_speed, glynn_phi1_a_speed, glynn_phi2_a_speed, glynn_ring_mode_a,
+			// Lazy Mega
+			lazy_shape_a, lazy_inside_mode_a, lazy_outside_mode_a, lazy_amount_a, lazy_amount_a_speed, lazy_twist_a, lazy_twist_a_speed, lazy_spin_a, lazy_spin_a_speed, lazy_space_a, lazy_space_a_speed, lazy_offset_x_a, lazy_offset_y_a,
+			lazy_ring_mode_a, lazy_ring_spin_a, lazy_ring_spin_a_speed, lazy_edge_softness_a,
+			// Nebula
+			nebula_scale_a, nebula_scale_a_speed,
+			nebula_speed_a, nebula_speed_a_speed,
+			nebula_detail_a, nebula_detail_a_speed,
+			nebula_distortion_a, nebula_distortion_a_speed,
+			nebula_swirl_a, nebula_swirl_a_speed, nebula_filaments_a,
+			// Jigsaw
+			jigsaw_scale_a, jigsaw_scale_a_speed,
+			jigsaw_tab_size_a, jigsaw_tab_size_a_speed,
+			jigsaw_distortion_a, jigsaw_distortion_a_speed, jigsaw_outline_a,
+			// Gnarl
+			gnarl_mode_a,
+    vec2(gnarl_scale_x_a, gnarl_scale_y_a),
+    vec2(gnarl_freq_x1_a, gnarl_freq_y1_a),
+    vec2(gnarl_freq_x2_a, gnarl_freq_y2_a),
+    vec2(gnarl_freq_x3_a, gnarl_freq_y3_a),
+    vec2(gnarl_c1_a, gnarl_c2_a),
+    gnarl_distort_a,
+	vec2(gnarl_scale_x_a_speed, gnarl_scale_y_a_speed),
+    vec2(gnarl_freq_x1_a_speed, gnarl_freq_y1_a_speed),
+    vec2(gnarl_freq_x2_a_speed, gnarl_freq_y2_a_speed),
+    vec2(gnarl_freq_x3_a_speed, gnarl_freq_y3_a_speed),
+    vec2(gnarl_c1_a_speed, gnarl_c2_a_speed),
+    gnarl_distort_a_speed
+		);
 
 		// --- APPLY VARIATION B ---
 		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
@@ -1726,25 +2002,37 @@ void fragment() {
 			truchet_scale_b, truchet_scale_b_speed, truchet_rotate_b, truchet_rotate_b_speed, truchet_strength_b, truchet_strength_b_speed, truchet_mode_b,
 			reptile_scale_b, reptile_scale_b_speed, reptile_rotate_b, reptile_rotate_b_speed,
 			popcorn_scale_b, popcorn_scale_b_speed, popcorn_strength_b, popcorn_strength_b_speed, popcorn_density_b, popcorn_density_b_speed,
-			// --- GLYNNSIM B ---
-    glynn_radius_b, glynn_thickness_b, glynn_contrast_b, glynn_pow_b, glynn_phi1_b, glynn_phi2_b,
-    glynn_radius_b_speed, glynn_thickness_b_speed, glynn_contrast_b_speed, glynn_pow_b_speed, glynn_phi1_b_speed, glynn_phi2_b_speed, glynn_ring_mode_b,
-
-    // --- LAZY MEGA B ---
-    lazy_shape_b, lazy_inside_mode_b, lazy_outside_mode_b, lazy_amount_b, lazy_amount_b_speed, lazy_twist_b, lazy_twist_b_speed, lazy_spin_b, lazy_spin_b_speed, lazy_space_b, lazy_space_b_speed, lazy_offset_x_b, lazy_offset_y_b,
-    lazy_ring_mode_b, lazy_ring_spin_b, lazy_ring_spin_b_speed, lazy_edge_softness_b,
-	nebula_scale_b, nebula_scale_b_speed,
-    nebula_speed_b, nebula_speed_b_speed,
-    nebula_detail_b, nebula_detail_b_speed,
-    nebula_distortion_b, nebula_distortion_b_speed,
-	nebula_swirl_b, nebula_swirl_b_speed, nebula_filaments_b,
-	
-	
-	// Jigsaw B
-    jigsaw_scale_b, jigsaw_scale_b_speed,
-    jigsaw_tab_size_b, jigsaw_tab_size_b_speed,
-    jigsaw_distortion_b, jigsaw_distortion_b_speed, jigsaw_outline_b
-);
+			// GlynnSim
+			glynn_radius_b, glynn_thickness_b, glynn_contrast_b, glynn_pow_b, glynn_phi1_b, glynn_phi2_b,
+			glynn_radius_b_speed, glynn_thickness_b_speed, glynn_contrast_b_speed, glynn_pow_b_speed, glynn_phi1_b_speed, glynn_phi2_b_speed, glynn_ring_mode_b,
+			// Lazy Mega
+			lazy_shape_b, lazy_inside_mode_b, lazy_outside_mode_b, lazy_amount_b, lazy_amount_b_speed, lazy_twist_b, lazy_twist_b_speed, lazy_spin_b, lazy_spin_b_speed, lazy_space_b, lazy_space_b_speed, lazy_offset_x_b, lazy_offset_y_b,
+			lazy_ring_mode_b, lazy_ring_spin_b, lazy_ring_spin_b_speed, lazy_edge_softness_b,
+			// Nebula
+			nebula_scale_b, nebula_scale_b_speed,
+			nebula_speed_b, nebula_speed_b_speed,
+			nebula_detail_b, nebula_detail_b_speed,
+			nebula_distortion_b, nebula_distortion_b_speed,
+			nebula_swirl_b, nebula_swirl_b_speed, nebula_filaments_b,
+			// Jigsaw
+			jigsaw_scale_b, jigsaw_scale_b_speed,
+			jigsaw_tab_size_b, jigsaw_tab_size_b_speed,
+			jigsaw_distortion_b, jigsaw_distortion_b_speed, jigsaw_outline_b,
+			// Gnarl
+			gnarl_mode_b,
+    vec2(gnarl_scale_x_b, gnarl_scale_y_b),
+    vec2(gnarl_freq_x1_b, gnarl_freq_y1_b),
+    vec2(gnarl_freq_x2_b, gnarl_freq_y2_b),
+    vec2(gnarl_freq_x3_b, gnarl_freq_y3_b),
+    vec2(gnarl_c1_b, gnarl_c2_b),
+    gnarl_distort_b,
+	vec2(gnarl_scale_x_b_speed, gnarl_scale_y_b_speed),
+    vec2(gnarl_freq_x1_b_speed, gnarl_freq_y1_b_speed),
+    vec2(gnarl_freq_x2_b_speed, gnarl_freq_y2_b_speed),
+    vec2(gnarl_freq_x3_b_speed, gnarl_freq_y3_b_speed),
+    vec2(gnarl_c1_b_speed, gnarl_c2_b_speed),
+    gnarl_distort_b_speed
+		);
 
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
 
@@ -1787,7 +2075,7 @@ void fragment() {
 		vec4 transformed_color;
 		if (final_uv.x > 5000.0) {
 			// It's an outline! Draw Black (or Outline Color)
-			transformed_color = vec4(0.0, 0.0, 0.0, 1.0); 
+			transformed_color = vec4(0.0, 0.0, 0.0, 1.0);
 		} else {
 			transformed_color = texture(previous_frame, final_uv);
 		}

@@ -51,6 +51,7 @@ const VARIATIONS = {
 	"Glynn Sim": { "id": 37, "controls": "glynn_sim" },
 	"Nebula": { "id": 38, "controls": "nebula" },
 	"Jigsaw": { "id": 39, "controls": "jigsaw" },
+	"Chimera": { "id": 40, "controls": "gnarl" },
 	"Wave":             { "id": 3, "controls": "wave" },
 }
 
