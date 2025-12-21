@@ -23,8 +23,8 @@ uniform bool use_escape_time = false; // Toggle
 uniform int escape_shape = 0; // 0=Circle, 1=Square, 2=Cross, 3=Diamond
 uniform float escape_smoothness : hint_range(0.0, 2.0) = 0.1; // How soft the edge is
 uniform bool escape_invert = false; // Toggle tunnel vs island
-
-
+uniform sampler2D input_texture; // This receives the "Generator" image
+uniform float generator_strength = 0.0; // Default to 0 (Disabled)
 
 
 
@@ -553,6 +553,31 @@ uniform float gnarl_c1_b_speed;
 uniform float gnarl_c2_b_speed;
 uniform float gnarl_distort_b_speed;
 
+// --- Constructivist A ---
+uniform float construction_density_a; uniform float construction_density_a_speed;
+uniform float construction_circles_a; uniform float construction_circles_a_speed;
+uniform float construction_chaos_a;   uniform float construction_chaos_a_speed;
+uniform float construction_thickness_a; uniform float construction_thickness_a_speed;
+
+// --- Constructivist B ---
+uniform float construction_density_b; uniform float construction_density_b_speed;
+uniform float construction_circles_b; uniform float construction_circles_b_speed;
+uniform float construction_chaos_b;   uniform float construction_chaos_b_speed;
+uniform float construction_thickness_b; uniform float construction_thickness_b_speed;
+
+// --- Snowflake A ---
+uniform float snow_scale_a;     uniform float snow_scale_a_speed;
+uniform float snow_branches_a;  uniform float snow_branches_a_speed;
+uniform float snow_thickness_a; uniform float snow_thickness_a_speed;
+uniform float snow_chaos_a;     uniform float snow_chaos_a_speed;
+uniform float snow_strength_a;  uniform float snow_strength_a_speed;
+
+// --- Snowflake B ---
+uniform float snow_scale_b;     uniform float snow_scale_b_speed;
+uniform float snow_branches_b;  uniform float snow_branches_b_speed;
+uniform float snow_thickness_b; uniform float snow_thickness_b_speed;
+uniform float snow_chaos_b;     uniform float snow_chaos_b_speed;
+uniform float snow_strength_b;  uniform float snow_strength_b_speed;
 
 
 
@@ -616,7 +641,26 @@ mat2 rot2D(float a) {
     return mat2(vec2(c, -s), vec2(s, c));
 }
 float sqr(float x) { return x * x; }
+// --- SDF HELPER FUNCTIONS ---
 
+// Signed Distance to a Box (centered at origin)
+// p = point, b = extents (half-width, half-height)
+float sdBox(vec2 p, vec2 b) {
+    vec2 d = abs(p) - b;
+    return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
+}
+
+// Signed Distance to an Equilateral Triangle
+// p = point, r = "radius" (distance from center to vertices)
+float sdTriangle(vec2 p, float r) {
+    const float k = sqrt(3.0);
+    p.x = abs(p.x) - r;
+    p.y = p.y + r / k;
+    if (p.x + k * p.y > 0.0) p = vec2(p.x - k * p.y, -k * p.x - p.y) / 2.0;
+    p.x -= clamp(p.x, -2.0 * r, 0.0);
+    return -length(p) * sign(p.y);
+}
+// ---------------------------
 
 
 // --- ADD THIS HELPER FUNCTION ---
@@ -764,7 +808,17 @@ vec2 apply_variation(vec2 uv, int variation_id,
     float g_distort,
 	// Gnarl (Speeds)
     vec2  g_scale_s,  vec2 g_freq1_s,  vec2 g_freq2_s,  vec2 g_freq3_s,  vec2 g_c_s,  float g_distort_s,
-
+	// Constructivist
+    float c_density, float c_density_s,
+    float c_circles, float c_circles_s,
+    float c_chaos,   float c_chaos_s,
+    float c_thick,   float c_thick_s,
+	// Snowflake
+    float s_scale,   float s_scale_s,
+    float s_branch,  float s_branch_s,
+    float s_thick,   float s_thick_s,
+    float s_chaos,   float s_chaos_s,
+    float s_strength, float s_strength_s
 ) {
 	vec2 p = uv;
 	if (variation_id == 0) { // Sinusoidal
@@ -1842,6 +1896,145 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 
         return p;
     }
+	
+	else if (variation_id == 41) { // CONSTRUCTIVIST (Mondrian/Bauhaus)
+        // 1. Animate
+        float anim_den = max(1.0, c_density + sin(time * c_density_s));
+        // anim_circ now controls Shape Variety (0.0 = Blocks only, 1.0 = All shapes)
+        float anim_variety = c_circles + sin(time * c_circles_s); 
+        float anim_chaos = c_chaos + sin(time * c_chaos_s);
+        float anim_thick = max(0.001, c_thick + sin(time * c_thick_s));
+
+        // 2. Grid Setup
+        vec2 grid_p = uv * anim_den;
+        vec2 id = floor(grid_p);
+        vec2 f = fract(grid_p) - 0.5; // Centered local UV (-0.5 to 0.5)
+
+        float rnd = rand(id); // Unique seed per cell
+
+        // 3. Chaos (Shifting Grid)
+        if (rnd > (1.0 - anim_chaos * 0.5)) {
+            // FIX: Multiply time by the speed variable (c_chaos_s)
+            // If speed is 0.0, this shift becomes constant (or 0 if time starts at 0)
+            float shift = time * c_chaos_s * 0.5 * (mod(id.y, 2.0) * 2.0 - 1.0); 
+            f.x += shift;
+            f = fract(f + 0.5) - 0.5;
+        }
+		
+		// Define line width
+		float line_width = anim_thick * 0.015;
+
+        // 4. Shape Selection Logic
+        // We split the variety parameter into thresholds for different shapes.
+        // If anim_variety is 1.0, each shape has a 20% chance.
+        // If anim_variety is 0.2, only circles and blocks appear.
+        float t_circle = anim_variety * 0.2;
+        float t_diamond = anim_variety * 0.4;
+        float t_cross = anim_variety * 0.6;
+        float t_triangle = anim_variety * 0.8;
+        
+        float dist = 0.0;
+        bool draw_shape_outline = false;
+
+        if (rnd < t_circle) {
+            // --- CIRCLE ---
+            dist = length(f);
+            // Draw at radius 0.4
+            draw_shape_outline = abs(dist - 0.4) < line_width;
+        } 
+        else if (rnd < t_diamond) {
+            // --- DIAMOND (Rotated Square) ---
+            // Manhattan distance
+            dist = abs(f.x) + abs(f.y);
+            // Draw at radius 0.5
+             draw_shape_outline = abs(dist - 0.5) < line_width;
+        }
+        else if (rnd < t_cross) {
+             // --- CROSS (Union of two boxes) ---
+             // Horizontal bar (wide, thin) vs Vertical bar (thin, tall)
+             float box1 = sdBox(f, vec2(0.4, 0.12)); 
+             float box2 = sdBox(f, vec2(0.12, 0.4));
+             // Union is min() of distances.
+             dist = min(box1, box2);
+             // SDF is 0.0 at edge. Draw outline near 0.0.
+             draw_shape_outline = abs(dist) < line_width;
+        }
+        else if (rnd < t_triangle) {
+            // --- TRIANGLE ---
+            // Need to offset Y slightly to center visually in grid cell
+            dist = sdTriangle(f + vec2(0.0, 0.05), 0.4);
+            // SDF is 0.0 at edge.
+            draw_shape_outline = abs(dist) < line_width;
+        }
+        else {
+            // --- BLOCK (Mondrian background) ---
+            // Draw grid lines near edges of cell (0.5)
+            vec2 ab_f = abs(f);
+            if (ab_f.x > (0.5 - line_width) || ab_f.y > (0.5 - line_width)) {
+                return vec2(10000.0); // Black Line
+            }
+        }
+
+        // 5. Final Outline Check
+        if (draw_shape_outline) {
+             return vec2(10000.0); // Black Line
+        }
+
+        // 6. Chaos distortion inside shapes (optional aesthetic choice)
+        if (rnd < t_triangle && anim_chaos > 0.1) {
+             f = f * (1.0 + anim_chaos * 0.2);
+        }
+
+        // Return mapped coordinate
+        return (id + 0.5 + f) / anim_den;
+    }
+	
+	else if (variation_id == 42) { // SNOWFLAKE (Fractal Ice Upgrade)
+		// 1. Animate Parameters
+		float anim_scale = max(0.1, s_scale + sin(time * s_scale_s));
+		float anim_branch = s_branch + sin(time * s_branch_s); // Controls fold angle
+		float anim_thick = max(0.001, s_thick + sin(time * s_thick_s)); // Controls spacing
+		float anim_chaos = s_chaos + sin(time * s_chaos_s); // Controls twist
+		float anim_str = s_strength + sin(time * s_strength_s);
+
+		// 2. Center and Scale
+		vec2 p = uv * anim_scale;
+		
+		// 3. FRACTAL LOOP
+		// We loop 4 times to create recursive "frost" patterns
+		// Use the 'anim_str' (Strength slider) to fade the effect in/out
+		float strength_factor = clamp(anim_str, 0.0, 1.0);
+		
+		// Standard Hexagonal Angle (30 degrees)
+		// We modulate this with 'Branch' slider to let you open/close the crystals
+		float fold_angle = 0.523598 + (anim_branch * 0.2); 
+		vec2 n = vec2(sin(fold_angle), cos(fold_angle));
+
+		for (int i = 0; i < 4; i++) {
+			// A. Symmetry Fold (Kaleidoscope)
+			p.x = abs(p.x);
+			p -= 2.0 * min(0.0, dot(p, n)) * n;
+			
+			// B. Shift & Scale (The Fractal part)
+			// 'Thickness' slider now controls how far apart the crystals are
+			p.y -= 1.0 + (anim_thick * 10.0); 
+			
+			// C. Rotation (Twist)
+			// 'Chaos' slider rotates the next layer of crystals
+			if (abs(anim_chaos) > 0.01) {
+				p *= rotate(anim_chaos * float(i));
+			}
+			
+			// D. Scale down for next iteration
+			p *= 1.4; 
+		}
+
+		// 4. Return to 0..1 space
+		// We mix between original UV and Fractal UV based on strength
+		return mix(uv, p, strength_factor);
+	}
+
+       
 	return uv;
 }
 
@@ -1850,22 +2043,22 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 // --- Main Shader Logic ---
 // --- Main Shader Logic ---
 void fragment() {
-	vec4 final_color;
-	vec4 start_pattern_color;
+    vec4 final_color;
+    vec4 start_pattern_color;
 
-	// --- STEP 1: Calculate the Start Pattern ---
-	if (start_pattern_mode == 0) { // Gradient + Grid
-		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
-		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
-		start_pattern_color = mix(top_mix, bottom_mix, UV.y);
-		if (show_grid) {
-			vec2 pixel_coords = UV / TEXTURE_PIXEL_SIZE;
-			float line_width = 1.5;
-			if (mod(pixel_coords.x, 50.0) < line_width || mod(pixel_coords.y, 50.0) < line_width) {
-				start_pattern_color *= 1.5;
-			}
-		}
-	}
+    // --- STEP 1: Calculate the Start Pattern ---
+    if (start_pattern_mode == 0) { // Gradient + Grid
+        vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
+        vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
+        start_pattern_color = mix(top_mix, bottom_mix, UV.y);
+        if (show_grid) {
+            vec2 pixel_coords = UV / TEXTURE_PIXEL_SIZE;
+            float line_width = 1.5;
+            if (mod(pixel_coords.x, 50.0) < line_width || mod(pixel_coords.y, 50.0) < line_width) {
+                start_pattern_color *= 1.5;
+            }
+        }
+    }
 	else if (start_pattern_mode == 1) { // Circles
 		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
 		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
@@ -1904,18 +2097,33 @@ void fragment() {
 						   smoothstep(0.5 + half_width, 0.5 + half_width + circle_grid_softness, v);
 		start_pattern_color = mix(gradient_color_B, gradient_color_A, ring_value);
 	}
-	else {
+
+// --- ADD THIS NEW BLOCK ---
+	else if (start_pattern_mode == 5) { // Snowflake Mode
+		// We use the GRADIENT here so you get the colors you liked!
 		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
 		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
 		start_pattern_color = mix(top_mix, bottom_mix, UV.y);
-	}
+    }
+    // --------------------------
+    else {
+        // Fallback (Gradient)
+        vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
+        vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
+        start_pattern_color = mix(top_mix, bottom_mix, UV.y);
+    }
 
+    // --- YOUR EXISTING OVERLAY LOGIC (Keep this!) ---
+    // This will mix the snowflake onto the black background we just set
+    vec4 snowflake_img = texture(input_texture, UV);
+    start_pattern_color = mix(start_pattern_color, snowflake_img, snowflake_img.a * generator_strength);   // ----
 	// --- STEP 2: Calculate Feedback ---
 	if (time < 0.1) {
-		final_color = start_pattern_color;
-	}
-	else {
-		vec2 transformed_uv = UV - vec2(0.5);
+        final_color = start_pattern_color;
+    }
+    else {
+        vec2 transformed_uv = UV - vec2(0.5);
+        
 		transformed_uv *= rotate(pre_rotation);
 		transformed_uv /= pre_scale;
 		transformed_uv += pre_translate;
@@ -1974,7 +2182,19 @@ void fragment() {
     vec2(gnarl_freq_x2_a_speed, gnarl_freq_y2_a_speed),
     vec2(gnarl_freq_x3_a_speed, gnarl_freq_y3_a_speed),
     vec2(gnarl_c1_a_speed, gnarl_c2_a_speed),
-    gnarl_distort_a_speed
+    gnarl_distort_a_speed,
+	// Constructivist Args
+    construction_density_a, construction_density_a_speed,
+    construction_circles_a, construction_circles_a_speed,
+    construction_chaos_a,   construction_chaos_a_speed,
+    construction_thickness_a, construction_thickness_a_speed,
+	// Snowflake Args
+    snow_scale_a,    snow_scale_a_speed,
+    snow_branches_a, snow_branches_a_speed,
+    snow_thickness_a,snow_thickness_a_speed,
+    snow_chaos_a,    snow_chaos_a_speed,
+	snow_strength_a, snow_strength_a_speed
+	
 		);
 
 		// --- APPLY VARIATION B ---
@@ -2031,7 +2251,18 @@ void fragment() {
     vec2(gnarl_freq_x2_b_speed, gnarl_freq_y2_b_speed),
     vec2(gnarl_freq_x3_b_speed, gnarl_freq_y3_b_speed),
     vec2(gnarl_c1_b_speed, gnarl_c2_b_speed),
-    gnarl_distort_b_speed
+    gnarl_distort_b_speed,
+    // Constructivist Args
+    construction_density_b, construction_density_b_speed,
+    construction_circles_b, construction_circles_b_speed,
+    construction_chaos_b,   construction_chaos_b_speed,
+    construction_thickness_b, construction_thickness_b_speed,
+	// Snowflake Args
+    snow_scale_b,    snow_scale_b_speed,
+    snow_branches_b, snow_branches_b_speed,
+    snow_thickness_b,snow_thickness_b_speed,
+    snow_chaos_b,    snow_chaos_b_speed,
+	snow_strength_b, snow_strength_b_speed
 		);
 
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
@@ -2104,4 +2335,6 @@ void fragment() {
 		}
 	}
 	COLOR = final_color;
+
+	
 }

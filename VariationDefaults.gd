@@ -120,8 +120,25 @@ class_name VariationDefaults
 @export var popcorn_strength_a_speed: float = 0.0
 @export var popcorn_density_a: float = 3.0
 @export var popcorn_density_a_speed: float = 0.0
-
-
+@export var construct_density_a: float = 5.0
+@export var construct_circles_a: float = 0.5
+@export var construct_chaos_a: float = 0.0
+@export var construct_thickness_a: float = 1.0
+@export var construct_density_a_speed: float = 0.0
+@export var construct_circles_a_speed: float = 0.0
+@export var construct_chaos_a_speed: float = 0.0
+@export var construct_thickness_a_speed: float = 0.0
+## --- Snowflake A ---
+@export var snow_scale_a: float = 1.0
+@export var snow_branches_a: float = 5.0
+@export var snow_thickness_a: float = 0.2
+@export var snow_chaos_a: float = 0.1
+@export var snow_strength_a: float = 0.2 
+@export var snow_scale_a_speed: float = 0.0
+@export var snow_branches_a_speed: float = 0.0
+@export var snow_thickness_a_speed: float = 0.0
+@export var snow_chaos_a_speed: float = 0.0
+@export var snow_strength_a_speed: float = 0.0
 ## --- Variation B ---
 @export var var_b_mirror_x: bool = false
 @export var var_b_mirror_y: bool = false
@@ -176,6 +193,28 @@ class_name VariationDefaults
 @export var custom_tr_b_id: int = 0
 @export var custom_bl_b_id: int = 0
 @export var custom_br_b_id: int = 0
+## --- Constructivist B ---
+@export var construct_density_b: float = 5.0
+@export var construct_circles_b: float = 0.5
+@export var construct_chaos_b: float = 0.0
+@export var construct_thickness_b: float = 1.0
+@export var construct_density_b_speed: float = 0.0
+@export var construct_circles_b_speed: float = 0.0
+@export var construct_chaos_b_speed: float = 0.0
+@export var construct_thickness_b_speed: float = 0.0
+## --- Snowflake B ---
+@export var snow_scale_b: float = 1.0
+@export var snow_branches_b: float = 5.0
+@export var snow_thickness_b: float = 0.2
+@export var snow_chaos_b: float = 0.1
+@export var snow_strength_b: float = 0.2 # NEW
+@export var snow_scale_b_speed: float = 0.0
+@export var snow_branches_b_speed: float = 0.0
+@export var snow_thickness_b_speed: float = 0.0
+@export var snow_chaos_b_speed: float = 0.0
+@export var snow_strength_b_speed: float = 0.0
+
+
 
 @export var popcorn_scale_b: float = 1.0
 @export var popcorn_scale_b_speed: float = 0.0

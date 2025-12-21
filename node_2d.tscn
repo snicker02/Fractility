@@ -1,4 +1,4 @@
-[gd_scene load_steps=247 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=267 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://di65wpry5ixo0" path="res://VariationParameter.gd" id="6_4d7sh"]
 [ext_resource type="Script" uid="uid://diswo4orl2u13" path="res://FreeLookCamera.gd" id="6_hqns4"]
 [ext_resource type="Shader" uid="uid://dr08robqa1tts" path="res://fractal_3d_displacement.gdshader" id="6_ir8iy"]
+[ext_resource type="Shader" uid="uid://dvgfy4qhc7mwt" path="res://Snoflake.gdshader" id="9_hqns4"]
 
 [sub_resource type="Resource" id="Resource_rj586"]
 script = ExtResource("6_4d7sh")
@@ -196,6 +197,46 @@ default = -1.2
 min = -3.0
 max = 3.0
 step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_7odyt"]
+script = ExtResource("6_4d7sh")
+name = "construction_density_a"
+label = "Grid Density"
+add_speed_control = true
+default = 5.0
+min = 1.0
+max = 20.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_0xbcw"]
+script = ExtResource("6_4d7sh")
+name = "construction_circles_a"
+label = "Shape Variety"
+add_speed_control = true
+default = 0.5
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_f8vqc"]
+script = ExtResource("6_4d7sh")
+name = "construction_chaos_a"
+label = "Diagonal Chaos"
+add_speed_control = true
+max = 50.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_7skfe"]
+script = ExtResource("6_4d7sh")
+name = "construction_thickness_a"
+label = "Line Weight"
+add_speed_control = true
+default = 1.0
+min = 0.1000000000003638
+max = 5.0
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1118,6 +1159,57 @@ step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
+[sub_resource type="Resource" id="Resource_4dxab"]
+script = ExtResource("6_4d7sh")
+name = "snow_scale_a"
+label = "Scale"
+add_speed_control = true
+default = 1.0
+min = 0.1000000000003638
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_6rkys"]
+script = ExtResource("6_4d7sh")
+name = "snow_branches_a"
+label = "Frequency"
+add_speed_control = true
+default = 5.0
+min = 1.0
+max = 20.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_1hwe0"]
+script = ExtResource("6_4d7sh")
+name = "snow_thickness_a"
+label = "Thickness"
+add_speed_control = true
+default = 0.2000000000007276
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_kjk4q"]
+script = ExtResource("6_4d7sh")
+name = "snow_chaos_a"
+label = "Chaos"
+add_speed_control = true
+default = 0.1000000000003638
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_vctpf"]
+script = ExtResource("6_4d7sh")
+name = "snow_strength_a"
+label = "Strength"
+add_speed_control = true
+default = 0.2000000000007276
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
 [sub_resource type="Resource" id="Resource_b481h"]
 script = ExtResource("6_4d7sh")
 name = "spherical_strength_a"
@@ -1465,6 +1557,46 @@ default = -1.2
 min = -3.0
 max = 3.0
 step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_avf3y"]
+script = ExtResource("6_4d7sh")
+name = "construction_density_b"
+label = "Grid Density"
+add_speed_control = true
+default = 5.0
+min = 1.0
+max = 20.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_b1vyi"]
+script = ExtResource("6_4d7sh")
+name = "construction_circles_b"
+label = "Shape Variety"
+add_speed_control = true
+default = 0.5
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_bnbtc"]
+script = ExtResource("6_4d7sh")
+name = "construction_chaos_b"
+label = "Diagonal Chaos"
+add_speed_control = true
+max = 50.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_u3lns"]
+script = ExtResource("6_4d7sh")
+name = "construction_thickness_b"
+label = "Line Weight"
+add_speed_control = true
+default = 1.0
+min = 0.1000000000003638
+max = 5.0
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -2394,6 +2526,57 @@ step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
+[sub_resource type="Resource" id="Resource_xsfpa"]
+script = ExtResource("6_4d7sh")
+name = "snow_scale_b"
+label = "Scale"
+add_speed_control = true
+default = 1.0
+min = 0.1000000000003638
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_kyw0c"]
+script = ExtResource("6_4d7sh")
+name = "snow_branches_b"
+label = "Frequency"
+add_speed_control = true
+default = 5.0
+min = 1.0
+max = 20.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_gwavb"]
+script = ExtResource("6_4d7sh")
+name = "snow_thickness_b"
+label = "Thickness"
+add_speed_control = true
+default = 0.2000000000007276
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_b38y5"]
+script = ExtResource("6_4d7sh")
+name = "snow_chaos_b"
+label = "Chaos"
+add_speed_control = true
+default = 0.1000000000003638
+step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_dibfd"]
+script = ExtResource("6_4d7sh")
+name = "snow_strength_b"
+label = "Effect Strength"
+add_speed_control = true
+default = 0.2000000000007276
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
 [sub_resource type="Resource" id="Resource_qphy4"]
 script = ExtResource("6_4d7sh")
 name = "spherical_strength_b"
@@ -2590,6 +2773,15 @@ transform_format = 1
 use_colors = true
 use_custom_data = true
 mesh = SubResource("BoxMesh_ir8iy")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x0ka3"]
+shader = ExtResource("9_hqns4")
+shader_parameter/snowflake_color = Color(0.1, 0.35, 0.65, 1)
+shader_parameter/size = 0.8
+shader_parameter/thickness = 0.015
+shader_parameter/branch_count = 4
+shader_parameter/branch_angle = 0.8
+shader_parameter/branch_len = 0.2
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kdubu"]
 shader = ExtResource("3_q6r6c")
@@ -3582,7 +3774,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 3.3"
+text = "V 3.4"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -3608,13 +3800,132 @@ text = "Reset on Drag"
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
+[node name="HBoxContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
 
 [node name="PauseAnimationCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Pause Anim"
+
+[node name="SnowflakeControlsContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="GeneratorCheck" type="CheckBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Show Snowflake Overlay"
+
+[node name="Power" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+layout_mode = 2
+text = "Power"
+
+[node name="GeneratorSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="GeneratorSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 0.1
+step = 0.01
+
+[node name="Branches" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+layout_mode = 2
+text = "Branches"
+
+[node name="GenBranchSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 8.0
+value = 4.0
+
+[node name="GenBranchSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 8.0
+value = 4.0
+
+[node name="Angle" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+layout_mode = 2
+text = "Angle"
+
+[node name="GenAngleSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 3.14
+step = 0.001
+value = 0.8
+
+[node name="GenAngleSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 3.14
+step = 0.001
+value = 0.8
+
+[node name="Length" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+layout_mode = 2
+text = "Length"
+
+[node name="GenLengthSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 0.5
+step = 0.001
+value = 0.2
+
+[node name="GenLengthSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 0.5
+step = 0.001
+value = 0.2
+
+[node name="Size" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+layout_mode = 2
+text = "Size"
+
+[node name="GenSizeSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 1.0
+step = 0.01
+value = 0.7999999999999999
+
+[node name="GenSizeSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 1.0
+step = 0.01
+value = 0.7999999999999999
+
+[node name="Thickness" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+layout_mode = 2
+text = "Thickness"
+
+[node name="GenThickSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.001
+max_value = 0.1
+step = 0.001
+value = 0.015
+
+[node name="GenThickSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SnowflakeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.001
+max_value = 0.1
+step = 0.001
+value = 0.015
 
 [node name="RandomizeToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
@@ -3973,6 +4284,12 @@ layout_mode = 2
 panel_title = "Clifford A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_4d7sh"), SubResource("Resource_ir8iy"), SubResource("Resource_hqns4"), SubResource("Resource_x0ka3")])
 
+[node name="ConstructivistControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Constructivist A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_7odyt"), SubResource("Resource_0xbcw"), SubResource("Resource_f8vqc"), SubResource("Resource_7skfe")])
+
 [node name="CosineControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -4153,6 +4470,12 @@ layout_mode = 2
 panel_title = "Sinusoidal A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_43vxp"), SubResource("Resource_sxwcl")])
 
+[node name="SnowflakeControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Frostbyte A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_4dxab"), SubResource("Resource_6rkys"), SubResource("Resource_1hwe0"), SubResource("Resource_kjk4q"), SubResource("Resource_vctpf")])
+
 [node name="SphericalControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -4234,6 +4557,12 @@ unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Clifford B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_flf07"), SubResource("Resource_k73cj"), SubResource("Resource_rjqkl"), SubResource("Resource_fs4d3")])
+
+[node name="ConstructivistControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Constructivist B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_avf3y"), SubResource("Resource_b1vyi"), SubResource("Resource_bnbtc"), SubResource("Resource_u3lns")])
 
 [node name="CosineControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
@@ -4414,6 +4743,12 @@ unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Sinusoidal B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_mb0t2"), SubResource("Resource_m2ceb")])
+
+[node name="SnowflakeControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Frostbyte B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_xsfpa"), SubResource("Resource_kyw0c"), SubResource("Resource_gwavb"), SubResource("Resource_b38y5"), SubResource("Resource_dibfd")])
 
 [node name="SphericalControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
@@ -4948,6 +5283,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
+
+[node name="SnowflakeViewport" type="SubViewport" parent="."]
+unique_name_in_owner = true
+
+[node name="SnowflakeRect" type="ColorRect" parent="SnowflakeViewport"]
+material = SubResource("ShaderMaterial_x0ka3")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="FileDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true

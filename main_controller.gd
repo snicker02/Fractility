@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 3.3
+const PROGRAM_VERSION = 3.4
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -115,7 +115,13 @@ var escape_invert: bool = false
 var as_wave_speed: float = 1.0
 var voxel_height_scale: float = 5.0
 var voxel_cube_scale: float = 0.2
-
+# --- Snowflake UI References ---
+@onready var generator_spinbox: SpinBox = %GeneratorSpinBox
+@onready var gen_branch_spinbox: SpinBox = %GenBranchSpinBox
+@onready var gen_angle_spinbox: SpinBox = %GenAngleSpinBox
+@onready var gen_length_spinbox: SpinBox = %GenLengthSpinBox
+@onready var gen_size_spinbox: SpinBox = %GenSizeSpinBox
+@onready var gen_thick_spinbox: SpinBox = %GenThickSpinBox
 # --- MINI GAME VARIABLES ---
 @onready var game_start_btn: Button = %GameStartButton # Make sure to set Unique Name
 @onready var score_label: Label = %ScoreLabel          # Make sure to set Unique Name
@@ -469,8 +475,15 @@ var mandel_texture_scale: float = 1.0
 @onready var nebula_controls_container_b: VBoxContainer = %NebulaControlsContainerB
 @onready var jigsaw_controls_container_a: VBoxContainer = %JigsawControlsContainerA
 @onready var jigsaw_controls_container_b: VBoxContainer = %JigsawControlsContainerB
+@onready var constructivist_controls_container_a: VBoxContainer = %ConstructivistControlsContainerA
+@onready var constructivist_controls_container_b: VBoxContainer = %ConstructivistControlsContainerB
+@onready var snowflake_controls_container_a: VBoxContainer = %SnowflakeControlsContainerA
+@onready var snowflake_controls_container_b: VBoxContainer = %SnowflakeControlsContainerB
+@onready var generator_check: CheckBox = %GeneratorCheck
+@onready var generator_slider: HSlider = %GeneratorSlider
+@onready var snowflake_controls_container: VBoxContainer = %SnowflakeControlsContainer
 
-
+var current_generator_strength: float = 0.0
 
 
 
@@ -728,6 +741,12 @@ func _ready() -> void:
 	feedback_material.shader = load("res://fractal_feedback.gdshader")
 	%ViewportA.get_node("ShaderRect").material = feedback_material
 	%ViewportB.get_node("ShaderRect").material = feedback_material.duplicate()
+	# Example logic inside your Main script
+	var snowflake_tex = $SnowflakeViewport.get_texture()
+
+# Send it to ViewportA to be glitched
+	$ViewportA/ShaderRect.material.set_shader_parameter("input_texture", snowflake_tex)
+	%ViewportB.get_node("ShaderRect").material.set_shader_parameter("input_texture", snowflake_tex)
 	%SaveViewport.get_node("ShaderRect").material = feedback_material.duplicate()
 	post_process_material = ShaderMaterial.new()
 	post_process_material.shader = load("res://post_process.gdshader")
@@ -752,7 +771,59 @@ func _ready() -> void:
 				# We can link them or set a safe default.
 				light_3d.shadow_normal_bias = v * 2.0 
 		)
+	# -----------------------------------------------------------
+	# SNOWFLAKE UI SETUP (Defaults & Sync)
+	# -----------------------------------------------------------
 	
+	# 1. Generator Strength (Default: 0.0 / Off)
+	if %GeneratorSlider and %GeneratorSpinBox:
+		var def_str = 0.0
+		%GeneratorSlider.value = def_str
+		%GeneratorSpinBox.value = def_str
+		%GeneratorSlider.value_changed.connect(func(v): %GeneratorSpinBox.set_value_no_signal(v))
+		%GeneratorSpinBox.value_changed.connect(func(v): %GeneratorSlider.set_value_no_signal(v))
+
+	# 2. Branch Count (Default: 4)
+	if %GenBranchSlider and %GenBranchSpinBox:
+		var def_branch = 4.0
+		%GenBranchSlider.value = def_branch
+		%GenBranchSpinBox.value = def_branch
+		%GenBranchSlider.value_changed.connect(func(v): %GenBranchSpinBox.set_value_no_signal(v))
+		%GenBranchSpinBox.value_changed.connect(func(v): %GenBranchSlider.set_value_no_signal(v))
+
+	# 3. Branch Angle (Default: 0.8)
+	if %GenAngleSlider and %GenAngleSpinBox:
+		var def_angle = 0.8
+		%GenAngleSlider.value = def_angle
+		%GenAngleSpinBox.value = def_angle
+		%GenAngleSlider.value_changed.connect(func(v): %GenAngleSpinBox.set_value_no_signal(v))
+		%GenAngleSpinBox.value_changed.connect(func(v): %GenAngleSlider.set_value_no_signal(v))
+
+	# 4. Branch Length (Default: 0.2)
+	if %GenLengthSlider and %GenLengthSpinBox:
+		var def_len = 0.2
+		%GenLengthSlider.value = def_len
+		%GenLengthSpinBox.value = def_len
+		%GenLengthSlider.value_changed.connect(func(v): %GenLengthSpinBox.set_value_no_signal(v))
+		%GenLengthSpinBox.value_changed.connect(func(v): %GenLengthSlider.set_value_no_signal(v))
+
+	# 5. Size (Default: 0.8)
+	if %GenSizeSlider and %GenSizeSpinBox:
+		var def_size = 0.8
+		%GenSizeSlider.value = def_size
+		%GenSizeSpinBox.value = def_size
+		%GenSizeSlider.value_changed.connect(func(v): %GenSizeSpinBox.set_value_no_signal(v))
+		%GenSizeSpinBox.value_changed.connect(func(v): %GenSizeSlider.set_value_no_signal(v))
+
+	# 6. Thickness (Default: 0.015)
+	if %GenThickSlider and %GenThickSpinBox:
+		var def_thick = 0.015
+		%GenThickSlider.value = def_thick
+		%GenThickSpinBox.value = def_thick
+		%GenThickSlider.value_changed.connect(func(v): %GenThickSpinBox.set_value_no_signal(v))
+		%GenThickSpinBox.value_changed.connect(func(v): %GenThickSlider.set_value_no_signal(v))
+	
+		
 	var_a_panels = {
 		"apollonian": apollonian_controls_container_a,
 		"arctangent": arctangent_controls_container_a,
@@ -782,7 +853,10 @@ func _ready() -> void:
 		"nebula": nebula_controls_container_a,
 		"jigsaw": jigsaw_controls_container_a,
 		"gnarl": gnarl_controls_container_a,
+		"constructivist": constructivist_controls_container_a,
+		"snowflake": snowflake_controls_container_a,
 		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
+		
 		
 		
 
@@ -817,6 +891,8 @@ func _ready() -> void:
 		"nebula": nebula_controls_container_b,
 		"jigsaw": jigsaw_controls_container_b,
 		"gnarl": gnarl_controls_container_b,
+		"constructivist": constructivist_controls_container_b,
+		"snowflake": snowflake_controls_container_b,
 		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
 	}
 	
@@ -874,8 +950,11 @@ func _ready() -> void:
 	jigsaw_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	gnarl_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	gnarl_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
-	
-	
+	constructivist_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	constructivist_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	snowflake_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	snowflake_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+
 	
 	
 	
@@ -1292,6 +1371,10 @@ func _ready() -> void:
 		
 		
 		
+	
+	
+
+	
 	
 	
 	
@@ -2531,6 +2614,21 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	var previous_frame_texture = source_viewport.get_texture()
 
 	save_viewport.size = render_size
+	
+	# --- NEW: RESIZE SNOWFLAKE VIEWPORT ---
+	# We temporarily resize the snowflake generator to match the save resolution
+	# so it doesn't look blurry or stretched in the high-res output.
+	var snowflake_vp = $SnowflakeViewport
+	var original_snow_size = snowflake_vp.size
+	snowflake_vp.size = render_size
+	
+	# Wait for the snowflake to redraw at the new size
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw 
+	
+	var snowflake_tex = snowflake_vp.get_texture()
+	# -------------------------------------
+
 	var save_material = save_viewport.get_node("ShaderRect").material as ShaderMaterial
 	var is_animating = not _speed_controls.is_empty()
 	save_material.set_shader_parameter("is_animating", is_animating)
@@ -2541,7 +2639,7 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("variation_mode_b", variation_mode_b)
 	save_material.set_shader_parameter("start_pattern_mode", start_pattern_mode)
 	save_material.set_shader_parameter("variation_mix", variation_mix)
-	save_material.set_shader_parameter("time", time) # Use current time for consistency
+	save_material.set_shader_parameter("time", time)
 	save_material.set_shader_parameter("pre_scale", pre_scale)
 	save_material.set_shader_parameter("pre_rotation", pre_rotation)
 	save_material.set_shader_parameter("pre_translate", pre_translate)
@@ -2567,16 +2665,20 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	save_material.set_shader_parameter("grad_col_br", grad_col_br)
 	save_material.set_shader_parameter("background_texture", background_texture)
 	save_material.set_shader_parameter("escape_shape", escape_shape)
+	
+	# --- NEW: SEND SNOWFLAKE PARAMS ---
+	save_material.set_shader_parameter("input_texture", snowflake_tex)
+	save_material.set_shader_parameter("generator_strength", current_generator_strength)
+	# ----------------------------------
+
 	for param_name in _auto_params_a:
 		save_material.set_shader_parameter(param_name,_auto_params_a[param_name])
 	
 	for param_name in _auto_params_b:
 		save_material.set_shader_parameter(param_name, _auto_params_b[param_name])
-	# Var A Params
 	
+	# Var A Params
 	save_material.set_shader_parameter("blur_amount_a", blur_amount_a)
-
-
 	save_material.set_shader_parameter("custom_tl_a", custom_tl_a_id)
 	save_material.set_shader_parameter("custom_tr_a", custom_tr_a_id)
 	save_material.set_shader_parameter("custom_bl_a", custom_bl_a_id)
@@ -2588,8 +2690,6 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	
 	# Var B Params
 	save_material.set_shader_parameter("blur_amount_b", blur_amount_b)
-
-
 	save_material.set_shader_parameter("custom_tl_b", custom_tl_b_id)
 	save_material.set_shader_parameter("custom_tr_b", custom_tr_b_id)
 	save_material.set_shader_parameter("custom_bl_b", custom_bl_b_id)
@@ -2597,7 +2697,7 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 
 	# Wait for the raw fractal to render
 	await RenderingServer.frame_post_draw
-	await RenderingServer.frame_post_draw # Sometimes need two waits
+	await RenderingServer.frame_post_draw
 
 	var raw_fractal_texture = save_viewport.get_texture()
 
@@ -2619,9 +2719,13 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 
 	# Wait for the post-processing to render
 	await RenderingServer.frame_post_draw
-	await RenderingServer.frame_post_draw # Sometimes need two waits
+	await RenderingServer.frame_post_draw
 
 	var final_image = post_process_save_viewport.get_texture().get_image()
+	
+	# --- RESTORE SNOWFLAKE SIZE ---
+	snowflake_vp.size = original_snow_size
+	# ------------------------------
 
 	# --- SAVE THE FINAL IMAGE ---
 	if OS.has_feature("web"):
@@ -2637,10 +2741,9 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 		else:
 			printerr("Error saving image. Code: ", error)
 
-	# Clean up viewport sizes to avoid unnecessary rendering
+	# Clean up viewport sizes
 	save_viewport.size = Vector2i(1, 1)
 	post_process_save_viewport.size = Vector2i(1, 1)
-
 func _process(delta: float) -> void:
 	# --- AUTO ROTATION LOGIC ---
 	if auto_rotate_active and is_3d_view and not animation_paused:
@@ -2759,7 +2862,43 @@ func _process(delta: float) -> void:
 	target_material.set_shader_parameter("grad_col_bl", grad_col_bl)
 	target_material.set_shader_parameter("grad_col_br", grad_col_br)
 	target_material.set_shader_parameter("background_texture", background_texture)
-
+	# -----------------------------------------------------------
+	# 1. GENERATOR STRENGTH LOGIC (Polling)
+	# -----------------------------------------------------------
+	if generator_check and generator_check.button_pressed:
+		current_generator_strength = generator_slider.value
+	else:
+		current_generator_strength = 0.0
+		
+	# -----------------------------------------------------------
+	# 2. SNOWFLAKE SHAPE LOGIC (Update the internal shader)
+	# -----------------------------------------------------------
+	var snowflake_rect = $SnowflakeViewport/SnowflakeRect 
+	
+	if snowflake_rect and snowflake_rect.material:
+		var mat = snowflake_rect.material
+		
+		# Update only if the UI sliders exist
+		if %GenBranchSlider: 
+			mat.set_shader_parameter("branch_count", int(%GenBranchSlider.value))
+			
+		if %GenAngleSlider:
+			mat.set_shader_parameter("branch_angle", %GenAngleSlider.value)
+			
+		if %GenLengthSlider:
+			mat.set_shader_parameter("branch_len", %GenLengthSlider.value)
+			
+		if %GenSizeSlider:
+			mat.set_shader_parameter("size", %GenSizeSlider.value)
+			
+		if %GenThickSlider:
+			mat.set_shader_parameter("thickness", %GenThickSlider.value)
+	
+	# -----------------------------------------------------------
+	# 3. SEND TO MAIN FRACTAL
+	# -----------------------------------------------------------
+	# Ensure 'target_material' is defined above this block in _process!
+	target_material.set_shader_parameter("generator_strength", current_generator_strength)
 	# Var A Params
 	
 	target_material.set_shader_parameter("blur_amount_a", blur_amount_a)
@@ -3655,6 +3794,8 @@ func _populate_all_dropdowns():
 	start_pattern_dropdown.add_item("Image Input")     # Index 2
 	start_pattern_dropdown.add_item("Perlin Noise")    # Index 3
 	start_pattern_dropdown.add_item("Concentric Rings")     # Index 4
+	start_pattern_dropdown.add_item("Snowflake")          # 5
+
 	# (Add more items here if you have them)
 
 	# --- 2. Populate Variation Dropdowns ---
@@ -3794,36 +3935,39 @@ func _on_gradient_toggle_button_pressed():
 	
 
 func _update_start_pattern_visibility():
-	# 1. Get the selected index
+	# 1. Get selection
 	var selected_index = start_pattern_dropdown.selected
 	
-	# 2. Hide all related controls first
+	# 2. Hide ALL contextual containers first
 	gradient_toggle_button.visible = false
 	circle_controls_container.visible = false
 	circle_grid_controls_container.visible = false
 	load_image_button.visible = false
-	
-	# 3. Also hide the gradient panel itself, in case it was left open
 	gradient_controls_container.visible = false 
 	
-	# 4. Show the correct controls based on selection
+	# --- HIDE SNOWFLAKE CONTAINER BY DEFAULT ---
+	if snowflake_controls_container:
+		snowflake_controls_container.visible = false
+	# -------------------------------------------
+	
+	# 3. Show only the correct one
 	match selected_index:
 		0: # Gradient + Grid
 			gradient_toggle_button.visible = true
-			# We leave the gradient_controls_container hidden
-			# The button itself will toggle it
 		1: # Circles
 			circle_controls_container.visible = true
 		2: # Image Input
 			load_image_button.visible = true
 		3: # Perlin Noise
-			pass # No extra controls to show
-			# Circle Grid
+			pass 
 		4: # Concentric Rings
-			gradient_toggle_button.visible = true # <-- THIS IS THE FIX
+			gradient_toggle_button.visible = true
 			circle_grid_controls_container.visible = true
-
-
+		5: # Snowflake (NEW)
+			if snowflake_controls_container:
+				snowflake_controls_container.visible = true
+				
+				
 func _on_start_pattern_dropdown_item_selected(index: int) -> void:
 	start_pattern_mode = index # Update the state variable
 	_update_start_pattern_visibility() # Call the helper to update the UI

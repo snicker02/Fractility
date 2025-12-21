@@ -52,6 +52,8 @@ const VARIATIONS = {
 	"Nebula": { "id": 38, "controls": "nebula" },
 	"Jigsaw": { "id": 39, "controls": "jigsaw" },
 	"Chimera": { "id": 40, "controls": "gnarl" },
+	"Constructivist":{ "id": 41, "controls": "constructivist", "category": "Geometry" },
+	"Frostbyte":     { "id": 42, "controls": "snowflake", "category": "Nature" },
 	"Wave":             { "id": 3, "controls": "wave" },
 }
 
