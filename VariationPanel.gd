@@ -19,7 +19,7 @@ func _ready():
 	if get_child_count() == 0 and not parameters.is_empty():
 		_generate_controls()
 
-# --- UPDATED: This function now auto-builds speed controls ---
+# --- MAIN GENERATOR FUNCTION ---
 func _generate_controls():
 	# Clear all old controls
 	for c in get_children():
@@ -39,6 +39,10 @@ func _generate_controls():
 
 	# Rebuild the UI from the array
 	for param in parameters:
+		# --- CRASH FIX: Skip empty/null slots ---
+		if param == null:
+			continue
+			
 		# 1. Build the main control for this parameter
 		match param.control_type:
 			VariationParameter.ControlType.SLIDER:
@@ -46,7 +50,7 @@ func _generate_controls():
 			VariationParameter.ControlType.DROPDOWN:
 				_build_dropdown(param) # Build the dropdown
 		
-		# 2. --- NEW: If requested, build a speed slider for it ---
+		# 2. If requested, build a speed slider for it
 		if param.add_speed_control:
 			# Create a "virtual" parameter resource for the speed slider
 			var speed_param = VariationParameter.new()
@@ -61,7 +65,8 @@ func _generate_controls():
 			_build_slider(speed_param, true)
 
 
-# --- UPDATED: This function now takes an 'is_speed' flag ---
+# --- HELPER: BUILD SLIDER ---
+# (This must be unindented, aligned with func _generate_controls)
 func _build_slider(param: VariationParameter, is_speed: bool):
 	var p_name: String = param.name
 	var p_label: String = param.label
@@ -115,7 +120,7 @@ func _build_slider(param: VariationParameter, is_speed: bool):
 	spinbox.value_changed.connect(_on_control_value_changed.bind(p_name, slider, is_speed))
 
 
-# --- This function builds a dropdown (unchanged) ---
+# --- HELPER: BUILD DROPDOWN ---
 func _build_dropdown(param: VariationParameter):
 	var p_name: String = param.name
 	var p_label: String = param.label
@@ -150,20 +155,21 @@ func _build_dropdown(param: VariationParameter):
 	
 	dropdown.item_selected.connect(_on_dropdown_param_changed.bind(p_name))
 
-# --- UPDATED: Handler now receives 'is_speed' ---
+
+# --- SIGNAL HANDLER ---
 func _on_control_value_changed(new_value: float, param_name: String, control_to_sync: Control, is_speed: bool):
 	control_to_sync.set_value_no_signal(new_value)
 	# Pass 'is_speed' to the main controller
 	emit_signal("value_updated", param_name, new_value, is_speed)
 
 
-# --- Dropdown handler (unchanged) ---
+# --- DROPDOWN SIGNAL HANDLER ---
 func _on_dropdown_param_changed(index: int, param_name: String):
 	# 'is_speed' is hard-coded to false for dropdowns
 	emit_signal("value_updated", param_name, float(index), false)
 
 
-# --- UPDATED: Now checks control types ---
+# --- PUBLIC SETTER ---
 func set_param_value(param_name: String, new_value: float):
 	if controls.has(param_name):
 		var control = controls[param_name]
@@ -174,7 +180,7 @@ func set_param_value(param_name: String, new_value: float):
 		elif control is OptionButton:
 			control.select(int(new_value))
 
-# --- Public helper functions (unchanged) ---
+# --- HELPERS ---
 func set_panel_visible(is_visible: bool):
 	visible = is_visible
 
@@ -186,28 +192,21 @@ func get_slider(param_name: String) -> HSlider:
 func get_spinbox(param_name: String) -> SpinBox:
 	return spinboxes.get(param_name)
 
-# --- Randomize Logic ---
+# --- RANDOMIZE ---
 func randomize_settings(include_speed: bool):
 	for param in parameters:
+		if param == null: continue # Skip nulls here too
+		
 		# 1. Randomize the Main Control
 		if param.control_type == VariationParameter.ControlType.SLIDER:
-			# Pick a random float between Min and Max
 			var random_val = randf_range(param.min, param.max)
-			
-			# Set the slider value directly. 
-			# This automagically triggers the 'value_changed' signal, 
-			# which updates the SpinBox AND emits our 'value_updated' signal to Control.gd.
 			if controls.has(param.name):
 				controls[param.name].value = random_val
 				
 		elif param.control_type == VariationParameter.ControlType.DROPDOWN:
-			# Pick a random index
 			var random_idx = randi() % param.dropdown_options.size()
-			
 			if controls.has(param.name):
 				controls[param.name].select(random_idx)
-				# OptionButton doesn't always emit signal when changed via code, 
-				# so we force it manually just in case.
 				controls[param.name].item_selected.emit(random_idx)
 
 		# 2. Randomize Speed (if enabled)
@@ -215,10 +214,7 @@ func randomize_settings(include_speed: bool):
 			var speed_name = param.name + "_speed"
 			if controls.has(speed_name):
 				if include_speed:
-					# Speed sliders created in _generate_controls default to -1.0 to 1.0
 					var random_speed = randf_range(-0.1, 0.1)
 					controls[speed_name].value = random_speed
 				else:
-					# If we aren't randomizing speed, should we reset it to 0?
-					# Let's set it to 0 so the image doesn't go crazy unexpectedly.
 					controls[speed_name].value = 0.0

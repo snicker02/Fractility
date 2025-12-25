@@ -54,6 +54,8 @@ const VARIATIONS = {
 	"Chimera": { "id": 40, "controls": "gnarl" },
 	"Constructivist":{ "id": 41, "controls": "constructivist", "category": "Geometry" },
 	"Frostbyte":     { "id": 42, "controls": "snowflake", "category": "Nature" },
+	"Portal":     { "id": 43, "controls": "portal", "category": "Geometry" },
+	"Janus":     { "id": 44, "controls": "janus", "category": "Geometry" },
 	"Wave":             { "id": 3, "controls": "wave" },
 }
 

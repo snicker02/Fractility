@@ -5,7 +5,7 @@ struct VariationResult {
 	float dist; // For Orbit Trap / Escape Time
 };
 // --- Uniforms ---
-uniform sampler2D previous_frame : filter_linear;
+uniform sampler2D previous_frame : filter_linear, repeat_enable;
 uniform int variation_mode_a = 0;
 uniform int variation_mode_b = 1;
 uniform int start_pattern_mode = 0;
@@ -61,7 +61,7 @@ uniform vec2 post_translate = vec2(0.0);
 uniform float brightness = 1.0;
 uniform float contrast = 1.0;
 uniform float saturation = 1.0;
-
+uniform float sharpen : hint_range(0.0, 5.0) = 0.0;
 // Wave A Variation Uniforms
 uniform int wave_type_a;
 uniform float wave_frequency_a;      // Base frequency
@@ -579,13 +579,41 @@ uniform float snow_thickness_b; uniform float snow_thickness_b_speed;
 uniform float snow_chaos_b;     uniform float snow_chaos_b_speed;
 uniform float snow_strength_b;  uniform float snow_strength_b_speed;
 
+uniform float portal_shift_x_a; uniform float portal_shift_x_a_speed;
+uniform float portal_shift_y_a; uniform float portal_shift_y_a_speed;
+uniform float portal_size_a; uniform float portal_size_a_speed;
+uniform float portal_center_x_a; uniform float portal_center_x_a_speed;
+uniform float portal_center_y_a; uniform float portal_center_y_a_speed;
+uniform float portal_opacity_a; uniform float portal_opacity_a_speed;
 
 
+uniform float portal_shift_x_b; uniform float portal_shift_x_b_speed;
+uniform float portal_shift_y_b; uniform float portal_shift_y_b_speed;
+uniform float portal_size_b; uniform float portal_size_b_speed;
+uniform float portal_center_x_b; uniform float portal_center_x_b_speed;
+uniform float portal_center_y_b; uniform float portal_center_y_b_speed;
+uniform float portal_opacity_b; uniform float portal_opacity_b_speed;
 
-
-
-
-
+uniform float janus_shift_a;       // Rotation around the poles
+uniform float janus_shift_a_speed;
+uniform float janus_zoom_a;        // Distance/Scale of the poles
+uniform float janus_zoom_a_speed;
+uniform float janus_opacity_a;     // Blend strength
+uniform float janus_opacity_a_speed;
+uniform float janus_shift_b;       // Rotation around the poles
+uniform float janus_shift_b_speed;
+uniform float janus_zoom_b;        // Distance/Scale of the poles
+uniform float janus_zoom_b_speed;
+uniform float janus_opacity_b;     // Blend strength
+uniform float janus_opacity_b_speed;
+uniform float janus_center_x_a;
+uniform float janus_center_x_a_speed;
+uniform float janus_center_y_a;
+uniform float janus_center_y_a_speed;
+uniform float janus_center_x_b;
+uniform float janus_center_x_b_speed;
+uniform float janus_center_y_b;
+uniform float janus_center_y_b_speed;
 // --- Helper Functions ---
 vec2 random(vec2 st) {
     st = vec2(dot(st, vec2(127.1,311.7)),
@@ -818,7 +846,20 @@ vec2 apply_variation(vec2 uv, int variation_id,
     float s_branch,  float s_branch_s,
     float s_thick,   float s_thick_s,
     float s_chaos,   float s_chaos_s,
-    float s_strength, float s_strength_s
+    float s_strength, float s_strength_s,
+	
+	float portal_shift_x, float portal_shift_x_speed,
+	float portal_shift_y, float portal_shift_y_speed,
+	float portal_size, float portal_size_speed,
+	float portal_center_x, float portal_center_x_speed,
+	float portal_center_y, float portal_center_y_speed,
+	float portal_opacity, float portal_opacity_speed,
+	
+	float janus_shift, float janus_shift_speed,
+	float janus_zoom,  float janus_zoom_speed,
+	float janus_opacity, float janus_opacity_speed,
+	float janus_center_x, float janus_center_x_speed,
+	float janus_center_y, float janus_center_y_speed
 ) {
 	vec2 p = uv;
 	if (variation_id == 0) { // Sinusoidal
@@ -2033,7 +2074,126 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 		// We mix between original UV and Fractal UV based on strength
 		return mix(uv, p, strength_factor);
 	}
+	
+	else if (variation_id == 43) { // PORTAL (Fully Animated)
+		
+		// --- ANIMATION CALCULATIONS ---
+		
+		// 1. Center / Position Animation (Orbiting)
+		// We use an amplitude of 0.5 so it can move across half the screen.
+		float anim_center_x = portal_center_x + (sin(time * portal_center_x_speed) * 0.5);
+		float anim_center_y = portal_center_y + (sin(time * portal_center_y_speed) * 0.5);
 
+		// 2. Size Animation (Pulse)
+		float anim_size = portal_size + (sin(time * portal_size_speed) * 0.3);
+		anim_size = max(0.01, anim_size); 
+		
+		// 3. Opacity Animation (Fade)
+		float anim_opacity = portal_opacity + sin(time * portal_opacity_speed);
+		anim_opacity = clamp(anim_opacity, 0.0, 1.0); 
+		
+		// 4. Shift Animation (Internal Sway)
+		float anim_shift_x = portal_shift_x + (sin(time * portal_shift_x_speed) * 0.5);
+		float anim_shift_y = portal_shift_y + (sin(time * portal_shift_y_speed) * 0.5);
+
+		
+		// --- CORE LOGIC ---
+		
+		// 1. APPLY CENTER (Using Animated Values)
+		vec2 p_centered = (uv - 0.5) - vec2(anim_center_x, anim_center_y);
+		
+		// 2. APPLY ZOOM
+		vec2 p = (p_centered * 2.0) * anim_size;
+		
+		// --- STAGE 1: THE APERTURE ---
+		float fixed_v = 0.63661977; 
+		float x = p.x;
+		float y = p.y;
+		
+		float tmp = y*y + x*x + 1.0;
+		float x2 = 2.0 * x;
+		float term1 = sqrt(max(0.0001, tmp + x2));
+		float term2 = sqrt(max(0.0001, tmp - x2));
+		float xmax = 0.5 * (term1 + term2);
+		
+		float a = x / max(0.0001, xmax);
+		float b = sqrt(max(0.0, 1.0 - a*a));
+		float sign_y = (y >= 0.0) ? 1.0 : -1.0;
+		
+		vec2 elliptic_p;
+		elliptic_p.x = fixed_v * atan(a, b);
+		elliptic_p.y = sign_y * fixed_v * log(max(0.0001, xmax + sqrt(max(0.0, xmax*xmax - 1.0))));
+		elliptic_p *= 1.2; 
+
+		// 3. BLEND (Opacity)
+		p = mix(p, elliptic_p, anim_opacity);
+
+		// --- STAGE 2: THE SHIFT ---
+		if (p.x >= 0.0) p.x += anim_shift_x;
+		else p.x -= anim_shift_x;
+		
+		if (p.y >= 0.0) p.y += anim_shift_y;
+		else p.y -= anim_shift_y;
+		
+		// 4. UN-CENTER
+		return (p / 2.0) + 0.5;
+	}
+	else if (variation_id == 44) { // JANUS (Centered & Robust)
+		
+		// 1. ANIMATION CALCULATIONS
+		float anim_shift = janus_shift + (time * janus_shift_speed * 0.5); 
+		
+		float anim_zoom = janus_zoom + (sin(time * janus_zoom_speed) * 0.2);
+		anim_zoom = max(0.01, anim_zoom); 
+		
+		float anim_opacity = janus_opacity + sin(time * janus_opacity_speed);
+		anim_opacity = clamp(anim_opacity, 0.0, 1.0);
+
+		// NEW: Calculate Center Animation
+		float anim_center_x = janus_center_x + (sin(time * janus_center_x_speed) * 0.5);
+		float anim_center_y = janus_center_y + (sin(time * janus_center_y_speed) * 0.5);
+
+		// 2. APPLY CENTER & SCALE
+		// We subtract the center offset first, THEN scale up.
+		vec2 p_centered = (uv - 0.5) - vec2(anim_center_x, anim_center_y);
+		vec2 p = p_centered * 4.0 * anim_zoom; 
+		
+		float r2 = dot(p, p);
+		float x2 = 2.0 * p.x;
+		
+		
+		// 3. JANUS MATH
+		
+		// --- Y Component (Angle) ---
+		float angle = 0.5 * atan(2.0 * p.y, r2 - 1.0);
+		
+		// Apply Shift
+		angle -= 0.5 * PI * anim_shift;
+		
+		// Wrap Angle cleanly
+		angle = mod(angle, PI); 
+		
+		// --- X Component (Field Lines) ---
+		float num = (r2 + 1.0) + x2;
+		float den = (r2 + 1.0) - x2;
+		
+		// Safety check for division
+		if (abs(den) < 0.0001) den = 0.0001;
+		float fraction = abs(num / den);
+		
+		float log_val = log(fraction);
+		
+		// 4. MAPPING
+		vec2 janus_p;
+		janus_p.x = log_val * 0.2; // Tighter rings
+		janus_p.y = angle * (1.0 / PI); 
+
+		// 5. BLEND & RETURN
+		// We use fract() to force the texture to loop, preventing solid colors
+		vec2 final_p = mix(p * 0.25, janus_p, janus_opacity);
+		
+		return fract(final_p + 0.5);
+	}
        
 	return uv;
 }
@@ -2193,8 +2353,20 @@ void fragment() {
     snow_branches_a, snow_branches_a_speed,
     snow_thickness_a,snow_thickness_a_speed,
     snow_chaos_a,    snow_chaos_a_speed,
-	snow_strength_a, snow_strength_a_speed
+	snow_strength_a, snow_strength_a_speed,
 	
+	portal_shift_x_a, portal_shift_x_a_speed,
+	portal_shift_y_a, portal_shift_y_a_speed,
+	portal_size_a, portal_size_a_speed,
+	portal_center_x_a, portal_center_x_a_speed,
+	portal_center_y_a, portal_center_y_a_speed,
+	portal_opacity_a, portal_opacity_a_speed,
+	
+	janus_shift_a, janus_shift_a_speed,
+	janus_zoom_a, janus_zoom_a_speed,
+	janus_opacity_a, janus_opacity_a_speed,
+	janus_center_x_a, janus_center_x_a_speed,
+	janus_center_y_a, janus_center_y_a_speed
 		);
 
 		// --- APPLY VARIATION B ---
@@ -2262,7 +2434,20 @@ void fragment() {
     snow_branches_b, snow_branches_b_speed,
     snow_thickness_b,snow_thickness_b_speed,
     snow_chaos_b,    snow_chaos_b_speed,
-	snow_strength_b, snow_strength_b_speed
+	snow_strength_b, snow_strength_b_speed,
+	
+	portal_shift_x_b, portal_shift_x_b_speed,
+	portal_shift_y_b, portal_shift_y_b_speed,
+	portal_size_b, portal_size_b_speed,
+	portal_center_x_b, portal_center_x_b_speed,
+	portal_center_y_b, portal_center_y_b_speed,
+	portal_opacity_b, portal_opacity_b_speed,
+	
+	janus_shift_b, janus_shift_b_speed,
+	janus_zoom_b, janus_zoom_b_speed,
+	janus_opacity_b, janus_opacity_b_speed,
+	janus_center_x_b, janus_center_x_b_speed,
+	janus_center_y_b, janus_center_y_b_speed
 		);
 
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);

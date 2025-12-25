@@ -1,4 +1,4 @@
-[gd_scene load_steps=267 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=292 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -590,6 +590,58 @@ step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
+[sub_resource type="Resource" id="Resource_p3obt"]
+script = ExtResource("6_4d7sh")
+name = "janus_shift_a"
+label = "Shift"
+add_speed_control = true
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_00y5r"]
+script = ExtResource("6_4d7sh")
+name = "janus_zoom_a"
+label = "Zoom"
+add_speed_control = true
+default = 1.0
+min = 0.1000000000003638
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_gopg6"]
+script = ExtResource("6_4d7sh")
+name = "janus_opacity_a"
+label = "Opacity"
+add_speed_control = true
+default = 1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_52lvn"]
+script = ExtResource("6_4d7sh")
+name = "janus_center_x_a"
+label = "Center X"
+add_speed_control = true
+default = -0.5
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_sfqef"]
+script = ExtResource("6_4d7sh")
+name = "janus_center_y_a"
+label = "Center Y"
+add_speed_control = true
+default = -0.5
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
 [sub_resource type="Resource" id="Resource_2aqrj"]
 script = ExtResource("6_4d7sh")
 name = "jigsaw_scale_a"
@@ -1111,6 +1163,68 @@ default = 3.0
 min = 1.0
 max = 20.0
 step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_g516u"]
+script = ExtResource("6_4d7sh")
+name = "portal_shift_x_a"
+label = "Shift X"
+add_speed_control = true
+default = 1.0
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_kq1bu"]
+script = ExtResource("6_4d7sh")
+name = "portal_shift_y_a"
+label = "Shift Y"
+add_speed_control = true
+default = 1.0
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_4j2s7"]
+script = ExtResource("6_4d7sh")
+name = "portal_size_a"
+label = "Aperture Zoom"
+add_speed_control = true
+default = 2.0
+min = 0.1000000000003638
+max = 10.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_v16td"]
+script = ExtResource("6_4d7sh")
+name = "portal_center_x_a"
+label = "Center X"
+add_speed_control = true
+default = -0.5
+min = -1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_tvg6p"]
+script = ExtResource("6_4d7sh")
+name = "portal_center_y_a"
+label = "Center Y"
+add_speed_control = true
+default = -0.5
+min = -1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_i7u5w"]
+script = ExtResource("6_4d7sh")
+name = "portal_opacity_a"
+label = "Opacity"
+add_speed_control = true
+default = 0.6000000000003638
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1955,6 +2069,59 @@ step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
+[sub_resource type="Resource" id="Resource_6uywc"]
+script = ExtResource("6_4d7sh")
+name = "janus_shift_b"
+label = "Shift"
+add_speed_control = true
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_bmw64"]
+script = ExtResource("6_4d7sh")
+name = "janus_zoom_b"
+label = "Zoom"
+add_speed_control = true
+default = 1.0
+min = 0.1000000000003638
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_810dj"]
+script = ExtResource("6_4d7sh")
+name = "janus_opacity_b"
+label = "Opacity"
+add_speed_control = true
+default = 1.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_0t0qg"]
+script = ExtResource("6_4d7sh")
+name = "janus_center_x_b"
+label = "Center X"
+add_speed_control = true
+default = -0.5
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_etv8j"]
+script = ExtResource("6_4d7sh")
+name = "janus_center_y_b"
+label = "Center Y"
+add_speed_control = true
+default = -0.5
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
 [sub_resource type="Resource" id="Resource_71iuk"]
 script = ExtResource("6_4d7sh")
 name = "jigsaw_scale_b"
@@ -2481,6 +2648,95 @@ step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
+[sub_resource type="Resource" id="Resource_wvf7d"]
+script = ExtResource("6_4d7sh")
+name = "portal_size_b"
+label = "Aperture Zoom"
+add_speed_control = true
+default = 0.6499999999996362
+min = 0.1000000000003638
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_03bj1"]
+script = ExtResource("6_4d7sh")
+name = "portal_center_x_b"
+label = "Center X"
+add_speed_control = true
+min = -1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_mfvrb"]
+script = ExtResource("6_4d7sh")
+name = "portal_center_y_b"
+label = "Center Y"
+add_speed_control = true
+min = -1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_42nn6"]
+script = ExtResource("6_4d7sh")
+name = "portal_shift_x_b"
+label = "Shift X"
+add_speed_control = true
+default = 1.0
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_n87b4"]
+script = ExtResource("6_4d7sh")
+name = "portal_shift_y_b"
+label = "Shift Y"
+add_speed_control = true
+default = 1.0
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_uedg8"]
+script = ExtResource("6_4d7sh")
+name = "portal_size_b"
+label = "Aperture Zoom"
+add_speed_control = true
+default = 2.0
+max = 10.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_d2d1y"]
+script = ExtResource("6_4d7sh")
+name = "portal_center_x_b"
+label = "Center X"
+add_speed_control = true
+default = -0.5
+min = -1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_nv02f"]
+script = ExtResource("6_4d7sh")
+name = "portal_center_y_b"
+label = "Center Y"
+add_speed_control = true
+default = -0.5
+min = -1.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_atyhr"]
+script = ExtResource("6_4d7sh")
+name = "portal_opacity_b"
+label = "Opacity"
+add_speed_control = true
+default = 0.6000000000003638
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
 [sub_resource type="Resource" id="Resource_ojpun"]
 script = ExtResource("6_4d7sh")
 name = "reptile_scale_b"
@@ -2788,6 +3044,7 @@ shader = ExtResource("3_q6r6c")
 shader_parameter/brightness = 1.0
 shader_parameter/contrast = 1.0
 shader_parameter/saturation = 1.0
+shader_parameter/sharpen = 0.0
 shader_parameter/grade_background = false
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_q6r6c"]
@@ -3774,7 +4031,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 3.4"
+text = "V 3.5"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -4338,6 +4595,12 @@ layout_mode = 2
 panel_title = "Hyperbolic Sine A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_ld5wt"), SubResource("Resource_wcv2n")])
 
+[node name="JanusControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Janus A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_p3obt"), SubResource("Resource_00y5r"), SubResource("Resource_gopg6"), SubResource("Resource_52lvn"), SubResource("Resource_sfqef")])
+
 [node name="JigsawControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -4391,6 +4654,12 @@ unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Popcorn A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_kq1c5"), SubResource("Resource_ornx7"), SubResource("Resource_cnnru")])
+
+[node name="PortalControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Portal A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_g516u"), SubResource("Resource_kq1bu"), SubResource("Resource_4j2s7"), SubResource("Resource_v16td"), SubResource("Resource_tvg6p"), SubResource("Resource_i7u5w")])
 
 [node name="RepTilePanelA" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
@@ -4612,6 +4881,12 @@ layout_mode = 2
 panel_title = "Hyperbolic Sine B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_b0j31"), SubResource("Resource_xgqcr")])
 
+[node name="JanusControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Janus B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_6uywc"), SubResource("Resource_bmw64"), SubResource("Resource_810dj"), SubResource("Resource_0t0qg"), SubResource("Resource_etv8j")])
+
 [node name="JigsawControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -4658,13 +4933,19 @@ parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_xdyyu"), SubRe
 unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Polar B"
-parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_5i8vy")])
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_5i8vy"), null])
 
 [node name="PopcornControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Popcorn B"
-parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_540hr"), SubResource("Resource_6ip5v"), SubResource("Resource_q5dlx")])
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_540hr"), SubResource("Resource_6ip5v"), SubResource("Resource_q5dlx"), SubResource("Resource_wvf7d"), SubResource("Resource_03bj1"), SubResource("Resource_mfvrb")])
+
+[node name="PortalControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Portal B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_42nn6"), SubResource("Resource_n87b4"), SubResource("Resource_uedg8"), SubResource("Resource_d2d1y"), SubResource("Resource_nv02f"), SubResource("Resource_atyhr")])
 
 [node name="RepTilePanelB" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 unique_name_in_owner = true
@@ -5129,6 +5410,74 @@ layout_mode = 2
 max_value = 5.0
 step = 0.001
 
+[node name="GammaContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="Gamma" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/GammaContainer"]
+layout_mode = 2
+text = "Gamma"
+
+[node name="GammaSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/GammaContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="GammaSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/GammaContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="VibranceContainer" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="Vibrance" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/VibranceContainer"]
+layout_mode = 2
+text = "Vibrance"
+
+[node name="VibranceSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/VibranceContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="VibranceSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/VibranceContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="SharpenContainer19" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="Sharpen" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SharpenContainer19"]
+layout_mode = 2
+text = "Sharpen"
+
+[node name="SharpenSlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SharpenContainer19"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 3.0
+step = 0.01
+
+[node name="SharpenSpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SharpenContainer19"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 3.0
+step = 0.01
+
 [node name="HBoxContainer11" type="HBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 layout_mode = 2
 
@@ -5441,6 +5790,12 @@ text = "STOP RECORDING"
 [connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer9/ContrastSpinBox" to="." method="_on_contrast_spinbox_value_changed"]
 [connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer10/SaturationSlider" to="." method="_on_saturation_slider_value_changed"]
 [connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer10/SaturationSpinBox" to="." method="_on_saturation_spinbox_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/GammaContainer/GammaSlider" to="." method="_on_gamma_slider_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/GammaContainer/GammaSpinBox" to="." method="_on_gamma_spinbox_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/VibranceContainer/VibranceSlider" to="." method="_on_vibrance_slider_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/VibranceContainer/VibranceSpinBox" to="." method="_on_vibrance_spinbox_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SharpenContainer19/SharpenSlider" to="." method="_on_sharpen_slider_value_changed"]
+[connection signal="value_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/SharpenContainer19/SharpenSpinBox" to="." method="_on_sharpen_spinbox_value_changed"]
 [connection signal="item_selected" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer11/ResolutionDropdown" to="." method="_on_resolution_dropdown_item_selected"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer11/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/HBoxContainer17/RecordButton" to="." method="_on_record_button_toggled"]

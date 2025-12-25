@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 3.4
+const PROGRAM_VERSION = 3.5
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -429,6 +429,12 @@ var mandel_texture_scale: float = 1.0
 @onready var contrast_spinbox: SpinBox = %ContrastSpinBox
 @onready var saturation_slider: HSlider = %SaturationSlider
 @onready var saturation_spinbox: SpinBox = %SaturationSpinBox
+@onready var sharpen_slider: HSlider = %SharpenSlider
+@onready var sharpen_spinbox: SpinBox = %SharpenSpinBox
+@onready var gamma_slider: HSlider = %GammaSlider
+@onready var gamma_spinbox: SpinBox = %GammaSpinBox
+@onready var vibrance_slider: HSlider = %VibranceSlider
+@onready var vibrance_spinbox: SpinBox = %VibranceSpinBox
 @onready var circle_count_slider: HSlider = %CircleCountSlider
 @onready var circle_count_spinbox: SpinBox = %CircleCountSpinBox
 @onready var circle_radius_slider: HSlider = %CircleRadiusSlider
@@ -482,6 +488,14 @@ var mandel_texture_scale: float = 1.0
 @onready var generator_check: CheckBox = %GeneratorCheck
 @onready var generator_slider: HSlider = %GeneratorSlider
 @onready var snowflake_controls_container: VBoxContainer = %SnowflakeControlsContainer
+@onready var portal_controls_container_a: VBoxContainer = %PortalControlsContainerA
+@onready var portal_controls_container_b: VBoxContainer = %PortalControlsContainerB
+@onready var janus_controls_container_a: VBoxContainer = %JanusControlsContainerA
+@onready var janus_controls_container_b: VBoxContainer = %JanusControlsContainerB
+
+
+
+
 
 var current_generator_strength: float = 0.0
 
@@ -532,6 +546,9 @@ var show_circles: bool = true
 var brightness: float = 1.0
 var contrast: float = 1.0
 var saturation: float = 1.0
+var sharpen: float = 1.0
+var gamma: float = 1.0
+var vibrance: float = 1.0
 var save_resolution_index: int = 1
 var active_translate_target: int = 0
 var circle_count: float = 4.0
@@ -855,6 +872,8 @@ func _ready() -> void:
 		"gnarl": gnarl_controls_container_a,
 		"constructivist": constructivist_controls_container_a,
 		"snowflake": snowflake_controls_container_a,
+		"portal": portal_controls_container_a,
+		"janus": janus_controls_container_a,
 		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
 		
 		
@@ -893,6 +912,9 @@ func _ready() -> void:
 		"gnarl": gnarl_controls_container_b,
 		"constructivist": constructivist_controls_container_b,
 		"snowflake": snowflake_controls_container_b,
+		"portal": portal_controls_container_b,
+		"janus": janus_controls_container_b,
+
 		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
 	}
 	
@@ -954,6 +976,11 @@ func _ready() -> void:
 	constructivist_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	snowflake_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	snowflake_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	portal_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	portal_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	janus_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	janus_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+
 
 	
 	
@@ -1398,7 +1425,38 @@ func _ready() -> void:
 
 	print("Control: _ready function finished.")
 	resized.connect(_on_main_control_resized)
-	
+	# --- CONNECT SHARPEN SLIDER (Paste this inside _ready) ---
+	if sharpen_slider:
+		sharpen_slider.value_changed.connect(func(v): 
+			sharpen = v
+			if sharpen_spinbox: sharpen_spinbox.set_value_no_signal(v)
+		)
+	if sharpen_spinbox:
+		sharpen_spinbox.value_changed.connect(func(v): 
+			sharpen = v
+			if sharpen_slider: sharpen_slider.set_value_no_signal(v)
+		)
+		# --- CONNECT GAMMA SLIDER (Paste this inside _ready) ---
+	if gamma_slider:
+		gamma_slider.value_changed.connect(func(v): 
+			gamma = v
+			if gamma_spinbox: gamma_spinbox.set_value_no_signal(v)
+		)
+	if gamma_spinbox:
+		gamma_spinbox.value_changed.connect(func(v): 
+			gamma = v
+			if gamma_slider: gamma_slider.set_value_no_signal(v)
+			)
+	if vibrance_slider:
+		vibrance_slider.value_changed.connect(func(v): 
+			vibrance = v
+			if vibrance_spinbox: vibrance_spinbox.set_value_no_signal(v)
+		)
+	if vibrance_spinbox:
+		vibrance_spinbox.value_changed.connect(func(v): 
+			vibrance = v
+			if vibrance_slider: vibrance_slider.set_value_no_signal(v)
+		)
 	# Call reset_visuals() at the end to load defaults and update the UI
 	reset_visuals() 
 	var should_randomize = load_user_prefs()
@@ -1552,6 +1610,10 @@ func _save_3d_view_web() -> void:
 		composite_material.set_shader_parameter("brightness", brightness)
 		composite_material.set_shader_parameter("contrast", contrast)
 		composite_material.set_shader_parameter("saturation", saturation)
+		composite_material.set_shader_parameter("sharpen", sharpen)
+		composite_material.set_shader_parameter("gamma", gamma)
+		composite_material.set_shader_parameter("vibrance", vibrance)
+
 
 		# Render
 		composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE)
@@ -1662,6 +1724,9 @@ func _save_3d_view_desktop(path: String) -> void:
 		composite_material.set_shader_parameter("brightness", brightness)
 		composite_material.set_shader_parameter("contrast", contrast)
 		composite_material.set_shader_parameter("saturation", saturation)
+		composite_material.set_shader_parameter("sharpen", sharpen)
+		composite_material.set_shader_parameter("gamma", gamma)
+		composite_material.set_shader_parameter("vibrance", vibrance)
 
 		# Render the final composite
 		composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE)
@@ -2112,6 +2177,8 @@ func reset_visuals() -> void:
 	brightness = default_settings.brightness
 	contrast = default_settings.contrast
 	saturation = default_settings.saturation
+	#sharpen = default_settings.sharpen
+	
 	move_post_translate = default_settings.move_post_translate
 	move_pre_translate = default_settings.move_pre_translate
 	move_var_a_translate = default_settings.move_var_a_translate
@@ -2174,7 +2241,7 @@ func update_ui_from_state() -> void:
 		"var_mix": variation_mix, "feedback": feedback_amount, "feedback_min": feedback_min, "feedback_max": feedback_max, "tiling": seamless_tiling,"mirror_tiling": mirror_tiling,
 		"reset_on_drag": reset_on_drag_enabled, "show_grid": show_start_grid, "show_circles": show_circles,
 		"pre_scale": pre_scale, "pre_rot": pre_rotation, "post_scale": post_scale, "post_rot": post_rotation,
-		"brightness": brightness, "contrast": contrast, "saturation": saturation,
+		"brightness": brightness, "contrast": contrast, "saturation": saturation,"sharpen": sharpen, "gamma":gamma,"vibrance": vibrance,
 		"circle_count": circle_count, "circle_radius": circle_radius, "circle_softness": circle_softness,
 		"circle_grid_scale": circle_grid_scale,
 		"circle_grid_radius": circle_grid_radius,
@@ -2291,6 +2358,12 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	contrast_spinbox.set_value_no_signal(initial_values.get("contrast", 1.0))
 	saturation_slider.set_value_no_signal(initial_values.get("saturation", 1.0))
 	saturation_spinbox.set_value_no_signal(initial_values.get("saturation", 1.0))
+	sharpen_slider.set_value_no_signal(initial_values.get("sharpen", 1.0))
+	sharpen_spinbox.set_value_no_signal(initial_values.get("sharpen", 1.0))
+	gamma_slider.set_value_no_signal(initial_values.get("gamma", 1.0))
+	gamma_spinbox.set_value_no_signal(initial_values.get("gamma", 1.0))
+	vibrance_slider.set_value_no_signal(initial_values.get("vibrance", 1.0))
+	vibrance_spinbox.set_value_no_signal(initial_values.get("vibrance", 1.0))
 	
 	grad_col_tl_picker.color = initial_values.get("grad_tl", Color.CYAN)
 	grad_col_tr_picker.color = initial_values.get("grad_tr", Color.YELLOW)
@@ -2712,6 +2785,10 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	post_save_material.set_shader_parameter("brightness", brightness)
 	post_save_material.set_shader_parameter("contrast", contrast)
 	post_save_material.set_shader_parameter("saturation", saturation)
+	post_save_material.set_shader_parameter("sharpen", sharpen)
+	post_save_material.set_shader_parameter("gamma", gamma)
+	post_save_material.set_shader_parameter("vibrance", vibrance)
+
 	post_save_material.set_shader_parameter("mirror_x", mirror_x)
 	post_save_material.set_shader_parameter("mirror_y", mirror_y)
 	post_save_material.set_shader_parameter("kaleidoscope_on", kaleidoscope_on)
@@ -2924,6 +3001,10 @@ func _process(delta: float) -> void:
 	post_process_material.set_shader_parameter("brightness", brightness)
 	post_process_material.set_shader_parameter("contrast", contrast)
 	post_process_material.set_shader_parameter("saturation", saturation)
+	post_process_material.set_shader_parameter("sharpen", sharpen)
+	post_process_material.set_shader_parameter("gamma", gamma)
+	post_process_material.set_shader_parameter("vibrance", vibrance)
+
 	post_process_material.set_shader_parameter("mirror_x", mirror_x)
 	post_process_material.set_shader_parameter("mirror_y", mirror_y)
 	post_process_material.set_shader_parameter("kaleidoscope_on", kaleidoscope_on)
@@ -2947,6 +3028,10 @@ func _process(delta: float) -> void:
 		mesh_material.set_shader_parameter("brightness", brightness)
 		mesh_material.set_shader_parameter("contrast", contrast)
 		mesh_material.set_shader_parameter("saturation", saturation)
+		mesh_material.set_shader_parameter("sharpen", sharpen)
+		mesh_material.set_shader_parameter("gamma", gamma)
+		mesh_material.set_shader_parameter("vibrance", vibrance)
+		
 		
 		# --- TEXTURE & DISPLACEMENT (UNIFIED) ---
 		mesh_material.set_shader_parameter("texture_intensity", mandel_texture_intensity)
@@ -3038,6 +3123,9 @@ func _process(delta: float) -> void:
 				voxel_mat.set_shader_parameter("brightness", brightness)
 				voxel_mat.set_shader_parameter("contrast", contrast)
 				voxel_mat.set_shader_parameter("saturation", saturation)
+				voxel_mat.set_shader_parameter("sharpen", sharpen)
+				voxel_mat.set_shader_parameter("gamma", gamma)
+				voxel_mat.set_shader_parameter("vibrance", vibrance)
 				
 				voxel_mat.set_shader_parameter("twist", as_twist)
 				voxel_mat.set_shader_parameter("wave_strength", as_wave_str)
@@ -3046,7 +3134,7 @@ func _process(delta: float) -> void:
 				voxel_mat.set_shader_parameter("time", time)
 				# Optional: Send Time if you want moving waves
 				voxel_mat.set_shader_parameter("time", time)
-
+	
 func _load_image_from_base64(b64_string: String) -> void:
 	if not "," in b64_string:
 		print("Error: Invalid Base64 string format (missing comma).")
@@ -3149,6 +3237,9 @@ func _gather_preset_data() -> Dictionary:
 		"brightness": brightness,
 		"contrast": contrast,
 		"saturation": saturation,
+		"sharpen": sharpen,
+		"gamma": gamma,
+		"vibrance": vibrance,
 
 		# Active Mouse Translate
 		"move_post_translate": move_post_translate,
@@ -3579,7 +3670,42 @@ func _on_saturation_slider_value_changed(value: float):
 
 func _on_saturation_spinbox_value_changed(value: float):
 	_on_saturation_changed(value)
+	
+# --- Sharpen ---
+func _on_sharpen_changed(value: float):
 
+	sharpen = value
+	sharpen_slider.set_value_no_signal(value)
+	sharpen_spinbox.set_value_no_signal(value)
+func _on_sharpen_slider_value_changed(value: float):
+	_on_sharpen_changed(value)
+	
+func _on_sharpen_spinbox_value_changed(value: float):
+	_on_sharpen_changed(value)
+
+# --- Gamma ---
+func _on_gamma_changed(value: float):
+	
+	gamma = value
+	gamma_slider.set_value_no_signal(value)
+	gamma_spinbox.set_value_no_signal(value)
+func _on_gamma_slider_value_changed(value: float):
+	_on_gamma_changed(value)
+	
+func _on_gamma_spinbox_value_changed(value: float):
+	_on_gamma_changed(value)
+
+# --- Vibrance ---
+func _on_vibrance_changed(value: float):
+
+	vibrance = value
+	vibrance_slider.set_value_no_signal(value)
+	vibrance_spinbox.set_value_no_signal(value)
+func _on_vibrance_slider_value_changed(value: float):
+	_on_vibrance_changed(value)
+	
+func _on_vibrance_spinbox_value_changed(value: float):
+	_on_vibrance_changed(value)
 # --- Circle Count ---
 func _on_circle_count_changed(value: float):
 	circle_count = value
@@ -4494,6 +4620,9 @@ func _on_record_timer_timeout():
 			composite_material.set_shader_parameter("brightness", brightness)
 			composite_material.set_shader_parameter("contrast", contrast)
 			composite_material.set_shader_parameter("saturation", saturation)
+			composite_material.set_shader_parameter("sharpen", sharpen)
+			composite_material.set_shader_parameter("gamma", gamma)
+			composite_material.set_shader_parameter("vibrance", vibrance)
 			# --------------------------------------------------------
 
 			composite_viewport.set_update_mode(SubViewport.UPDATE_ONCE)
@@ -4531,6 +4660,9 @@ func _on_record_timer_timeout():
 		post_save_material.set_shader_parameter("brightness", brightness)
 		post_save_material.set_shader_parameter("contrast", contrast)
 		post_save_material.set_shader_parameter("saturation", saturation)
+		post_save_material.set_shader_parameter("sharpen", sharpen)
+		post_save_material.set_shader_parameter("gamma", gamma)
+		post_save_material.set_shader_parameter("vibrance", vibrance)
 		post_save_material.set_shader_parameter("mirror_x", mirror_x)
 		post_save_material.set_shader_parameter("mirror_y", mirror_y)
 		post_save_material.set_shader_parameter("kaleidoscope_on", kaleidoscope_on)

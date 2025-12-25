@@ -214,6 +214,15 @@ class_name VariationDefaults
 @export var snow_chaos_b_speed: float = 0.0
 @export var snow_strength_b_speed: float = 0.0
 
+@export var portal_shift_x_a: float = 1.0
+@export var portal_shift_y_a: float = 1.0
+@export var portal_shift_x_a_speed: float = 0.0
+@export var portal_shift_y_a_speed: float = 0.0
+
+@export var portal_shift_x_b: float = 1.0
+@export var portal_shift_y_b: float = 1.0
+@export var portal_shift_x_b_speed: float = 0.0
+@export var portal_shift_y_b_speed: float = 0.0
 
 
 @export var popcorn_scale_b: float = 1.0
