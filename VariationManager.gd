@@ -56,6 +56,7 @@ const VARIATIONS = {
 	"Frostbyte":     { "id": 42, "controls": "snowflake", "category": "Nature" },
 	"Portal":     { "id": 43, "controls": "portal", "category": "Geometry" },
 	"Janus":     { "id": 44, "controls": "janus", "category": "Geometry" },
+	"Canvas":     { "id": 45, "controls": "canvas" },
 	"Wave":             { "id": 3, "controls": "wave" },
 }
 

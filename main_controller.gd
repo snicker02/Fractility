@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 3.5
+const PROGRAM_VERSION = 3.6
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -17,6 +17,8 @@ const INVERSE_VARIATIONS = [1 ]
 @onready var fractal_mesh: MeshInstance3D = %FractalMesh
 @onready var display_container_3d: SubViewportContainer = %Display_3D_Container # <-- Add reference to 3D view container
 @onready var container_3d_controls: VBoxContainer = %Container3DControls
+@onready var image_opacity_slider: HSlider = %ImageInputOpacitySlider
+@onready var image_opacity_spinbox: SpinBox = %ImageInputOpacitySpinBox
 @onready var normal_map_viewport = $NormalMapViewport
 @onready var normal_map_material = $NormalMapViewport/ColorRect.material
 @onready var light_3d: DirectionalLight3D = %DirectionalLight3D
@@ -492,6 +494,8 @@ var mandel_texture_scale: float = 1.0
 @onready var portal_controls_container_b: VBoxContainer = %PortalControlsContainerB
 @onready var janus_controls_container_a: VBoxContainer = %JanusControlsContainerA
 @onready var janus_controls_container_b: VBoxContainer = %JanusControlsContainerB
+@onready var canvas_controls_container_a: VBoxContainer = %CanvasControlsContainerA
+@onready var canvas_controls_container_b: VBoxContainer = %CanvasControlsContainerB
 
 
 
@@ -799,7 +803,16 @@ func _ready() -> void:
 		%GeneratorSpinBox.value = def_str
 		%GeneratorSlider.value_changed.connect(func(v): %GeneratorSpinBox.set_value_no_signal(v))
 		%GeneratorSpinBox.value_changed.connect(func(v): %GeneratorSlider.set_value_no_signal(v))
-
+	if image_opacity_slider and image_opacity_spinbox:
+		# 1. Sync Slider -> SpinBox
+		image_opacity_slider.value_changed.connect(func(v): 
+			image_opacity_spinbox.set_value_no_signal(v)
+		)
+		
+		# 2. Sync SpinBox -> Slider
+		image_opacity_spinbox.value_changed.connect(func(v): 
+			image_opacity_slider.set_value_no_signal(v)
+		)
 	# 2. Branch Count (Default: 4)
 	if %GenBranchSlider and %GenBranchSpinBox:
 		var def_branch = 4.0
@@ -874,6 +887,7 @@ func _ready() -> void:
 		"snowflake": snowflake_controls_container_a,
 		"portal": portal_controls_container_a,
 		"janus": janus_controls_container_a,
+		"canvas": canvas_controls_container_a,
 		"rep_tile": rep_tile_panel_a # Special key for the Rep-Tile panel
 		
 		
@@ -914,6 +928,7 @@ func _ready() -> void:
 		"snowflake": snowflake_controls_container_b,
 		"portal": portal_controls_container_b,
 		"janus": janus_controls_container_b,
+		"canvas": canvas_controls_container_b,
 
 		"rep_tile": rep_tile_panel_b # Special key for the Rep-Tile panel
 	}
@@ -980,6 +995,8 @@ func _ready() -> void:
 	portal_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	janus_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	janus_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
+	canvas_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	canvas_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 
 
 	
@@ -2976,6 +2993,9 @@ func _process(delta: float) -> void:
 	# -----------------------------------------------------------
 	# Ensure 'target_material' is defined above this block in _process!
 	target_material.set_shader_parameter("generator_strength", current_generator_strength)
+	var img_op = 0.0
+	if image_opacity_slider: img_op = image_opacity_slider.value
+	target_material.set_shader_parameter("image_input_opacity", img_op)
 	# Var A Params
 	
 	target_material.set_shader_parameter("blur_amount_a", blur_amount_a)
@@ -4071,10 +4091,18 @@ func _update_start_pattern_visibility():
 	load_image_button.visible = false
 	gradient_controls_container.visible = false 
 	
-	# --- HIDE SNOWFLAKE CONTAINER BY DEFAULT ---
+	# Hide Snowflake Container
 	if snowflake_controls_container:
 		snowflake_controls_container.visible = false
-	# -------------------------------------------
+		
+	# --- RESET GENERATOR SLIDER VISIBILITY ---
+	# We hide it by default, then show it only for Image (2) and Snowflake (5)
+	if %GeneratorSlider: %GeneratorSlider.visible = false
+	if %GeneratorSpinBox: %GeneratorSpinBox.visible = false
+	if %ImageInputOpacitySlider: %ImageInputOpacitySlider.visible = false
+	if %ImageInputOpacitySpinBox: %ImageInputOpacitySpinBox.visible = false
+	#if %GeneratorLabel: %GeneratorLabel.visible = false # If you have a label
+	# -----------------------------------------
 	
 	# 3. Show only the correct one
 	match selected_index:
@@ -4084,16 +4112,21 @@ func _update_start_pattern_visibility():
 			circle_controls_container.visible = true
 		2: # Image Input
 			load_image_button.visible = true
+			# Show ONLY the Opacity slider
+			if %ImageInputOpacitySlider: %ImageInputOpacitySlider.visible = true
+			if %ImageInputOpacitySpinBox: %ImageInputOpacitySpinBox.visible = true
 		3: # Perlin Noise
 			pass 
 		4: # Concentric Rings
 			gradient_toggle_button.visible = true
 			circle_grid_controls_container.visible = true
-		5: # Snowflake (NEW)
+		5: # Snowflake
 			if snowflake_controls_container:
 				snowflake_controls_container.visible = true
-				
-				
+			# Show ONLY the Generator Strength slider
+			if %GeneratorSlider: %GeneratorSlider.visible = true
+			
+			
 func _on_start_pattern_dropdown_item_selected(index: int) -> void:
 	start_pattern_mode = index # Update the state variable
 	_update_start_pattern_visibility() # Call the helper to update the UI

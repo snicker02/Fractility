@@ -1,4 +1,4 @@
-[gd_scene load_steps=292 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=302 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -114,6 +114,54 @@ add_speed_control = true
 default = 1.0
 max = 10.0
 step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_hwi37"]
+script = ExtResource("6_4d7sh")
+name = "canvas_scale_a"
+label = "Scale"
+add_speed_control = true
+default = 10.0
+min = 0.1000000000003638
+max = 50.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_t13dj"]
+script = ExtResource("6_4d7sh")
+name = "canvas_strength_a"
+label = "Strength"
+add_speed_control = true
+default = 0.5
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_y4hmt"]
+script = ExtResource("6_4d7sh")
+name = "canvas_flow_a"
+label = "Flow"
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_pv4a3"]
+script = ExtResource("6_4d7sh")
+name = "canvas_style_a"
+label = "Style"
+max = 14.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_144tm"]
+script = ExtResource("6_4d7sh")
+name = "canvas_chaos_a"
+label = "Chaso"
+add_speed_control = true
+default = 0.5
+max = 5.0
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -1588,6 +1636,54 @@ add_speed_control = true
 default = 1.0
 max = 10.0
 step = 0.001
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_5s6xl"]
+script = ExtResource("6_4d7sh")
+name = "canvas_scale_b"
+label = "Scale"
+add_speed_control = true
+default = 10.0
+min = 0.1000000000003638
+max = 50.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_8kymp"]
+script = ExtResource("6_4d7sh")
+name = "canvas_strength_b"
+label = "Strength"
+add_speed_control = true
+default = 0.5
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_u3vfl"]
+script = ExtResource("6_4d7sh")
+name = "canvas_flow_b"
+label = "Flow"
+min = -2.0
+max = 2.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_unpwl"]
+script = ExtResource("6_4d7sh")
+name = "canvas_style_b"
+label = "Style"
+max = 14.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_5yhid"]
+script = ExtResource("6_4d7sh")
+name = "canvas_chaos_b"
+label = "Chaos"
+add_speed_control = true
+default = 0.5
+max = 5.0
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
@@ -4031,7 +4127,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 3.5"
+text = "V 3.6"
 
 [node name="ViewToggleButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer"]
 unique_name_in_owner = true
@@ -4226,10 +4322,27 @@ text = "Randomize on Startup"
 [node name="HSeparator7" type="HSeparator" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 layout_mode = 2
 
-[node name="LoadImageButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+[node name="LoadImageContainer" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="LoadImageButton" type="Button" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/LoadImageContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Load Background Image"
+
+[node name="ImageInputOpacitySlider" type="HSlider" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/LoadImageContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="ImageInputOpacitySpinBox" type="SpinBox" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/LoadImageContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+value = 1.0
 
 [node name="Gradient section" type="VBoxContainer" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer"]
 layout_mode = 2
@@ -4529,6 +4642,12 @@ max_value = 3.0
 step = 0.001
 script = ExtResource("2_q6r6c")
 
+[node name="CanvasControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Canvas A"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_hwi37"), SubResource("Resource_t13dj"), SubResource("Resource_y4hmt"), SubResource("Resource_pv4a3"), SubResource("Resource_144tm")])
+
 [node name="CellularWeaveControlsContainerA" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -4814,6 +4933,12 @@ min_value = -3.0
 max_value = 3.0
 step = 0.001
 script = ExtResource("2_q6r6c")
+
+[node name="CanvasControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Canvas B"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_5s6xl"), SubResource("Resource_8kymp"), SubResource("Resource_u3vfl"), SubResource("Resource_unpwl"), SubResource("Resource_5yhid")])
 
 [node name="CellularWeaveControlsContainerB" parent="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
@@ -5724,7 +5849,7 @@ text = "STOP RECORDING"
 [connection signal="toggled" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/StartPattern/VBoxContainer/HSeparator7/ResetOnDragCheck" to="." method="_on_reset_on_drag_check_toggled"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeToggleButton" to="." method="_on_randomize_toggle_button_pressed"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/RandomizeControlsContainer/RandomizeButton" to="." method="_on_randomize_button_pressed"]
-[connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/LoadImageButton" to="." method="_on_load_image_button_pressed"]
+[connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/LoadImageContainer/LoadImageButton" to="." method="_on_load_image_button_pressed"]
 [connection signal="pressed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientToggleButton" to="." method="_on_gradient_toggle_button_pressed"]
 [connection signal="color_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer16/GradColTLPicker" to="." method="_on_grad_col_tl_picker_color_changed"]
 [connection signal="color_changed" from="HSplitContainer/Panel/ScrollContainer/MarginContainer/MainContainer/Gradient section/GradientControlsContainer/HBoxContainer17/GradColTRPicker" to="." method="_on_grad_col_tr_picker_color_changed"]

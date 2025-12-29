@@ -2,8 +2,9 @@ shader_type canvas_item;
 
 struct VariationResult {
 	vec2 uv;
-	float dist; // For Orbit Trap / Escape Time
+	float dist; 
 };
+
 // --- Uniforms ---
 uniform sampler2D previous_frame : filter_linear, repeat_enable;
 uniform int variation_mode_a = 0;
@@ -18,17 +19,16 @@ uniform bool show_grid = false;
 uniform bool show_circles = true;
 uniform sampler2D background_texture;
 uniform bool is_animating = false;
-uniform float escape_limit = 4.0; // The "Trap" radius
-uniform bool use_escape_time = false; // Toggle
-uniform int escape_shape = 0; // 0=Circle, 1=Square, 2=Cross, 3=Diamond
-uniform float escape_smoothness : hint_range(0.0, 2.0) = 0.1; // How soft the edge is
-uniform bool escape_invert = false; // Toggle tunnel vs island
-uniform sampler2D input_texture; // This receives the "Generator" image
-uniform float generator_strength = 0.0; // Default to 0 (Disabled)
+uniform float escape_limit = 4.0; 
+uniform bool use_escape_time = false; 
+uniform int escape_shape = 0; 
+uniform float escape_smoothness : hint_range(0.0, 2.0) = 0.1; 
+uniform bool escape_invert = false; 
+uniform sampler2D input_texture; 
 
-
-
-
+// --- CONTROLS ---
+uniform float generator_strength = 0.0; // For Snowflake
+uniform float image_input_opacity = 0.5; // Controls Image Input Brightness
 
 // Start Pattern Uniforms
 uniform float circle_count = 4.0;
@@ -62,14 +62,17 @@ uniform float brightness = 1.0;
 uniform float contrast = 1.0;
 uniform float saturation = 1.0;
 uniform float sharpen : hint_range(0.0, 5.0) = 0.0;
+uniform float gamma = 1.0;
+uniform float vibrance = 1.0;
+
 // Wave A Variation Uniforms
 uniform int wave_type_a;
-uniform float wave_frequency_a;      // Base frequency
-uniform float wave_frequency_a_speed; // Speed to animate frequency
-uniform float wave_amplitude_a;      // Base amplitude
-uniform float wave_amplitude_a_speed; // Speed to animate amplitude
-uniform float wave_phase_a;          // Base phase (renamed from wave_speed_a)
-uniform float wave_phase_a_speed;    // Speed to animate phase
+uniform float wave_frequency_a;      
+uniform float wave_frequency_a_speed; 
+uniform float wave_amplitude_a;      
+uniform float wave_amplitude_a_speed; 
+uniform float wave_phase_a;          
+uniform float wave_phase_a_speed;    
 
 // Wave B Variation Uniforms
 uniform int wave_type_b;
@@ -115,6 +118,7 @@ uniform float julian_e_b;
 uniform float julian_e_b_speed;
 uniform float julian_f_b;
 uniform float julian_f_b_speed;
+
 // Fisheye/Polar Uniforms
 uniform float fisheye_strength_a;
 uniform float fisheye_strength_a_speed;
@@ -126,7 +130,6 @@ uniform float polar_offset_b;
 uniform float polar_offset_b_speed;
 
 // Symmetry Uniforms
-
 uniform float var_a_mirror_x;
 uniform float var_a_mirror_y;
 uniform float var_a_mirror_rotation;
@@ -211,10 +214,9 @@ uniform float heart_rotation_b_speed;
 uniform float heart_strength_b;
 uniform float heart_strength_b_speed;
 
-// --- Add uniforms for Blur ---
+// --- Blur Uniforms ---
 uniform float blur_amount_a;
 uniform float blur_amount_b;
-
 
 // Apollonian A Uniforms
 uniform float apollonian_scale_a;
@@ -247,6 +249,7 @@ uniform float ap_c3x_b;
 uniform float ap_c3x_b_speed;
 uniform float ap_c3y_b;
 uniform float ap_c3y_b_speed;
+
 // ArcTangent A Uniforms
 uniform float arctangent_scale_a;
 uniform float arctangent_scale_a_speed;
@@ -258,8 +261,10 @@ uniform float arctangent_scale_b;
 uniform float arctangent_scale_b_speed;
 uniform float arctangent_strength_b;
 uniform float arctangent_strength_b_speed;
+
 uniform int custom_tl_a; uniform int custom_tr_a; uniform int custom_bl_a; uniform int custom_br_a;
 uniform int custom_tl_b; uniform int custom_tr_b; uniform int custom_bl_b; uniform int custom_br_b;
+
 // Clifford A Uniforms
 uniform float clifford_a_a;
 uniform float clifford_a_a_speed;
@@ -292,6 +297,7 @@ uniform float cosine_scale_b_speed;
 uniform float cosine_strength_b;
 uniform float cosine_strength_b_speed;
 
+// DeJong A Uniforms
 uniform float dejong_a_a;
 uniform float dejong_a_a_speed;
 uniform float dejong_b_a;
@@ -310,6 +316,7 @@ uniform float dejong_c_b;
 uniform float dejong_c_b_speed;
 uniform float dejong_d_b;
 uniform float dejong_d_b_speed;
+
 // Truchet A Uniforms
 uniform float truchet_scale_a;
 uniform float truchet_scale_a_speed;
@@ -327,6 +334,7 @@ uniform float truchet_rotate_b_speed;
 uniform float truchet_strength_b;
 uniform float truchet_strength_b_speed;
 uniform float truchet_mode_b;
+
 // Hyperbolic Cosine A Uniforms
 uniform float hyperbolic_cosine_scale_a;
 uniform float hyperbolic_cosine_scale_a_speed;
@@ -614,6 +622,28 @@ uniform float janus_center_x_b;
 uniform float janus_center_x_b_speed;
 uniform float janus_center_y_b;
 uniform float janus_center_y_b_speed;
+
+// --- CANVAS (Mode 45) Uniforms ---
+uniform float canvas_scale_a;     // Brush/Stroke Size
+uniform float canvas_scale_a_speed;
+uniform float canvas_strength_a;  // How much the paint distorts
+uniform float canvas_strength_a_speed;
+uniform float canvas_style_a;     // 0 = Oil, 1 = Cubism, 2 = Sketch
+uniform float canvas_flow_a;      // Animation speed of the strokes
+uniform float canvas_scale_b;     // Brush/Stroke Size
+uniform float canvas_scale_b_speed;
+uniform float canvas_strength_b;  // How much the paint distorts
+uniform float canvas_strength_b_speed;
+uniform float canvas_style_b;     // 0 = Oil, 1 = Cubism, 2 = Sketch
+uniform float canvas_flow_b;      // Animation speed of the strokes
+uniform float canvas_chaos_a;
+uniform float canvas_chaos_a_speed; // Optional, but good for "boiling" paint
+uniform float canvas_chaos_b;
+uniform float canvas_chaos_b_speed;
+
+
+
+
 // --- Helper Functions ---
 vec2 random(vec2 st) {
     st = vec2(dot(st, vec2(127.1,311.7)),
@@ -859,7 +889,12 @@ vec2 apply_variation(vec2 uv, int variation_id,
 	float janus_zoom,  float janus_zoom_speed,
 	float janus_opacity, float janus_opacity_speed,
 	float janus_center_x, float janus_center_x_speed,
-	float janus_center_y, float janus_center_y_speed
+	float janus_center_y, float janus_center_y_speed,
+	
+	float v_canvas_scale, float v_canvas_scale_speed,
+	float v_canvas_strength, float v_canvas_strength_speed,
+	float v_canvas_style, float v_canvas_flow,
+	float v_canvas_chaos, float v_canvas_chaos_speed
 ) {
 	vec2 p = uv;
 	if (variation_id == 0) { // Sinusoidal
@@ -2194,19 +2229,210 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 		
 		return fract(final_p + 0.5);
 	}
-       
+	
+	
+	else if (variation_id == 45) { // CANVAS (15 Styles: Oil to Spirit)
+		
+		// 1. ANIMATION & PARAMS
+		float anim_scale = max(1.0, v_canvas_scale + (sin(time * v_canvas_scale_speed) * 0.1));
+		float anim_str = v_canvas_strength + (sin(time * v_canvas_strength_speed) * 0.1);
+		
+		// Chaos Multi-Mode Selector
+		float raw_chaos = v_canvas_chaos + (sin(time * v_canvas_chaos_speed) * 0.1);
+		float flow_time = time * v_canvas_flow;
+
+		vec2 p = uv; 
+		vec2 paint_offset = vec2(0.0);
+		
+		// --- CHAOS SELECTOR ---
+		if (raw_chaos > 0.001) {
+			int chaos_mode = int(floor(abs(raw_chaos)));     
+			float chaos_power = fract(abs(raw_chaos));       
+			if (chaos_power < 0.001) chaos_power = 1.0;
+
+			if (chaos_mode == 0) { // Liquid
+				float cx = sin(p.y * 3.0 + flow_time); 
+				float cy = cos(p.x * 3.0 + flow_time);
+				p += vec2(cx, cy) * chaos_power * 0.1;
+			}
+			else if (chaos_mode == 1) { // Smoke
+				float n = perlin_noise(p * 5.0 + vec2(flow_time * 0.5));
+				p += n * chaos_power * 0.1;
+			}
+			else if (chaos_mode == 2) { // Static
+				float rnd = rand(uv + vec2(time)) - 0.5;
+				p += rnd * chaos_power * 0.05;
+			}
+			else if (chaos_mode == 3) { // Tear
+				float slit = floor(p.y * 20.0); 
+				float shift = sin(flow_time * 5.0 + slit);
+				p.x += shift * chaos_power * 0.05;
+			}
+			else if (chaos_mode == 4) { // Crunch
+				float res = 100.0 * (1.1 - chaos_power);
+				p = floor(p * res) / res;
+			}
+            else { 
+                float cx = sin(p.y * 10.0 + flow_time); 
+				p += vec2(cx, 0.0) * chaos_power * 0.1;
+            }
+		}
+
+		float style = v_canvas_style;
+
+		// --- STYLE 0: OIL ---
+		if (style < 1.0) {
+			float influence = 1.0 - style; 
+			float wave_x = sin(p.y * anim_scale * 8.0 + flow_time);
+			float wave_y = cos(p.x * anim_scale * 8.0 + flow_time);
+			paint_offset += vec2(wave_x, wave_y * 0.5) * 0.015 * anim_str * influence;
+		}
+		// --- STYLE 1: CUBISM ---
+		else if (style < 2.0) {
+			float influence = 1.0 - abs(1.0 - style); 
+			float blocks = anim_scale * 5.0; 
+			vec2 stepped_uv = floor(p * blocks) / blocks;
+			paint_offset += (p - stepped_uv) * anim_str * 2.0 * influence;
+		}
+		// --- STYLE 2: SKETCH ---
+		else if (style < 3.0) {
+			float influence = 1.0 - abs(2.0 - style); 
+			float grain = sin(p.x * 200.0 * anim_scale) * sin(p.y * 200.0 * anim_scale);
+			float jitter_x = sin(p.x * anim_scale * 50.0 + flow_time * 20.0);
+			paint_offset += vec2(jitter_x + grain, grain) * 0.003 * anim_str * influence;
+		}
+		// --- STYLE 3: MOSAIC ---
+		else if (style < 4.0) {
+			float influence = 1.0 - abs(3.0 - style);
+			float tiles = anim_scale * 10.0;
+			vec2 grid = p * tiles;
+			if (mod(floor(grid.y), 2.0) > 0.5) grid.x += 0.5;
+			vec2 cell = floor(grid);
+			vec2 center = (cell + 0.5) / tiles;
+			vec2 mosaic_dist = (center - p);
+			if (mod(cell.y, 2.0) > 0.5) mosaic_dist.x -= (0.5/tiles); 
+			paint_offset += mosaic_dist * anim_str * influence;
+		}
+		// --- STYLE 4: WET INK ---
+		else if (style < 5.0) {
+			float influence = 1.0 - abs(4.0 - style);
+			float ink_x = sin(p.y * 3.0 * anim_scale + flow_time) + sin(p.y * 10.0 * anim_scale);
+			float ink_y = cos(p.x * 3.0 * anim_scale + flow_time) + cos(p.x * 10.0 * anim_scale);
+			paint_offset += vec2(ink_x, ink_y) * 0.03 * anim_str * influence;
+		}
+		// --- STYLE 5: GLITCH ---
+		else if (style < 6.0) {
+			float influence = 1.0 - abs(5.0 - style);
+			float scanline = floor(p.y * anim_scale * 20.0);
+			float shift = sin(scanline * 132.4 + flow_time * 50.0);
+			if (fract(sin(scanline * 43.12 + flow_time) * 43758.54) > (1.0 - anim_str * 0.5)) {
+				paint_offset.x += shift * 0.1 * anim_str * influence;
+			}
+			paint_offset.y += sin(flow_time * 50.0) * 0.002 * anim_str * influence;
+		}
+		// --- STYLE 6: IMPASTO ---
+		else if (style < 7.0) {
+			float influence = 1.0 - abs(6.0 - style);
+			float dabs = anim_scale * 15.0;
+			vec2 dab_id = floor(p * dabs);
+			float dab_angle = rand(dab_id) * 3.14 + flow_time; 
+			vec2 dab_uv = fract(p * dabs) - 0.5;
+			vec2 rot_dab = dab_uv * mat2(vec2(cos(dab_angle), -sin(dab_angle)), vec2(sin(dab_angle), cos(dab_angle)));
+			paint_offset += rot_dab * 0.1 * anim_str * influence;
+		}
+		// --- STYLE 7: POINTILLISM ---
+		else if (style < 8.0) {
+			float influence = 1.0 - abs(7.0 - style);
+			float dots = anim_scale * 40.0;
+			vec2 dot_grid = fract(p * dots) - 0.5;
+			float d_len = length(dot_grid);
+			float breathe = sin(flow_time * 5.0) * 0.2;
+			paint_offset += (dot_grid * (0.5 - d_len + breathe)) * 0.1 * anim_str * influence;
+		}
+		// --- STYLE 8: CROSS-HATCH ---
+		else if (style < 9.0) {
+			float influence = 1.0 - abs(8.0 - style);
+			float lines = anim_scale * 50.0;
+			float l1 = sin((p.x + p.y) * lines + flow_time * 10.0);
+			float l2 = sin((p.x - p.y) * lines - flow_time * 10.0);
+			paint_offset += vec2(l1, l2) * 0.005 * anim_str * influence;
+		}
+		// --- STYLE 9: HALFTONE ---
+		else if (style < 10.0) {
+			float influence = 1.0 - abs(9.0 - style);
+			float freq = anim_scale * 60.0;
+			vec2 grid = fract(p * freq) - 0.5;
+			float dist = length(grid);
+			paint_offset += (grid * -dist) * anim_str * 0.5 * influence;
+		}
+		// --- STYLE 10: ENGRAVING ---
+		else if (style < 11.0) {
+			float influence = 1.0 - abs(10.0 - style);
+			float freq = anim_scale * 80.0;
+			float wave = sin(p.x * freq + sin(p.y * freq * 0.5 + flow_time) * 5.0);
+			paint_offset.y += wave * 0.02 * anim_str * influence;
+		}
+		// --- STYLE 11: MARBLING ---
+		else if (style < 12.0) {
+			float influence = 1.0 - abs(11.0 - style);
+			vec2 q = vec2(0.0);
+			q.x = fbm((p * anim_scale) + 0.00 * flow_time, 2, 0.5);
+			q.y = fbm((p * anim_scale) + vec2(1.0), 2, 0.5);
+			vec2 r = vec2(0.0);
+			r.x = fbm((p * anim_scale) + 1.0 * q + vec2(1.7, 9.2) + 0.15 * flow_time, 2, 0.5);
+			r.y = fbm((p * anim_scale) + 1.0 * q + vec2(8.3, 2.8) + 0.126 * flow_time, 2, 0.5);
+			paint_offset += r * 0.2 * anim_str * influence;
+		}
+		// --- STYLE 12: WOVEN (Fabric) ---
+		else if (style < 13.0) {
+			float influence = 1.0 - abs(12.0 - style);
+			float threads = anim_scale * 40.0;
+			// Checkboard pattern for over/under
+			vec2 weave = sin(p * threads + flow_time);
+			// Offset X by Y to create the weave look
+			float fabric = sin(p.x * threads + sin(p.y * threads));
+			paint_offset += vec2(fabric, -fabric) * 0.005 * anim_str * influence;
+		}
+		// --- STYLE 13: SHATTER (Glass) ---
+		else if (style < 14.0) {
+			float influence = 1.0 - abs(13.0 - style);
+			float shards = anim_scale * 5.0;
+			vec2 cell = floor(p * shards);
+			// Random offset for each shard
+			vec2 rand_shift = vec2(rand(cell), rand(cell + 10.0)) - 0.5;
+			// Rotate slightly based on time
+			rand_shift *= rotate(flow_time * (rand(cell) - 0.5));
+			paint_offset += rand_shift * 0.1 * anim_str * influence;
+		}
+		// --- STYLE 14: SPIRIT (Ethereal) ---
+		else {
+			float influence = 1.0; 
+			
+			// Upward drifting sine waves
+			float drift = sin(p.x * 20.0 * anim_scale + flow_time * 2.0) + sin(p.x * 50.0 * anim_scale + flow_time * 5.0);
+			
+			// FIX: Use 'p.y' (local coord) instead of 'UV.y' (global)
+			// p.y is centered (-0.5 to 0.5), so adding 0.5 restores the 0-to-1 range
+			float fade = clamp(p.y + 0.5, 0.0, 1.0); 
+			
+			paint_offset.y -= drift * 0.02 * anim_str * influence * fade;
+		}
+
+		return uv + paint_offset;
+	}
+
+
+        
 	return uv;
 }
 
 
 // --- Main Shader Logic ---
-// --- Main Shader Logic ---
-// --- Main Shader Logic ---
 void fragment() {
     vec4 final_color;
     vec4 start_pattern_color;
 
-    // --- STEP 1: Calculate the Start Pattern ---
+    // --- STEP 1: CALCULATE BASE PATTERN ---
     if (start_pattern_mode == 0) { // Gradient + Grid
         vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
         vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
@@ -2257,28 +2483,34 @@ void fragment() {
 						   smoothstep(0.5 + half_width, 0.5 + half_width + circle_grid_softness, v);
 		start_pattern_color = mix(gradient_color_B, gradient_color_A, ring_value);
 	}
-
-// --- ADD THIS NEW BLOCK ---
 	else if (start_pattern_mode == 5) { // Snowflake Mode
-		// We use the GRADIENT here so you get the colors you liked!
 		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
 		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
 		start_pattern_color = mix(top_mix, bottom_mix, UV.y);
+		
+		// Snowflake Mixing
+		vec4 snow_tex = texture(input_texture, UV);
+		start_pattern_color = mix(start_pattern_color, snow_tex, snow_tex.a * generator_strength);
     }
-    // --------------------------
     else {
-        // Fallback (Gradient)
         vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
         vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
         start_pattern_color = mix(top_mix, bottom_mix, UV.y);
     }
 
-    // --- YOUR EXISTING OVERLAY LOGIC (Keep this!) ---
-    // This will mix the snowflake onto the black background we just set
-    vec4 snowflake_img = texture(input_texture, UV);
-    start_pattern_color = mix(start_pattern_color, snowflake_img, snowflake_img.a * generator_strength);   // ----
-	// --- STEP 2: Calculate Feedback ---
+    // --- STEP 2: PREPARE FEED COLOR ---
+    // This color is injected into the feedback loop every frame.
+    vec4 feed_color = start_pattern_color;
+    
+    // For Image Input (Mode 2), we allow the user to dim the feed 
+    // so it doesn't create a strong ghost image.
+    if (start_pattern_mode == 2) {
+        feed_color = start_pattern_color * image_input_opacity;
+    }
+
+	// --- STEP 3: CALCULATE FEEDBACK ---
 	if (time < 0.1) {
+        // SEED: Always use the full brightness base pattern for the first frame!
         final_color = start_pattern_color;
     }
     else {
@@ -2313,63 +2545,22 @@ void fragment() {
 			truchet_scale_a, truchet_scale_a_speed, truchet_rotate_a, truchet_rotate_a_speed, truchet_strength_a, truchet_strength_a_speed, truchet_mode_a,
 			reptile_scale_a, reptile_scale_a_speed, reptile_rotate_a, reptile_rotate_a_speed,
 			popcorn_scale_a, popcorn_scale_a_speed, popcorn_strength_a, popcorn_strength_a_speed, popcorn_density_a, popcorn_density_a_speed,
-			// GlynnSim
 			glynn_radius_a, glynn_thickness_a, glynn_contrast_a, glynn_pow_a, glynn_phi1_a, glynn_phi2_a,
 			glynn_radius_a_speed, glynn_thickness_a_speed, glynn_contrast_a_speed, glynn_pow_a_speed, glynn_phi1_a_speed, glynn_phi2_a_speed, glynn_ring_mode_a,
-			// Lazy Mega
 			lazy_shape_a, lazy_inside_mode_a, lazy_outside_mode_a, lazy_amount_a, lazy_amount_a_speed, lazy_twist_a, lazy_twist_a_speed, lazy_spin_a, lazy_spin_a_speed, lazy_space_a, lazy_space_a_speed, lazy_offset_x_a, lazy_offset_y_a,
 			lazy_ring_mode_a, lazy_ring_spin_a, lazy_ring_spin_a_speed, lazy_edge_softness_a,
-			// Nebula
-			nebula_scale_a, nebula_scale_a_speed,
-			nebula_speed_a, nebula_speed_a_speed,
-			nebula_detail_a, nebula_detail_a_speed,
-			nebula_distortion_a, nebula_distortion_a_speed,
-			nebula_swirl_a, nebula_swirl_a_speed, nebula_filaments_a,
-			// Jigsaw
-			jigsaw_scale_a, jigsaw_scale_a_speed,
-			jigsaw_tab_size_a, jigsaw_tab_size_a_speed,
-			jigsaw_distortion_a, jigsaw_distortion_a_speed, jigsaw_outline_a,
-			// Gnarl
-			gnarl_mode_a,
-    vec2(gnarl_scale_x_a, gnarl_scale_y_a),
-    vec2(gnarl_freq_x1_a, gnarl_freq_y1_a),
-    vec2(gnarl_freq_x2_a, gnarl_freq_y2_a),
-    vec2(gnarl_freq_x3_a, gnarl_freq_y3_a),
-    vec2(gnarl_c1_a, gnarl_c2_a),
-    gnarl_distort_a,
-	vec2(gnarl_scale_x_a_speed, gnarl_scale_y_a_speed),
-    vec2(gnarl_freq_x1_a_speed, gnarl_freq_y1_a_speed),
-    vec2(gnarl_freq_x2_a_speed, gnarl_freq_y2_a_speed),
-    vec2(gnarl_freq_x3_a_speed, gnarl_freq_y3_a_speed),
-    vec2(gnarl_c1_a_speed, gnarl_c2_a_speed),
-    gnarl_distort_a_speed,
-	// Constructivist Args
-    construction_density_a, construction_density_a_speed,
-    construction_circles_a, construction_circles_a_speed,
-    construction_chaos_a,   construction_chaos_a_speed,
-    construction_thickness_a, construction_thickness_a_speed,
-	// Snowflake Args
-    snow_scale_a,    snow_scale_a_speed,
-    snow_branches_a, snow_branches_a_speed,
-    snow_thickness_a,snow_thickness_a_speed,
-    snow_chaos_a,    snow_chaos_a_speed,
-	snow_strength_a, snow_strength_a_speed,
-	
-	portal_shift_x_a, portal_shift_x_a_speed,
-	portal_shift_y_a, portal_shift_y_a_speed,
-	portal_size_a, portal_size_a_speed,
-	portal_center_x_a, portal_center_x_a_speed,
-	portal_center_y_a, portal_center_y_a_speed,
-	portal_opacity_a, portal_opacity_a_speed,
-	
-	janus_shift_a, janus_shift_a_speed,
-	janus_zoom_a, janus_zoom_a_speed,
-	janus_opacity_a, janus_opacity_a_speed,
-	janus_center_x_a, janus_center_x_a_speed,
-	janus_center_y_a, janus_center_y_a_speed
+			nebula_scale_a, nebula_scale_a_speed, nebula_speed_a, nebula_speed_a_speed, nebula_detail_a, nebula_detail_a_speed, nebula_distortion_a, nebula_distortion_a_speed, nebula_swirl_a, nebula_swirl_a_speed, nebula_filaments_a,
+			jigsaw_scale_a, jigsaw_scale_a_speed, jigsaw_tab_size_a, jigsaw_tab_size_a_speed, jigsaw_distortion_a, jigsaw_distortion_a_speed, jigsaw_outline_a,
+			gnarl_mode_a, vec2(gnarl_scale_x_a, gnarl_scale_y_a), vec2(gnarl_freq_x1_a, gnarl_freq_y1_a), vec2(gnarl_freq_x2_a, gnarl_freq_y2_a), vec2(gnarl_freq_x3_a, gnarl_freq_y3_a), vec2(gnarl_c1_a, gnarl_c2_a), gnarl_distort_a,
+			vec2(gnarl_scale_x_a_speed, gnarl_scale_y_a_speed), vec2(gnarl_freq_x1_a_speed, gnarl_freq_y1_a_speed), vec2(gnarl_freq_x2_a_speed, gnarl_freq_y2_a_speed), vec2(gnarl_freq_x3_a_speed, gnarl_freq_y3_a_speed), vec2(gnarl_c1_a_speed, gnarl_c2_a_speed), gnarl_distort_a_speed,
+			construction_density_a, construction_density_a_speed, construction_circles_a, construction_circles_a_speed, construction_chaos_a, construction_chaos_a_speed, construction_thickness_a, construction_thickness_a_speed,
+			snow_scale_a, snow_scale_a_speed, snow_branches_a, snow_branches_a_speed, snow_thickness_a, snow_thickness_a_speed, snow_chaos_a, snow_chaos_a_speed, snow_strength_a, snow_strength_a_speed,
+			portal_shift_x_a, portal_shift_x_a_speed, portal_shift_y_a, portal_shift_y_a_speed, portal_size_a, portal_size_a_speed, portal_center_x_a, portal_center_x_a_speed, portal_center_y_a, portal_center_y_a_speed, portal_opacity_a, portal_opacity_a_speed,
+			janus_shift_a, janus_shift_a_speed, janus_zoom_a, janus_zoom_a_speed, janus_opacity_a, janus_opacity_a_speed, janus_center_x_a, janus_center_x_a_speed, janus_center_y_a, janus_center_y_a_speed,
+			canvas_scale_a, canvas_scale_a_speed, canvas_strength_a, canvas_strength_a_speed, canvas_style_a, canvas_flow_a, canvas_chaos_a, canvas_chaos_a_speed
 		);
 
-		// --- APPLY VARIATION B ---
+		// CALCULATE uv_b
 		vec2 uv_b = apply_variation(transformed_uv + translate_b, variation_mode_b,
 			sinusoidal_scale_b, sinusoidal_scale_b_speed, sinusoidal_strength_b, sinusoidal_strength_b_speed,
 			spherical_strength_b, spherical_strength_b_speed, spherical_center_x_b, spherical_center_x_b_speed, spherical_center_y_b, spherical_center_y_b_speed,
@@ -2394,60 +2585,19 @@ void fragment() {
 			truchet_scale_b, truchet_scale_b_speed, truchet_rotate_b, truchet_rotate_b_speed, truchet_strength_b, truchet_strength_b_speed, truchet_mode_b,
 			reptile_scale_b, reptile_scale_b_speed, reptile_rotate_b, reptile_rotate_b_speed,
 			popcorn_scale_b, popcorn_scale_b_speed, popcorn_strength_b, popcorn_strength_b_speed, popcorn_density_b, popcorn_density_b_speed,
-			// GlynnSim
 			glynn_radius_b, glynn_thickness_b, glynn_contrast_b, glynn_pow_b, glynn_phi1_b, glynn_phi2_b,
 			glynn_radius_b_speed, glynn_thickness_b_speed, glynn_contrast_b_speed, glynn_pow_b_speed, glynn_phi1_b_speed, glynn_phi2_b_speed, glynn_ring_mode_b,
-			// Lazy Mega
 			lazy_shape_b, lazy_inside_mode_b, lazy_outside_mode_b, lazy_amount_b, lazy_amount_b_speed, lazy_twist_b, lazy_twist_b_speed, lazy_spin_b, lazy_spin_b_speed, lazy_space_b, lazy_space_b_speed, lazy_offset_x_b, lazy_offset_y_b,
 			lazy_ring_mode_b, lazy_ring_spin_b, lazy_ring_spin_b_speed, lazy_edge_softness_b,
-			// Nebula
-			nebula_scale_b, nebula_scale_b_speed,
-			nebula_speed_b, nebula_speed_b_speed,
-			nebula_detail_b, nebula_detail_b_speed,
-			nebula_distortion_b, nebula_distortion_b_speed,
-			nebula_swirl_b, nebula_swirl_b_speed, nebula_filaments_b,
-			// Jigsaw
-			jigsaw_scale_b, jigsaw_scale_b_speed,
-			jigsaw_tab_size_b, jigsaw_tab_size_b_speed,
-			jigsaw_distortion_b, jigsaw_distortion_b_speed, jigsaw_outline_b,
-			// Gnarl
-			gnarl_mode_b,
-    vec2(gnarl_scale_x_b, gnarl_scale_y_b),
-    vec2(gnarl_freq_x1_b, gnarl_freq_y1_b),
-    vec2(gnarl_freq_x2_b, gnarl_freq_y2_b),
-    vec2(gnarl_freq_x3_b, gnarl_freq_y3_b),
-    vec2(gnarl_c1_b, gnarl_c2_b),
-    gnarl_distort_b,
-	vec2(gnarl_scale_x_b_speed, gnarl_scale_y_b_speed),
-    vec2(gnarl_freq_x1_b_speed, gnarl_freq_y1_b_speed),
-    vec2(gnarl_freq_x2_b_speed, gnarl_freq_y2_b_speed),
-    vec2(gnarl_freq_x3_b_speed, gnarl_freq_y3_b_speed),
-    vec2(gnarl_c1_b_speed, gnarl_c2_b_speed),
-    gnarl_distort_b_speed,
-    // Constructivist Args
-    construction_density_b, construction_density_b_speed,
-    construction_circles_b, construction_circles_b_speed,
-    construction_chaos_b,   construction_chaos_b_speed,
-    construction_thickness_b, construction_thickness_b_speed,
-	// Snowflake Args
-    snow_scale_b,    snow_scale_b_speed,
-    snow_branches_b, snow_branches_b_speed,
-    snow_thickness_b,snow_thickness_b_speed,
-    snow_chaos_b,    snow_chaos_b_speed,
-	snow_strength_b, snow_strength_b_speed,
-	
-	portal_shift_x_b, portal_shift_x_b_speed,
-	portal_shift_y_b, portal_shift_y_b_speed,
-	portal_size_b, portal_size_b_speed,
-	portal_center_x_b, portal_center_x_b_speed,
-	portal_center_y_b, portal_center_y_b_speed,
-	portal_opacity_b, portal_opacity_b_speed,
-	
-	janus_shift_b, janus_shift_b_speed,
-	janus_zoom_b, janus_zoom_b_speed,
-	janus_opacity_b, janus_opacity_b_speed,
-	janus_center_x_b, janus_center_x_b_speed,
-	janus_center_y_b, janus_center_y_b_speed
+			nebula_scale_b, nebula_scale_b_speed, nebula_speed_b, nebula_speed_b_speed, nebula_detail_b, nebula_detail_b_speed, nebula_distortion_b, nebula_distortion_b_speed, nebula_swirl_b, nebula_swirl_b_speed, nebula_filaments_b,
+			jigsaw_scale_b, jigsaw_scale_b_speed, jigsaw_tab_size_b, jigsaw_tab_size_b_speed, jigsaw_distortion_b, jigsaw_distortion_b_speed, jigsaw_outline_b,
+			gnarl_mode_b, vec2(gnarl_scale_x_b, gnarl_scale_y_b), vec2(gnarl_freq_x1_b, gnarl_freq_y1_b), vec2(gnarl_freq_x2_b, gnarl_freq_y2_b), vec2(gnarl_freq_x3_b, gnarl_freq_y3_b), vec2(gnarl_c1_b, gnarl_c2_b), gnarl_distort_b,
+			vec2(gnarl_scale_x_b_speed, gnarl_scale_y_b_speed), vec2(gnarl_freq_x1_b_speed, gnarl_freq_y1_b_speed), vec2(gnarl_freq_x2_b_speed, gnarl_freq_y2_b_speed), vec2(gnarl_freq_x3_b_speed, gnarl_freq_y3_b_speed), vec2(gnarl_c1_b_speed, gnarl_c2_b_speed), gnarl_distort_b_speed,
+			construction_density_b, construction_density_b_speed, construction_circles_b, construction_circles_b_speed, construction_chaos_b, construction_chaos_b_speed, construction_thickness_b, construction_thickness_b_speed,
+			snow_scale_b, snow_scale_b_speed, snow_branches_b, snow_branches_b_speed, snow_thickness_b, snow_thickness_b_speed, snow_chaos_b, snow_chaos_b_speed, snow_strength_b, snow_strength_b_speed,
+			portal_shift_x_b, portal_shift_x_b_speed, portal_shift_y_b, portal_shift_y_b_speed, portal_size_b, portal_size_b_speed, portal_center_x_b, portal_center_x_b_speed, portal_center_y_b, portal_center_y_b_speed, portal_opacity_b, portal_opacity_b_speed,
+			janus_shift_b, janus_shift_b_speed, janus_zoom_b, janus_zoom_b_speed, janus_opacity_b, janus_opacity_b_speed, janus_center_x_b, janus_center_x_b_speed, janus_center_y_b, janus_center_y_b_speed,
+			canvas_scale_b, canvas_scale_b_speed, canvas_strength_b, canvas_strength_b_speed, canvas_style_b, canvas_flow_b, canvas_chaos_b, canvas_chaos_b_speed
 		);
 
 		vec2 mixed_uv = mix(uv_a, uv_b, variation_mix);
@@ -2456,18 +2606,10 @@ void fragment() {
 		float dist = 0.0;
 		vec2 p_centered = mixed_uv;
 
-		if (escape_shape == 0) { // Circle
-			dist = length(p_centered);
-		}
-		else if (escape_shape == 1) { // Square
-			dist = max(abs(p_centered.x), abs(p_centered.y));
-		}
-		else if (escape_shape == 2) { // Cross
-			dist = min(abs(p_centered.x), abs(p_centered.y));
-		}
-		else if (escape_shape == 3) { // Diamond
-			dist = (abs(p_centered.x) + abs(p_centered.y)) * 0.7;
-		}
+		if (escape_shape == 0) { dist = length(p_centered); }
+		else if (escape_shape == 1) { dist = max(abs(p_centered.x), abs(p_centered.y)); }
+		else if (escape_shape == 2) { dist = min(abs(p_centered.x), abs(p_centered.y)); }
+		else if (escape_shape == 3) { dist = (abs(p_centered.x) + abs(p_centered.y)) * 0.7; }
 
 		// Apply Post-Transforms
 		mixed_uv *= rotate(post_rotation);
@@ -2489,37 +2631,36 @@ void fragment() {
 
 		// --- FINAL MIXING ---
 		vec4 transformed_color;
+		
 		if (final_uv.x > 5000.0) {
-			// It's an outline! Draw Black (or Outline Color)
 			transformed_color = vec4(0.0, 0.0, 0.0, 1.0);
 		} else {
 			transformed_color = texture(previous_frame, final_uv);
 		}
 
+		// --- FEEDBACK LOGIC ---
 		if (use_escape_time) {
 			float mask = smoothstep(escape_limit, escape_limit + escape_smoothness, dist);
 			if (escape_invert) { mask = 1.0 - mask; }
-			vec4 feedback_result = mix(start_pattern_color, transformed_color, feedback_amount);
-			final_color = mix(feedback_result, start_pattern_color, mask);
+			
+			vec4 feedback_result = mix(feed_color, transformed_color, feedback_amount);
+			final_color = mix(feedback_result, feed_color, mask);
 		} else {
-			final_color = mix(start_pattern_color, transformed_color, feedback_amount);
+			final_color = mix(feed_color, transformed_color, feedback_amount);
 		}
 	}
-// --- NEBULA STARS ---
-	// Add stars if we are in Nebula mode (ID 38) and density > 0
+
+    // --- NEBULA STARS ---
 	float star_density = 0.0;
 	if (variation_mode_a == 38) star_density += nebula_stars_a;
 	if (variation_mode_b == 38) star_density += nebula_stars_b;
 
 	if (star_density > 0.00001) {
-		// Simple high-frequency noise threshold
-		float star_rnd = rand(UV * 100.0 + time * 0.1); // Twinkling
+		float star_rnd = rand(UV * 100.0 + time * 0.1); 
 		if (star_rnd > (1.0 - star_density)) {
-			// Add a bright white star
 			final_color += vec4(1.0);
 		}
 	}
-	COLOR = final_color;
 
-	
+	COLOR = final_color;
 }
