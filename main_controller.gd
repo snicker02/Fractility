@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 3.6
+const PROGRAM_VERSION = 3.7
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -117,6 +117,27 @@ var escape_invert: bool = false
 var as_wave_speed: float = 1.0
 var voxel_height_scale: float = 5.0
 var voxel_cube_scale: float = 0.2
+
+@onready var voxel_flow_params: VBoxContainer = %VoxelFlowParams
+@onready var voxel_tubes: MultiMeshInstance3D = %VoxelTubes
+@onready var voxel_thickness_slider: HSlider = %VoxelThicknessSlider
+@onready var voxel_thickness_spinbox: SpinBox = %VoxelThicknessSpinBox
+@onready var voxel_smooth_slider: HSlider = %VoxelSmoothSlider
+@onready var voxel_smooth_spinbox: SpinBox = %VoxelSmoothSpinBox
+@onready var voxel_length_slider: HSlider = %VoxelLengthSlider
+@onready var voxel_length_spinbox: SpinBox = %VoxelLengthSpinBox
+@onready var voxel_tube_density_slider: HSlider = %VoxelTubeDensitySlider
+@onready var voxel_tube_density_spinbox: SpinBox = %VoxelTubeDensitySpinBox
+@onready var flow_speed_slider: HSlider = %FlowSpeedSlider
+@onready var flow_speed_spinbox: SpinBox = %FlowSpeedSpinBox
+
+var voxel_tube_resolution: int = 60 # Default to 60 for cleaner tubes
+var voxel_thickness: float = 1.2
+var voxel_flow_smoothness: float = 5.0
+var voxel_tube_length: float = 3.0
+var current_flow_time: float = 0.0
+var flow_speed: float = 0.0
+
 # --- Snowflake UI References ---
 @onready var generator_spinbox: SpinBox = %GeneratorSpinBox
 @onready var gen_branch_spinbox: SpinBox = %GenBranchSpinBox
@@ -318,7 +339,7 @@ var mandel_texture_scale: float = 1.0
 # --- Node References ---
 # Main Layout
 #@onready var collapse_button: Button = %CollapseButton
-@onready var scroll_container: ScrollContainer = %ScrollContainer
+#@onready var scroll_container: ScrollContainer = %ScrollContainer
 @onready var load_image_button: Button = %LoadImageButton
 @onready var mirror_tiling_check_box: CheckBox = %MirrorTilingCheckBox
 @onready var shape_selector_button: OptionButton = %ShapeSelectorButton
@@ -394,7 +415,7 @@ var mandel_texture_scale: float = 1.0
 @onready var post_kaleidoscope_spinbox: SpinBox = %PostKaleidoscopeSlicesSpinBox
 
 # Start Pattern Controls
-@onready var show_grid_check: CheckBox = %ShowGridCheck
+
 @onready var show_circles_check: CheckBox = %ShowCirclesCheck
 
 # Transform Controls
@@ -1518,7 +1539,8 @@ func _ready() -> void:
 		quality_dropdown.select(1) # Default to Balanced
 		
 		quality_dropdown.item_selected.connect(_on_quality_changed)
-
+	setup_flow_tubes()
+	_on_shape_selected(shape_selector_button.selected)
 func _on_quality_changed(index: int):
 	match index:
 		0: current_step_speed = 0.6  # Fast, creates holes/noise
@@ -1757,7 +1779,7 @@ func _save_3d_view_desktop(path: String) -> void:
 			final_image = composite_texture.get_image()
 		
 		# Cleanup
-		composite_viewport.size = Vector2i(1, 1)
+		composite_viewport.size = Vector2i(16, 16)
 
 	else: 
 		# If no background, just use the High-Res 3D image
@@ -1836,6 +1858,21 @@ func _on_shape_selected(shape_index: int):
 		return
 
 	var new_mesh: Mesh = null
+	
+	# ==================================================
+	# 1. GLOBAL RESET (THE CRITICAL FIX)
+	# Turn OFF all 3D objects first. Only turn the right one back on later.
+	# ==================================================
+	if fractal_mesh: fractal_mesh.visible = false
+	if voxel_grid: voxel_grid.visible = false
+	if voxel_tubes: voxel_tubes.visible = false # Explicitly hide tubes
+
+	# Turn OFF all special UI panels
+	if ab_params: ab_params.visible = false
+	if as_params: as_params.visible = false
+	if raymarch_core_params: raymarch_core_params.visible = false
+	if voxel_controls: voxel_controls.visible = false
+	# ==================================================
 
 	# --- STEP 1: CREATE GEOMETRY ---
 	match shape_index:
@@ -1882,30 +1919,23 @@ func _on_shape_selected(shape_index: int):
 		9: # Voxel Grid
 			is_raymarching = false
 			fractal_mesh.visible = false 
-			
+			if voxel_tubes: voxel_tubes.visible = false # Ensure tubes are OFF
+
 			# 1. Show Voxel Controls
 			if voxel_controls: voxel_controls.visible = true
 			
+			# FIX ISSUE 3: HIDE FLOW PARAMS WHEN IN GRID MODE
+			if voxel_flow_params: voxel_flow_params.visible = false
 			
-			# 2. Hide Standard Mesh / Raymarch Core (Junk)
 			if standard_mesh_controls: standard_mesh_controls.visible = false
 			if raymarch_core_params: raymarch_core_params.visible = false
-			if ab_params: ab_params.visible = false # Amazing Box panel
+			if ab_params: ab_params.visible = false 
 
-			# --- 3. THE "JUST WHAT I WANT" LOGIC ---
-			
-			# A. Turn ON the Modifiers Panel (Parent)
 			if as_params: as_params.visible = true 
-			
-			# B. Turn OFF the specific sub-sections we hate
 			if as_julia_container: as_julia_container.visible = false
 			if as_fold_container: as_fold_container.visible = false
 			if as_rotate_container: as_rotate_container.visible = false
-			# C. (Optional) Turn ON the sections we want (Twist/Wave) 
-			# (They are usually visible by default, but good to be safe)
-			# if as_twist_container: as_twist_container.visible = true
 			
-			# 4. Show Main
 			mandel_controls.visible = true 
 		
 			if voxel_grid:
@@ -1914,42 +1944,36 @@ func _on_shape_selected(shape_index: int):
 				mat.shader = load("res://voxel_visualizer.gdshader")
 				voxel_grid.material_override = mat
 
-	# --- STEP 2: APPLY MATERIALS & UI ---
-	
-	# 1. GLOBAL RESET: Turn OFF all special panels first
-	# This prevents "Ghost UI" from showing up where it shouldn't.
-	if ab_params: ab_params.visible = false
-	if as_params: as_params.visible = false
-	if raymarch_core_params: raymarch_core_params.visible = false
-	if voxel_controls: voxel_controls.visible = false
-	
-	# 2. VOXEL GRID LOGIC (ID 9)
-	if shape_index == 9:
-		is_raymarching = false
-		fractal_mesh.visible = false
-		
-		# Show Main Controls
-		mandel_controls.visible = true
-		if voxel_controls: voxel_controls.visible = true
-		
-		# --- SHOW CHAOS MODIFIERS (Twist/Wave) ---
-		if as_params: as_params.visible = true # <--- CHANGE THIS TO TRUE!
-		
-		# Hide irrelevant stuff
-		if raymarch_core_params: raymarch_core_params.visible = false
-		if standard_mesh_controls: standard_mesh_controls.visible = false # Keep standard for Emission
-		
-		if voxel_grid:
-			voxel_grid.visible = true
-			var mat = ShaderMaterial.new()
-			mat.shader = load("res://voxel_visualizer.gdshader")
-			voxel_grid.material_override = mat
+		10: # Flow Tubes10: # Flow Tubes
+			is_raymarching = false
+			fractal_mesh.visible = false
+			if voxel_grid: voxel_grid.visible = false 
 
-	# 3. STANDARD MESH / RAYMARCH LOGIC (0-8)
-	elif new_mesh:
+			mandel_controls.visible = true 
+			if voxel_controls: voxel_controls.visible = true
+			if voxel_flow_params: voxel_flow_params.visible = true
+			if as_params: as_params.visible = true 
+			
+			if voxel_tubes: 
+				voxel_tubes.visible = true
+				
+				# --- FIX: Load the SPECIFIC shader for tubes ---
+				var mat = ShaderMaterial.new()
+				mat.shader = load("res://VoxelTubes.gdshader") # <--- CHANGED THIS LINE
+				voxel_tubes.material_override = mat
+				# -----------------------------------------------
+				
+			setup_flow_tubes()
+
+	# --- STEP 2: APPLY MATERIALS & UI FOR STANDARD/RAYMARCH ---
+	
+	if new_mesh:
+		# Ensure 3D modes are off
+		if voxel_grid: voxel_grid.visible = false
+		if voxel_tubes: voxel_tubes.visible = false
+
 		fractal_mesh.mesh = new_mesh
 		fractal_mesh.visible = true
-		if voxel_grid: voxel_grid.visible = false
 		
 		# Show Main Container
 		mandel_controls.visible = true 
@@ -1958,19 +1982,15 @@ func _on_shape_selected(shape_index: int):
 		if shape_index >= 5:
 			is_raymarching = true
 			var mat = ShaderMaterial.new()
-			# UI: Show Core Raymarch Sliders
-			if raymarch_core_params: raymarch_core_params.visible = true
 			
-			# UI: Hide Standard Mesh Controls
+			if raymarch_core_params: raymarch_core_params.visible = true
 			if standard_mesh_controls: standard_mesh_controls.visible = false
 
-			# --- FIX: RESTORE CHAOS MODIFIERS ---
-			# Voxel Mode hides these children, so we MUST turn them back ON for 3D Fractals.
 			if as_params: as_params.visible = true
 			if as_julia_container: as_julia_container.visible = true
 			if as_fold_container: as_fold_container.visible = true
 			if as_rotate_container: as_rotate_container.visible = true
-			# Load Shaders
+
 			if shape_index == 5: mat.shader = load("res://raymarch_mandelbulb.gdshader")
 			elif shape_index == 6: mat.shader = load("res://raymarch_menger.gdshader")
 			elif shape_index == 7: mat.shader = load("res://raymarch_amazingbox.gdshader")
@@ -1978,19 +1998,8 @@ func _on_shape_selected(shape_index: int):
 			
 			fractal_mesh.set_surface_override_material(0, mat)
 			
-			# UI: Show Core Raymarch Sliders (Power, Iterations)
-			if raymarch_core_params: raymarch_core_params.visible = true
-			
-			# UI: Show Chaos Modifiers (Twist, Wave, Julia) for ALL Raymarchers
-			# This fixes the missing variables for Menger/Mandelbulb
-			if as_params: as_params.visible = true 
-			
-			# UI: Show Amazing Box Specifics (Fold/Radius) ONLY for Box (7)
 			if shape_index == 7:
 				if ab_params: ab_params.visible = true
-				
-			# UI: Hide Standard Mesh Controls
-			if standard_mesh_controls: standard_mesh_controls.visible = false
 
 		# --- STANDARD MESHES (0-4) ---
 		else:
@@ -1999,7 +2008,6 @@ func _on_shape_selected(shape_index: int):
 			mat.shader = load("res://fractal_3d_displacement.gdshader")
 			fractal_mesh.set_surface_override_material(0, mat)
 			
-			# UI: Show Standard Controls (Height, Glow)
 			if standard_mesh_controls: standard_mesh_controls.visible = true
 			
 			if shape_index == 2: # Quad
@@ -2348,7 +2356,7 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	tiling_check_box.set_pressed_no_signal(initial_values.get("tiling", true))
 	mirror_tiling_check_box.set_pressed_no_signal(initial_values.get("mirror_tiling", false))
 	reset_on_drag_check.button_pressed = initial_values.get("reset_on_drag", true)
-	show_grid_check.button_pressed = initial_values.get("show_grid", false)
+
 	show_circles_check.set_pressed_no_signal(initial_values.get("show_circles", true))
 	post_translate_radio.set_pressed_no_signal(initial_values.get("move_post", true))
 	pre_translate_radio.set_pressed_no_signal(initial_values.get("move_pre", false))
@@ -2533,6 +2541,73 @@ func initialize_ui(initial_values: Dictionary) -> void:
 	if voxel_cube_scale_spinbox: voxel_cube_scale_spinbox.set_value_no_signal(initial_values.get("voxel_cube", 0.2))
 	if voxel_height_slider: voxel_height_slider.set_value_no_signal(initial_values.get("voxel_height", 5.0))
 	if voxel_height_spinbox: voxel_height_spinbox.set_value_no_signal(initial_values.get("voxel_height", 5.0))
+	
+	# --- FLOW TUBE CONTROLS ---
+	
+	# Thickness
+	if voxel_thickness_slider:
+		voxel_thickness_slider.value_changed.connect(func(v): 
+			voxel_thickness = v
+			if voxel_thickness_spinbox: voxel_thickness_spinbox.set_value_no_signal(v)
+			)
+	if voxel_thickness_spinbox:
+		voxel_thickness_spinbox.value_changed.connect(func(v): 
+			voxel_thickness = v
+			if voxel_thickness_slider: voxel_thickness_slider.set_value_no_signal(v)
+		)
+
+	# Smoothness
+	if voxel_smooth_slider:
+		voxel_smooth_slider.value_changed.connect(func(v): 
+			voxel_flow_smoothness = v
+			if voxel_smooth_spinbox: voxel_smooth_spinbox.set_value_no_signal(v)
+		)
+	if voxel_smooth_spinbox:
+		voxel_smooth_spinbox.value_changed.connect(func(v): 
+			voxel_flow_smoothness = v
+			if voxel_smooth_slider: voxel_smooth_slider.set_value_no_signal(v)
+		)
+
+	# Tube Length
+	if voxel_length_slider:
+		voxel_length_slider.value_changed.connect(func(v): 
+			voxel_tube_length = v
+			if voxel_length_spinbox: voxel_length_spinbox.set_value_no_signal(v)
+		)
+	if voxel_length_spinbox:
+		voxel_length_spinbox.value_changed.connect(func(v): 
+			voxel_tube_length = v
+			if voxel_length_slider: voxel_length_slider.set_value_no_signal(v)
+		)
+		
+	# --- Tube Density Control ---
+	if voxel_tube_density_slider:
+		voxel_tube_density_slider.value_changed.connect(func(v): 
+			voxel_tube_resolution = int(v)
+			if voxel_tube_density_spinbox: voxel_tube_density_spinbox.set_value_no_signal(v)
+			
+			setup_flow_tubes() # <--- FIXED: Now calls the Tube function!
+		)
+		
+	if voxel_tube_density_spinbox:
+		voxel_tube_density_spinbox.value_changed.connect(func(v): 
+			voxel_tube_resolution = int(v)
+			if voxel_tube_density_slider: voxel_tube_density_slider.set_value_no_signal(v)
+			
+			setup_flow_tubes() # <--- FIXED: Now calls the Tube function!
+		)
+	# Tube Speed
+	if flow_speed_slider:
+		flow_speed_slider.value_changed.connect(func(v): 
+			flow_speed = v
+			if flow_speed_spinbox: flow_speed_spinbox.set_value_no_signal(v)
+		)
+	if flow_speed_spinbox:
+		flow_speed_spinbox.value_changed.connect(func(v): 
+			flow_speed = v
+			if flow_speed_slider: flow_speed_slider.set_value_no_signal(v)
+		)
+		
 	# CRITICAL: Update the variables to match!
 	limit_to_top = limit_top_check.button_pressed
 	use_dynamic_material = dynamic_material_check.button_pressed
@@ -2836,8 +2911,8 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 			printerr("Error saving image. Code: ", error)
 
 	# Clean up viewport sizes
-	save_viewport.size = Vector2i(1, 1)
-	post_process_save_viewport.size = Vector2i(1, 1)
+	save_viewport.size = Vector2i(16, 16)
+	post_process_save_viewport.size = Vector2i(16, 16)
 func _process(delta: float) -> void:
 	# --- AUTO ROTATION LOGIC ---
 	if auto_rotate_active and is_3d_view and not animation_paused:
@@ -3127,7 +3202,7 @@ func _process(delta: float) -> void:
 				
 				# 2. Height (Use voxel_height_scale variable)
 				# Make sure this variable is connected to your Height Slider!
-				voxel_mat.set_shader_parameter("height_scale", voxel_height_scale * displacement_strength * 10.0)
+				voxel_mat.set_shader_parameter("height_scale", voxel_height_scale)
 				# Use Emission Slider for Glow
 				voxel_mat.set_shader_parameter("emission_energy", emission_strength)
 				# 3. Cube Size
@@ -3154,7 +3229,49 @@ func _process(delta: float) -> void:
 				voxel_mat.set_shader_parameter("time", time)
 				# Optional: Send Time if you want moving waves
 				voxel_mat.set_shader_parameter("time", time)
+			# ==================================================
+	# NEW: Update Flow Tubes Shader if active
+	# ==================================================
+	if voxel_tubes and voxel_tubes.visible:
+	# 1. Update the custom time
+		if not animation_paused:
+			current_flow_time += delta * flow_speed
+			if fractal_mesh: fractal_mesh.visible = false
+			if voxel_grid: voxel_grid.visible = false
+			#if voxel_tubes: voxel_tubes.visible = false # Explicitly hide tubes
+
+			# Turn OFF all special UI panels
+			if ab_params: ab_params.visible = false
+			if as_params: as_params.visible = false
+			if raymarch_core_params: raymarch_core_params.visible = false
+			if voxel_controls: voxel_controls.visible = false
+		var tube_mat = voxel_tubes.material_override as ShaderMaterial
 	
+		if tube_mat:
+			var current_tex = viewport_b.get_texture() if is_a_source else viewport_a.get_texture()
+			tube_mat.set_shader_parameter("fractal_texture", current_tex)
+		
+			# Existing params
+			tube_mat.set_shader_parameter("height_scale", voxel_height_scale) 
+			tube_mat.set_shader_parameter("thickness_scale", voxel_thickness)
+			tube_mat.set_shader_parameter("flow_smoothness", voxel_flow_smoothness)
+			tube_mat.set_shader_parameter("tube_length", voxel_tube_length)
+			tube_mat.set_shader_parameter("flow_time", current_flow_time)
+			
+			# Lighting & Color Grading (The fix for your issue)
+			if light_3d:
+				var light_dir = light_3d.global_transform.basis.z
+				tube_mat.set_shader_parameter("light_direction", light_dir)
+				var l_col = Vector3(light_color.r, light_color.g, light_color.b)
+				tube_mat.set_shader_parameter("light_color_val", l_col)
+				tube_mat.set_shader_parameter("light_energy_val", light_energy)
+
+			tube_mat.set_shader_parameter("brightness", brightness)
+			tube_mat.set_shader_parameter("contrast", contrast)
+			tube_mat.set_shader_parameter("saturation", saturation)
+			tube_mat.set_shader_parameter("sharpen", sharpen)
+			tube_mat.set_shader_parameter("gamma", gamma)
+			tube_mat.set_shader_parameter("vibrance", vibrance)
 func _load_image_from_base64(b64_string: String) -> void:
 	if not "," in b64_string:
 		print("Error: Invalid Base64 string format (missing comma).")
@@ -4036,6 +4153,7 @@ func _populate_all_dropdowns():
 	shape_selector_button.add_item("Amazing Box (Raymarch)") # Index 7
 	shape_selector_button.add_item("Amazing Surf (Raymarch)") # Index 8
 	shape_selector_button.add_item("Voxel Grid (Real 3D)") # Index 9
+	shape_selector_button.add_item("Flow Tubes") # Index 10
 
 func _get_id_from_name(var_name: String) -> int:
 	if VariationManager.VARIATIONS.has(var_name):
@@ -4667,7 +4785,7 @@ func _on_record_timer_timeout():
 			if is_instance_valid(composite_texture):
 				final_image = composite_texture.get_image()
 			
-			composite_viewport.size = Vector2i(1, 1)
+			composite_viewport.size = Vector2i(16, 16)
 
 		else: # 3D view, no background
 			final_image = image_3d
@@ -4807,8 +4925,10 @@ func setup_voxel_grid():
 	var mm = voxel_grid.multimesh
 	var count = voxel_resolution * voxel_resolution
 	
-	mm.instance_count = count
-	mm.visible_instance_count = count
+	# Update Instance Count
+	if mm.instance_count != count:
+		mm.instance_count = count
+		mm.visible_instance_count = count
 	
 	var size = 20.0 # Physical size of the floor
 	var step = size / float(voxel_resolution)
@@ -4820,12 +4940,53 @@ func setup_voxel_grid():
 			
 			# 1. Position
 			var pos = Vector3(x * step - offset, 0.0, z * step - offset)
+			
+			# --- RESTORED OLD BEHAVIOR ---
+			# We use Basis() (Identity Rotation/Scale).
+			# This means the script sets the position, but leaves the Scale at 1.0.
+			# Your Shader will handle the shrinking/growing based on the "voxel_cube_scale" uniform.
 			var t = Transform3D(Basis(), pos)
 			mm.set_instance_transform(i, t)
 			
 			# 2. Custom Data (UVs)
-			# We store the 0..1 texture coordinate in the Custom Data X/Y
 			var u = float(x) / float(voxel_resolution)
 			var v = float(z) / float(voxel_resolution)
-			# Color is mostly unused since we sample texture, but CustomData is vital
 			mm.set_instance_custom_data(i, Color(u, v, 0.0, 0.0))
+func setup_flow_tubes():
+	if not voxel_tubes: return
+	
+	var mm = voxel_tubes.multimesh
+	var count = voxel_tube_resolution * voxel_tube_resolution
+	
+	var size = 20.0 
+	var step = size / float(voxel_tube_resolution)
+	var offset = size * 0.5
+	
+	# 1. Update Count
+	if mm.instance_count != count:
+		mm.instance_count = count
+		mm.visible_instance_count = count
+	
+	# 2. Position Loop
+	for z in range(voxel_tube_resolution):
+		for x in range(voxel_tube_resolution):
+			var i = z * voxel_tube_resolution + x
+			
+			# Position
+			var pos = Vector3(x * step - offset, 0.0, z * step - offset)
+			
+			# Transform (Standard Basis = Scale 1,1,1)
+			# We do NOT shrink them. The Shader controls thickness!
+			var t = Transform3D(Basis(), pos)
+			
+			mm.set_instance_transform(i, t)
+			
+			# Custom Data (UVs)
+			var u = float(x) / float(voxel_tube_resolution)
+			var v = float(z) / float(voxel_tube_resolution)
+			mm.set_instance_custom_data(i, Color(u, v, 0.0, 0.0))
+		if voxel_tubes.material_override == null:
+			var mat = ShaderMaterial.new()
+		# MAKE SURE THIS PATH MATCHES YOUR SHADER FILE NAME
+			mat.shader = load("res://VoxelTubes.gdshader") 
+			voxel_tubes.material_override = mat

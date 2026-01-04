@@ -2,7 +2,7 @@ shader_type canvas_item;
 
 struct VariationResult {
 	vec2 uv;
-	float dist; 
+	float dist;
 };
 
 // --- Uniforms ---
@@ -19,17 +19,22 @@ uniform bool show_grid = false;
 uniform bool show_circles = true;
 uniform sampler2D background_texture;
 uniform bool is_animating = false;
-uniform float escape_limit = 4.0; 
-uniform bool use_escape_time = false; 
-uniform int escape_shape = 0; 
-uniform float escape_smoothness : hint_range(0.0, 2.0) = 0.1; 
-uniform bool escape_invert = false; 
-uniform sampler2D input_texture; 
+uniform float escape_limit = 4.0;
+uniform bool use_escape_time = false;
+uniform int escape_shape = 0;
+uniform float escape_smoothness : hint_range(0.0, 2.0) = 0.1;
+uniform bool escape_invert = false;
+uniform sampler2D input_texture;
 
 // --- CONTROLS ---
 uniform float generator_strength = 0.0; // For Snowflake
 uniform float image_input_opacity = 0.5; // Controls Image Input Brightness
-
+// --- 3D SURFACE LIGHTING ---
+uniform bool lighting_enabled = false;
+uniform float lighting_strength = 2.0; // How "deep" the carving looks
+uniform float lighting_specular = 1.0; // How "shiny" the surface is
+uniform float lighting_roughness = 10.0; // 1.0 = Wet/Glossy, 20.0 = Matte/Rough
+uniform vec2 light_direction = vec2(0.5, -0.5); // X and Y direction of light source
 // Start Pattern Uniforms
 uniform float circle_count = 4.0;
 uniform float circle_radius = 0.2;
@@ -67,12 +72,12 @@ uniform float vibrance = 1.0;
 
 // Wave A Variation Uniforms
 uniform int wave_type_a;
-uniform float wave_frequency_a;      
-uniform float wave_frequency_a_speed; 
-uniform float wave_amplitude_a;      
-uniform float wave_amplitude_a_speed; 
-uniform float wave_phase_a;          
-uniform float wave_phase_a_speed;    
+uniform float wave_frequency_a;
+uniform float wave_frequency_a_speed;
+uniform float wave_amplitude_a;
+uniform float wave_amplitude_a_speed;
+uniform float wave_phase_a;
+uniform float wave_phase_a_speed;
 
 // Wave B Variation Uniforms
 uniform int wave_type_b;
@@ -877,20 +882,20 @@ vec2 apply_variation(vec2 uv, int variation_id,
     float s_thick,   float s_thick_s,
     float s_chaos,   float s_chaos_s,
     float s_strength, float s_strength_s,
-	
+
 	float portal_shift_x, float portal_shift_x_speed,
 	float portal_shift_y, float portal_shift_y_speed,
 	float portal_size, float portal_size_speed,
 	float portal_center_x, float portal_center_x_speed,
 	float portal_center_y, float portal_center_y_speed,
 	float portal_opacity, float portal_opacity_speed,
-	
+
 	float janus_shift, float janus_shift_speed,
 	float janus_zoom,  float janus_zoom_speed,
 	float janus_opacity, float janus_opacity_speed,
 	float janus_center_x, float janus_center_x_speed,
 	float janus_center_y, float janus_center_y_speed,
-	
+
 	float v_canvas_scale, float v_canvas_scale_speed,
 	float v_canvas_strength, float v_canvas_strength_speed,
 	float v_canvas_style, float v_canvas_flow,
@@ -1779,20 +1784,20 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 		return result;
 	}
 	else if (variation_id == 40) { // GNARL FRANKENSTEIN (DC + Vibration)
-        
+
         // 1. Calculate Animated Values
         float sx = g_scale.x + sin(time * g_scale_s.x);
         float sy = g_scale.y + sin(time * g_scale_s.y);
-        
+
         float fx1 = g_freq1.x + sin(time * g_freq1_s.x);
         float fy1 = g_freq1.y + sin(time * g_freq1_s.y);
-        
+
         float fx2 = g_freq2.x + sin(time * g_freq2_s.x);
         float fy2 = g_freq2.y + sin(time * g_freq2_s.y);
-        
+
         float fx3 = g_freq3.x + sin(time * g_freq3_s.x);
         float fy3 = g_freq3.y + sin(time * g_freq3_s.y);
-        
+
         float c1 = g_c.x + sin(time * g_c_s.x);
         float c2 = g_c.y + sin(time * g_c_s.y);
         float dist_amt = g_distort + sin(time * g_distort_s);
@@ -1801,7 +1806,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         float y0 = p.y;
         float x1 = 0.0;
         float y1 = 0.0;
-        
+
         // --- MODE 9: VIBRATION MONSTER ---
         if (g_mode == 9) {
             // Mapping Gnarl Vars to Vibration2 Params
@@ -1809,46 +1814,46 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
             float angle = c2;        // C2 = Angle 1
             float freq = fx1;        // Freq X1 = Base Freq
             float amp = sx;          // Scale X = Amplitude
-            
+
             // Modulation parameters (using Freq 2/3 vars)
             float dm = fx2;          // Dir Mod
             float tm = fy2;          // Angle Mod
             float fm = fx3;          // Freq Mod
             float am = fy3;          // Amp Mod
-            
+
             // WAVE 1 Calculation
             float d_along = x0 * cos(dir) + y0 * sin(dir);
             float dirL = dir + modulate(dm, 0.1, d_along);
             float angleL = angle + modulate(tm, 0.1, d_along);
             float freqL = modulate(fm, 0.1, d_along); // / freq removed for stability
             float ampL = amp + amp * modulate(am, 0.1, d_along);
-            
+
             float total_angle = angleL + dirL;
             float local_amp = ampL * sin((d_along * freq * 6.28) + freqL);
-            
+
             x1 = local_amp * cos(total_angle);
             y1 = local_amp * sin(total_angle);
-            
+
             // WAVE 2 Calculation (Secondary interference layer)
             // We reuse the variables but flipped (Y vars) to create complexity
             float dir2 = c1 + 1.57;  // Perpendicular
             float freq2 = fy1;
             float amp2 = sy;
-            
+
             float d_along2 = x0 * cos(dir2) + y0 * sin(dir2);
             float dirL2 = dir2 + modulate(fy2, 0.1, d_along2);
-            
+
             float total_angle2 = angle + dirL2; // Link angle to primary
             float local_amp2 = amp2 * sin((d_along2 * freq2 * 6.28));
-            
+
             x1 += local_amp2 * cos(total_angle2);
             y1 += local_amp2 * sin(total_angle2);
-            
+
             // Apply Logic: In Vibration, x1/y1 IS the displacement
             // We don't overwrite, we Add.
             p.x += x1;
             p.y += y1;
-            
+
             // Skip the standard Gnarl mixing below for this mode
             return p;
         }
@@ -1856,66 +1861,66 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
        // --- MODE 10: LIGHTNING GNARL (Exponential) ---
         if (g_mode == 10) {
             // No auto-animation (t = 0.0)
-            float t = 0.0; 
-            
+            float t = 0.0;
+
             // Exponential math creates sharp, electric spikes
             // Damped by 0.5 to prevent blowing out to pure white
             x1 = exp(sin(fx1 * y0)) * cos(fx2 * x0) * sx * 0.5;
             y1 = exp(sin(fy1 * x0)) * cos(fy2 * y0) * sy * 0.5;
-            
+
             // Additive mixing
             p.x += x1;
             p.y += y1;
-            
+
             // We use standard distortion logic at the end of the function
             // so simply return here to skip the x0/x1 average mix
             // (or let it fall through if you want standard mixing)
-            
+
             // Let's fall through to the end so Color/Distort still work!
             // But we need to update x0/y0 for the mix
-            x0 = p.x; 
+            x0 = p.x;
             y0 = p.y;
         }
 
         // --- MODE 11: DEEP LIQUID NOISE (Multi-Layer Perlin) ---
         else if (g_mode == 11) {
             float t = 0.0; // No auto-animation
-            
+
             // Layer 1: Base Flow (Controlled by Freq 1)
             float n1 = perlin_noise(p * fx1);
-            
+
             // Layer 2: Detail/Grit (Controlled by Freq 2)
             // We rotate it slightly to prevent grid alignment
             float n2 = perlin_noise((p * fx2) + vec2(43.0, 12.0));
-            
+
             // Layer 3: Warp/Distortion (Controlled by Freq 3)
             float n3 = perlin_noise((p * fx3) - vec2(15.0, 32.0));
-            
+
             // Combine layers: Base + (Detail * 0.5) + (Warp * 0.25)
             float final_noise = n1 + (n2 * 0.5) + (n3 * 0.25);
-            
+
             // Map noise to an angle (0 to 2PI)
             float angle = final_noise * 6.28;
-            
+
             // Create displacement
             x1 = cos(angle) * sx;
             y1 = sin(angle) * sy;
-            
+
             // Additive mixing feels more fluid
             p.x += x1;
             p.y += y1;
-            
+
             // Update for final mix step
             x0 = p.x;
             y0 = p.y;
         }
         // --- MODES 1-8: DC GNARLY ---
         float t = 0.0; // Internal flow for standard gnarl
-        
+
         if (g_mode == 1) {
             x1 = cos(fx1 * y0 + t + sin(fx2 * (y0 + sin(fx3 * y0))));
             y1 = cos(fy1 * x0 + t + sin(fy2 * (x0 + sin(fy3 * x0))));
-        } 
+        }
         else if (g_mode == 2) {
             x1 = sin(fx1 * y0 + t + sin(fx2 * (y0 + cos(fx3 * y0))));
             y1 = sin(fy1 * x0 + t + sin(fy2 * (x0 + cos(fy3 * x0))));
@@ -1960,24 +1965,24 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 
         // --- STEP 3: APPLY LOG DISTORTION ---
         if (abs(dist_amt) > 0.001) {
-            p += (s1 * dist_amt) * 0.5; 
+            p += (s1 * dist_amt) * 0.5;
         }
-        
+
         // --- STEP 4: APPLY COLOR/PHASE WARPING ---
         if (abs(c1) > 0.0 || abs(c2) > 0.0) {
-             float final_s1 = s1 * dist_amt; 
+             float final_s1 = s1 * dist_amt;
              float phase_val = abs(cos(x0 + x1 * c1 + final_s1) + sin(y0 + y1 * c2 + final_s1));
              p += vec2(sin(phase_val), cos(phase_val)) * 0.1;
         }
 
         return p;
     }
-	
+
 	else if (variation_id == 41) { // CONSTRUCTIVIST (Mondrian/Bauhaus)
         // 1. Animate
         float anim_den = max(1.0, c_density + sin(time * c_density_s));
         // anim_circ now controls Shape Variety (0.0 = Blocks only, 1.0 = All shapes)
-        float anim_variety = c_circles + sin(time * c_circles_s); 
+        float anim_variety = c_circles + sin(time * c_circles_s);
         float anim_chaos = c_chaos + sin(time * c_chaos_s);
         float anim_thick = max(0.001, c_thick + sin(time * c_thick_s));
 
@@ -1992,11 +1997,11 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         if (rnd > (1.0 - anim_chaos * 0.5)) {
             // FIX: Multiply time by the speed variable (c_chaos_s)
             // If speed is 0.0, this shift becomes constant (or 0 if time starts at 0)
-            float shift = time * c_chaos_s * 0.5 * (mod(id.y, 2.0) * 2.0 - 1.0); 
+            float shift = time * c_chaos_s * 0.5 * (mod(id.y, 2.0) * 2.0 - 1.0);
             f.x += shift;
             f = fract(f + 0.5) - 0.5;
         }
-		
+
 		// Define line width
 		float line_width = anim_thick * 0.015;
 
@@ -2008,7 +2013,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         float t_diamond = anim_variety * 0.4;
         float t_cross = anim_variety * 0.6;
         float t_triangle = anim_variety * 0.8;
-        
+
         float dist = 0.0;
         bool draw_shape_outline = false;
 
@@ -2017,7 +2022,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
             dist = length(f);
             // Draw at radius 0.4
             draw_shape_outline = abs(dist - 0.4) < line_width;
-        } 
+        }
         else if (rnd < t_diamond) {
             // --- DIAMOND (Rotated Square) ---
             // Manhattan distance
@@ -2028,7 +2033,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         else if (rnd < t_cross) {
              // --- CROSS (Union of two boxes) ---
              // Horizontal bar (wide, thin) vs Vertical bar (thin, tall)
-             float box1 = sdBox(f, vec2(0.4, 0.12)); 
+             float box1 = sdBox(f, vec2(0.4, 0.12));
              float box2 = sdBox(f, vec2(0.12, 0.4));
              // Union is min() of distances.
              dist = min(box1, box2);
@@ -2064,7 +2069,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
         // Return mapped coordinate
         return (id + 0.5 + f) / anim_den;
     }
-	
+
 	else if (variation_id == 42) { // SNOWFLAKE (Fractal Ice Upgrade)
 		// 1. Animate Parameters
 		float anim_scale = max(0.1, s_scale + sin(time * s_scale_s));
@@ -2075,45 +2080,45 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 
 		// 2. Center and Scale
 		vec2 p = uv * anim_scale;
-		
+
 		// 3. FRACTAL LOOP
 		// We loop 4 times to create recursive "frost" patterns
 		// Use the 'anim_str' (Strength slider) to fade the effect in/out
 		float strength_factor = clamp(anim_str, 0.0, 1.0);
-		
+
 		// Standard Hexagonal Angle (30 degrees)
 		// We modulate this with 'Branch' slider to let you open/close the crystals
-		float fold_angle = 0.523598 + (anim_branch * 0.2); 
+		float fold_angle = 0.523598 + (anim_branch * 0.2);
 		vec2 n = vec2(sin(fold_angle), cos(fold_angle));
 
 		for (int i = 0; i < 4; i++) {
 			// A. Symmetry Fold (Kaleidoscope)
 			p.x = abs(p.x);
 			p -= 2.0 * min(0.0, dot(p, n)) * n;
-			
+
 			// B. Shift & Scale (The Fractal part)
 			// 'Thickness' slider now controls how far apart the crystals are
-			p.y -= 1.0 + (anim_thick * 10.0); 
-			
+			p.y -= 1.0 + (anim_thick * 10.0);
+
 			// C. Rotation (Twist)
 			// 'Chaos' slider rotates the next layer of crystals
 			if (abs(anim_chaos) > 0.01) {
 				p *= rotate(anim_chaos * float(i));
 			}
-			
+
 			// D. Scale down for next iteration
-			p *= 1.4; 
+			p *= 1.4;
 		}
 
 		// 4. Return to 0..1 space
 		// We mix between original UV and Fractal UV based on strength
 		return mix(uv, p, strength_factor);
 	}
-	
+
 	else if (variation_id == 43) { // PORTAL (Fully Animated)
-		
+
 		// --- ANIMATION CALCULATIONS ---
-		
+
 		// 1. Center / Position Animation (Orbiting)
 		// We use an amplitude of 0.5 so it can move across half the screen.
 		float anim_center_x = portal_center_x + (sin(time * portal_center_x_speed) * 0.5);
@@ -2121,44 +2126,44 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 
 		// 2. Size Animation (Pulse)
 		float anim_size = portal_size + (sin(time * portal_size_speed) * 0.3);
-		anim_size = max(0.01, anim_size); 
-		
+		anim_size = max(0.01, anim_size);
+
 		// 3. Opacity Animation (Fade)
 		float anim_opacity = portal_opacity + sin(time * portal_opacity_speed);
-		anim_opacity = clamp(anim_opacity, 0.0, 1.0); 
-		
+		anim_opacity = clamp(anim_opacity, 0.0, 1.0);
+
 		// 4. Shift Animation (Internal Sway)
 		float anim_shift_x = portal_shift_x + (sin(time * portal_shift_x_speed) * 0.5);
 		float anim_shift_y = portal_shift_y + (sin(time * portal_shift_y_speed) * 0.5);
 
-		
+
 		// --- CORE LOGIC ---
-		
+
 		// 1. APPLY CENTER (Using Animated Values)
 		vec2 p_centered = (uv - 0.5) - vec2(anim_center_x, anim_center_y);
-		
+
 		// 2. APPLY ZOOM
 		vec2 p = (p_centered * 2.0) * anim_size;
-		
+
 		// --- STAGE 1: THE APERTURE ---
-		float fixed_v = 0.63661977; 
+		float fixed_v = 0.63661977;
 		float x = p.x;
 		float y = p.y;
-		
+
 		float tmp = y*y + x*x + 1.0;
 		float x2 = 2.0 * x;
 		float term1 = sqrt(max(0.0001, tmp + x2));
 		float term2 = sqrt(max(0.0001, tmp - x2));
 		float xmax = 0.5 * (term1 + term2);
-		
+
 		float a = x / max(0.0001, xmax);
 		float b = sqrt(max(0.0, 1.0 - a*a));
 		float sign_y = (y >= 0.0) ? 1.0 : -1.0;
-		
+
 		vec2 elliptic_p;
 		elliptic_p.x = fixed_v * atan(a, b);
 		elliptic_p.y = sign_y * fixed_v * log(max(0.0001, xmax + sqrt(max(0.0, xmax*xmax - 1.0))));
-		elliptic_p *= 1.2; 
+		elliptic_p *= 1.2;
 
 		// 3. BLEND (Opacity)
 		p = mix(p, elliptic_p, anim_opacity);
@@ -2166,21 +2171,21 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 		// --- STAGE 2: THE SHIFT ---
 		if (p.x >= 0.0) p.x += anim_shift_x;
 		else p.x -= anim_shift_x;
-		
+
 		if (p.y >= 0.0) p.y += anim_shift_y;
 		else p.y -= anim_shift_y;
-		
+
 		// 4. UN-CENTER
 		return (p / 2.0) + 0.5;
 	}
 	else if (variation_id == 44) { // JANUS (Centered & Robust)
-		
+
 		// 1. ANIMATION CALCULATIONS
-		float anim_shift = janus_shift + (time * janus_shift_speed * 0.5); 
-		
+		float anim_shift = janus_shift + (time * janus_shift_speed * 0.5);
+
 		float anim_zoom = janus_zoom + (sin(time * janus_zoom_speed) * 0.2);
-		anim_zoom = max(0.01, anim_zoom); 
-		
+		anim_zoom = max(0.01, anim_zoom);
+
 		float anim_opacity = janus_opacity + sin(time * janus_opacity_speed);
 		anim_opacity = clamp(anim_opacity, 0.0, 1.0);
 
@@ -2191,67 +2196,67 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 		// 2. APPLY CENTER & SCALE
 		// We subtract the center offset first, THEN scale up.
 		vec2 p_centered = (uv - 0.5) - vec2(anim_center_x, anim_center_y);
-		vec2 p = p_centered * 4.0 * anim_zoom; 
-		
+		vec2 p = p_centered * 4.0 * anim_zoom;
+
 		float r2 = dot(p, p);
 		float x2 = 2.0 * p.x;
-		
-		
+
+
 		// 3. JANUS MATH
-		
+
 		// --- Y Component (Angle) ---
 		float angle = 0.5 * atan(2.0 * p.y, r2 - 1.0);
-		
+
 		// Apply Shift
 		angle -= 0.5 * PI * anim_shift;
-		
+
 		// Wrap Angle cleanly
-		angle = mod(angle, PI); 
-		
+		angle = mod(angle, PI);
+
 		// --- X Component (Field Lines) ---
 		float num = (r2 + 1.0) + x2;
 		float den = (r2 + 1.0) - x2;
-		
+
 		// Safety check for division
 		if (abs(den) < 0.0001) den = 0.0001;
 		float fraction = abs(num / den);
-		
+
 		float log_val = log(fraction);
-		
+
 		// 4. MAPPING
 		vec2 janus_p;
 		janus_p.x = log_val * 0.2; // Tighter rings
-		janus_p.y = angle * (1.0 / PI); 
+		janus_p.y = angle * (1.0 / PI);
 
 		// 5. BLEND & RETURN
 		// We use fract() to force the texture to loop, preventing solid colors
 		vec2 final_p = mix(p * 0.25, janus_p, janus_opacity);
-		
+
 		return fract(final_p + 0.5);
 	}
-	
-	
+
+
 	else if (variation_id == 45) { // CANVAS (15 Styles: Oil to Spirit)
-		
+
 		// 1. ANIMATION & PARAMS
 		float anim_scale = max(1.0, v_canvas_scale + (sin(time * v_canvas_scale_speed) * 0.1));
 		float anim_str = v_canvas_strength + (sin(time * v_canvas_strength_speed) * 0.1);
-		
+
 		// Chaos Multi-Mode Selector
 		float raw_chaos = v_canvas_chaos + (sin(time * v_canvas_chaos_speed) * 0.1);
 		float flow_time = time * v_canvas_flow;
 
-		vec2 p = uv; 
+		vec2 p = uv;
 		vec2 paint_offset = vec2(0.0);
-		
+
 		// --- CHAOS SELECTOR ---
 		if (raw_chaos > 0.001) {
-			int chaos_mode = int(floor(abs(raw_chaos)));     
-			float chaos_power = fract(abs(raw_chaos));       
+			int chaos_mode = int(floor(abs(raw_chaos)));
+			float chaos_power = fract(abs(raw_chaos));
 			if (chaos_power < 0.001) chaos_power = 1.0;
 
 			if (chaos_mode == 0) { // Liquid
-				float cx = sin(p.y * 3.0 + flow_time); 
+				float cx = sin(p.y * 3.0 + flow_time);
 				float cy = cos(p.x * 3.0 + flow_time);
 				p += vec2(cx, cy) * chaos_power * 0.1;
 			}
@@ -2264,7 +2269,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 				p += rnd * chaos_power * 0.05;
 			}
 			else if (chaos_mode == 3) { // Tear
-				float slit = floor(p.y * 20.0); 
+				float slit = floor(p.y * 20.0);
 				float shift = sin(flow_time * 5.0 + slit);
 				p.x += shift * chaos_power * 0.05;
 			}
@@ -2272,8 +2277,8 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 				float res = 100.0 * (1.1 - chaos_power);
 				p = floor(p * res) / res;
 			}
-            else { 
-                float cx = sin(p.y * 10.0 + flow_time); 
+            else {
+                float cx = sin(p.y * 10.0 + flow_time);
 				p += vec2(cx, 0.0) * chaos_power * 0.1;
             }
 		}
@@ -2282,21 +2287,21 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 
 		// --- STYLE 0: OIL ---
 		if (style < 1.0) {
-			float influence = 1.0 - style; 
+			float influence = 1.0 - style;
 			float wave_x = sin(p.y * anim_scale * 8.0 + flow_time);
 			float wave_y = cos(p.x * anim_scale * 8.0 + flow_time);
 			paint_offset += vec2(wave_x, wave_y * 0.5) * 0.015 * anim_str * influence;
 		}
 		// --- STYLE 1: CUBISM ---
 		else if (style < 2.0) {
-			float influence = 1.0 - abs(1.0 - style); 
-			float blocks = anim_scale * 5.0; 
+			float influence = 1.0 - abs(1.0 - style);
+			float blocks = anim_scale * 5.0;
 			vec2 stepped_uv = floor(p * blocks) / blocks;
 			paint_offset += (p - stepped_uv) * anim_str * 2.0 * influence;
 		}
 		// --- STYLE 2: SKETCH ---
 		else if (style < 3.0) {
-			float influence = 1.0 - abs(2.0 - style); 
+			float influence = 1.0 - abs(2.0 - style);
 			float grain = sin(p.x * 200.0 * anim_scale) * sin(p.y * 200.0 * anim_scale);
 			float jitter_x = sin(p.x * anim_scale * 50.0 + flow_time * 20.0);
 			paint_offset += vec2(jitter_x + grain, grain) * 0.003 * anim_str * influence;
@@ -2310,7 +2315,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 			vec2 cell = floor(grid);
 			vec2 center = (cell + 0.5) / tiles;
 			vec2 mosaic_dist = (center - p);
-			if (mod(cell.y, 2.0) > 0.5) mosaic_dist.x -= (0.5/tiles); 
+			if (mod(cell.y, 2.0) > 0.5) mosaic_dist.x -= (0.5/tiles);
 			paint_offset += mosaic_dist * anim_str * influence;
 		}
 		// --- STYLE 4: WET INK ---
@@ -2335,7 +2340,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 			float influence = 1.0 - abs(6.0 - style);
 			float dabs = anim_scale * 15.0;
 			vec2 dab_id = floor(p * dabs);
-			float dab_angle = rand(dab_id) * 3.14 + flow_time; 
+			float dab_angle = rand(dab_id) * 3.14 + flow_time;
 			vec2 dab_uv = fract(p * dabs) - 0.5;
 			vec2 rot_dab = dab_uv * mat2(vec2(cos(dab_angle), -sin(dab_angle)), vec2(sin(dab_angle), cos(dab_angle)));
 			paint_offset += rot_dab * 0.1 * anim_str * influence;
@@ -2406,15 +2411,15 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 		}
 		// --- STYLE 14: SPIRIT (Ethereal) ---
 		else {
-			float influence = 1.0; 
-			
+			float influence = 1.0;
+
 			// Upward drifting sine waves
 			float drift = sin(p.x * 20.0 * anim_scale + flow_time * 2.0) + sin(p.x * 50.0 * anim_scale + flow_time * 5.0);
-			
+
 			// FIX: Use 'p.y' (local coord) instead of 'UV.y' (global)
 			// p.y is centered (-0.5 to 0.5), so adding 0.5 restores the 0-to-1 range
-			float fade = clamp(p.y + 0.5, 0.0, 1.0); 
-			
+			float fade = clamp(p.y + 0.5, 0.0, 1.0);
+
 			paint_offset.y -= drift * 0.02 * anim_str * influence * fade;
 		}
 
@@ -2422,7 +2427,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 	}
 
 
-        
+
 	return uv;
 }
 
@@ -2431,6 +2436,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
 void fragment() {
     vec4 final_color;
     vec4 start_pattern_color;
+	vec2 final_uv = UV;
 
     // --- STEP 1: CALCULATE BASE PATTERN ---
     if (start_pattern_mode == 0) { // Gradient + Grid
@@ -2487,7 +2493,7 @@ void fragment() {
 		vec4 top_mix = mix(grad_col_tl, grad_col_tr, UV.x);
 		vec4 bottom_mix = mix(grad_col_bl, grad_col_br, UV.x);
 		start_pattern_color = mix(top_mix, bottom_mix, UV.y);
-		
+
 		// Snowflake Mixing
 		vec4 snow_tex = texture(input_texture, UV);
 		start_pattern_color = mix(start_pattern_color, snow_tex, snow_tex.a * generator_strength);
@@ -2501,8 +2507,8 @@ void fragment() {
     // --- STEP 2: PREPARE FEED COLOR ---
     // This color is injected into the feedback loop every frame.
     vec4 feed_color = start_pattern_color;
-    
-    // For Image Input (Mode 2), we allow the user to dim the feed 
+
+    // For Image Input (Mode 2), we allow the user to dim the feed
     // so it doesn't create a strong ghost image.
     if (start_pattern_mode == 2) {
         feed_color = start_pattern_color * image_input_opacity;
@@ -2515,7 +2521,7 @@ void fragment() {
     }
     else {
         vec2 transformed_uv = UV - vec2(0.5);
-        
+
 		transformed_uv *= rotate(pre_rotation);
 		transformed_uv /= pre_scale;
 		transformed_uv += pre_translate;
@@ -2616,7 +2622,7 @@ void fragment() {
 		mixed_uv /= post_scale;
 		mixed_uv += post_translate;
 
-		vec2 final_uv = mixed_uv + vec2(0.5);
+		final_uv = mixed_uv + vec2(0.5);
 
 		// --- TILING LOGIC ---
 		if (mirror_tiling) {
@@ -2631,7 +2637,7 @@ void fragment() {
 
 		// --- FINAL MIXING ---
 		vec4 transformed_color;
-		
+
 		if (final_uv.x > 5000.0) {
 			transformed_color = vec4(0.0, 0.0, 0.0, 1.0);
 		} else {
@@ -2642,7 +2648,7 @@ void fragment() {
 		if (use_escape_time) {
 			float mask = smoothstep(escape_limit, escape_limit + escape_smoothness, dist);
 			if (escape_invert) { mask = 1.0 - mask; }
-			
+
 			vec4 feedback_result = mix(feed_color, transformed_color, feedback_amount);
 			final_color = mix(feedback_result, feed_color, mask);
 		} else {
@@ -2656,11 +2662,52 @@ void fragment() {
 	if (variation_mode_b == 38) star_density += nebula_stars_b;
 
 	if (star_density > 0.00001) {
-		float star_rnd = rand(UV * 100.0 + time * 0.1); 
+		float star_rnd = rand(UV * 100.0 + time * 0.1);
 		if (star_rnd > (1.0 - star_density)) {
 			final_color += vec4(1.0);
 		}
 	}
 
-	COLOR = final_color;
+// --- 3D NANO-SURFACE LIGHTING ---
+	if (lighting_enabled) {
+		// FIX: We increase the step size to 3.0 or 4.0 to ignore tiny grain/fuzz
+		float smoothness = 3.0;
+		vec2 tex_size = vec2(textureSize(previous_frame, 0));
+		vec2 step_offset = vec2(smoothness) / tex_size;
+
+		// Sample neighbors from the feedback buffer
+		// We use the 'r' channel (brightness) as height
+		float center = texture(previous_frame, final_uv).r;
+		float north = texture(previous_frame, final_uv + vec2(0.0, -step_offset.y)).r;
+		float south = texture(previous_frame, final_uv + vec2(0.0, step_offset.y)).r;
+		float east  = texture(previous_frame, final_uv + vec2(step_offset.x, 0.0)).r;
+		float west  = texture(previous_frame, final_uv + vec2(-step_offset.x, 0.0)).r;
+
+		// Calculate slope (Normal)
+		float dx = (west - east) * lighting_strength;
+		float dy = (north - south) * lighting_strength;
+
+		// Create the Normal Vector
+		vec3 normal = normalize(vec3(dx, dy, 1.0));
+
+		// Lighting Calculations
+		vec3 light_dir = normalize(vec3(light_direction, 0.5));
+		vec3 view_dir = vec3(0.0, 0.0, 1.0);
+
+		// Diffuse (Shadows)
+		float diffuse = max(dot(normal, light_dir), 0.0);
+
+		// Specular (Shine)
+		vec3 reflect_dir = reflect(-light_dir, normal);
+		float spec = pow(max(dot(view_dir, reflect_dir), 0.0), lighting_roughness);
+
+		// Apply Logic
+		// 1. Darken the valleys (Ambient Occlusion)
+		final_color.rgb *= (0.4 + diffuse * 0.6);
+
+		// 2. Add the shiny highlight
+		final_color.rgb += vec3(1.0) * spec * lighting_specular * 0.5;
+	}
+
+    COLOR = final_color;
 }
