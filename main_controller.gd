@@ -1,5 +1,5 @@
 extends Control
-const PROGRAM_VERSION = 3.7
+const PROGRAM_VERSION = 3.8
 const VariationPanel = preload("res://VariationPanel.gd")
 # IDs for "inversive" variations that zoom in when scale INCREASES
 const INVERSE_VARIATIONS = [1 ]
@@ -130,6 +130,55 @@ var voxel_cube_scale: float = 0.2
 @onready var voxel_tube_density_spinbox: SpinBox = %VoxelTubeDensitySpinBox
 @onready var flow_speed_slider: HSlider = %FlowSpeedSlider
 @onready var flow_speed_spinbox: SpinBox = %FlowSpeedSpinBox
+
+
+# --- NEW KIFS UI VARIABLES ---
+@onready var kifs_help_button: Button = %KifsHelpButton
+@onready var kifs_help_panel: Control = %KifsHelpPanel
+@onready var kifs_help_close_btn: Button = %KifsHelpCloseBtn
+@onready var kifs_box_size_slider: HSlider = %KifsBoxSizeSlider
+@onready var kifs_box_size_spinbox: SpinBox = %KifsBoxSizeSpinBox
+
+@onready var kifs_step_speed_slider: HSlider = %KifsStepSpeedSlider
+@onready var kifs_step_speed_spinbox: SpinBox = %KifsStepSpeedSpinBox
+
+@onready var kifs_rot_x_slider: HSlider = %KifsRotXSlider
+@onready var kifs_rot_x_spinbox: SpinBox = %KifsRotXSpinBox
+
+@onready var kifs_rot_y_slider: HSlider = %KifsRotYSlider
+@onready var kifs_rot_y_spinbox: SpinBox = %KifsRotYSpinBox
+
+@onready var kifs_rot_z_slider: HSlider = %KifsRotZSlider
+@onready var kifs_rot_z_spinbox: SpinBox = %KifsRotZSpinBox
+
+# --- NEW KIFS ARBITRARY ROTATION ---
+@onready var kifs_axis_x_slider: HSlider = %KifsAxisXSlider
+@onready var kifs_axis_x_spinbox: SpinBox = %KifsAxisXSpinBox
+@onready var kifs_axis_y_slider: HSlider = %KifsAxisYSlider
+@onready var kifs_axis_y_spinbox: SpinBox = %KifsAxisYSpinBox
+@onready var kifs_axis_z_slider: HSlider = %KifsAxisZSlider
+@onready var kifs_axis_z_spinbox: SpinBox = %KifsAxisZSpinBox
+
+@onready var kifs_spin_slider: HSlider = %KifsSpinSlider
+@onready var kifs_spin_spinbox: SpinBox = %KifsSpinSpinBox
+
+# --- KIFS FOLD SHIFT ---
+@onready var kifs_shift_x_slider: HSlider = %KifsShiftXSlider
+@onready var kifs_shift_x_spinbox: SpinBox = %KifsShiftXSpinBox
+@onready var kifs_shift_y_slider: HSlider = %KifsShiftYSlider
+@onready var kifs_shift_y_spinbox: SpinBox = %KifsShiftYSpinBox
+@onready var kifs_shift_z_slider: HSlider = %KifsShiftZSlider
+@onready var kifs_shift_z_spinbox: SpinBox = %KifsShiftZSpinBox
+
+var kifs_fold_shift: Vector3 = Vector3(0.0, 0.0, 0.0)
+
+var kifs_custom_axis: Vector3 = Vector3(0.0, 1.0, 0.0)
+var kifs_custom_angle: float = 0.0
+var kifs_box_size: float = 6.0
+var kifs_step_speed: float = 0.5
+var kifs_rot_x: float = 0.0
+var kifs_rot_y: float = 0.0
+var kifs_rot_z: float = 0.0
 
 var voxel_tube_resolution: int = 60 # Default to 60 for cleaner tubes
 var voxel_thickness: float = 1.2
@@ -379,6 +428,8 @@ var mandel_texture_scale: float = 1.0
 @onready var polar_controls_container_a: VBoxContainer = %PolarControlsContainerA
 @onready var fisheye_controls_container_b: VBoxContainer = %FisheyeControlsContainerB
 @onready var polar_controls_container_b: VBoxContainer = %PolarControlsContainerB
+@onready var mobiq_controls_container_a: VBoxContainer = %MobiqControlsContainerA
+@onready var mobiq_controls_container_b: VBoxContainer = %MobiqControlsContainerB
 @onready var mobius_controls_container_a: VBoxContainer = %MobiusControlsContainerA
 @onready var mobius_controls_container_b: VBoxContainer = %MobiusControlsContainerB
 @onready var cellular_weave_controls_container_a: VBoxContainer = %CellularWeaveControlsContainerA
@@ -430,7 +481,7 @@ var mandel_texture_scale: float = 1.0
 @onready var grad_col_tr_picker: ColorPickerButton = %GradColTRPicker
 @onready var grad_col_bl_picker: ColorPickerButton = %GradColBLPicker
 @onready var grad_col_br_picker: ColorPickerButton = %GradColBRPicker
-
+var kaleidoscope_3d = false
 # Sliders & SpinBoxes (Grouped by name)
 @onready var var_mix_slider: HSlider = %VarMixSlider
 @onready var var_mix_spinbox: SpinBox = %VarMixSpinBox
@@ -520,13 +571,66 @@ var mandel_texture_scale: float = 1.0
 
 
 
-
-
+var time_accumulator = 0.0
 var current_generator_strength: float = 0.0
 
 
 
+# --- ROMANESCO UI VARIABLES ---
+# Make sure these paths match where you put them in your Scene Tree!
+@onready var romanesco_container: VBoxContainer = %RomanescoControls # Parent container
 
+@onready var size_slider: HSlider = %RomSizeSlider
+@onready var recursion_slider: HSlider = %RomRecursionSlider
+@onready var num_arms_slider: HSlider = %RomNumArmsSlider
+@onready var arm_spread_slider: HSlider = %RomArmSpreadSlider
+@onready var arm_elevation_slider: HSlider = %RomArmElevationSlider
+@onready var arm_twist_slider: HSlider = %RomArmTwistSlider
+@onready var floret_count_slider: HSlider = %RomFloretCountSlider
+@onready var floret_scale_slider: HSlider = %RomFloretScaleSlider
+@onready var pattern_spread_slider: HSlider = %RomPatternSpreadSlider
+@onready var spiral_twist_slider: HSlider = %RomSpiralTwistSlider
+@onready var cone_steepness_slider: HSlider = %RomConeSteepnessSlider
+@onready var floret_detail_slider: HSlider = %RomDetailSlider
+@onready var floret_shape_option: OptionButton = %RomShapeDropdown
+
+# Rotation
+@onready var pitch_slider: HSlider = %RomPitchSlider
+@onready var yaw_slider: HSlider = %RomYawSlider
+@onready var roll_slider: HSlider = %RomRollSlider
+
+# Coloring
+@onready var color_mode_option: OptionButton = %RomColorModeDropdown
+@onready var solid_color_slider: HSlider = %RomSolidColorSlider
+@onready var color_min_slider: HSlider = %RomColorMinSlider
+@onready var color_max_slider: HSlider = %RomColorMaxSlider
+# --- ROMANESCO SPINBOXES ---
+# Make sure you create these in your Scene and give them these Unique Names!
+@onready var size_spinbox: SpinBox = %RomSizeSpinBox
+@onready var recursion_spinbox: SpinBox = %RomRecursionSpinBox
+@onready var num_arms_spinbox: SpinBox = %RomNumArmsSpinBox
+@onready var arm_spread_spinbox: SpinBox = %RomArmSpreadSpinBox
+@onready var arm_elevation_spinbox: SpinBox = %RomArmElevationSpinBox
+@onready var arm_twist_spinbox: SpinBox = %RomArmTwistSpinBox
+@onready var floret_count_spinbox: SpinBox = %RomFloretCountSpinBox
+@onready var floret_scale_spinbox: SpinBox = %RomFloretScaleSpinBox
+@onready var pattern_spread_spinbox: SpinBox = %RomPatternSpreadSpinBox
+@onready var spiral_twist_spinbox: SpinBox = %RomSpiralTwistSpinBox
+@onready var cone_steepness_spinbox: SpinBox = %RomConeSteepnessSpinBox
+@onready var floret_detail_spinbox: SpinBox = %RomDetailSpinBox
+@onready var pitch_spinbox: SpinBox = %RomPitchSpinBox
+@onready var yaw_spinbox: SpinBox = %RomYawSpinBox
+@onready var roll_spinbox: SpinBox = %RomRollSpinBox
+@onready var solid_color_spinbox: SpinBox = %RomSolidColorSpinBox
+@onready var color_min_spinbox: SpinBox = %RomColorMinSpinBox
+@onready var color_max_spinbox: SpinBox = %RomColorMaxSpinBox
+# Compute Objects
+var rd: RenderingDevice
+var shader_rid: RID
+var pipeline_rid: RID
+var point_buffer_rid: RID
+var uniform_set_rid: RID
+var TOTAL_POINTS: int = 100000 # Start safe (100k points)
 
 
 
@@ -593,6 +697,7 @@ var file_dialog_mode: String = "save"
 var mirror_tiling: bool = false
 var is_3d_view: bool = false
 var normal_map_texture: ImageTexture = null
+var trap_mode = 1
 
 var move_post_translate: bool = true
 var move_pre_translate: bool = false
@@ -670,6 +775,13 @@ func _set_platform_feedback_defaults() -> void:
 	# We get the defaults from the resource file.
 	pass
 
+
+var color_mode = 0
+var orbit_color_1 = Color(1.0, 0.5, 0.0) # Orange
+var orbit_color_2 = Color(0.0, 0.5, 1.0) # Blue
+var orbit_contrast = 1.0
+var orbit_offset = 0.0
+
 func _update_camera() -> void:
 	if is_instance_valid(camera_3d):
 		# Reset rotation first
@@ -722,7 +834,102 @@ func _update_light() -> void:
 				printerr("ERROR: WorldEnvironment node has no Environment resource!")
 		else:
 			printerr("ERROR: WorldEnvironment node not found!")
-
+func _set_romanesco_defaults():
+	# Main
+	size_slider.min_value = 0.0
+	size_slider.max_value = 5.0
+	size_slider.value = 0.5
+	
+	recursion_slider.min_value = 1
+	recursion_slider.max_value = 15
+	recursion_slider.value = 7
+	
+	# Arms
+	num_arms_slider.min_value = 1
+	num_arms_slider.max_value = 10
+	num_arms_slider.value = 1
+	
+	arm_spread_slider.min_value = -10.0
+	arm_spread_slider.max_value = 10.0
+	arm_spread_slider.value = 1.0
+	
+	arm_elevation_slider.min_value = -180.0
+	arm_elevation_slider.max_value = 180.0
+	arm_elevation_slider.value = 45.0
+	
+	arm_twist_slider.min_value = -5.0
+	arm_twist_slider.max_value = 5.0
+	arm_twist_slider.value = 0.0
+	
+	# Floret
+	floret_count_slider.min_value = 1
+	floret_count_slider.max_value = 500
+	floret_count_slider.value = 100
+	
+	floret_scale_slider.min_value = 0.0
+	floret_scale_slider.max_value = 1.0
+	floret_scale_slider.step = 0.01
+	floret_scale_slider.value = 0.28
+	
+	pattern_spread_slider.min_value = 0.0
+	pattern_spread_slider.max_value = 3.0
+	pattern_spread_slider.step = 0.01
+	pattern_spread_slider.value = 0.4
+	
+	spiral_twist_slider.min_value = 0.0
+	spiral_twist_slider.max_value = 5.0
+	spiral_twist_slider.step = 0.01
+	spiral_twist_slider.value = 1.0
+	
+	cone_steepness_slider.min_value = -5.0
+	cone_steepness_slider.max_value = 5.0
+	cone_steepness_slider.value = 1.0
+	
+	floret_detail_slider.min_value = 0.01
+	floret_detail_slider.max_value = 2.0
+	floret_detail_slider.value = 0.1
+	
+	# Shapes
+	if floret_shape_option.item_count == 0:
+		floret_shape_option.add_item("Sphere") # 0
+		floret_shape_option.add_item("Cube")   # 1
+		floret_shape_option.add_item("Spike")  # 2
+		floret_shape_option.add_item("Ring")   # 3
+	floret_shape_option.selected = 0
+	
+	# Rotation
+	pitch_slider.min_value = -180.0
+	pitch_slider.max_value = 180.0
+	pitch_slider.value = 180.0
+	
+	yaw_slider.min_value = -180.0
+	yaw_slider.max_value = 180.0
+	yaw_slider.value = 0.0
+	
+	roll_slider.min_value = -180.0
+	roll_slider.max_value = 180.0
+	roll_slider.value = 0.0
+	
+	# Colors
+	if color_mode_option.item_count == 0:
+		color_mode_option.add_item("Solid")
+		color_mode_option.add_item("Distance")
+		color_mode_option.add_item("Radius")
+		color_mode_option.add_item("Height")
+	color_mode_option.selected = 1 # Distance mode looks best
+	
+	solid_color_slider.min_value = 0.0
+	solid_color_slider.max_value = 1.0
+	solid_color_slider.step = 0.01
+	solid_color_slider.value = 0.5
+	
+	color_min_slider.min_value = -10.0
+	color_min_slider.max_value = 10.0
+	color_min_slider.value = 0.0
+	
+	color_max_slider.min_value = -10.0
+	color_max_slider.max_value = 20.0
+	color_max_slider.value = 9.0
 
 func _ready() -> void:
 	# --- ALL VAR DECLARATIONS MUST GO FIRST ---
@@ -874,7 +1081,171 @@ func _ready() -> void:
 		%GenThickSlider.value_changed.connect(func(v): %GenThickSpinBox.set_value_no_signal(v))
 		%GenThickSpinBox.value_changed.connect(func(v): %GenThickSlider.set_value_no_signal(v))
 	
+	
+	# --- CONNECT NEW KIFS SLIDERS ---
+	# --- KIFS HELP SIGNALS ---
+	if kifs_help_button and kifs_help_panel:
+		# 1. Main Toggle Button
+		kifs_help_button.toggled.connect(func(pressed):
+			kifs_help_panel.visible = pressed
+		)
 		
+		# 2. Close Button inside the panel
+		if kifs_help_close_btn:
+			kifs_help_close_btn.pressed.connect(func():
+				kifs_help_panel.visible = false
+				kifs_help_button.set_pressed_no_signal(false) # Unpress the main button
+			)
+	# 1. Box Size
+	if %KifsBoxSizeSlider:
+		%KifsBoxSizeSlider.value_changed.connect(func(v): 
+			kifs_box_size = v
+			if %KifsBoxSizeSpinBox: %KifsBoxSizeSpinBox.set_value_no_signal(v)
+		)
+	if %KifsBoxSizeSpinBox:
+		%KifsBoxSizeSpinBox.value_changed.connect(func(v): 
+			kifs_box_size = v
+			if %KifsBoxSizeSlider: %KifsBoxSizeSlider.set_value_no_signal(v)
+		)
+
+	# 2. Step Speed
+	if %KifsStepSpeedSlider:
+		%KifsStepSpeedSlider.value_changed.connect(func(v): 
+			kifs_step_speed = v
+			if %KifsStepSpeedSpinBox: %KifsStepSpeedSpinBox.set_value_no_signal(v)
+		)
+	if %KifsStepSpeedSpinBox:
+		%KifsStepSpeedSpinBox.value_changed.connect(func(v): 
+			kifs_step_speed = v
+			if %KifsStepSpeedSlider: %KifsStepSpeedSlider.set_value_no_signal(v)
+		)
+
+	# 3. Rotation X
+	if %KifsRotXSlider:
+		%KifsRotXSlider.value_changed.connect(func(v): 
+			kifs_rot_x = v
+			if %KifsRotXSpinBox: %KifsRotXSpinBox.set_value_no_signal(v)
+		)
+	if %KifsRotXSpinBox:
+		%KifsRotXSpinBox.value_changed.connect(func(v): 
+			kifs_rot_x = v
+			if %KifsRotXSlider: %KifsRotXSlider.set_value_no_signal(v)
+		)
+
+	# 4. Rotation Y
+	if %KifsRotYSlider:
+		%KifsRotYSlider.value_changed.connect(func(v): 
+			kifs_rot_y = v
+			if %KifsRotYSpinBox: %KifsRotYSpinBox.set_value_no_signal(v)
+		)
+	if %KifsRotYSpinBox:
+		%KifsRotYSpinBox.value_changed.connect(func(v): 
+			kifs_rot_y = v
+			if %KifsRotYSlider: %KifsRotYSlider.set_value_no_signal(v)
+		)
+
+	# 5. Rotation Z
+	if %KifsRotZSlider:
+		%KifsRotZSlider.value_changed.connect(func(v): 
+			kifs_rot_z = v
+			if %KifsRotZSpinBox: %KifsRotZSpinBox.set_value_no_signal(v)
+		)
+	if %KifsRotZSpinBox:
+		%KifsRotZSpinBox.value_changed.connect(func(v): 
+			kifs_rot_z = v
+			if %KifsRotZSlider: %KifsRotZSlider.set_value_no_signal(v)
+		)
+		# --- KIFS ARBITRARY ROTATION SIGNALS ---
+	
+	# Axis X
+	if kifs_axis_x_slider:
+		kifs_axis_x_slider.value_changed.connect(func(v): 
+			kifs_custom_axis.x = v
+			if kifs_axis_x_spinbox: kifs_axis_x_spinbox.set_value_no_signal(v)
+		)
+	if kifs_axis_x_spinbox:
+		kifs_axis_x_spinbox.value_changed.connect(func(v): 
+			kifs_custom_axis.x = v
+			if kifs_axis_x_slider: kifs_axis_x_slider.set_value_no_signal(v)
+		)
+
+	# Axis Y
+	if kifs_axis_y_slider:
+		kifs_axis_y_slider.value_changed.connect(func(v): 
+			kifs_custom_axis.y = v
+			if kifs_axis_y_spinbox: kifs_axis_y_spinbox.set_value_no_signal(v)
+		)
+	if kifs_axis_y_spinbox:
+		kifs_axis_y_spinbox.value_changed.connect(func(v): 
+			kifs_custom_axis.y = v
+			if kifs_axis_y_slider: kifs_axis_y_slider.set_value_no_signal(v)
+		)
+
+	# Axis Z
+	if kifs_axis_z_slider:
+		kifs_axis_z_slider.value_changed.connect(func(v): 
+			kifs_custom_axis.z = v
+			if kifs_axis_z_spinbox: kifs_axis_z_spinbox.set_value_no_signal(v)
+		)
+	if kifs_axis_z_spinbox:
+		kifs_axis_z_spinbox.value_changed.connect(func(v): 
+			kifs_custom_axis.z = v
+			if kifs_axis_z_slider: kifs_axis_z_slider.set_value_no_signal(v)
+		)
+		
+		
+		
+	# --- KIFS FOLD SHIFT SIGNALS ---
+	
+	# Shift X
+	if kifs_shift_x_slider:
+		kifs_shift_x_slider.value_changed.connect(func(v): 
+			kifs_fold_shift.x = v
+			if kifs_shift_x_spinbox: kifs_shift_x_spinbox.set_value_no_signal(v)
+		)
+	if kifs_shift_x_spinbox:
+		kifs_shift_x_spinbox.value_changed.connect(func(v): 
+			kifs_fold_shift.x = v
+			if kifs_shift_x_slider: kifs_shift_x_slider.set_value_no_signal(v)
+		)
+
+	# Shift Y
+	if kifs_shift_y_slider:
+		kifs_shift_y_slider.value_changed.connect(func(v): 
+			kifs_fold_shift.y = v
+			if kifs_shift_y_spinbox: kifs_shift_y_spinbox.set_value_no_signal(v)
+		)
+	if kifs_shift_y_spinbox:
+		kifs_shift_y_spinbox.value_changed.connect(func(v): 
+			kifs_fold_shift.y = v
+			if kifs_shift_y_slider: kifs_shift_y_slider.set_value_no_signal(v)
+		)
+
+	# Shift Z
+	if kifs_shift_z_slider:
+		kifs_shift_z_slider.value_changed.connect(func(v): 
+			kifs_fold_shift.z = v
+			if kifs_shift_z_spinbox: kifs_shift_z_spinbox.set_value_no_signal(v)
+		)
+	if kifs_shift_z_spinbox:
+		kifs_shift_z_spinbox.value_changed.connect(func(v): 
+			kifs_fold_shift.z = v
+			if kifs_shift_z_slider: kifs_shift_z_slider.set_value_no_signal(v)
+		)
+		
+		
+
+	# Spin Angle
+	if kifs_spin_slider:
+		kifs_spin_slider.value_changed.connect(func(v): 
+			kifs_custom_angle = v
+			if kifs_spin_spinbox: kifs_spin_spinbox.set_value_no_signal(v)
+		)
+	if kifs_spin_spinbox:
+		kifs_spin_spinbox.value_changed.connect(func(v): 
+			kifs_custom_angle = v
+			if kifs_spin_slider: kifs_spin_slider.set_value_no_signal(v)
+		)
 	var_a_panels = {
 		"apollonian": apollonian_controls_container_a,
 		"arctangent": arctangent_controls_container_a,
@@ -888,6 +1259,7 @@ func _ready() -> void:
 		"julian": julian_controls_container_a,
 		"kaleidoscope": var_a_kaleidoscope_controls, # Use the correct node
 		"mirror": var_a_mirror_controls,# Use the correct node
+		"mobiq": mobiq_controls_container_a,
 		"mobius": mobius_controls_container_a,
 		"polar": polar_controls_container_a,
 		"wave": wave_controls_container_a,
@@ -929,6 +1301,7 @@ func _ready() -> void:
 		"julian": julian_controls_container_b,
 		"kaleidoscope": var_b_kaleidoscope_controls, # Use the correct node
 		"mirror": var_b_mirror_controls,# Use the correct node
+		"mobiq": mobiq_controls_container_b,
 		"mobius": mobius_controls_container_b,
 		"polar": polar_controls_container_b,
 		"wave": wave_controls_container_b,
@@ -986,6 +1359,8 @@ func _ready() -> void:
 	var_b_kaleidoscope_controls.value_updated.connect(_on_variation_param_changed.bind("b"))
 	var_a_mirror_controls.value_updated.connect(_on_variation_param_changed.bind("a"))
 	var_b_mirror_controls.value_updated.connect(_on_variation_param_changed.bind("b"))
+	mobiq_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
+	mobiq_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	mobius_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	mobius_controls_container_b.value_updated.connect(_on_variation_param_changed.bind("b"))
 	polar_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
@@ -1037,6 +1412,8 @@ func _ready() -> void:
 	dynamic_material_check.toggled.connect(func(b): use_dynamic_material = b)
 	grade_background_check.toggled.connect(func(b): grade_background_active = b)
 	limit_top_check.toggled.connect(func(b): limit_to_top = b)
+	if %Kaleidoscope3DCheck:
+		%Kaleidoscope3DCheck.toggled.connect(func(b): kaleidoscope_3d = b)
 	if popcorn_controls_container_a:
 		popcorn_controls_container_a.value_updated.connect(_on_variation_param_changed.bind("a"))
 	if popcorn_controls_container_b:
@@ -1541,6 +1918,98 @@ func _ready() -> void:
 		quality_dropdown.item_selected.connect(_on_quality_changed)
 	setup_flow_tubes()
 	_on_shape_selected(shape_selector_button.selected)
+	_set_romanesco_defaults()
+	# 1. TURN ON THE GPU ENGINE (This is likely missing!)
+	_init_romanesco_gpu()
+
+	# 2. Connect the sliders
+	_connect_romanesco_signals()
+
+	# 3. Force the shape update (Ghost Fix)
+	_on_shape_selected(shape_selector_button.selected)
+
+	# 4. Run the first frame of Romanesco
+	await get_tree().process_frame
+	if shape_selector_button.selected == 11:
+		_run_romanesco_compute()	
+		
+	setup_coloring_ui()
+
+func setup_coloring_ui():
+	# 1. SETUP COLOR MODE DROPDOWN
+	%ColorModeSelect.clear()
+	%ColorModeSelect.add_item("Texture Material (Default)", 0)
+	%ColorModeSelect.add_item("Orbit Trap (Neon/Glow)", 1)
+
+	# Connect signals (Using Godot 4 Lambda syntax for cleanliness)
+	%ColorModeSelect.item_selected.connect(func(index): 
+		color_mode = index
+	)
+
+# SETUP TRAP MODE SELECTOR
+	%TrapModeSelect.clear()
+	%TrapModeSelect.add_item("Sphere (Core)", 0)
+	%TrapModeSelect.add_item("Cylinder (Tube)", 1)
+	%TrapModeSelect.add_item("Plane (Sheet)", 2)
+	%TrapModeSelect.add_item("Cross (Grid)", 3)
+
+	%TrapModeSelect.selected = trap_mode
+	%TrapModeSelect.item_selected.connect(func(index): 
+		trap_mode = index
+	)
+
+
+	# 2. SETUP COLOR PICKERS
+	%ColorPicker1.color = orbit_color_1
+	%ColorPicker1.color_changed.connect(func(color): 
+		orbit_color_1 = color
+	)
+
+	%ColorPicker2.color = orbit_color_2
+	%ColorPicker2.color_changed.connect(func(color): 
+		orbit_color_2 = color
+	)
+
+	# 3. SETUP SLIDERS
+	%OrbitContrastSlider.value = orbit_contrast
+	%OrbitContrastSlider.value_changed.connect(func(value): 
+		orbit_contrast = value
+	)
+
+	%OffsetSlider.value = orbit_offset
+	%OffsetSlider.value_changed.connect(func(value): 
+		orbit_offset = value
+	)
+
+func _init_romanesco_gpu():
+	# 1. Create local RenderingDevice
+	rd = RenderingServer.create_local_rendering_device()
+	if not rd:
+		printerr("Compute Shaders not supported on this hardware!")
+		return
+
+	# 2. Load and Compile Shader
+	var shader_file = load("res://romanesco.glsl")
+	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
+	shader_rid = rd.shader_create_from_spirv(shader_spirv)
+	
+	# 3. Create Output Buffer (Positions + Color)
+	# vec4 = 16 bytes. 100,000 points * 16 bytes = 1.6 MB
+	var buffer_size = TOTAL_POINTS * 16
+	point_buffer_rid = rd.storage_buffer_create(buffer_size)
+	
+	# 4. Create Uniform Set (Binding the buffer to the shader)
+	var uniform := RDUniform.new()
+	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	uniform.binding = 0
+	uniform.add_id(point_buffer_rid)
+	
+	uniform_set_rid = rd.uniform_set_create([uniform], shader_rid, 0)
+	
+	# 5. Create Pipeline
+	pipeline_rid = rd.compute_pipeline_create(shader_rid)
+	# Initialize the Romanesco system
+
 func _on_quality_changed(index: int):
 	match index:
 		0: current_step_speed = 0.6  # Fast, creates holes/noise
@@ -1866,6 +2335,8 @@ func _on_shape_selected(shape_index: int):
 	if fractal_mesh: fractal_mesh.visible = false
 	if voxel_grid: voxel_grid.visible = false
 	if voxel_tubes: voxel_tubes.visible = false # Explicitly hide tubes
+	if %RomanescoMesh: %RomanescoMesh.visible = false
+	if romanesco_container: romanesco_container.visible = false
 
 	# Turn OFF all special UI panels
 	if ab_params: ab_params.visible = false
@@ -1964,6 +2435,51 @@ func _on_shape_selected(shape_index: int):
 				# -----------------------------------------------
 				
 			setup_flow_tubes()
+		11: # Romanesco (Compute Shader)
+				is_raymarching = false
+				fractal_mesh.visible = false
+
+				# Hide Standard Controls
+				mandel_controls.visible = false 
+				if standard_mesh_controls: standard_mesh_controls.visible = false
+				if raymarch_core_params: raymarch_core_params.visible = false
+				if voxel_controls: voxel_controls.visible = false
+				if voxel_flow_params: voxel_flow_params.visible = false
+
+				# Show Romanesco Controls
+				if romanesco_container: romanesco_container.visible = true
+
+				# Show the Mesh
+				if %RomanescoMesh: 
+					%RomanescoMesh.visible = true
+					# Force an update immediately so it isn't empty
+					_run_romanesco_compute()
+		12: # KIFS Fractal
+			is_raymarching = true
+			
+			# 1. Reset Visibility
+			fractal_mesh.visible = true
+			if voxel_grid: voxel_grid.visible = false
+			if voxel_tubes: voxel_tubes.visible = false
+			if %RomanescoMesh: %RomanescoMesh.visible = false
+			if romanesco_container: romanesco_container.visible = false
+			
+			# 2. Show the "Feedback" Controls (Transform/Effects)
+			mandel_controls.visible = true 
+			
+			# 3. Create the Screen (A big box we sit inside)
+			var m = BoxMesh.new()
+			m.size = Vector3(20.0, 20.0, 20.0)
+			m.flip_faces = true # Crucial! Makes us see the inside.
+			fractal_mesh.mesh = m
+			
+			# 4. Load the KIFS Shader
+			var mat = ShaderMaterial.new()
+			mat.shader = load("res://raymarch_kifs.gdshader")
+			fractal_mesh.set_surface_override_material(0, mat)
+			
+			# 5. Set Defaults so it isn't invisible
+			_set_kifs_defaults()
 
 	# --- STEP 2: APPLY MATERIALS & UI FOR STANDARD/RAYMARCH ---
 	
@@ -2321,21 +2837,35 @@ func _get_item_index_by_text(dropdown: OptionButton, text: String) -> int:
 
 func initialize_ui(initial_values: Dictionary) -> void:
 	
-	# --- Handle Variation Dropdowns ---
-	var var_a_id = initial_values.get("var_a_id", 0) # Expect ID
-	var var_b_id = initial_values.get("var_b_id", 1) # Expect ID
+	# --- Handle Variation A ---
+	var var_a_id = initial_values.get("var_a_id", 0)
 	var var_a_name = _get_name_from_id(var_a_id)
-	var var_b_name = _get_name_from_id(var_b_id)
-	if var_a_name != "" and VariationManager.VARIATIONS[var_a_name].get("category") == "Rep-Tile":
+	
+	if var_a_name != "" and VariationManager.VARIATIONS.has(var_a_name) and VariationManager.VARIATIONS[var_a_name].get("category") == "Rep-Tile":
+		# 1. Select "Rep-Tiles" in Main
 		_set_dropdown_selection(var_a_dropdown, "Rep-Tiles")
+		# 2. Select specific shape in Sub
 		_set_dropdown_selection(rep_tile_dropdown_a, var_a_name)
 	else:
+		# Standard Variation
 		_set_dropdown_selection(var_a_dropdown, var_a_name)
-	if var_b_name != "" and VariationManager.VARIATIONS[var_b_name].get("category") == "Rep-Tile":
+	
+	# CRITICAL FIX: Force the UI to update visibility (Show/Hide Rep-Tile Panel)
+	_on_var_a_dropdown_item_selected(var_a_dropdown.selected)
+
+
+	# --- Handle Variation B ---
+	var var_b_id = initial_values.get("var_b_id", 1)
+	var var_b_name = _get_name_from_id(var_b_id)
+	
+	if var_b_name != "" and VariationManager.VARIATIONS.has(var_b_name) and VariationManager.VARIATIONS[var_b_name].get("category") == "Rep-Tile":
 		_set_dropdown_selection(var_b_dropdown, "Rep-Tiles")
 		_set_dropdown_selection(rep_tile_dropdown_b, var_b_name)
 	else:
 		_set_dropdown_selection(var_b_dropdown, var_b_name)
+
+	# CRITICAL FIX: Force the UI to update visibility
+	_on_var_b_dropdown_item_selected(var_b_dropdown.selected)
 	
 	# --- Update Feedback Controls ---
 	var fb_min = initial_values.get("feedback_min", 0.8)
@@ -2913,7 +3443,13 @@ func _render_and_save_image(path: String, render_size: Vector2i) -> void:
 	# Clean up viewport sizes
 	save_viewport.size = Vector2i(16, 16)
 	post_process_save_viewport.size = Vector2i(16, 16)
+	
+	
+	
+	
+	
 func _process(delta: float) -> void:
+	time_accumulator += delta
 	# --- AUTO ROTATION LOGIC ---
 	if auto_rotate_active and is_3d_view and not animation_paused:
 		var speed_mult = rotate_speed * delta * 30.0
@@ -3112,9 +3648,771 @@ func _process(delta: float) -> void:
 	# --- NEW 3D MESH UPDATE (DISPLACEMENT + COLOR) ---
 	var mesh_material = fractal_mesh.get_surface_override_material(0) as ShaderMaterial
 	
+	# 1. SAFETY CHECK FIRST!
 	if is_instance_valid(mesh_material):
 		var current_shape = shape_selector_button.selected
 		
+		# --- KIFS SPECIFIC PARAMS (Only send if using KIFS!) ---
+		# 1. Send Core KIFS Transforms
+		# --- SOLID KIFS LOGIC ---
+		if current_shape == 12: 
+			# --- FIX: HIDE TUBE CONTROLS ---
+			
+			# 1. HIDE TUBE STUFF (Explicitly)
+			# This hides the container with Thickness, Flow Speed, etc.
+			if %VoxelFlowParams: %VoxelFlowParams.visible = false
+			if %VoxelControls: %VoxelControls.visible = false
+			
+			# 2. SHOW MIX SLIDER (The "Surgical" Method)
+			# First, we MUST show the parent container, or nothing appears.
+			if %RaymarchCoreParams: %RaymarchCoreParams.visible = true
+			
+			# NOW, we hide the siblings we don't want to see:
+			if %Mandel_Fractal_Power: %Mandel_Fractal_Power.visible = false
+			if %MandelPowerSlider: %MandelPowerSlider.visible = false
+			if %MandelPowerSpinBox: %MandelPowerSpinBox.visible = false
+			# Also hide the label if possible, or usually hiding the slider is enough
+			
+			if %MandelScaleSlider: %MandelScaleSlider.visible = true
+			if %MandelScaleSpinBox: %MandelScaleSpinBox.visible = true
+			
+			if %IterSlider: %IterSlider.visible = true
+			if %IterSpinBox: %IterSpinBox.visible = true
+			
+			# Finally, ensure the Mix Slider IS visible
+			if %MandelMixSlider: %MandelMixSlider.visible = true
+			if %MandelMixSpinBox: %MandelMixSpinBox.visible = true
+			
+			# If you have specific sliders for tubes (like flow_smooth_slider), hide their parent container
+			# Example: %FlowTubeContainer.visible = false
+			
+			# --- NEW PARAMETERS ---
+			mesh_material.set_shader_parameter("box_size", kifs_box_size)
+			mesh_material.set_shader_parameter("step_speed", kifs_step_speed)
+			
+			# Send 3-Axis Rotations
+			var p_rot = Vector3(kifs_rot_x, kifs_rot_y, kifs_rot_z)
+			mesh_material.set_shader_parameter("plane_rot", p_rot)
+			
+			# --- NEW: SEND ARBITRARY ROTATION ---
+			mesh_material.set_shader_parameter("custom_rot_axis", kifs_custom_axis)
+			mesh_material.set_shader_parameter("custom_rot_angle", kifs_custom_angle)
+			mesh_material.set_shader_parameter("fold_shift", kifs_fold_shift)
+
+			# --- EXISTING PARAMS ---
+			mesh_material.set_shader_parameter("pre_scale", pre_scale)
+			mesh_material.set_shader_parameter("pre_translate", pre_translate)
+			mesh_material.set_shader_parameter("kaleidoscope_slices", kaleidoscope_slices)
+			mesh_material.set_shader_parameter("kaleidoscope_on", kaleidoscope_on)
+			mesh_material.set_shader_parameter("mirror_x", mirror_x)
+			mesh_material.set_shader_parameter("mirror_y", mirror_y)
+			mesh_material.set_shader_parameter("kaleidoscope_3d", kaleidoscope_3d)
+			
+			mesh_material.set_shader_parameter("texture_intensity", mandel_texture_intensity)
+			mesh_material.set_shader_parameter("texture_scale", mandel_texture_scale)
+			mesh_material.set_shader_parameter("iterations", ray_iterations)
+			mesh_material.set_shader_parameter("time", time)
+
+			if light_3d:
+				var l_dir = light_3d.global_transform.basis.z
+				mesh_material.set_shader_parameter("light_direction", l_dir)
+				var l_col = Vector3(light_color.r, light_color.g, light_color.b)
+				mesh_material.set_shader_parameter("light_color_val", l_col)
+				mesh_material.set_shader_parameter("light_energy_val", light_energy)
+
+			mesh_material.set_shader_parameter("variation_mode_a", variation_mode_a)
+			mesh_material.set_shader_parameter("variation_mode_b", variation_mode_b)
+			mesh_material.set_shader_parameter("variation_mix", variation_mix)
+			
+			
+			mesh_material.set_shader_parameter("color_mode", color_mode)
+			mesh_material.set_shader_parameter("trap_mode", trap_mode)
+			mesh_material.set_shader_parameter("orbit_color_1", orbit_color_1)
+			mesh_material.set_shader_parameter("orbit_color_2", orbit_color_2)
+			mesh_material.set_shader_parameter("orbit_contrast", orbit_contrast)
+			mesh_material.set_shader_parameter("orbit_offset", orbit_offset)
+			
+			# Smart Mapping Loop (Keep this!)
+			# --- VARIATION A SETUP ---
+			var val_a_scale = 1.0; var val_a_strength = 1.0; var val_a_speed = 0.0
+			var val_a_p1 = 0.0; var val_a_p2 = 0.0
+			var val_a_center = Vector2(0.0, 0.0)
+			var val_a_extra = Color(0.0, 0.0, 0.0, 0.0)
+			
+			# Mobiq vars (Keep these defaults)
+			var val_a_mobiq_A = Color(1, 0, 0, 0); var val_a_mobiq_B = Color(0, 0, 0, 0)
+			var val_a_mobiq_C = Color(0, 0, 0, 0); var val_a_mobiq_D = Color(1, 0, 0, 0)
+			
+			for key in _auto_params_a:
+				var v = _auto_params_a[key]
+				var k = key.to_lower()
+				
+				# --- NEW: CPU ANIMATION CHECK ---
+				# Look for a companion speed variable (e.g. "ap_c1x" looks for "ap_c1x_speed")
+				var speed_key = key + "_speed"
+				if _auto_params_a.has(speed_key):
+					var s = _auto_params_a[speed_key]
+					# If speed is not 0, apply the sine wave math HERE
+					if abs(s) > 0.001:
+						v += sin(time_accumulator * s)
+
+				# 1. SPEED CHECK (Fixed to ignore "frequency")
+				if "speed" in k and not "freq" in k:
+					val_a_speed = v
+					continue 
+
+				# --- APOLLONIAN MAPPING ---
+				if "apollonian_scale" in k: val_a_scale = v; continue
+				if "ap_c1x" in k: val_a_center.x = v; continue
+				if "ap_c1y" in k: val_a_center.y = v; continue
+				if "ap_c2x" in k: val_a_extra.r = v; continue
+				if "ap_c2y" in k: val_a_extra.g = v; continue
+				if "ap_c3x" in k: val_a_extra.b = v; continue
+				if "ap_c3y" in k: val_a_extra.a = v; continue
+				
+				# --- ARCTANGENT MAPPING ---
+				if "arctangent_scale" in k: val_a_scale = v; continue
+				if "arctangent_amount" in k: val_a_strength = v; continue
+				if "arctangent_offset" in k: val_a_p1 = v; continue
+				
+				
+				# --- JULIAN MAPPING ---
+				if "julian" in k:
+					if "power" in k: val_a_scale = v; continue    # Map Power -> Scale
+					if "dist" in k: val_a_strength = v; continue  # Map Dist -> Strength
+					if "offset" in k: val_a_p1 = v; continue      # Map Offset -> P1
+					
+					# Map the Seed Variables (A-F) to Center and Extra slots
+					if "julian_a" in k: val_a_center.x = v; continue
+					if "julian_b" in k: val_a_center.y = v; continue
+					if "julian_c" in k: val_a_extra.r = v; continue
+					if "julian_d" in k: val_a_extra.g = v; continue
+					if "julian_e" in k: val_a_extra.b = v; continue
+					if "julian_f" in k: val_a_extra.a = v; continue
+					
+					
+					
+				# --- CELLULAR WEAVE MAPPING ---
+				if "cellular_weave" in k:
+					if "grid_size" in k: val_a_scale = v; continue   # Grid Size -> Scale
+					if "threshold" in k: val_a_strength = v; continue # Threshold -> Strength
+					if "iterations" in k: val_a_p1 = v; continue      # Iterations -> P1 (Offset)
+				
+				
+				# --- CHIMERA / GNARL (Source Code Port) ---
+				if "gnarl" in k:
+					val_a_strength = 1.0 # Force ON
+					
+					# 1. Scales (X, Y)
+					if "scale_x" in k and not "speed" in k: val_a_scale = v; continue
+					if "scale_y" in k and not "speed" in k: val_a_extra.r = v; continue
+					
+					# 2. Distortion Amount
+					if "distort" in k and not "speed" in k: val_a_extra.g = v; continue
+					
+					# 3. Freq 2 (X, Y) -> Mapped to Extra Blue/Alpha
+					if "freq_x2" in k: val_a_extra.b = v; continue
+					if "freq_y2" in k: val_a_extra.a = v; continue
+					
+					# 4. Phase/Color (C1) -> P2
+					if "c1" in k: val_a_p2 = v; continue
+					
+					# 5. Freq 1 (X, Y) -> Center
+					if "freq_x1" in k: val_a_center.x = v; continue
+					if "freq_y1" in k: val_a_center.y = v; continue
+					
+					# 6. Mode (Likely manual set)
+					if "mode" in k: val_a_p1 = v; continue
+					
+					
+				# --- FROSTBYTE / SNOWFLAKE (ID 42) ---
+				if "snowflake" in k or "frost" in k:
+					if "scale" in k: val_a_scale = v; continue
+					if "strength" in k or "amount" in k: val_a_strength = v; continue
+					
+					# Branch Angle -> P1
+					if "branch" in k: val_a_p1 = v; continue
+					
+					# Thickness -> P2
+					if "thick" in k: val_a_p2 = v; continue
+					
+					# Chaos -> Extra Red
+					if "chaos" in k: val_a_extra.r = v; continue
+					
+					
+				# --- CLIFFORD MAPPING ---
+				if "clifford" in k:
+					if "scale" in k: val_a_scale = v; continue
+					if "strength" in k or "amount" in k: val_a_strength = v; continue
+					
+					# Map the 4 Clifford Constants
+					if "clifford_a" in k: val_a_center.x = v; continue
+					if "clifford_b" in k: val_a_center.y = v; continue
+					if "clifford_c" in k: val_a_extra.r = v; continue
+					if "clifford_d" in k: val_a_extra.g = v; continue
+				
+				
+				
+				
+				# --- COSINE MAPPING ---
+				if "cosine" in k:
+					if "freq" in k or "scale" in k: val_a_scale = v; continue   # Map Frequency -> Scale
+					if "amp" in k or "strength" in k: val_a_strength = v; continue # Map Amplitude -> Strength
+					if "phase" in k or "offset" in k: val_a_p1 = v; continue    # Map Phase -> P1
+					
+					
+				# --- DEJONG MAPPING ---
+				if "dejong" in k:
+					if "scale" in k: val_a_scale = v; continue
+					if "strength" in k or "amount" in k: val_a_strength = v; continue
+					
+					# Map the 4 DeJong Constants
+					if "dejong_a" in k: val_a_center.x = v; continue
+					if "dejong_b" in k: val_a_center.y = v; continue
+					if "dejong_c" in k: val_a_extra.r = v; continue
+					if "dejong_d" in k: val_a_extra.g = v; continue
+					
+					
+				# --- CANVAS MAPPING ---
+				if "canvas" in k:
+					if "scale" in k: val_a_scale = v; continue
+					if "amount" in k or "strength" in k: val_a_strength = v; continue
+					if "flow" in k: val_a_p1 = v; continue        # Map Flow -> P1
+					if "style" in k: val_a_p2 = v; continue       # Map Style -> P2
+					if "chaos" in k: val_a_extra.r = v; continue  # Map Chaos -> Extra Red
+				
+				# --- HEART (ID 12) ---
+				if "heart" in k:
+					if "scale" in k and not "speed" in k: val_a_scale = v; continue
+					if "strength" in k and not "speed" in k: val_a_strength = v; continue
+					if "rotation" in k and not "speed" in k: val_a_p1 = v; continue
+				
+				
+				# --- HYPERBOLIC SINE (ID 17) ---
+				if "hyperbolic_sine" in k:
+					if "scale" in k and not "speed" in k: val_a_scale = v; continue
+					if "strength" in k and not "speed" in k: val_a_strength = v; continue
+
+				# --- HYPERBOLIC COSINE (ID 18) ---
+				if "hyperbolic_cosine" in k:
+					if "scale" in k and not "speed" in k: val_a_scale = v; continue
+					if "strength" in k and not "speed" in k: val_a_strength = v; continue
+				
+				
+				# --- MIRROR (ID 7) ---
+				if "mirror" in k:
+					# Rotation -> P1
+					if "rotation" in k and not "speed" in k: val_a_p1 = v; continue
+					
+					# Mirror X Boolean -> Extra Red
+					if "_x" in k: val_a_extra.r = v; continue
+					
+					# Mirror Y Boolean -> Extra Green
+					if "_y" in k: val_a_extra.g = v; continue
+					
+					# Standard Strength
+					if "strength" in k or "amount" in k: val_a_strength = v; continue
+
+
+				# --- KALEIDOSCOPE (ID 8) ---
+				if "kaleid" in k:
+					# Rotation -> P1
+					if "rotation" in k and not "speed" in k: val_a_p1 = v; continue
+					
+					# Slices -> P2
+					if "slices" in k: val_a_p2 = v; continue
+					
+					# Standard Strength
+					if "strength" in k or "amount" in k: val_a_strength = v; continue
+					
+				# --- POPCORN (ID 35) ---
+				if "popcorn" in k:
+					# 1. Scale
+					if "scale" in k and not "speed" in k: val_a_scale = v; continue
+					
+					# 2. Strength
+					if "strength" in k and not "speed" in k: val_a_strength = v; continue
+					
+					# 3. Density -> P1
+					if "density" in k and not "speed" in k: val_a_p1 = v; continue
+					
+					# 4. Center / Position (X)
+					if ("center_x" in k or "pos_x" in k or "offset_x" in k) and not "speed" in k: 
+						val_a_center.x = v; continue
+						
+					# 5. Center / Position (Y)
+					if ("center_y" in k or "pos_y" in k or "offset_y" in k) and not "speed" in k: 
+						val_a_center.y = v; continue
+				
+				if "reptile" in k or "rep_tile" in k:
+					# Scale -> Scale
+					if "scale" in k and not "speed" in k: val_a_scale = v; continue
+					
+					# Rotate -> Strength (Important!)
+					if "rotate" in k and not "speed" in k: val_a_strength = v; continue
+				
+					# --- LAZY MEGA (ID 36) ---
+				if "lazy" in k:
+					# 1. Radius -> Scale
+					if "amount" in k and not "speed" in k: val_a_scale = v; continue
+					
+					# 2. Ring Thickness -> Strength
+					if "space" in k and not "speed" in k: val_a_strength = v; continue
+					
+					# 3. Twist -> P1
+					if "twist" in k and not "speed" in k: val_a_p1 = v; continue
+					
+					# 4. Spin -> P2
+					if "spin" in k and not "ring" in k and not "speed" in k: val_a_p2 = v; continue
+					
+					# 5. Ring Spin -> Extra Red
+					if "ring_spin" in k and not "speed" in k: val_a_extra.r = v; continue
+					
+					# 6. Ring Mode -> Extra Green
+					if "ring_mode" in k: val_a_extra.g = v; continue
+					
+					# 7. Inside Mode -> Extra Blue
+					if "inside_mode" in k: val_a_extra.b = v; continue
+					
+					# 8. Outside Mode -> Extra Alpha
+					if "outside_mode" in k: val_a_extra.a = v; continue
+
+					# 9. Shape -> Center X
+					if "shape" in k: val_a_center.x = v; continue
+				
+				
+				# --- MOBIQ A (Using Long Names) ---
+				if "mobiq_qa_t" in k: val_a_mobiq_A.r = v; continue
+				if "mobiq_qa_x" in k: val_a_mobiq_A.g = v; continue
+				if "mobiq_qa_y" in k: val_a_mobiq_A.b = v; continue
+				if "mobiq_qa_z" in k: val_a_mobiq_A.a = v; continue
+				
+				if "mobiq_qb_t" in k: val_a_mobiq_B.r = v; continue
+				if "mobiq_qb_x" in k: val_a_mobiq_B.g = v; continue
+				if "mobiq_qb_y" in k: val_a_mobiq_B.b = v; continue
+				if "mobiq_qb_z" in k: val_a_mobiq_B.a = v; continue
+				
+				if "mobiq_qc_t" in k: val_a_mobiq_C.r = v; continue
+				if "mobiq_qc_x" in k: val_a_mobiq_C.g = v; continue
+				if "mobiq_qc_y" in k: val_a_mobiq_C.b = v; continue
+				if "mobiq_qc_z" in k: val_a_mobiq_C.a = v; continue
+				
+				if "mobiq_qd_t" in k: val_a_mobiq_D.r = v; continue
+				if "mobiq_qd_x" in k: val_a_mobiq_D.g = v; continue
+				if "mobiq_qd_y" in k: val_a_mobiq_D.b = v; continue
+				if "mobiq_qd_z" in k: val_a_mobiq_D.a = v; continue
+
+				# --- MOBIUS ---
+				if "mobius_re_a" in k: val_a_p1 = v; continue
+				if "mobius_im_a" in k: val_a_p2 = v; continue
+				if "mobius_re_b" in k: val_a_center.x = v; continue
+				if "mobius_im_b" in k: val_a_center.y = v; continue
+				if "mobius_re_c" in k: val_a_extra.r = v; continue
+				if "mobius_im_c" in k: val_a_extra.g = v; continue
+				if "mobius_re_d" in k: val_a_extra.b = v; continue
+				if "mobius_im_d" in k: val_a_extra.a = v; continue
+
+				if "wave_type" in k: val_a_p1 = v; continue   # p1 = Type (0, 1, 2)
+				if "wave_phase" in k: val_a_p2 = v; continue  # p2 = Phase Offset
+				if "wave_frequency" in k: val_a_scale = v; continue
+				if "wave_amplitude" in k: val_a_strength = v; continue
+	
+
+
+				# --- GLYNNSIM (ID 37) ---
+				if "glynn" in k:
+					# 1. Radius -> Scale (Inner Edge)
+					if "radius" in k and not "speed" in k: val_a_scale = v; continue
+					
+					# 2. Thickness -> Strength (Outer Edge)
+					if "thickness" in k and not "speed" in k: val_a_strength = v; continue
+					
+					# 3. Contrast -> P1
+					if "contrast" in k and not "speed" in k: val_a_p1 = v; continue
+					
+					# 4. Power -> P2
+					if "pow" in k and not "speed" in k: val_a_p2 = v; continue
+					
+					# 5. Ring Mode -> Extra.r
+					if "mode" in k: val_a_extra.r = v; continue
+
+				# --- OTHERS ---
+				if "radius_scale" in k: val_a_p1 = v; continue
+				if "angle_scale" in k: val_a_p2 = v; continue
+				if "nebula_detail" in k or "detail" in k: val_a_p1 = v; continue
+				if "nebula_swirl" in k or "swirl" in k: val_a_p2 = v; continue
+				if "offset" in k: val_a_p1 = v; continue
+				if "center_x" in k: val_a_center.x = v; continue
+				if "center_y" in k: val_a_center.y = v; continue
+				if "truchet_mode" in k: val_a_p1 = v; continue
+				if "truchet_rotate" in k: val_a_p2 = v; continue
+				if "construction_density" in k: val_a_p1 = v; continue
+				if "construction_circles" in k: val_a_p2 = v; continue
+				if "construction_chaos" in k: val_a_strength = v; continue
+				if "portal_shift_x" in k: val_a_p1 = v; continue
+				if "portal_shift_y" in k: val_a_p2 = v; continue
+				if "portal_size" in k: val_a_scale = v; continue
+				if "janus_shift" in k: val_a_p1 = v; continue
+				if "janus_zoom" in k: val_a_p2 = v; continue
+
+				# --- GENERIC ---
+				if "scale" in k: val_a_scale = v
+				if "strength" in k or "amount" in k or "opacity" in k or "distortion" in k: val_a_strength = v
+				# 1. Scale
+				if "scale" in k and not "gnarl" in k and not "speed" in k: 
+					val_a_scale = v
+				
+				# 2. Strength / Amount
+				if ("strength" in k or "amount" in k) and not "gnarl" in k and not "speed" in k: 
+					val_a_strength = v
+			mesh_material.set_shader_parameter("var_a_scale", val_a_scale)
+			mesh_material.set_shader_parameter("var_a_strength", val_a_strength)
+			mesh_material.set_shader_parameter("var_a_speed", val_a_speed)
+			mesh_material.set_shader_parameter("var_a_param1", val_a_p1)
+			mesh_material.set_shader_parameter("var_a_param2", val_a_p2)
+			mesh_material.set_shader_parameter("var_a_center", val_a_center)
+			mesh_material.set_shader_parameter("var_a_extra", val_a_extra)
+			mesh_material.set_shader_parameter("mobiq_a_A", val_a_mobiq_A)
+			mesh_material.set_shader_parameter("mobiq_a_B", val_a_mobiq_B)
+			mesh_material.set_shader_parameter("mobiq_a_C", val_a_mobiq_C)
+			mesh_material.set_shader_parameter("mobiq_a_D", val_a_mobiq_D)
+
+			# --- VARIATION B SETUP ---
+			var val_b_scale = 1.0; var val_b_strength = 1.0; var val_b_speed = 0.0
+			var val_b_p1 = 0.0; var val_b_p2 = 0.0
+			var val_b_center = Vector2(0.0, 0.0)
+			var val_b_extra = Color(0.0, 0.0, 0.0, 0.0)
+			
+			# Mobiq vars (Keep these defaults)
+			var val_b_mobiq_A = Color(1, 0, 0, 0); var val_b_mobiq_B = Color(0, 0, 0, 0)
+			var val_b_mobiq_C = Color(0, 0, 0, 0); var val_b_mobiq_D = Color(1, 0, 0, 0)
+			
+			for key in _auto_params_b:
+				var v = _auto_params_b[key]
+				var k = key.to_lower()
+				
+				# --- NEW: CPU ANIMATION CHECK ---
+				# Look for a companion speed variable (e.g. "ap_c1x" looks for "ap_c1x_speed")
+				var speed_key = key + "_speed"
+				if _auto_params_b.has(speed_key):
+					var s = _auto_params_b[speed_key]
+					# If speed is not 0, apply the sine wave math HERE
+					if abs(s) > 0.001:
+						v += sin(time_accumulator * s)
+
+				# 1. SPEED CHECK (Fixed to ignore "frequency")
+				if "speed" in k and not "freq" in k:
+					val_b_speed = v
+					continue 
+
+				# --- APOLLONIAN MAPPING ---
+				if "apollonian_scale" in k: val_b_scale = v; continue
+				if "ap_c1x" in k: val_b_center.x = v; continue
+				if "ap_c1y" in k: val_b_center.y = v; continue
+				if "ap_c2x" in k: val_b_extra.r = v; continue
+				if "ap_c2y" in k: val_b_extra.g = v; continue
+				if "ap_c3x" in k: val_b_extra.b = v; continue
+				if "ap_c3y" in k: val_b_extra.a = v; continue
+				
+				
+				# --- ARCTANGENT MAPPING ---
+				if "arctangent_scale" in k: val_b_scale = v; continue
+				if "arctangent_amount" in k: val_b_strength = v; continue
+				if "arctangent_offset" in k: val_b_p1 = v; continue
+				
+				
+				# --- JULIAN MAPPING ---
+				if "julian" in k:
+					if "power" in k: val_b_scale = v; continue    # Map Power -> Scale
+					if "dist" in k: val_b_strength = v; continue  # Map Dist -> Strength
+					if "offset" in k: val_b_p1 = v; continue      # Map Offset -> P1
+					
+					# Map the Seed Variables (A-F) to Center and Extra slots
+					if "julian_a" in k: val_b_center.x = v; continue
+					if "julian_b" in k: val_b_center.y = v; continue
+					if "julian_c" in k: val_b_extra.r = v; continue
+					if "julian_d" in k: val_b_extra.g = v; continue
+					if "julian_e" in k: val_b_extra.b = v; continue
+					if "julian_f" in k: val_b_extra.a = v; continue
+					
+					
+					
+					
+				# --- CELLULAR WEAVE MAPPING ---
+				if "cellular" in k or "weave" in k:
+					if "grid_size" in k: val_b_scale = v; continue   # Grid Size -> Scale
+					if "threshold" in k: val_b_strength = v; continue # Threshold -> Strength
+					if "iterations" in k: val_b_p1 = v; continue      # Iterations -> P1 (Offset)
+				
+				
+				
+				# --- CHIMERA / GNARL (Source Code Port) ---
+				if "gnarl" in k:
+					val_b_strength = 1.0 # Force ON
+					
+					# 1. Scales (X, Y)
+					if "scale_x" in k and not "speed" in k: val_b_scale = v; continue
+					if "scale_y" in k and not "speed" in k: val_b_extra.r = v; continue
+					
+					# 2. Distortion Amount
+					if "distort" in k and not "speed" in k: val_b_extra.g = v; continue
+					
+					# 3. Freq 2 (X, Y) -> Mapped to Extra Blue/Alpha
+					if "freq_x2" in k: val_b_extra.b = v; continue
+					if "freq_y2" in k: val_b_extra.a = v; continue
+					
+					# 4. Phase/Color (C1) -> P2
+					if "c1" in k: val_b_p2 = v; continue
+					
+					# 5. Freq 1 (X, Y) -> Center
+					if "freq_x1" in k: val_b_center.x = v; continue
+					if "freq_y1" in k: val_b_center.y = v; continue
+					
+					# 6. Mode (Likely manual set)
+					if "mode" in k: val_b_p1 = v; continue
+				
+				# --- CLIFFORD MAPPING ---
+				if "clifford" in k:
+					if "scale" in k: val_b_scale = v; continue
+					if "strength" in k or "amount" in k: val_b_strength = v; continue
+					
+					
+				# --- DEJONG MAPPING ---
+				if "dejong" in k:
+					if "scale" in k: val_b_scale = v; continue
+					if "strength" in k or "amount" in k: val_b_strength = v; continue
+					
+					# Map the 4 DeJong Constants
+					if "dejong_a" in k: val_b_center.x = v; continue
+					if "dejong_b" in k: val_b_center.y = v; continue
+					if "dejong_c" in k: val_b_extra.r = v; continue
+					if "dejong_d" in k: val_b_extra.g = v; continue
+					
+					
+					
+					# Map the 4 Clifford Constants
+					if "clifford_a" in k: val_b_center.x = v; continue
+					if "clifford_b" in k: val_b_center.y = v; continue
+					if "clifford_c" in k: val_b_extra.r = v; continue
+					if "clifford_d" in k: val_b_extra.g = v; continue
+				
+				# --- COSINE MAPPING ---
+				if "cosine" in k:
+					if "freq" in k or "scale" in k: val_b_scale = v; continue   # Map Frequency -> Scale
+					if "amp" in k or "strength" in k: val_b_strength = v; continue # Map Amplitude -> Strength
+					if "phase" in k or "offset" in k: val_b_p1 = v; continue    # Map Phase -> P1
+				
+				# --- CANVAS MAPPING ---
+				if "canvas" in k:
+					if "scale" in k: val_b_scale = v; continue
+					if "amount" in k or "strength" in k: val_b_strength = v; continue
+					if "flow" in k: val_b_p1 = v; continue        # Map Flow -> P1
+					if "style" in k: val_b_p2 = v; continue       # Map Style -> P2
+					if "chaos" in k: val_b_extra.r = v; continue  # Map Chaos -> Extra Red
+					
+					
+					
+				# --- HEART (ID 12) ---
+				if "heart" in k:
+					if "scale" in k and not "speed" in k: val_b_scale = v; continue
+					if "strength" in k and not "speed" in k: val_b_strength = v; continue
+					if "rotation" in k and not "speed" in k: val_b_p1 = v; continue
+					
+					
+					
+				# --- HYPERBOLIC SINE (ID 17) ---
+				if "hyperbolic_sine" in k:
+					if "scale" in k and not "speed" in k: val_b_scale = v; continue
+					if "strength" in k and not "speed" in k: val_b_strength = v; continue
+
+				# --- HYPERBOLIC COSINE (ID 18) ---
+				if "hyperbolic_cosine" in k:
+					if "scale" in k and not "speed" in k: val_b_scale = v; continue
+					if "strength" in k and not "speed" in k: val_b_strength = v; continue
+					
+					
+					
+					
+				# --- MIRROR (ID 20) ---
+				if "mirror" in k:
+					# Rotation -> P1
+					if "rotation" in k and not "speed" in k: val_b_p1 = v; continue
+					
+					# Mirror X Boolean -> Extra Red
+					if "_x" in k: val_b_extra.r = v; continue
+					
+					# Mirror Y Boolean -> Extra Green
+					if "_y" in k: val_b_extra.g = v; continue
+					
+					# Standard Strength
+					if "strength" in k or "amount" in k: val_b_strength = v; continue
+
+
+				# --- KALEIDOSCOPE (ID 8) ---
+				if "kaleid" in k:
+					# Rotation -> P1
+					if "rotation" in k and not "speed" in k: val_b_p1 = v; continue
+					
+					# Slices -> P2
+					if "slices" in k: val_b_p2 = v; continue
+					
+					# Standard Strength
+					if "strength" in k or "amount" in k: val_b_strength = v; continue
+					
+					
+					# --- LAZY MEGA (ID 36) ---
+				if "lazy" in k:
+					# 1. Radius -> Scale
+					if "amount" in k and not "speed" in k: val_b_scale = v; continue
+					
+					# 2. Ring Thickness -> Strength
+					if "space" in k and not "speed" in k: val_b_strength = v; continue
+					
+					# 3. Twist -> P1
+					if "twist" in k and not "speed" in k: val_b_p1 = v; continue
+					
+					# 4. Spin -> P2
+					if "spin" in k and not "ring" in k and not "speed" in k: val_b_p2 = v; continue
+					
+					# 5. Ring Spin -> Extra Red
+					if "ring_spin" in k and not "speed" in k: val_b_extra.r = v; continue
+					
+					# 6. Ring Mode -> Extra Green
+					if "ring_mode" in k: val_b_extra.g = v; continue
+					
+					# 7. Inside Mode -> Extra Blue
+					if "inside_mode" in k: val_b_extra.b = v; continue
+					
+					# 8. Outside Mode -> Extra Alpha
+					if "outside_mode" in k: val_b_extra.a = v; continue
+
+					# 9. Shape -> Center X
+					if "shape" in k: val_b_center.x = v; continue
+					
+					
+				if "reptile" in k or "rep_tile" in k:
+					# Scale -> Scale
+					if "scale" in k and not "speed" in k: val_b_scale = v; continue
+					
+					# Rotate -> Strength (Important!)
+					if "rotate" in k and not "speed" in k: val_b_strength = v; continue
+					
+					
+				# --- POPCORN (ID 35) ---
+				if "popcorn" in k:
+					# 1. Scale
+					if "scale" in k and not "gnarl" in k and not "speed" in k: 
+						val_b_scale = v
+				
+				# 2. Strength / Amount
+					if ("strength" in k or "amount" in k) and not "gnarl" in k and not "speed" in k: 
+						val_b_strength = v
+					
+					# 3. Density -> P1
+					if "density" in k and not "speed" in k: val_b_p1 = v; continue
+					
+					# 4. Center X/Y (Position)
+					if "center_x" in k and not "speed" in k: val_b_center.x = v; continue
+					if "center_y" in k and not "speed" in k: val_b_center.y = v; continue
+
+
+
+
+
+				if "mobiq_qa_t" in k: val_b_mobiq_A.r = v; continue
+				if "mobiq_qa_x" in k: val_b_mobiq_A.g = v; continue
+				if "mobiq_qa_y" in k: val_b_mobiq_A.b = v; continue
+				if "mobiq_qa_z" in k: val_b_mobiq_A.a = v; continue
+				
+				if "mobiq_qb_t" in k: val_b_mobiq_B.r = v; continue
+				if "mobiq_qb_x" in k: val_b_mobiq_B.g = v; continue
+				if "mobiq_qb_y" in k: val_b_mobiq_B.b = v; continue
+				if "mobiq_qb_z" in k: val_b_mobiq_B.a = v; continue
+				
+				if "mobiq_qc_t" in k: val_b_mobiq_C.r = v; continue
+				if "mobiq_qc_x" in k: val_b_mobiq_C.g = v; continue
+				if "mobiq_qc_y" in k: val_b_mobiq_C.b = v; continue
+				if "mobiq_qc_z" in k: val_b_mobiq_C.a = v; continue
+				
+				if "mobiq_qd_t" in k: val_b_mobiq_D.r = v; continue
+				if "mobiq_qd_x" in k: val_b_mobiq_D.g = v; continue
+				if "mobiq_qd_y" in k: val_b_mobiq_D.b = v; continue
+				if "mobiq_qd_z" in k: val_b_mobiq_D.a = v; continue
+
+				if "mobius_re_a" in k: val_b_p1 = v; continue
+				if "mobius_im_a" in k: val_b_p2 = v; continue
+				if "mobius_re_b" in k: val_b_center.x = v; continue
+				if "mobius_im_b" in k: val_b_center.y = v; continue
+				if "mobius_re_c" in k: val_b_extra.r = v; continue
+				if "mobius_im_c" in k: val_b_extra.g = v; continue
+				if "mobius_re_d" in k: val_b_extra.b = v; continue
+				if "mobius_im_d" in k: val_b_extra.a = v; continue
+
+				if "wave_type" in k: val_b_p1 = v; continue   # p1 = Type (0, 1, 2)
+				if "wave_phase" in k: val_b_p2 = v; continue  # p2 = Phase Offset
+				if "wave_frequency" in k: val_b_scale = v; continue
+				if "wave_amplitude" in k: val_b_strength = v; continue
+
+				if "radius_scale" in k: val_b_p1 = v; continue
+				if "angle_scale" in k: val_b_p2 = v; continue
+				if "nebula_detail" in k or "detail" in k: val_b_p1 = v; continue
+				if "nebula_swirl" in k or "swirl" in k: val_b_p2 = v; continue
+				if "offset" in k: val_b_p1 = v; continue
+				if "center_x" in k: val_b_center.x = v; continue
+				if "center_y" in k: val_b_center.y = v; continue
+				if "truchet_mode" in k: val_b_p1 = v; continue
+				if "truchet_rotate" in k: val_b_p2 = v; continue
+				if "construction_density" in k: val_b_p1 = v; continue
+				if "construction_circles" in k: val_b_p2 = v; continue
+				if "construction_chaos" in k: val_b_strength = v; continue
+				if "portal_shift_x" in k: val_b_p1 = v; continue
+				if "portal_shift_y" in k: val_b_p2 = v; continue
+				if "portal_size" in k: val_b_scale = v; continue
+				if "janus_shift" in k: val_b_p1 = v; continue
+				if "janus_zoom" in k: val_b_p2 = v; continue
+				# --- GLYNNSIM (ID 37) ---
+				if "glynn" in k:
+					# 1. Radius -> Scale (Inner Edge)
+					if "radius" in k and not "speed" in k: val_b_scale = v; continue
+					
+					# 2. Thickness -> Strength (Outer Edge)
+					if "thickness" in k and not "speed" in k: val_b_strength = v; continue
+					
+					# 3. Contrast -> P1
+					if "contrast" in k and not "speed" in k: val_b_p1 = v; continue
+					
+					# 4. Power -> P2
+					if "pow" in k and not "speed" in k: val_b_p2 = v; continue
+					
+					# 5. Ring Mode -> Extra.r
+					if "mode" in k: val_b_extra.r = v; continue
+
+				if "scale" in k: val_b_scale = v
+				if "strength" in k or "amount" in k or "opacity" in k or "distortion" in k: val_b_strength = v
+				
+				# 1. Scale
+				if "scale" in k and not "gnarl" in k and not "speed" in k: 
+					val_b_scale = v
+				
+				# 2. Strength / Amount
+				if ("strength" in k or "amount" in k) and not "gnarl" in k and not "speed" in k: 
+					val_b_strength = v
+
+			mesh_material.set_shader_parameter("var_b_scale", val_b_scale)
+			mesh_material.set_shader_parameter("var_b_strength", val_b_strength)
+			mesh_material.set_shader_parameter("var_b_speed", val_b_speed)
+			mesh_material.set_shader_parameter("var_b_param1", val_b_p1)
+			mesh_material.set_shader_parameter("var_b_param2", val_b_p2)
+			mesh_material.set_shader_parameter("var_b_center", val_b_center)
+			mesh_material.set_shader_parameter("var_b_extra", val_b_extra)
+			mesh_material.set_shader_parameter("mobiq_b_A", val_b_mobiq_A)
+			mesh_material.set_shader_parameter("mobiq_b_B", val_b_mobiq_B)
+			mesh_material.set_shader_parameter("mobiq_b_C", val_b_mobiq_C)
+			mesh_material.set_shader_parameter("mobiq_b_D", val_b_mobiq_D)
+		# -------------------------------------------------------
+		# -------------------------------------------------------
+		# -------------------------------------------------------
+
 		# --- 1. CRITICAL: SEND TEXTURE TO EVERYONE ---
 		var tex = viewport_b.get_texture() if is_a_source else viewport_a.get_texture()
 		mesh_material.set_shader_parameter("fractal_texture", tex)
@@ -3141,7 +4439,9 @@ func _process(delta: float) -> void:
 
 		# --- 3. RAYMARCH SPECIFIC PARAMS ---
 		if is_raymarching:
-			mesh_material.set_shader_parameter("step_speed", current_step_speed)
+			if current_shape != 12:
+				
+				mesh_material.set_shader_parameter("step_speed", current_step_speed)
 			# Send Light Data
 			if light_3d:
 				var light_dir = light_3d.global_transform.basis.z
@@ -3272,6 +4572,8 @@ func _process(delta: float) -> void:
 			tube_mat.set_shader_parameter("sharpen", sharpen)
 			tube_mat.set_shader_parameter("gamma", gamma)
 			tube_mat.set_shader_parameter("vibrance", vibrance)
+			
+		
 func _load_image_from_base64(b64_string: String) -> void:
 	if not "," in b64_string:
 		print("Error: Invalid Base64 string format (missing comma).")
@@ -3977,8 +5279,14 @@ func _on_var_a_dropdown_item_selected(index: int):
 			# --- FIX: CLEAR OLD DATA BEFORE LOADING NEW DEFAULTS ---
 			_auto_params_a.clear() 
 			# -------------------------------------------------------
-			for param in panel.parameters:
-				_auto_params_a[param.name] = param.default
+			# Safety Check: Does the panel actually have parameters?
+			if "parameters" in panel and panel.parameters:
+				for param in panel.parameters:
+					# CRITICAL FIX: Skip if param is null or missing the 'default' key
+					if param == null: continue
+					if not "default" in param: continue
+					
+					_auto_params_a[param.name] = param.default
 
 func _on_rep_tile_dropdown_a_item_selected(index: int):
 	# This just updates the ID. The panel is already visible.
@@ -4024,8 +5332,14 @@ func _on_var_b_dropdown_item_selected(index: int):
 			# --- FIX: CLEAR OLD DATA BEFORE LOADING NEW DEFAULTS ---
 			_auto_params_b.clear() 
 			# -------------------------------------------------------
-			for param in panel.parameters:
-				_auto_params_b[param.name] = param.default
+			# Safety Check: Does the panel actually have parameters?
+			if "parameters" in panel and panel.parameters:
+				for param in panel.parameters:
+					# CRITICAL FIX: Skip if param is null or missing the 'default' key
+					if param == null: continue
+					if not "default" in param: continue
+					
+					_auto_params_b[param.name] = param.default
 
 func _on_rep_tile_dropdown_b_item_selected(index: int):
 	# This just updates the ID. The panel is already visible.
@@ -4154,6 +5468,8 @@ func _populate_all_dropdowns():
 	shape_selector_button.add_item("Amazing Surf (Raymarch)") # Index 8
 	shape_selector_button.add_item("Voxel Grid (Real 3D)") # Index 9
 	shape_selector_button.add_item("Flow Tubes") # Index 10
+	shape_selector_button.add_item("Romanesco (Compute)")  # Index 11
+	shape_selector_button.add_item("KIFS Fractal (Raymarch)") # Index 12
 
 func _get_id_from_name(var_name: String) -> int:
 	if VariationManager.VARIATIONS.has(var_name):
@@ -4990,3 +6306,169 @@ func setup_flow_tubes():
 		# MAKE SURE THIS PATH MATCHES YOUR SHADER FILE NAME
 			mat.shader = load("res://VoxelTubes.gdshader") 
 			voxel_tubes.material_override = mat
+# --- Shader Parameters Struct ---
+# Must match the layout(push_constant) in GLSL EXACTLY
+# Be careful with alignment! Floats are 4 bytes. 
+# Total bytes: 21 params * 4 = 84 bytes.
+func get_push_constants() -> PackedByteArray:
+	var bytes = PackedByteArray()
+	
+	bytes.resize(96) 
+	
+	var buffer = StreamPeerBuffer.new()
+	buffer.data_array = bytes
+
+	# Write parameters in order
+	buffer.put_float(size_slider.value)          # 1. size
+	buffer.put_32(int(recursion_slider.value))   # 2. recursion_depth
+	
+	buffer.put_32(int(num_arms_slider.value))    # 3. num_arms
+	buffer.put_float(arm_spread_slider.value)    # 4. arm_spread
+	buffer.put_float(arm_elevation_slider.value) # 5. arm_elevation
+	buffer.put_float(arm_twist_slider.value)     # 6. arm_twist
+	
+	buffer.put_32(int(floret_count_slider.value))# 7. floret_count
+	buffer.put_float(floret_scale_slider.value)  # 8. floret_scale
+	buffer.put_float(pattern_spread_slider.value)# 9. pattern_spread
+	buffer.put_float(spiral_twist_slider.value)  # 10. spiral_twist
+	buffer.put_float(cone_steepness_slider.value)# 11. cone_steepness
+	buffer.put_float(floret_detail_slider.value) # 12. floret_detail_size
+	buffer.put_32(int(floret_shape_option.selected)) # 13. floret_shape
+	
+	buffer.put_float(pitch_slider.value)         # 14. pitch
+	buffer.put_float(yaw_slider.value)           # 15. yaw
+	buffer.put_float(roll_slider.value)          # 16. roll
+	
+	buffer.put_32(int(color_mode_option.selected)) # 17. color_mode
+	buffer.put_float(solid_color_slider.value)     # 18. solid_color_idx
+	buffer.put_float(color_min_slider.value)       # 19. color_range_min
+	buffer.put_float(color_max_slider.value)       # 20. color_range_max
+	
+	buffer.put_float(float(TOTAL_POINTS))          # 21. total_points
+	buffer.put_float(Time.get_ticks_msec() / 1000.0) # 22. time_seed
+
+	# The remaining 8 bytes in 'bytes' are automatically 0 (padding).
+	
+	# Important: We return the modified 'bytes' array directly to ensure size is correct.
+	# (StreamPeerBuffer might define its own size based on cursor position)
+	return buffer.data_array
+func _run_romanesco_compute():
+	if not rd: return
+
+	# 1. Push Constants (The function you already pasted)
+	var push_constant_data = get_push_constants()
+
+	# 2. Start List
+	var compute_list = rd.compute_list_begin()
+	rd.compute_list_bind_compute_pipeline(compute_list, pipeline_rid)
+	rd.compute_list_bind_uniform_set(compute_list, uniform_set_rid, 0)
+	rd.compute_list_set_push_constant(compute_list, push_constant_data, push_constant_data.size())
+	
+	# 3. Dispatch (Total Points / 64 threads per group)
+	var groups = ceil(TOTAL_POINTS / 64.0)
+	rd.compute_list_dispatch(compute_list, int(groups), 1, 1)
+	rd.compute_list_end()
+	
+	# 4. Submit and Sync
+	rd.submit()
+	rd.sync() # Wait for GPU to finish
+	
+	# 5. Read Back Data (We will optimize this later)
+	var output_bytes = rd.buffer_get_data(point_buffer_rid)
+	_update_romanesco_multimesh(output_bytes)
+
+func _update_romanesco_multimesh(bytes: PackedByteArray):
+	
+
+	# 2. Safety Checks
+	if not %RomanescoMesh: return 
+	var mm: MultiMesh = %RomanescoMesh.multimesh
+	if not mm: return 
+
+	if mm.instance_count != TOTAL_POINTS:
+		mm.instance_count = TOTAL_POINTS
+	
+	# 3. The Loop (Do NOT put print statements inside here!)
+	for i in range(TOTAL_POINTS):
+		var offset = i * 16 
+		var x = bytes.decode_float(offset + 0)
+		var y = bytes.decode_float(offset + 4)
+		var z = bytes.decode_float(offset + 8)
+		var c = bytes.decode_float(offset + 12)
+
+		var t = Transform3D()
+		t.origin = Vector3(x, y, z)
+		t = t.scaled(Vector3(0.05, 0.05, 0.05)) 
+
+		mm.set_instance_transform(i, t)
+		mm.set_instance_custom_data(i, Color(c, 0, 0, 0))
+func _connect_romanesco_signals():
+	# Dropdowns (These don't have spinboxes)
+	floret_shape_option.item_selected.connect(func(_idx): _run_romanesco_compute())
+	color_mode_option.item_selected.connect(func(_idx): _run_romanesco_compute())
+
+	# Helper function to link Slider <-> Spinbox
+	var link = func(slider: Slider, spinbox: SpinBox):
+		if not slider or not spinbox: return
+		
+		# 1. Slider moved -> Update Spinbox -> Run Compute
+		slider.value_changed.connect(func(v):
+			spinbox.set_value_no_signal(v)
+			_run_romanesco_compute()
+		)
+		
+		# 2. Spinbox typed -> Update Slider -> Run Compute
+		spinbox.value_changed.connect(func(v):
+			slider.set_value_no_signal(v)
+			_run_romanesco_compute()
+		)
+
+	# --- Link Every Pair ---
+	link.call(size_slider, size_spinbox)
+	link.call(recursion_slider, recursion_spinbox)
+	link.call(num_arms_slider, num_arms_spinbox)
+	link.call(arm_spread_slider, arm_spread_spinbox)
+	link.call(arm_elevation_slider, arm_elevation_spinbox)
+	link.call(arm_twist_slider, arm_twist_spinbox)
+	link.call(floret_count_slider, floret_count_spinbox)
+	link.call(floret_scale_slider, floret_scale_spinbox)
+	link.call(pattern_spread_slider, pattern_spread_spinbox)
+	link.call(spiral_twist_slider, spiral_twist_spinbox)
+	link.call(cone_steepness_slider, cone_steepness_spinbox)
+	link.call(floret_detail_slider, floret_detail_spinbox)
+	link.call(pitch_slider, pitch_spinbox)
+	link.call(yaw_slider, yaw_spinbox)
+	link.call(roll_slider, roll_spinbox)
+	link.call(solid_color_slider, solid_color_spinbox)
+	link.call(color_min_slider, color_min_spinbox)
+	link.call(color_max_slider, color_max_spinbox)
+func _set_kifs_defaults():
+	# 1. Force the Variables first (The Real Fix)
+	pre_scale = 1.5
+	pre_translate = Vector2(0.5, 0.5)
+	
+	# 2. Update UI to match
+	pre_scale_slider.set_value_no_signal(1.5)
+	if pre_scale_spinbox: pre_scale_spinbox.set_value_no_signal(1.5)
+	
+	# 3. Enable Symmetry for the "Kaleidoscope" look
+	kaleidoscope_on = true
+	if post_kaleidoscope_master_check: 
+		post_kaleidoscope_master_check.set_pressed_no_signal(true)
+	
+	mirror_x = true
+	if post_mirror_x_check: 
+		post_mirror_x_check.set_pressed_no_signal(true)
+	
+	mirror_y = true
+	if post_mirror_y_check: 
+		post_mirror_y_check.set_pressed_no_signal(true)
+	
+	kaleidoscope_slices = 6.0
+	if post_kaleidoscope_slider: 
+		post_kaleidoscope_slider.set_value_no_signal(6.0)
+func _on_box_size_slider_changed(value):
+	kifs_box_size = value
+
+func _on_rot_x_changed(value):
+	kifs_rot_x = value

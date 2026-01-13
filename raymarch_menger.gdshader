@@ -96,7 +96,7 @@ vec2 map(vec3 p) {
 	mat3 rot = get_rot_matrix(fold_rotate);
 
 	for(int m = 0; m < iterations; m++) {
-		p *= rot; 
+		p *= rot;
 		if (length(twist) > 0.001) {
 			if (abs(twist.x) > 0.001) p.yz *= rot2D(p.x * twist.x);
 			if (abs(twist.y) > 0.001) p.xz *= rot2D(p.y * twist.y);
@@ -105,7 +105,7 @@ vec2 map(vec3 p) {
 		if (length(wave_strength) > 0.001) {
 			p += sin(p.yzx * wave_frequency) * wave_strength;
 		}
-		p += julia_offset; 
+		p += julia_offset;
 		
 		vec3 a = mod(p * s, 2.0) - 1.0;
 		s *= scale_factor;

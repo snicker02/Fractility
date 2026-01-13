@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://d0prs0ptrj4q3"
+path="res://.godot/imported/romanesco.glsl-2975ec9ab0dfd2c436609b45285e4cf2.res"
+
+[deps]
+
+source_file="res://romanesco.glsl"
+dest_files=["res://.godot/imported/romanesco.glsl-2975ec9ab0dfd2c436609b45285e4cf2.res"]
+
+[params]
+

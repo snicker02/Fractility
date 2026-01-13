@@ -1,4 +1,4 @@
-[gd_scene load_steps=308 format=3 uid="uid://kwgmoghoe0fi"]
+[gd_scene load_steps=346 format=3 uid="uid://kwgmoghoe0fi"]
 
 [ext_resource type="Script" uid="uid://b2rflje0spa1e" path="res://main_controller.gd" id="1_wtcfe"]
 [ext_resource type="Resource" uid="uid://cmauc4sn1b4yg" path="res://default_settings.tres" id="2_d21ai"]
@@ -13,6 +13,7 @@
 [ext_resource type="Shader" uid="uid://p8d3swti6ayv" path="res://VoxelTubes.gdshader" id="9_0h7mo"]
 [ext_resource type="Shader" uid="uid://dvgfy4qhc7mwt" path="res://Snoflake.gdshader" id="9_hqns4"]
 [ext_resource type="Script" uid="uid://ccfjk355f4bqx" path="res://voxel_tubes.gd" id="10_nr8wp"]
+[ext_resource type="Shader" uid="uid://mlvhju0ii8io" path="res://romanesco_Mat.gdshader" id="11_nr8wp"]
 
 [sub_resource type="Resource" id="Resource_rj586"]
 script = ExtResource("6_4d7sh")
@@ -1004,6 +1005,168 @@ step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
+[sub_resource type="Resource" id="Resource_ux2an"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qa_t_a"
+label = "A Real T"
+add_speed_control = true
+default = 1.0
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_kivee"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qa_x_a"
+label = "A  Imag X"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_qp26s"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qa_y_a"
+label = "A Imag Y "
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_uaenx"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qa_z_a"
+label = " A Imag Z"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_fnivv"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qb_t_a"
+label = "B  Real T"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_4tgck"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qb_x_a"
+label = "B Imag X"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_0f5y0"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qb_y_a"
+label = "B Imag Y "
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_81le4"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qb_z_a"
+label = "B Imag Z"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_hve81"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qc_t_a"
+label = "C Real T"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_cm2e3"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qc_x_a"
+label = "C Imag X"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_avdom"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qc_y_a"
+label = "C Imag Y "
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_5vov6"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qc_z_a"
+label = "C Imag Z"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_46eqt"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qd_t_a"
+label = "D Real T"
+add_speed_control = true
+default = 1.0
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_0ak8h"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qd_x_a"
+label = "D Imag X"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_mt0dj"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qd_y_a"
+label = "D Imag Y "
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_2mp0g"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qd_z_a"
+label = "D Imag Z"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
 [sub_resource type="Resource" id="Resource_oixsq"]
 script = ExtResource("6_4d7sh")
 name = "mobius_re_a_a"
@@ -1380,8 +1543,8 @@ name = "spherical_strength_a"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = -2.0
-max = 2.0
+min = -5.0
+max = 5.0
 step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
@@ -1391,7 +1554,8 @@ script = ExtResource("6_4d7sh")
 name = "spherical_center_x_a"
 label = "Center X"
 add_speed_control = true
-min = -1.0
+min = -5.0
+max = 5.0
 step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
@@ -1401,7 +1565,8 @@ script = ExtResource("6_4d7sh")
 name = "spherical_center_y_a"
 label = "Center Y"
 add_speed_control = true
-min = -1.0
+min = -5.0
+max = 5.0
 step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
@@ -1522,6 +1687,7 @@ name = "wave_amplitude_a"
 label = "Amplitude"
 add_speed_control = true
 default = 0.1
+max = 10.0
 step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
@@ -2534,6 +2700,167 @@ step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
 
+[sub_resource type="Resource" id="Resource_7weow"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qa_t_b"
+label = "A Real T"
+add_speed_control = true
+default = 1.0
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_selgx"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qa_x_b"
+label = "A Imag X"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_74xqj"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qa_y_b"
+label = "A Imag Y"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_f03q3"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qa_z_b"
+label = "A Imag Z"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_4ujub"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qb_t_b"
+label = "B Real T"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_yvvvk"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qb_x_b"
+label = "B Imag X"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_0kktd"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qb_y_b"
+label = "B Imag Y"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_57csi"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qb_z_b"
+label = "B Imag Z"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_01rmr"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qc_t_b"
+label = "C Real T"
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_rldui"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qc_x_b"
+label = "C Imag X"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_o8nts"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qc_y_b"
+label = "C Imag Y "
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_gvnon"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qc_z_b"
+label = "C Imag Z"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_mn2ro"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qd_t_b"
+label = "D Real T"
+add_speed_control = true
+default = 1.0
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_r58u6"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qd_x_b"
+label = "D Imag X "
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_vhcl3"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qd_y_b"
+label = "D Imag Y"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
+[sub_resource type="Resource" id="Resource_dp460"]
+script = ExtResource("6_4d7sh")
+name = "mobiq_qd_z_b"
+label = "D Imag Z"
+add_speed_control = true
+min = -5.0
+max = 5.0
+dropdown_options = PackedStringArray()
+metadata/_custom_type_script = "uid://di65wpry5ixo0"
+
 [sub_resource type="Resource" id="Resource_kkr25"]
 script = ExtResource("6_4d7sh")
 name = "mobius_re_a_b"
@@ -2937,8 +3264,8 @@ name = "spherical_strength_b"
 label = "Strength"
 add_speed_control = true
 default = 1.0
-min = -2.0
-max = 2.0
+min = -5.0
+max = 5.0
 step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
@@ -2948,7 +3275,8 @@ script = ExtResource("6_4d7sh")
 name = "spherical_center_x_b"
 label = "Center X"
 add_speed_control = true
-min = -1.0
+min = -5.0
+max = 5.0
 step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
@@ -2958,7 +3286,8 @@ script = ExtResource("6_4d7sh")
 name = "spherical_center_y_b"
 label = "Center Y"
 add_speed_control = true
-min = -1.0
+min = -5.0
+max = 5.0
 step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
@@ -3080,6 +3409,7 @@ name = "wave_amplitude_b"
 label = "Amplitude"
 add_speed_control = true
 default = 0.1
+max = 10.0
 step = 0.001
 dropdown_options = PackedStringArray()
 metadata/_custom_type_script = "uid://di65wpry5ixo0"
@@ -3166,6 +3496,30 @@ use_colors = true
 use_custom_data = true
 mesh = SubResource("CylinderMesh_flf07")
 
+[sub_resource type="Gradient" id="Gradient_d2bti"]
+offsets = PackedFloat32Array(0, 0.3604061, 0.87309647)
+colors = PackedColorArray(0.25490198, 0.5176471, 0.4862745, 1, 0.68235296, 1, 0, 1, 0, 0.38893744, 0.37911743, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ta5nu"]
+gradient = SubResource("Gradient_d2bti")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_flf07"]
+render_priority = 0
+shader = ExtResource("11_nr8wp")
+shader_parameter/color_gradient = SubResource("GradientTexture1D_ta5nu")
+
+[sub_resource type="SphereMesh" id="SphereMesh_k73cj"]
+radius = 0.01
+height = 0.01
+radial_segments = 10
+rings = 2
+
+[sub_resource type="MultiMesh" id="MultiMesh_rjqkl"]
+transform_format = 1
+use_colors = true
+use_custom_data = true
+mesh = SubResource("SphereMesh_k73cj")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_x0ka3"]
 shader = ExtResource("9_hqns4")
 shader_parameter/snowflake_color = Color(0.1, 0.35, 0.65, 1)
@@ -3241,7 +3595,7 @@ layout_mode = 2
 
 [node name="Version #" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Main/Main_Content/StartPattern/VBoxContainer"]
 layout_mode = 2
-text = "V 3.7"
+text = "V 3.8"
 
 [node name="HSeparator7" type="HBoxContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Main/Main_Content/StartPattern/VBoxContainer"]
 layout_mode = 2
@@ -3795,10 +4149,16 @@ text = "Scale"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+max_value = 10.0
+step = 0.001
+value = 2.0
 
 [node name="PreScaleSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Main/Main_Content/HBoxContainer4"]
 unique_name_in_owner = true
 layout_mode = 2
+max_value = 10.0
+step = 0.001
+value = 2.0
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Main/Main_Content"]
 layout_mode = 2
@@ -3812,10 +4172,12 @@ text = "Rotation"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+max_value = 360.0
 
 [node name="PreRotationSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Main/Main_Content/HBoxContainer5"]
 unique_name_in_owner = true
 layout_mode = 2
+max_value = 360.0
 
 [node name="HSeparator3" type="HSeparator" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Main/Main_Content"]
 layout_mode = 2
@@ -4035,6 +4397,12 @@ unique_name_in_owner = true
 layout_mode = 2
 panel_title = "Mirror A"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_bxemi"), SubResource("Resource_qoxh5"), SubResource("Resource_d8e56")])
+
+[node name="MobiqControlsContainerA" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Var A/Var A Content" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Mobiq A - Only with KIFS"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_ux2an"), SubResource("Resource_kivee"), SubResource("Resource_qp26s"), SubResource("Resource_uaenx"), SubResource("Resource_fnivv"), SubResource("Resource_4tgck"), SubResource("Resource_0f5y0"), SubResource("Resource_81le4"), SubResource("Resource_hve81"), SubResource("Resource_cm2e3"), SubResource("Resource_avdom"), SubResource("Resource_5vov6"), SubResource("Resource_46eqt"), SubResource("Resource_0ak8h"), SubResource("Resource_mt0dj"), SubResource("Resource_2mp0g")])
 
 [node name="MobiusControlsContainerA" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Var A/Var A Content" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
@@ -4352,6 +4720,12 @@ layout_mode = 2
 panel_title = "Mirror B"
 parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_jinwr"), SubResource("Resource_qwoqy"), SubResource("Resource_dkifn")])
 
+[node name="MobiqControlsContainerB" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Var B/Var B Content" instance=ExtResource("5_rj586")]
+unique_name_in_owner = true
+layout_mode = 2
+panel_title = "Mobiq B - Only with KIFS"
+parameters = Array[ExtResource("6_4d7sh")]([SubResource("Resource_7weow"), SubResource("Resource_selgx"), SubResource("Resource_74xqj"), SubResource("Resource_f03q3"), SubResource("Resource_4ujub"), SubResource("Resource_yvvvk"), SubResource("Resource_0kktd"), SubResource("Resource_57csi"), SubResource("Resource_01rmr"), SubResource("Resource_rldui"), SubResource("Resource_o8nts"), SubResource("Resource_gvnon"), SubResource("Resource_mn2ro"), SubResource("Resource_r58u6"), SubResource("Resource_vhcl3"), SubResource("Resource_dp460")])
+
 [node name="MobiusControlsContainerB" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Var B/Var B Content" instance=ExtResource("5_rj586")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -4599,6 +4973,16 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="Kaleidoscope3DCheck" type="CheckBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/Effects/PostKaleidoscopeControlsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "3D Kaleidoscope enable. Enables true volumetric symmetry. Use the Slices slider to change the geometric shape:
+1 - 6: Dodecahedron (Soccer Ball)
+7 - 13: Octahedron (Diamond / Pyramid)
+14 - 20: Icosahedron (Spiky / Triangular)\""
+alignment = 1
+autowrap_mode = 2
+
 [node name="3D" type="ScrollContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer"]
 visible = false
 layout_mode = 2
@@ -4637,7 +5021,6 @@ layout_mode = 2
 
 [node name="MandelbulbControls" type="VBoxContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 
 [node name="RaymarchCoreParams" type="VBoxContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/MandelbulbControls"]
@@ -4652,7 +5035,8 @@ text = "Quality"
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Fractal Power" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/MandelbulbControls/RaymarchCoreParams"]
+[node name="Mandel_Fractal_Power" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/MandelbulbControls/RaymarchCoreParams"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Fractal Power"
 
@@ -4717,21 +5101,21 @@ layout_mode = 2
 
 [node name="Iterations (Detail)" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/MandelbulbControls/RaymarchCoreParams/IterationsContainer"]
 layout_mode = 2
-text = "Iterations (Detail)"
+text = "Iterations"
 
 [node name="IterSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/MandelbulbControls/RaymarchCoreParams/IterationsContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 1.0
-max_value = 20.0
+max_value = 50.0
 value = 12.0
 
 [node name="IterSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/MandelbulbControls/RaymarchCoreParams/IterationsContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
-max_value = 20.0
+max_value = 50.0
 value = 12.0
 
 [node name="AmazingBoxParams" type="VBoxContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/MandelbulbControls"]
@@ -5326,6 +5710,681 @@ layout_mode = 2
 max_value = 5.0
 step = 0.01
 
+[node name="RomanescoControls" type="VBoxContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RomSize" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Size"
+
+[node name="RomSizeSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.01
+value = 0.5
+
+[node name="RomSizeSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.01
+value = 0.5
+
+[node name="RomRecursion" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Recursion"
+
+[node name="RomRecursionSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 15.0
+value = 7.0
+
+[node name="RomRecursionSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 15.0
+value = 7.0
+
+[node name="RomNumArms" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Num Arms"
+
+[node name="RomNumArmsSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 10.0
+value = 1.0
+
+[node name="RomNumArmsSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 10.0
+value = 1.0
+
+[node name="RomArmSpread" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Arm Spread"
+
+[node name="RomArmSpreadSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.01
+value = 1.0
+
+[node name="RomArmSpreadSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.01
+value = 1.0
+
+[node name="RomArmElevation" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Arm Elevation"
+
+[node name="RomArmElevationSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+value = 45.0
+
+[node name="RomArmElevationSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+value = 45.0
+
+[node name="RomArmTwist" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Arm Twist"
+
+[node name="RomArmTwistSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+value = 0.09999999999999964
+
+[node name="RomArmTwistSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+value = 0.09999999999999964
+
+[node name="RomFloretCount" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Floret Count"
+
+[node name="RomFloretCountSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 500.0
+value = 100.0
+
+[node name="RomFloretCountSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 500.0
+value = 100.0
+
+[node name="RomFloretScale" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Floret Scale"
+
+[node name="RomFloretScaleSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.28
+
+[node name="RomFloretScaleSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.28
+
+[node name="RomPatternSpread" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Pattern Spread"
+
+[node name="RomPatternSpreadSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 3.0
+step = 0.01
+value = 0.4
+
+[node name="RomPatternSpreadSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 3.0
+step = 0.01
+value = 0.4
+
+[node name="RomSpiralTwist" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Spiral Twist"
+
+[node name="RomSpiralTwistSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="RomSpiralTwistSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="RomDetail" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Detail Size"
+
+[node name="RomDetailSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.01
+max_value = 2.0
+step = 0.001
+value = 0.09999999999999999
+
+[node name="RomDetailSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.01
+max_value = 2.0
+step = 0.001
+value = 0.09999999999999999
+
+[node name="RomConeSteepness" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Spiral Twist"
+
+[node name="RomConeSteepnessSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="RomConeSteepnessSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="RomShape" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Shape"
+
+[node name="RomShapeDropdown" type="OptionButton" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 4
+popup/item_0/text = "Sphere"
+popup/item_0/id = 0
+popup/item_1/text = "Cube"
+popup/item_1/id = 1
+popup/item_2/text = "Spike"
+popup/item_2/id = 2
+popup/item_3/text = "Ring"
+popup/item_3/id = 3
+
+[node name="RomPitch" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Pitch"
+
+[node name="RomPitchSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+step = 0.1
+value = 180.0
+
+[node name="RomPitchSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+step = 0.1
+value = 180.0
+
+[node name="RomYaw" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Yaw"
+
+[node name="RomYawSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+step = 0.1
+value = 0.09999999999999432
+
+[node name="RomYawSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+step = 0.1
+value = 0.09999999999999432
+
+[node name="RomRoll" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Roll"
+
+[node name="RomRollSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+step = 0.1
+value = 0.09999999999999432
+
+[node name="RomRollSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+step = 0.1
+value = 0.09999999999999432
+
+[node name="RomColorMode" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Color Mode"
+
+[node name="RomColorModeDropdown" type="OptionButton" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 4
+popup/item_0/text = "Solid"
+popup/item_0/id = 0
+popup/item_1/text = "Dist"
+popup/item_1/id = 1
+popup/item_2/text = "Radius"
+popup/item_2/id = 2
+popup/item_3/text = "Z-Axis"
+popup/item_3/id = 3
+
+[node name="RomSolidColor" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Solid Color"
+
+[node name="RomSolidColorSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="RomSolidColorSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="RomColorMin" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Color Min"
+
+[node name="RomColorMinSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.01
+value = 0.09999999999999964
+
+[node name="RomColorMinSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.01
+value = 0.09999999999999964
+
+[node name="RomColorMax" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+layout_mode = 2
+text = "Color Max"
+
+[node name="RomColorMaxSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 20.0
+step = 0.01
+value = 9.0
+
+[node name="RomColorMaxSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/RomanescoControls"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 20.0
+step = 0.01
+value = 9.0
+
+[node name="KIFSContainer" type="VBoxContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="KifsHelpButton" type="Button" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "KIFS usage"
+
+[node name="KifsHelpPanel" type="PanelContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer/KifsHelpPanel"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer/KifsHelpPanel/VBoxContainer"]
+layout_mode = 2
+text = "KIFS stands for Kaleidoscopic Iterated Function System
+
+This object works along with 
+Main tab - variation mix and pre scale
+
+Variations A and B and all variables for all the variations (excludes blur and jigsaw) 
+
+Effects - mirror and kaleidoscope and the 3D kaleidoscope that works off of geometric shapes. "
+fit_content = true
+
+[node name="KifsHelpCloseBtn" type="Button" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer/KifsHelpPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close"
+
+[node name="KIFS Bounding Box Size" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Bounding Box Size"
+
+[node name="KifsBoxSizeSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 25.0
+step = 0.1
+value = 6.0
+
+[node name="KifsBoxSizeSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 25.0
+step = 0.1
+value = 6.0
+
+[node name="KIFS Step Speed" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Step Speed"
+
+[node name="KifsStepSpeedSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 10.0
+step = 0.01
+value = 0.5
+
+[node name="KifsStepSpeedSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 10.0
+step = 0.01
+value = 0.5
+
+[node name="Plane Rot X" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Rotate X"
+
+[node name="KifsRotXSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 360.0
+
+[node name="KifsRotXSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 360.0
+
+[node name="Plane Shift X" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Shift  X"
+
+[node name="KifsShiftXSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="KifsShiftXSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="Plane Rot Y" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Rotate Y"
+
+[node name="KifsRotYSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 360.0
+
+[node name="KifsRotYSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 360.0
+
+[node name="Plane Shift Y" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Shift  Y"
+
+[node name="KifsShiftYSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="KifsShiftYSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="Plane Rot Z" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Rotate z"
+
+[node name="KifsRotZSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 360.0
+
+[node name="KifsRotZSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 360.0
+
+[node name="Plane Shift Z" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Shift  Z"
+
+[node name="KifsShiftZSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="KifsShiftZSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="Custom Axis X" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Custom Axis X"
+
+[node name="KifsAxisXSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+
+[node name="KifsAxisXSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+
+[node name="Custom Axis Y" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Custom Axis Y"
+
+[node name="KifsAxisYSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="KifsAxisYSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Custom Axis Z" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Custom Axis Z"
+
+[node name="KifsAxisZSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+
+[node name="KifsAxisZSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+
+[node name="Custom Spin Angle" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Custom Spin Angle"
+
+[node name="KifsSpinSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+step = 0.1
+
+[node name="KifsSpinSpinBox" type="SpinBox" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -180.0
+max_value = 180.0
+step = 0.1
+
+[node name="ColorModeSelect" type="OptionButton" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 2
+popup/item_0/text = "Texture"
+popup/item_0/id = 0
+popup/item_1/text = "Orbit Trap"
+popup/item_1/id = 1
+
+[node name="TrapModeSelect" type="OptionButton" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 4
+popup/item_0/text = "Sphere"
+popup/item_0/id = 0
+popup/item_1/text = "Cylinder"
+popup/item_1/id = 1
+popup/item_2/text = "Plane"
+popup/item_2/id = 2
+popup/item_3/text = "Cross"
+popup/item_3/id = 3
+
+[node name="ColorPicker1" type="ColorPickerButton" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Color Picker 1"
+
+[node name="ColorPicker2" type="ColorPickerButton" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Color Picker 2"
+
+[node name="Contrast" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Contrast"
+
+[node name="OrbitContrastSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.1
+value = 1.0
+
+[node name="Offset" type="Label" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+layout_mode = 2
+text = "Offset"
+
+[node name="OffsetSlider" type="HSlider" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls/KIFSContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.1
+
 [node name="DisplacementContainer" type="HBoxContainer" parent="HSplitContainer/Panel/MarginContainer/TabContainer/3D/3D content/Container3DControls"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -5906,6 +6965,11 @@ unique_name_in_owner = true
 multimesh = SubResource("MultiMesh_k73cj")
 script = ExtResource("10_nr8wp")
 
+[node name="RomanescoMesh" type="MultiMeshInstance3D" parent="HSplitContainer/Control/Display_3D_Container/3DViewport/Node3D"]
+unique_name_in_owner = true
+material_override = SubResource("ShaderMaterial_flf07")
+multimesh = SubResource("MultiMesh_rjqkl")
+
 [node name="ViewportA" type="SubViewport" parent="."]
 unique_name_in_owner = true
 size = Vector2i(225, 225)
@@ -6041,8 +7105,10 @@ text = "STOP RECORDING"
 [connection signal="value_changed" from="HSplitContainer/Panel/MarginContainer/TabContainer/Main/Main_Content/HBoxContainer7/PostRotationSpinBox" to="." method="_on_post_rotation_spinbox_value_changed"]
 [connection signal="item_selected" from="HSplitContainer/Panel/MarginContainer/TabContainer/Var A/Var A Content/HBoxContainer12/VarADropdown" to="." method="_on_var_a_dropdown_item_selected"]
 [connection signal="toggled" from="HSplitContainer/Panel/MarginContainer/TabContainer/Var A/Var A Content/HBoxContainer12/VarATranslateRadio" to="." method="_on_var_a_translate_radio_toggled"]
+[connection signal="item_selected" from="HSplitContainer/Panel/MarginContainer/TabContainer/Var A/Var A Content/RepTilePanelA/RepTileDropdownA" to="." method="_on_rep_tile_dropdown_a_item_selected"]
 [connection signal="item_selected" from="HSplitContainer/Panel/MarginContainer/TabContainer/Var B/Var B Content/HBoxContainer13/VarBDropdown" to="." method="_on_var_b_dropdown_item_selected"]
 [connection signal="toggled" from="HSplitContainer/Panel/MarginContainer/TabContainer/Var B/Var B Content/HBoxContainer13/VarBTranslateRadio" to="." method="_on_var_b_translate_radio_toggled"]
+[connection signal="item_selected" from="HSplitContainer/Panel/MarginContainer/TabContainer/Var B/Var B Content/RepTilePanelB/RepTileDropdownB" to="." method="_on_rep_tile_dropdown_b_item_selected"]
 [connection signal="toggled" from="HSplitContainer/Panel/MarginContainer/TabContainer/Effects/PostMirrorControlsContainer/PostMirrorOptions/PostMirrorXCheck" to="." method="_on_post_mirror_x_check_toggled"]
 [connection signal="toggled" from="HSplitContainer/Panel/MarginContainer/TabContainer/Effects/PostMirrorControlsContainer/PostMirrorOptions/PostMirrorYCheck" to="." method="_on_post_mirror_y_check_toggled"]
 [connection signal="toggled" from="HSplitContainer/Panel/MarginContainer/TabContainer/Effects/PostKaleidoscopeControlsContainer/PostKaleidoscopeMasterCheck" to="." method="_on_post_kaleidoscope_master_check_toggled"]

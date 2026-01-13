@@ -57,6 +57,7 @@ const VARIATIONS = {
 	"Portal":     { "id": 43, "controls": "portal", "category": "Geometry" },
 	"Janus":     { "id": 44, "controls": "janus", "category": "Geometry" },
 	"Canvas":     { "id": 45, "controls": "canvas" },
+	"Mobiq":     { "id": 46, "controls": "mobiq" },
 	"Wave":             { "id": 3, "controls": "wave" },
 }
 

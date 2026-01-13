@@ -1210,7 +1210,7 @@ else if (variation_id == 13) { // Apollonian Gasket (Iterative Approximation)
     // 2. Apply parameters
     return cosh(uv * anim_scale) * anim_strength;
 	}
-	// --- ADD L-TROMINO (Mode 19) ---
+	
 	// --- REP-TILES GROUP ---
     // Now INCLUDES ID 20 (Custom 2x2)
     if (variation_id >= 19 && variation_id <= 31) {
