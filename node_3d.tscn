@@ -1,0 +1,2507 @@
+[gd_scene load_steps=11 format=3 uid="uid://mgp02mkor0at"]
+
+[ext_resource type="Script" uid="uid://cb4eam8v584o8" path="res://camera_3d.gd" id="1_a0tk4"]
+[ext_resource type="Shader" uid="uid://cuy0g4p8455ex" path="res://Mandelbox4D.gdshader" id="1_a202f"]
+[ext_resource type="Script" uid="uid://c7m3ihv4c3sqr" path="res://canvas_layer.gd" id="1_noarx"]
+[ext_resource type="Script" uid="uid://d3hdn0h0hi8r1" path="res://slice.gd" id="3_jka67"]
+[ext_resource type="Texture2D" uid="uid://c6f60mwlraver" path="res://2025-11-09_18-45-43.png" id="4_r3fl7"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_a202f"]
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_noarx"]
+render_priority = 0
+shader = ExtResource("1_a202f")
+shader_parameter/Reflectivity = 0.3
+shader_parameter/FogDensity = 0.05
+shader_parameter/PaletteType = 0
+shader_parameter/ColorCycle = 1.0
+shader_parameter/ColorOffset = 0.0
+shader_parameter/OffsetW = 0.0
+shader_parameter/F_absX = false
+shader_parameter/F_absY = false
+shader_parameter/F_absZ = false
+shader_parameter/F_X = false
+shader_parameter/F_Y = false
+shader_parameter/F_Z = false
+shader_parameter/SymmetryStrength = Vector3(0.5, 0.5, 0.5)
+shader_parameter/F_offset = Vector3(0, 0, 0)
+shader_parameter/KIFS_Angle_X = 0.0
+shader_parameter/KIFS_Angle_Y = 0.0
+shader_parameter/KIFS_Angle_Z = 0.0
+shader_parameter/KIFS_Axes = Vector3(1, 0, 0)
+shader_parameter/Color1 = Color(1, 0, 0, 1)
+shader_parameter/Color2 = Color(0, 1, 0, 1)
+shader_parameter/Color3 = Color(0, 0, 1, 1)
+shader_parameter/Saturation = 1.0
+shader_parameter/Contrast = 1.0
+shader_parameter/Brightness = 1.0
+shader_parameter/EnableSurf = false
+shader_parameter/SurfScale = 5.0
+shader_parameter/SurfStrength = 0.5
+shader_parameter/SurfOctaves = 4
+shader_parameter/SurfRoughness = 0.5
+shader_parameter/SurfSpeed = 0.0
+shader_parameter/TorusEnabled = false
+shader_parameter/TorusRadius = 2.5
+shader_parameter/TorusTube = 0.4
+shader_parameter/TorusOffset = Vector3(0, 0, 0)
+shader_parameter/GrainIntensity = 0.5
+shader_parameter/TentacleCount = 0.0
+shader_parameter/TentacleLength = 0.0
+shader_parameter/TentacleTwist = 0.0
+shader_parameter/ShapeType = 0
+shader_parameter/ShapeEnabled = false
+shader_parameter/ShapeRadius = 1.0
+shader_parameter/ShapeThickness = 0.4
+shader_parameter/ShapeBend = 0.0
+shader_parameter/ShapeOffset = Vector3(0, 0, 0)
+shader_parameter/Time = 0.0
+shader_parameter/Scale = 2.134
+shader_parameter/BoxFoldLimit = 1.0
+shader_parameter/Iterations = 21
+shader_parameter/RotationAngle = 0.0
+shader_parameter/InvType = 4
+shader_parameter/InvScale = 1.70400008024148
+shader_parameter/InvParamA = 1.02400033364
+shader_parameter/InvParamB = 6.5610001691474995
+shader_parameter/InvCenter = Vector4(0, 0, 0.11, 0.09)
+shader_parameter/Detail = -5.0
+shader_parameter/MaxSteps = 128
+shader_parameter/JuliaMode = false
+shader_parameter/JuliaSeed = Vector4(-0.5, 0.2, 0, 0)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_jka67"]
+panorama = ExtResource("4_r3fl7")
+
+[sub_resource type="Sky" id="Sky_i5arm"]
+sky_material = SubResource("PanoramaSkyMaterial_jka67")
+
+[sub_resource type="Environment" id="Environment_wc5p8"]
+background_mode = 2
+sky = SubResource("Sky_i5arm")
+tonemap_mode = 3
+tonemap_exposure = 0.7
+tonemap_white = 4.16
+ssr_fade_in = 1.0090758
+ssr_fade_out = 0.4999995
+ssr_depth_tolerance = 8.61
+glow_intensity = 0.38
+glow_strength = 1.25
+glow_bloom = 1.0
+glow_hdr_luminance_cap = 138.32
+glow_map_strength = 1.0
+fog_density = 0.0
+fog_height = -1024.0
+fog_height_density = 3.7895
+volumetric_fog_anisotropy = 0.9
+volumetric_fog_length = 57.27
+volumetric_fog_sky_affect = 0.0
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10.154795)
+near = 0.001
+script = ExtResource("1_a0tk4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+extra_cull_margin = 10000.0
+mesh = SubResource("QuadMesh_a202f")
+surface_material_override/0 = SubResource("ShaderMaterial_noarx")
+script = ExtResource("3_jka67")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." node_paths=PackedStringArray("fractal_mesh", "main_camera")]
+layer = -10
+script = ExtResource("1_noarx")
+fractal_mesh = NodePath("../MeshInstance3D")
+main_camera = NodePath("../Camera3D")
+
+[node name="BackgroundTexture" type="TextureRect" parent="CanvasLayer"]
+unique_name_in_owner = true
+z_index = -100
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stretch_mode = 6
+
+[node name="BackgroundDialog" type="FileDialog" parent="CanvasLayer"]
+unique_name_in_owner = true
+title = "Open File(s)"
+file_mode = 1
+filters = PackedStringArray("*.png", "*.jpg")
+
+[node name="RenderContainer" type="SubViewportContainer" parent="CanvasLayer"]
+unique_name_in_owner = true
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HighResViewport" type="SubViewport" parent="CanvasLayer/RenderContainer"]
+unique_name_in_owner = true
+handle_input_locally = false
+render_target_update_mode = 0
+
+[node name="Camera3D" type="Camera3D" parent="CanvasLayer/RenderContainer/HighResViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36234176, 2.0138736)
+script = ExtResource("1_a0tk4")
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer"]
+unique_name_in_owner = true
+offset_left = 19.0
+offset_top = 20.0
+offset_right = 231.0
+offset_bottom = 403.0
+
+[node name="MenuScroll" type="ScrollContainer" parent="CanvasLayer/PanelContainer"]
+custom_minimum_size = Vector2(500, 600)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HSplitContainer" type="HSplitContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="NavigationTree" type="Tree" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="TabContainer" type="TabContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+current_tab = 2
+tabs_visible = false
+
+[node name="Camera" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Versionlabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+layout_mode = 2
+text = "Hyperion V3.0"
+
+[node name="ResetButton" type="Button" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reset Camera"
+
+[node name="SavePresetButton" type="Button" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save Preset"
+
+[node name="LoadPresetButton" type="Button" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Load Preset"
+
+[node name="SavePresetDialog" type="FileDialog" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+oversampling_override = 1.0
+mode = 1
+access = 2
+filters = PackedStringArray("*.cfg ;  Fractal Preset")
+
+[node name="LoadPresetDialog" type="FileDialog" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+oversampling_override = 1.0
+mode = 1
+title = "Open a File"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.cfg ;  Fractal Preset")
+
+[node name="SpeedLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SpeedSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.01
+max_value = 1.0
+step = 0.001
+value = 1.0
+
+[node name="ScreenshotButton" type="Button" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save image"
+
+[node name="SaveDialog" type="FileDialog" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+oversampling_override = 1.0
+mode = 1
+access = 2
+filters = PackedStringArray("*.png ; PNG Images")
+
+[node name="ResolutionSelector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "1080p (1920x1080)"
+popup/item_0/id = 0
+popup/item_1/text = "4K (3840x2160)"
+popup/item_1/id = 1
+popup/item_2/text = "8K (7680x4320)"
+popup/item_2/id = 2
+
+[node name="AddWaypointButton" type="Button" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add Waypoint (P hotkey)"
+
+[node name="PlayAnimationButton" type="Button" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Play Animation"
+
+[node name="ClearPathButton" type="Button" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Clear Path"
+
+[node name="SaveVideoDialog" type="FileDialog" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+access = 2
+filters = PackedStringArray("*.mp4 ; MP4 Video")
+
+[node name="RecordButton" type="Button" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "Start Record"
+
+[node name="RecordTimer" type="Timer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+unique_name_in_owner = true
+wait_time = 0.033
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Camera"]
+layout_mode = 2
+text = "Press R to stop record"
+
+[node name="Environment" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="ChangeBGButton" type="Button" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Change Background Image"
+
+[node name="SaturationLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SaturationSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="ContrastLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ContrastSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="BrightnessLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BrightnessSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="ColorCycleLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+layout_mode = 2
+text = "Color Cycle"
+
+[node name="ColorCycleSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 10.0
+step = 0.1
+
+[node name="PaletteSelectorLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+layout_mode = 2
+text = "Palette Selector"
+
+[node name="PaletteSelector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 5
+popup/item_0/text = "Rainbow"
+popup/item_0/id = 0
+popup/item_1/text = "Deep Sea"
+popup/item_1/id = 1
+popup/item_2/text = "Fire & Gold"
+popup/item_2/id = 2
+popup/item_3/text = "Grayscale"
+popup/item_3/id = 3
+popup/item_4/text = "Custom Gradient"
+popup/item_4/id = 4
+
+[node name="CustomColorContainer" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ColorPicker1" type="ColorPicker" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment/CustomColorContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ColorPicker2" type="ColorPicker" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment/CustomColorContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ColorPicker3" type="ColorPicker" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment/CustomColorContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ReflectLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ReflectSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="FogLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FogSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Environment"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 0.3
+step = 0.01
+
+[node name="Mandelbox4D" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="TypeSelectorLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+layout_mode = 2
+text = "TypeSelector"
+
+[node name="TypeSelector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 9
+popup/item_0/text = "Default - None"
+popup/item_0/id = 0
+popup/item_1/text = "4D Hypercube"
+popup/item_1/id = 1
+popup/item_2/text = "Union (Cube + Sphere)"
+popup/item_2/id = 2
+popup/item_3/text = "Intersection"
+popup/item_3/id = 3
+popup/item_4/text = "Simple Blend"
+popup/item_4/id = 4
+popup/item_5/text = "4D Polygon Prism"
+popup/item_5/id = 5
+popup/item_6/text = "Cylindrical Inversion"
+popup/item_6/id = 6
+popup/item_7/text = "4D Toroidal"
+popup/item_7/id = 7
+popup/item_8/text = "Amazing Box"
+popup/item_8/id = 8
+
+[node name="JuliaToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia Toggle"
+
+[node name="JuliaXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="JuliaXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.001
+
+[node name="JuliaYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="JuliaYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.001
+
+[node name="JuliaZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="JuliaZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.001
+
+[node name="ScaleLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ScaleSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.001
+
+[node name="WLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="WSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 5.0
+step = 0.0
+
+[node name="StepsLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="StepsSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 32.0
+max_value = 512.0
+value = 128.0
+
+[node name="DetailLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = -1.0
+step = 0.1
+value = -3.0
+
+[node name="SidesLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SidesSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 20.0
+
+[node name="ParamALabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="InvParamA" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.001
+
+[node name="FixedRadiusLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FixedRadiusSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.01
+
+[node name="RotationLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+layout_mode = 2
+text = "Rotations"
+
+[node name="RotationSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Mandelbox4D"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 360.0
+
+[node name="Menger4D" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="MengerScalelabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MengerScaleSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 5.0
+step = 0.01
+value = 3.0
+
+[node name="MengerMaxStepslabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Max Steps"
+
+[node name="MengerMaxStepsSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 32.0
+max_value = 512.0
+value = 32.0
+
+[node name="MengerDetailLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Max Steps"
+
+[node name="MengerDetailSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = -1.0
+value = -1.0
+
+[node name="OffsetWlabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OffsetWSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="Iterationslabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IterationsSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 15.0
+step = 0.01
+value = 8.0
+
+[node name="Rotation4Dslabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Rotations4DSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 628.0
+step = 0.01
+
+[node name="MengerOffset1_xlabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MengerOffset1_xSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="MengerOffset1_ylabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MengerOffset1_ySlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="MengerOffset1_zlabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MengerOffset1_zSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="MengerOffset1_wlabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MengerOffset1_wSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="MS4DJuliaToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia Toggle"
+
+[node name="MS4DMorphLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MS4DMorphSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 10.0
+step = 0.01
+
+[node name="MS4DJuliaXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MS4DJuliaXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.001
+
+[node name="MS4DJuliaYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MS4DJuliaYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.001
+
+[node name="MS4DJuliaZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MS4DJuliaZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.001
+
+[node name="MS4DJuliaWLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MS4DJuliaWSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Menger4D"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.001
+
+[node name="AmazingSurf4D" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 4
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D"]
+custom_minimum_size = Vector2(300, 600)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="TabContainer" type="TabContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="Main" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="DEMethodSelector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Standard DE"
+popup/item_0/id = 0
+popup/item_1/text = "Box DE"
+popup/item_1/id = 1
+popup/item_2/text = "Hybrid DE"
+popup/item_2/id = 2
+
+[node name="DEMultiplierLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "DE Multiplier: 1.0"
+
+[node name="DEMultiplierSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="UseLogDEToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Use Logarithmic DE"
+
+[node name="PowerLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rotation Power: 0.0"
+
+[node name="PowerSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 16.0
+step = 0.1
+
+[node name="SurfScaleLabel2" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Scale: 2.0"
+
+[node name="SurfScaleSlider2" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+value = 2.0
+
+[node name="SurfIterationsLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Iterations: 12"
+
+[node name="SurfIterationsSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 150.0
+value = 12.0
+
+[node name="BailoutLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Bailout: 4.0"
+
+[node name="BailoutSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+step = 0.1
+value = 4.0
+
+[node name="ASMaxStepsLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MaxSteps: 64"
+
+[node name="ASMaxStepsSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 32.0
+max_value = 512.0
+step = 0.1
+value = 64.0
+
+[node name="ASDetailLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Detail: -2.2"
+
+[node name="ASDetailSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = -1.0
+step = 0.01
+value = -1.0
+
+[node name="ASurfJuliaToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia Mode"
+
+[node name="ASurfJuliaXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia X: 0.0"
+
+[node name="ASurfJuliaXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+
+[node name="ASurfJuliaYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia Y: 0.0"
+
+[node name="ASurfJuliaYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+
+[node name="ASurfJuliaZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia Z: 0.0"
+
+[node name="ASurfJuliaZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+
+[node name="Rendering" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="RenderingMethodSelector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "Raymarch"
+popup/item_0/id = 0
+popup/item_1/text = "Slice 4D"
+popup/item_1/id = 1
+popup/item_2/text = "Volume 3D"
+popup/item_2/id = 2
+
+[node name="SliceWLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Slice W: 0.0"
+
+[node name="SliceWSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="AnimateSliceWToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Animate W"
+
+[node name="SliceWSpeedLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "W Speed: 0.1"
+
+[node name="SliceWSpeedSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.1
+
+[node name="SliceZoomLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Zoom: 2.0"
+
+[node name="SliceZoomSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.5
+max_value = 5.0
+step = 0.01
+value = 2.0
+
+[node name="VolumeStepsLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Volume Steps: 32"
+
+[node name="VolumeStepsSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 8.0
+max_value = 128.0
+step = 0.01
+value = 32.0
+
+[node name="VolumeDensityLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Density: 1.0"
+
+[node name="VolumeDensitySlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="VolumeBrightnessLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Brightness: 2.0"
+
+[node name="VolumeBrightnessSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Rendering"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 2.0
+
+[node name="Folding" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="EnableZAxisToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enable Z-Axis Folding"
+
+[node name="EnableWAxisToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enable W-Axis Folding (4D)"
+
+[node name="FoldSlot1Toggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Fold Slot 1"
+
+[node name="FoldType1Selector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 16
+popup/item_0/text = "TGlad Fold"
+popup/item_0/id = 0
+popup/item_1/text = "Reverse Fold"
+popup/item_1/id = 1
+popup/item_2/text = "Simple Abs"
+popup/item_2/id = 2
+popup/item_3/text = "Conditional"
+popup/item_3/id = 3
+popup/item_4/text = "Darkbeam"
+popup/item_4/id = 4
+popup/item_5/text = "Box Fold"
+popup/item_5/id = 5
+popup/item_6/text = "Tetrahedral"
+popup/item_6/id = 6
+popup/item_7/text = "Octahedral"
+popup/item_7/id = 7
+popup/item_8/text = "Cubic"
+popup/item_8/id = 8
+popup/item_9/text = "Kaleidoscopic"
+popup/item_9/id = 9
+popup/item_10/text = "Ripple"
+popup/item_10/id = 10
+popup/item_11/text = "Parabolic"
+popup/item_11/id = 11
+popup/item_12/text = "R Fold"
+popup/item_12/id = 12
+popup/item_13/text = "Spherical Inversion"
+popup/item_13/id = 13
+popup/item_14/text = "Box Inversion"
+popup/item_14/id = 14
+popup/item_15/text = "Organic Ribbon"
+popup/item_15/id = 15
+
+[node name="FoldSlot2Toggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fold Slot 2"
+
+[node name="FoldType2Selector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 1
+item_count = 16
+popup/item_0/text = "TGlad Fold"
+popup/item_0/id = 0
+popup/item_1/text = "Reverse Fold"
+popup/item_1/id = 1
+popup/item_2/text = "Simple Abs"
+popup/item_2/id = 2
+popup/item_3/text = "Conditional"
+popup/item_3/id = 3
+popup/item_4/text = "Darkbeam"
+popup/item_4/id = 4
+popup/item_5/text = "Box Fold"
+popup/item_5/id = 5
+popup/item_6/text = "Tetrahedral"
+popup/item_6/id = 6
+popup/item_7/text = "Octahedral"
+popup/item_7/id = 7
+popup/item_8/text = "Cubic"
+popup/item_8/id = 8
+popup/item_9/text = "Kaleidoscopic"
+popup/item_9/id = 9
+popup/item_10/text = "Ripple"
+popup/item_10/id = 10
+popup/item_11/text = "Parabolic"
+popup/item_11/id = 11
+popup/item_12/text = "R Fold"
+popup/item_12/id = 12
+popup/item_13/text = "Spherical Inversion"
+popup/item_13/id = 13
+popup/item_14/text = "Box Inversion"
+popup/item_14/id = 14
+popup/item_15/text = "Organic Ribbon"
+popup/item_15/id = 15
+
+[node name="FoldSlot3Toggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fold Slot 3"
+
+[node name="FoldType3Selector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 2
+item_count = 16
+popup/item_0/text = "TGlad Fold"
+popup/item_0/id = 0
+popup/item_1/text = "Reverse Fold"
+popup/item_1/id = 1
+popup/item_2/text = "Simple Abs"
+popup/item_2/id = 2
+popup/item_3/text = "Conditional"
+popup/item_3/id = 3
+popup/item_4/text = "Darkbeam"
+popup/item_4/id = 4
+popup/item_5/text = "Box Fold"
+popup/item_5/id = 5
+popup/item_6/text = "Tetrahedral"
+popup/item_6/id = 6
+popup/item_7/text = "Octahedral"
+popup/item_7/id = 7
+popup/item_8/text = "Cubic"
+popup/item_8/id = 8
+popup/item_9/text = "Kaleidoscopic"
+popup/item_9/id = 9
+popup/item_10/text = "Ripple"
+popup/item_10/id = 10
+popup/item_11/text = "Parabolic"
+popup/item_11/id = 11
+popup/item_12/text = "R Fold"
+popup/item_12/id = 12
+popup/item_13/text = "Spherical Inversion"
+popup/item_13/id = 13
+popup/item_14/text = "Box Inversion"
+popup/item_14/id = 14
+popup/item_15/text = "Organic Ribbon"
+popup/item_15/id = 15
+
+[node name="FoldSlot4Toggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fold Slot 4"
+
+[node name="FoldType4Selector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 3
+item_count = 16
+popup/item_0/text = "TGlad Fold"
+popup/item_0/id = 0
+popup/item_1/text = "Reverse Fold"
+popup/item_1/id = 1
+popup/item_2/text = "Simple Abs"
+popup/item_2/id = 2
+popup/item_3/text = "Conditional"
+popup/item_3/id = 3
+popup/item_4/text = "Darkbeam"
+popup/item_4/id = 4
+popup/item_5/text = "Box Fold"
+popup/item_5/id = 5
+popup/item_6/text = "Tetrahedral"
+popup/item_6/id = 6
+popup/item_7/text = "Octahedral"
+popup/item_7/id = 7
+popup/item_8/text = "Cubic"
+popup/item_8/id = 8
+popup/item_9/text = "Kaleidoscopic"
+popup/item_9/id = 9
+popup/item_10/text = "Ripple"
+popup/item_10/id = 10
+popup/item_11/text = "Parabolic"
+popup/item_11/id = 11
+popup/item_12/text = "R Fold"
+popup/item_12/id = 12
+popup/item_13/text = "Spherical Inversion"
+popup/item_13/id = 13
+popup/item_14/text = "Box Inversion"
+popup/item_14/id = 14
+popup/item_15/text = "Organic Ribbon"
+popup/item_15/id = 15
+
+[node name="FoldSlot5Toggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fold Slot 5"
+
+[node name="FoldType5Selector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Folding"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 4
+item_count = 16
+popup/item_0/text = "TGlad Fold"
+popup/item_0/id = 0
+popup/item_1/text = "Reverse Fold"
+popup/item_1/id = 1
+popup/item_2/text = "Simple Abs"
+popup/item_2/id = 2
+popup/item_3/text = "Conditional"
+popup/item_3/id = 3
+popup/item_4/text = "Darkbeam"
+popup/item_4/id = 4
+popup/item_5/text = "Box Fold"
+popup/item_5/id = 5
+popup/item_6/text = "Tetrahedral"
+popup/item_6/id = 6
+popup/item_7/text = "Octahedral"
+popup/item_7/id = 7
+popup/item_8/text = "Cubic"
+popup/item_8/id = 8
+popup/item_9/text = "Kaleidoscopic"
+popup/item_9/id = 9
+popup/item_10/text = "Ripple"
+popup/item_10/id = 10
+popup/item_11/text = "Parabolic"
+popup/item_11/id = 11
+popup/item_12/text = "R Fold"
+popup/item_12/id = 12
+popup/item_13/text = "Spherical Inversion"
+popup/item_13/id = 13
+popup/item_14/text = "Box Inversion"
+popup/item_14/id = 14
+popup/item_15/text = "Organic Ribbon"
+popup/item_15/id = 15
+
+[node name="Parameters" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="FoldLimitXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fold Limit X: 1.0"
+
+[node name="FoldLimitXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="FoldLimitYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fold Limit Y: 1.0"
+
+[node name="FoldLimitYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="FoldLimitZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fold Limit Z: 1.0"
+
+[node name="FoldLimitZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="FoldLimitWLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fold Limit W: 1.0"
+
+[node name="FoldLimitWSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="FoldingValueLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Folding Value: 2.0"
+
+[node name="FoldingValueSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 2.0
+
+[node name="Offset2Label" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Offset 2: 0.0"
+
+[node name="Offset2Slider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="RippleFrequencyLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ripple Frequency: 3.0"
+
+[node name="RippleFrequencySlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 10.0
+step = 0.1
+value = 3.0
+
+[node name="RippleAmplitudeLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ripple Amplitude: 0.5"
+
+[node name="RippleAmplitudeSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.1
+value = 0.5
+
+[node name="Kaleidoscopic Twist onlyLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "--- Kaleidoscopic Twist only---"
+
+[node name="KIFS_Axis_SelectorLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "KIFS Axis Selector"
+
+[node name="KIFS_Axis_Selector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "XY (Pillar)"
+popup/item_0/id = 0
+popup/item_1/text = "XZ (Star)"
+popup/item_1/id = 1
+popup/item_2/text = "YZ (Vertical)"
+popup/item_2/id = 2
+
+[node name="KIFS_Sides_Label" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "KIFS Sides 6.0"
+
+[node name="KIFS_Sides_Slider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 3.0
+max_value = 24.0
+value = 6.0
+
+[node name="KIFS_Twist_Label" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "KIFS Twist 0.0"
+
+[node name="KIFS_Twist_Slider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.14
+max_value = 3.14
+step = 0.01
+value = -0.14000000000000012
+
+[node name="Ribbon fold only Label" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+layout_mode = 2
+
+[node name="RibbonTwistLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "KIFS Twist 0.0"
+
+[node name="RibbonTwistSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="RibbonWarpStrengthLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Warp Strength"
+
+[node name="RibbonWarpStrengthSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="RibbonWarpFrequencyLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Warp Frequency"
+
+[node name="RibbonWarpFrequencySlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Parameters"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 10.0
+step = 0.01
+value = 0.1
+
+[node name="Sphere Fold" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 4
+
+[node name="SphereFoldToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Sphere Fold"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sphere Fold Enabled"
+
+[node name="MinRadiusLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Sphere Fold"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Min Radius: 0.5"
+
+[node name="MinRadiusSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Sphere Fold"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+value = 0.5
+
+[node name="FixedRadiusLabel2" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Sphere Fold"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fixed Radius: 1.0"
+
+[node name="FixedRadiusSlider2" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Sphere Fold"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="CylinderFoldToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Sphere Fold"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Force Cylinder Fold"
+
+[node name="CylinderWeightLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Sphere Fold"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Cylinder Weight: 1.0"
+
+[node name="CylinderWeightSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Sphere Fold"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Transforms" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 5
+
+[node name="Pre-OffsetLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "---Pre-Offset Section---"
+
+[node name="PreOffsetXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pre-Offset X: 0.0"
+
+[node name="PreOffsetXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="PreOffsetYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pre-Offset Y: 0.0"
+
+[node name="PreOffsetYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="PreOffsetZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pre-Offset Z: 0.0"
+
+[node name="PreOffsetZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="Post-OffsetLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "---Post-Offset Section---"
+
+[node name="PostOffsetXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Post-Offset X: 0.0"
+
+[node name="PostOffsetXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="PostOffsetYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Post-Offset Y: 0.0"
+
+[node name="PostOffsetYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="PostOffsetZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Post-Offset Z: 0.0"
+
+[node name="PostOffsetZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="RotationLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "---Rotation Section---"
+
+[node name="ASurfRotationLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rotation: 0.0"
+
+[node name="ASurfRotationSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -6.28
+max_value = 6.28
+step = 0.01
+
+[node name="AlphaRotationLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Alpha Rotation: 0.0"
+
+[node name="AlphaRotationSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -360.0
+max_value = 360.0
+step = 0.01
+
+[node name="BetaRotationLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BetaRotation: 0.0"
+
+[node name="BetaRotationSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -360.0
+max_value = 360.0
+step = 0.01
+
+[node name="GammaRotationLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "GammaRotation: 0.0"
+
+[node name="GammaRotationSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -360.0
+max_value = 360.0
+step = 0.01
+
+[node name="RotationXWLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rotation XW: 0.0"
+
+[node name="RotationXWSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -6.28
+max_value = 6.28
+step = 0.01
+
+[node name="RotationYWLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rotation YW: 0.0"
+
+[node name="RotationYWSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -6.28
+max_value = 6.28
+step = 0.01
+
+[node name="RotationZWLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rotation ZW: 0.0"
+
+[node name="RotationZWSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -6.28
+max_value = 6.28
+step = 0.01
+
+[node name="ScaleVaryLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "ScaleVary: 0.0"
+
+[node name="ScaleVarySlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer/Transforms"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+
+[node name="Surface" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/AmazingSurf4D/ScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 6
+
+[node name="BristorBrot" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 5
+
+[node name="TimeSpeedLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+layout_mode = 2
+text = "Time Speed"
+
+[node name="TimeSpeedSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.001
+
+[node name="Label3" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+layout_mode = 2
+text = "Parallel"
+
+[node name="ParallelToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="WarpStrengthLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Warp Strength"
+
+[node name="WarpStrengthSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="WarpFrequencyLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Warp Frequency"
+
+[node name="WarpFrequencySlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 10.0
+step = 0.01
+value = 0.1
+
+[node name="WOffsetLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "W Offset"
+
+[node name="WOffsetSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/BristorBrot"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 3.0
+step = 0.01
+
+[node name="Symmetry" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 6
+
+[node name="AbsXToggle" type="CheckBox" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Absolute X"
+
+[node name="AbsYToggle" type="CheckBox" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Absolute Y"
+
+[node name="AbsZToggle" type="CheckBox" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Absolute Z"
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="XSwapToggle" type="CheckBox" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Symmetry X"
+
+[node name="YSwapToggle" type="CheckBox" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Symmetry y"
+
+[node name="ZSwapToggle" type="CheckBox" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Symmetry z"
+
+[node name="PFiveLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "pfive: 0.5"
+
+[node name="PFiveSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+value = 0.5
+
+[node name="FoldOffsetLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fold Offset: 0.0"
+
+[node name="FoldOffsetSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+
+[node name="KIFSAngleXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "KIFS Angle X"
+
+[node name="KIFSAngleXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -6.24
+max_value = 6.24
+step = 0.01
+
+[node name="KIFSAngleYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "KIFS Angle Y"
+
+[node name="KIFSAngleYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -6.24
+max_value = 6.24
+step = 0.01
+
+[node name="KIFSAngleZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "KIFS Angle Z"
+
+[node name="KIFSAngleZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Symmetry"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -6.24
+max_value = 6.24
+step = 0.01
+
+[node name="Shapes" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 7
+
+[node name="ShapeEnabledCheck" type="CheckBox" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enable Shape"
+
+[node name="ShapeTypeButton" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 2
+popup/item_0/text = "Torus"
+popup/item_0/id = 0
+popup/item_1/text = "Cylinder"
+popup/item_1/id = 1
+
+[node name="ShapeRadiusLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Radius : 2.5"
+
+[node name="ShapeRadiusSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 10.0
+step = 0.01
+value = 2.5
+
+[node name="ShapeThicknessLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Tube width: 0.4"
+
+[node name="ShapeThicknessSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.001
+max_value = 2.0
+step = 0.01
+value = 0.401
+
+[node name="ShapeBendLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Bend : 0.0"
+
+[node name="ShapeBendSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.5
+step = 0.01
+
+[node name="ShapeOffsetXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Offset X: 0.0"
+
+[node name="ShapeOffsetXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.01
+
+[node name="ShapeOffsetYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Offset Y: 0.0"
+
+[node name="ShapeOffsetYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.01
+
+[node name="ShapeOffsetZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Offset Z: 0.0"
+
+[node name="ShapeOffsetZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.01
+
+[node name="GrainIntensityLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Grain Intensity: 0.0"
+
+[node name="GrainIntensitySlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="TentacleCountLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Tentacle Count: 0.0"
+
+[node name="TentacleCountSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 50.0
+
+[node name="TentacleLengthLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Tentacle Length: 0.0"
+
+[node name="TentacleLengthSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.5
+step = 0.01
+
+[node name="TentacleTwistLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Tentacle Twist: 0.0"
+
+[node name="TentacleTwistSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+
+[node name="SurfScaleLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Surf Scale: 0.0"
+
+[node name="SurfScaleSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 20.0
+step = 0.1
+
+[node name="SurfStrengthLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Surf Strength: 0.0"
+
+[node name="SurfStrengthSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="SurfOctavesLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Surf Octaves: 1"
+
+[node name="SurfOctavesSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 8.0
+value = 1.0
+
+[node name="SurfRoughnessLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Surf Roughness: 0.0"
+
+[node name="SurfRoughnessSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="SurfSpeedLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Surf Speed: 0.0"
+
+[node name="SurfSpeedSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Shapes"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="Archon" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 8
+
+[node name="ArchonScrollContainer" type="ScrollContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon"]
+custom_minimum_size = Vector2(300, 600)
+layout_mode = 2
+
+[node name="TabContainer" type="TabContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="Main" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="ArchonTypeSelector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 2
+popup/item_0/text = "Organic"
+popup/item_0/id = 0
+popup/item_1/text = "City"
+popup/item_1/id = 1
+
+[node name="ArchonScaleLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Scale"
+
+[node name="ArchonScaleSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 2.0
+
+[node name="ArchonIterationsLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Iterations"
+
+[node name="ArchonIterationsSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 120.0
+value = 20.0
+
+[node name="ArchonBailoutLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Bailout"
+
+[node name="ArchonBailoutSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+step = 0.1
+value = 8.0
+
+[node name="ArchonTowerBiasLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Tower Bias"
+
+[node name="ArchonTowerBiasSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 5.0
+step = 0.001
+
+[node name="ArchonMaxStepsLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Max Steps"
+
+[node name="ArchonMaxStepsSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 32.0
+max_value = 512.0
+value = 128.0
+
+[node name="ArchonDetailLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Detail"
+
+[node name="ArchonDetailSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Main"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -5.0
+max_value = -1.0
+step = 0.1
+value = -1.0
+
+[node name="Constants" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="ArchonConstantXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Constants"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Constant X"
+
+[node name="ArchonConstantXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Constants"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="ArchonConstantYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Constants"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Constant Y"
+
+[node name="ArchonConstantYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Constants"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 3.0
+step = 0.01
+value = 1.2999999999999998
+
+[node name="ArchonConstantZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Constants"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Constant Z"
+
+[node name="ArchonConstantZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Constants"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 3.0
+step = 0.01
+value = 0.7999999999999998
+
+[node name="ArchonConstantWLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Constants"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Constant W"
+
+[node name="ArchonConstantWSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Constants"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 3.0
+step = 0.01
+value = 0.20000000000000018
+
+[node name="Spin-Warp" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="SpinAxisSelectorLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Spin Axis Selector"
+
+[node name="ArchonSpinAxisSelector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "Y Axis"
+popup/item_0/id = 0
+popup/item_1/text = "X Axis"
+popup/item_1/id = 1
+popup/item_2/text = "Z Axis"
+popup/item_2/id = 2
+
+[node name="ArchonSpinStrengthLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Spin Strength"
+
+[node name="ArchonSpinStrengthSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 10.0
+step = 0.01
+
+[node name="ArchonWaveTypeLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Wave Type Selector"
+
+[node name="ArchonWaveTypeSelector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 5
+popup/item_0/text = "Sine "
+popup/item_0/id = 0
+popup/item_1/text = "Triangle "
+popup/item_1/id = 1
+popup/item_2/text = "Square "
+popup/item_2/id = 2
+popup/item_3/text = "Sawtooth "
+popup/item_3/id = 3
+popup/item_4/text = "Bounce"
+popup/item_4/id = 4
+
+[node name="ArchonWaveBlendLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Wave Blend"
+
+[node name="ArchonWaveBlendSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 20.0
+step = 0.01
+
+[node name="ArchonArchFreqLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Arch Freq"
+
+[node name="ArchonArchFreqSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 10.0
+step = 0.01
+value = 1.5
+
+[node name="ArchonArchDepthLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Arch Depth"
+
+[node name="ArchonArchDepthSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+value = 0.4
+
+[node name="ArchonArchAxisSelectorLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Arch Axis Selector"
+
+[node name="ArchonArchAxisSelector" type="OptionButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "XY "
+popup/item_0/id = 0
+popup/item_1/text = "XZ "
+popup/item_1/id = 1
+popup/item_2/text = "YZ "
+popup/item_2/id = 2
+
+[node name="ArchonRotationLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rotation"
+
+[node name="ArchonRotationSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 6.28
+step = 0.01
+value = 0.3
+
+[node name="ArchonWRotationSpeedLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "W Rotation Speed"
+
+[node name="ArchonWRotationSpeedSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Spin-Warp"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 2.0
+step = 0.01
+
+[node name="Inversion" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="ArchonInvRadiusLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Inversion"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Inv Radius"
+
+[node name="ArchonInvRadiusSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Inversion"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 1.2000000000000002
+
+[node name="ArchonInvStrengthLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Inversion"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Inv Strength"
+
+[node name="ArchonInvStrengthSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Inversion"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.8
+
+[node name="Julia" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 4
+
+[node name="ArchonJuliaToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia Toggle"
+
+[node name="ArchonJuliaMorphLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia Morph"
+
+[node name="ArchonJuliaMorphSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="ArchonJuliaXLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia X"
+
+[node name="ArchonJuliaXSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="ArchonJuliaYLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia Y"
+
+[node name="ArchonJuliaYSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 3.0
+step = 0.01
+value = 1.2999999999999998
+
+[node name="ArchonJuliaZLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia Z"
+
+[node name="ArchonJuliaZSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 3.0
+step = 0.01
+value = 0.7999999999999998
+
+[node name="ArchonJuliaWLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Julia W"
+
+[node name="ArchonJuliaWSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/Julia"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -3.0
+max_value = 3.0
+step = 0.01
+value = 0.20000000000000018
+
+[node name="City" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+metadata/_tab_index = 5
+
+[node name="ArchonCityEnabledToggle" type="CheckButton" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "City Tiling"
+
+[node name="ArchonCellSizeLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Cell Size: 4.0\""
+
+[node name="ArchonCellSizeSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 5.0
+max_value = 20.0
+step = 0.1
+value = 5.0
+
+[node name="ArchonCellRotVarianceLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rotation Variance: 0.8"
+
+[node name="ArchonCellRotVarianceSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 6.28
+step = 0.01
+value = 0.8
+
+[node name="ArchonCellConstantVarianceLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ruin Variance: 0.3"
+
+[node name="ArchonCellConstantVarianceSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.3
+
+[node name="ArchonCellHeightVarianceLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Height Variance: 0.4"
+
+[node name="ArchonCellHeightVarianceSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.4
+
+[node name="ArchonAlleyWidthLabel" type="Label" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Alley Width: 0.15"
+
+[node name="ArchonAlleyWidthSlider" type="HSlider" parent="CanvasLayer/PanelContainer/MenuScroll/VBoxContainer/HSplitContainer/TabContainer/Archon/ArchonScrollContainer/TabContainer/City"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 0.49
+step = 0.01
+value = 0.15
+
+[node name="OverlayStopButton" type="Button" parent="."]
+unique_name_in_owner = true
+process_mode = 3
+visible = false
+top_level = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -69.5
+offset_right = 346.0
+offset_bottom = 126.0
+grow_horizontal = 2
+text = "Stop Rec"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_wc5p8")
